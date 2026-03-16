@@ -1233,6 +1233,21 @@
         <img class="modal-content" id="expandedImg" alt="Expanded image view">
     </div>
 
+    <div id="matchmakingOverlay">
+        <div class="radar-ring"></div>
+        <div class="radar-ring" style="animation-delay: 1s;"></div>
+
+        <i class="fa-solid fa-masks-theater" style="font-size: 60px; color: var(--accent-yellow); margin-bottom: 20px; z-index: 2;"></i>
+        <h2 style="color: var(--text-primary); z-index: 2; margin-bottom: 5px;">Looking for a VIP...</h2>
+        <p style="color: var(--text-secondary); z-index: 2; margin-top: 0; font-size: 14px;">Please wait on this screen</p>
+
+        <div id="matchCountdown" style="font-size: 70px; font-weight: 900; color: var(--accent-yellow); margin: 30px 0; z-index: 2; text-shadow: 0 0 20px rgba(0,0,0,0.5);">30</div>
+
+        <button class="cancel-match-btn" onclick="cancelMatchmaking()">
+            <i class="fa-solid fa-xmark"></i> Cancel Search
+        </button>
+    </div>
+
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
     
     <div class="bottom-sheet" id="bottomSheet">
@@ -1362,6 +1377,9 @@
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" alt="G"> 
                 Continue with Google
             </button>
+            <button class="btn-glass ripple-target" id="guestBtn" onclick="guestAuth()" style="margin-top: 10px; opacity: 0.8; font-size: 13px;">
+                <i class="fa-solid fa-user-secret" style="font-size: 16px;"></i> Continue as Guest
+            </button>
         </div>
     </div>
 
@@ -1377,6 +1395,17 @@
             </div>
             
             <div class="hub-grid">
+                <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
+                    <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                    <div class="card-text">
+                        <h3>Global Lounge</h3>
+                        <div class="pill-row" style="justify-content: flex-start;">
+                            <span class="status-pill"><div class="dot green"></div> Live</span>
+                            <span class="status-pill">Public</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="hub-card ripple-target" onclick="openSheet('Private Room', 'private')">
                     <div class="card-icon" style="color: #ff9900;">
                         <i class="fa-solid fa-user-shield"></i>
@@ -1385,6 +1414,20 @@
                         <h3 style="color: #ff9900;">Private Room</h3>
                         <div class="pill-row" style="justify-content: flex-start;">
                             <span class="status-pill" style="color: #ff9900; border-color: rgba(255,153,0,0.2);"><div class="dot orange"></div> Encrypted</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hub-card ripple-target" onclick="findStranger()">
+                    <div class="card-icon" style="color: var(--roulette-pink);">
+                        <i class="fa-solid fa-masks-theater"></i>
+                    </div>
+                    <div class="card-text">
+                        <h3 style="color: var(--roulette-pink);">Stranger Roulette</h3>
+                        <div class="pill-row" style="justify-content: flex-start;">
+                            <span class="status-pill" style="color: var(--roulette-pink); border-color: rgba(255, 0, 106, 0.2);">
+                                <div class="dot" style="background: var(--roulette-pink); box-shadow: 0 0 8px var(--roulette-pink);"></div> Matchmaking
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -1911,6 +1954,16 @@ function sendNotification(title, body, icon) {
             }).catch(err => { 
                 showToast(err.message, "error"); 
             }); 
+        }
+
+        window.guestAuth = function() {
+            showToast('Creating Guest Account...', 'success', true);
+            auth.signInAnonymously().then(() => {
+                const t = document.getElementById('toast');
+                if (t) t.classList.remove('show');
+            }).catch(err => {
+                showToast(err.message, "error");
+            });
         }
         
         window.resetPassword = function() {
@@ -2721,6 +2774,82 @@ function sendNotification(title, body, icon) {
             enterRoom(k); 
         }
 
+        // --- PHASE 4: FULL-SCREEN ROULETTE ---
+        window.findStranger = function() {
+            const overlay = document.getElementById('matchmakingOverlay');
+            if(!overlay) return;
+
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.style.opacity = '1', 10);
+
+            let timeLeft = 30;
+            const cd = document.getElementById('matchCountdown');
+            if(cd) cd.innerText = timeLeft;
+
+            const queueRef = db.ref('queue');
+
+            queueRef.once('value', snap => {
+                let found = false;
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        if (child.key !== user.uid && child.val() === true) {
+                            found = true;
+                            const matchedUid = child.key;
+                            const rouletteRoomId = "roulette_" + user.uid + "_" + matchedUid;
+
+                            db.ref('queue/' + matchedUid).set(rouletteRoomId);
+                            setTimeout(() => {
+                                cancelMatchmaking(true);
+                                enterRoom(rouletteRoomId, "Stranger Roulette 🎲");
+                            }, 500);
+
+                            return true;
+                        }
+                    });
+                }
+
+                if (!found) {
+                    db.ref('queue/' + user.uid).set(true);
+
+                    db.ref('queue/' + user.uid).on('value', matchSnap => {
+                        const val = matchSnap.val();
+                        if (val && typeof val === 'string') {
+                            cancelMatchmaking(true);
+                            enterRoom(val, "Stranger Roulette 🎲");
+                        }
+                    });
+
+                    db.ref('queue/' + user.uid).onDisconnect().remove();
+
+                    matchInterval = setInterval(() => {
+                        timeLeft--;
+                        const mcd = document.getElementById('matchCountdown');
+                        if(mcd) mcd.innerText = timeLeft;
+
+                        if (timeLeft <= 0) {
+                            cancelMatchmaking();
+                            showToast("No strangers found. Try again!", "error");
+                        }
+                    }, 1000);
+                }
+            });
+        }
+
+        window.cancelMatchmaking = function(silent = false) {
+            if (matchInterval) clearInterval(matchInterval);
+
+            db.ref('queue/' + user.uid).off();
+            db.ref('queue/' + user.uid).remove();
+
+            const overlay = document.getElementById('matchmakingOverlay');
+            if(overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 300);
+            }
+
+            if(!silent) showToast("Matchmaking canceled.", "success");
+        }
+
         // --- CHAT ROOM LOGIC ---
 window.burnImage = function(element, url, key) {
     element.innerHTML = '';
@@ -3245,9 +3374,16 @@ window.burnImage = function(element, url, key) {
                     db.ref(`rooms/${room}/${key}`).update({ read: true });
                 }
 
-                // Send notification for DM if not me
+                // Send notification for DM or Global if not me
                 if (!initialRoomLoad && !isMe) {
-                    if (currentChatFriend) {
+                    if (room === 'GlobalLobby') {
+                        if (!document.hasFocus()) {
+                            let msgPreview = d.type === 'image' ? '🖼️ Image' : (d.type === 'gif' ? '🎞️ GIF' : (d.type === 'audio' ? '🎤 Voice Message' : d.txt));
+                            sendNotification(`Global Lounge: ${d.name}`, msgPreview, d.pic);
+                        } else {
+                            playReceiveSound();
+                        }
+                    } else if (currentChatFriend) {
                         if (document.hasFocus()) {
                             playReceiveSound();
                         }
