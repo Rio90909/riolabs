@@ -1230,7 +1230,7 @@
 
     <div id="imageModal" class="image-modal" onclick="closeImageModal()">
         <span class="close-modal">&times;</span>
-        <img class="modal-content" id="expandedImg">
+        <img class="modal-content" id="expandedImg" alt="Expanded image view">
     </div>
 
     <div id="matchmakingOverlay">
@@ -1262,7 +1262,7 @@
             <p style="font-size: 12px; color: var(--text-secondary); text-align: center; margin-bottom: 15px;">Enter an existing key to join, or generate a new one.</p>
             <div style="display: flex; width: 100%; max-width: 400px; gap: 10px; margin-bottom: 15px;">
                 <input type="text" id="secretKeyInput" class="secret-input" placeholder="Secret Key" autocomplete="off" style="margin-bottom: 0;">
-                <button class="btn-glass ripple-target" style="width: 60px; flex-shrink: 0; padding: 0; border-color: var(--accent-yellow); color: var(--accent-yellow);" onclick="generateRandomKey()" title="Generate Random Key"><i class="fa-solid fa-dice"></i></button>
+                <button class="btn-glass ripple-target" style="width: 60px; flex-shrink: 0; padding: 0; border-color: var(--accent-yellow); color: var(--accent-yellow);" onclick="generateRandomKey()" title="Generate Random Key" aria-label="Generate Random Key"><i class="fa-solid fa-dice"></i></button>
             </div>
             <div class="sheet-btn primary ripple-target" onclick="confirmJoinPrivate()"><i class="fa-solid fa-lock"></i> Enter Room</div>
         </div>
@@ -1289,13 +1289,13 @@
         <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="uploadBannerToSupabase(event)">
         
         <div class="profile-banner-container" id="upBannerContainer" onclick="handleBannerClick()">
-            <img id="upBanner" src="" class="profile-banner-img" style="background: var(--glass-border);">
+            <img id="upBanner" src="" class="profile-banner-img" style="background: var(--glass-border);" alt="User Profile Banner">
             <i class="fa-solid fa-camera profile-banner-icon" id="upBannerCamera" style="display: none;"></i>
         </div>
 
         <div class="sheet-drag-handle" onclick="closeSheet()" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
         
-        <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); margin-bottom: 5px; object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 2;">
+        <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); margin-bottom: 5px; object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 2;" alt="User Avatar">
         
         <h2 id="upName" style="margin: 0 0 5px 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
             Name <span id="upOnlineDot" class="dot grey"></span>
@@ -1471,7 +1471,7 @@
                 <input type="file" id="profileUploadInput" accept="image/*" style="display: none;" onchange="uploadProfileToSupabase(event)">
                 
                 <div class="profile-avatar-ring" onclick="document.getElementById('profileUploadInput').click()" title="Tap to upload new avatar">
-                    <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" class="avatar-img">
+                    <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" class="avatar-img" alt="My Profile Avatar">
                 </div>
                 
                 <div class="profile-name" id="displayUsername" onclick="editProfileName()">Guest User</div>
@@ -1557,12 +1557,12 @@
         <div class="chat-footer">
             <div class="island-container">
                 <div class="island" id="islandInputBox">
-                    <button class="icon-btn" id="fToggle" onclick="handleFireClick()"><i class="fa-solid fa-fire"></i></button>
-                    <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()"><i class="fa-solid fa-image"></i></button>
+                    <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
+                    <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()" aria-label="Upload Image"><i class="fa-solid fa-image"></i></button>
                     <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTyping()">
-                    <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')"><i class="fa-regular fa-face-smile"></i></button>
+                    <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')" aria-label="Open Emoji Picker"><i class="fa-regular fa-face-smile"></i></button>
                 </div>
-                <button class="send-btn" onclick="sendMsg('text')"><i class="fa-solid fa-paper-plane"></i></button>
+                <button class="send-btn" onclick="sendMsg('text')" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -1693,6 +1693,36 @@
         });
 
         // --- APP STATE ---
+// --- NOTIFICATION SYSTEM ---
+const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+function requestNotificationPermission() {
+    if (!("Notification" in window)) {
+        console.log("This browser does not support desktop notification");
+    } else if (Notification.permission === "granted") {
+        // Permission already granted
+    } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+                console.log("Notification permission granted.");
+            }
+        });
+    }
+}
+
+function sendNotification(title, body, icon) {
+    if (Notification.permission === "granted") {
+        const notification = new Notification(title, {
+            body: body,
+            icon: icon || 'https://api.dicebear.com/7.x/bottts/svg?seed=Direct'
+        });
+        notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+        notification.onclick = function() {
+            window.focus();
+            this.close();
+        };
+    }
+}
         let user = null;
         let room = ''; 
         let myProfile = { 
@@ -1863,7 +1893,8 @@
                 setupPresence();
                 loadMyProfile(); 
                 listenForFriends(); 
-                listenForRecentChats(); 
+                listenForRecentChats();
+                requestNotificationPermission();
                 
                 db.ref('queue/' + user.uid).remove(); 
                 
@@ -2242,6 +2273,7 @@
 
         // --- RECENT CHATS & TYPING PREVIEWS ---
         function listenForRecentChats() {
+            let initialLoad = true;
             db.ref(`recentChats/${user.uid}`).orderByChild('time').on('value', snap => {
                 const chatsBox = document.getElementById('content-chats'); 
                 const wrapper = document.getElementById('content-chats-wrapper');
@@ -2268,7 +2300,7 @@
                         const safeName = c.name.replace(/'/g, "\\'");
                         html += `
                         <div class="chat-list-card ripple-target" onclick="openDM('${c.uid}', '${safeName}', '${c.pic}')">
-                            <img src="${c.pic}" class="chat-list-avatar">
+                            <img src="${c.pic}" class="chat-list-avatar" alt="${c.name} avatar">
                             <div class="chat-list-info">
                                 <h3 class="chat-list-name">${c.name}</h3>
                                 <p class="chat-list-msg" id="recent-msg-${c.uid}">${c.lastMsg}</p>
@@ -2301,6 +2333,30 @@
                     chatsBox.style.display = 'none';
                 }
             });
+
+            db.ref(`recentChats/${user.uid}`).orderByChild('time').on('child_changed', snap => {
+                if (initialLoad) return;
+                const d = snap.val();
+                if (d.senderUid && d.senderUid !== user.uid) {
+                    if (room !== (user.uid < d.uid ? user.uid + '_' + d.uid : d.uid + '_' + user.uid) || !document.hasFocus()) {
+                        sendNotification(d.name, d.lastMsg, d.pic);
+                    }
+                }
+            });
+
+            db.ref(`recentChats/${user.uid}`).orderByChild('time').on('child_added', snap => {
+                if (initialLoad) return;
+                const d = snap.val();
+                if (d.senderUid && d.senderUid !== user.uid) {
+                    if (room !== (user.uid < d.uid ? user.uid + '_' + d.uid : d.uid + '_' + user.uid) || !document.hasFocus()) {
+                        sendNotification(d.name, d.lastMsg, d.pic);
+                    }
+                }
+            });
+
+            db.ref(`recentChats/${user.uid}`).orderByChild('time').once('value').then(() => {
+                initialLoad = false;
+            });
         }
 
         // --- FRIENDS SYSTEM ---
@@ -2328,7 +2384,7 @@
                             resultsBox.innerHTML += `
                                 <div class="friend-list-item">
                                     <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                        <img src="${ud.pic}" class="friend-avatar">
+                                        <img src="${ud.pic}" class="friend-avatar" alt="${ud.name} avatar">
                                         <span class="friend-name">${ud.name}</span>
                                     </div>
                                     <button class="friend-action-btn" onclick="sendFriendRequest('${child.key}', '${safeTargetName}', '${ud.pic}')">Add VIP</button>
@@ -2371,12 +2427,12 @@
                         reqBox.innerHTML += `
                             <div class="friend-list-item" style="border: 1px solid var(--accent-yellow);">
                                 <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                    <img src="${r.pic}" class="friend-avatar">
+                                    <img src="${r.pic}" class="friend-avatar" alt="${r.name} avatar">
                                     <span class="friend-name">${r.name}</span>
                                 </div>
                                 <div style="display:flex; gap:5px;">
                                     <button class="friend-action-btn" onclick="acceptFriend('${child.key}', '${safeName}', '${r.pic}')">Accept</button>
-                                    <button class="friend-action-btn reject" onclick="rejectFriend('${child.key}')"><i class="fa-solid fa-xmark"></i></button>
+                                    <button class="friend-action-btn reject" onclick="rejectFriend('${child.key}')" aria-label="Reject friend request"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </div>`;
                     });
@@ -2415,7 +2471,7 @@
                             fBox.innerHTML += `
                                 <div class="friend-list-item">
                                     <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                        <img src="${f.pic}" class="friend-avatar">
+                                        <img src="${f.pic}" class="friend-avatar" alt="${f.name} avatar">
                                         <span class="friend-name">${f.name} <span class="${dotClass}" style="margin-left: 5px;"></span></span>
                                     </div>
                                     <button class="friend-action-btn" style="background:var(--glass-surface); color:var(--text-primary); border: 1px solid var(--glass-border);" onclick="openDM('${child.key}', '${safeFName}', '${f.pic}')">
@@ -2883,6 +2939,7 @@
                     name: currentChatFriend.name, 
                     pic: currentChatFriend.pic, 
                     lastMsg: msgPreview, 
+                    senderUid: user.uid,
                     time: firebase.database.ServerValue.TIMESTAMP 
                 });
                 
@@ -2891,6 +2948,7 @@
                     name: myProfile.name, 
                     pic: myProfile.pic, 
                     lastMsg: msgPreview, 
+                    senderUid: user.uid,
                     time: firebase.database.ServerValue.TIMESTAMP 
                 });
             }
@@ -2917,6 +2975,8 @@
 
         // LISTEN FOR MESSAGES (DISCORD BUBBLES INJECTED & REACTIONS)
         function listen() {
+            let initialRoomLoad = true;
+            currentRoomRef.once('value').then(() => { initialRoomLoad = false; });
             currentRoomRef.on('child_added', snap => {
                 const d = snap.val();
                 const key = snap.key;
@@ -2928,6 +2988,14 @@
                 if (!isMe && !d.read && currentChatFriend) {
                     db.ref(`rooms/${room}/${key}`).update({ read: true });
                 }
+
+                // Send notification for global room if not me
+                if (!initialRoomLoad && !isMe && room === 'GlobalLobby') {
+                    if (!document.hasFocus()) {
+                        let msgPreview = d.type === 'image' ? '🖼️ Image' : (d.type === 'gif' ? '🎞️ GIF' : d.txt);
+                        sendNotification(`Global Lounge: ${d.name}`, msgPreview, d.pic);
+                    }
+                }
                 
                 const div = document.createElement('div'); 
                 div.className = isMe ? 'msg-row me' : 'msg-row other'; 
@@ -2936,8 +3004,8 @@
                 let tStr = d.time ? new Date(d.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "";
                 
                 let content = d.txt;
-                if (d.type === 'image') content = `<img src="${d.txt}" class="chat-img" onclick="openImageModal('${d.txt}')">`;
-                if (d.type === 'gif') content = `<img src="${d.txt}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${d.txt}')">`;
+                if (d.type === 'image') content = `<img src="${d.txt}" class="chat-img" onclick="openImageModal('${d.txt}')" alt="Chat Image">`;
+                if (d.type === 'gif') content = `<img src="${d.txt}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${d.txt}')" alt="Chat GIF">`;
                 
                 let safeName = d.name || "Unknown User";
                 let badgeHtml = d.badge || '';
@@ -2945,13 +3013,13 @@
                 // DISCORD STYLE PROFILE CLICKER WITH BADGE
                 let header = `
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer;" onclick="openUserProfile('${d.uid}')">
-                        <img src="${d.pic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; border: 1px solid rgba(255,255,255,0.1); background: black;">
+                        <img src="${d.pic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; border: 1px solid rgba(255,255,255,0.1); background: black;" alt="${safeName} Avatar">
                         <span style="font-weight:700; font-size:11px; opacity:0.8; color: ${isMe ? 'inherit' : 'var(--accent-yellow)'}">${isMe ? 'You' : safeName} ${badgeHtml}</span>
                     </div>`;
 
-                let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()"><i class="fa-solid fa-trash"></i></button>` : '';
+                let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
                 let burnerIcon = d.burner ? `<i class="fa-solid fa-fire" style="color:var(--fire);"></i> ` : '';
-                let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')"><i class="fa-regular fa-face-smile"></i></button>`;
+                let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>`;
                 
                 let receiptHtml = '';
                 if (isMe && currentChatFriend) {
