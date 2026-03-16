@@ -1702,7 +1702,9 @@
         // --- APP STATE ---
 // --- NOTIFICATION SYSTEM ---
 const messageSendSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2861/2861-preview.mp3');
+messageSendSound.volume = 0.2;
 const messageReceiveSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+messageReceiveSound.volume = 0.2;
 
 function playSendSound() {
     if (myProfile.appSoundEnabled) {
@@ -1718,6 +1720,7 @@ function playReceiveSound() {
     }
 }
 const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+notificationSound.volume = 0.2;
 
 function requestNotificationPermission() {
     if (!("Notification" in window)) {
