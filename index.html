@@ -3229,7 +3229,6 @@ function sendNotification(title, body, icon) {
 
                 div.innerHTML = `
                     <div class="bubble ${d.burner ? 'burner-msg' : ''}" style="${customStyle}"
-                         ondblclick="initiateReplyDirect('${key}')"
                          ontouchstart="handleTouchStart('${key}', event)"
                          ontouchend="handleTouchEnd()"
                          ontouchcancel="handleTouchEnd()"
