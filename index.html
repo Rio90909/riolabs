@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>riolabs</title>
+    <title>Direct Chat</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -1490,6 +1490,13 @@
                 </div>
             </div>
             <div class="profile-menu-list">
+                <div class="profile-menu-item ripple-target" onclick="toggleAppSound()">
+                    <div class="profile-menu-icon"><i class="fa-solid fa-volume-high" id="soundIcon"></i></div>
+                    <span style="flex: 1;">Message Sounds</span>
+                    <div class="status-toggle-bg" style="margin-top: 0; background: transparent; border: none; padding: 0;">
+                        <span id="soundStatusText" style="font-size: 11px; font-weight: 700; color: var(--accent-yellow);">ON</span>
+                    </div>
+                </div>
                 <div class="profile-menu-item logout ripple-target" onclick="logoutApp()">
                     <div class="profile-menu-icon"><i class="fa-solid fa-right-from-bracket"></i></div><span>Log Out</span>
                 </div>
@@ -1694,6 +1701,22 @@
 
         // --- APP STATE ---
 // --- NOTIFICATION SYSTEM ---
+const messageSendSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2861/2861-preview.mp3');
+const messageReceiveSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+
+function playSendSound() {
+    if (myProfile.appSoundEnabled) {
+        messageSendSound.currentTime = 0;
+        messageSendSound.play().catch(e => console.log('Audio play blocked:', e));
+    }
+}
+
+function playReceiveSound() {
+    if (myProfile.appSoundEnabled) {
+        messageReceiveSound.currentTime = 0;
+        messageReceiveSound.play().catch(e => console.log('Audio play blocked:', e));
+    }
+}
 const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
 function requestNotificationPermission() {
@@ -1716,7 +1739,11 @@ function sendNotification(title, body, icon) {
             body: body,
             icon: icon || 'https://api.dicebear.com/7.x/bottts/svg?seed=Direct'
         });
-        notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+
+        if (myProfile.appSoundEnabled) {
+            notificationSound.play().catch(e => console.log('Audio play blocked:', e));
+        }
+
         notification.onclick = function() {
             window.focus();
             this.close();
@@ -1736,6 +1763,7 @@ function sendNotification(title, body, icon) {
             chatTextColor: '#000', 
             appTheme: 't_free', 
             badge: 'badge_none',
+            appSoundEnabled: true,
             unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none'] 
         };
         let mode = 'login';
@@ -1955,6 +1983,7 @@ function sendNotification(title, body, icon) {
                 myProfile.chatTextColor = d.chatTextColor || '#000';
                 myProfile.appTheme = d.appTheme || 't_free';
                 myProfile.badge = d.badge || 'badge_none';
+                myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 
                 // Guarantee all free items are unlocked
                 let unlocked = d.unlocked || [];
@@ -1975,6 +2004,8 @@ function sendNotification(title, body, icon) {
                 const jd = new Date(myProfile.joinDate);
                 document.getElementById('displayJoinDate').innerText = jd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
+                updateSoundUI();
+
                 if(!d.name || !d.pic || !d.joinDate) saveProfile();
             }); 
         }
@@ -1992,8 +2023,32 @@ function sendNotification(title, body, icon) {
                 chatTextColor: myProfile.chatTextColor, 
                 appTheme: myProfile.appTheme,
                 badge: myProfile.badge,
+                appSoundEnabled: myProfile.appSoundEnabled,
                 unlocked: myProfile.unlocked 
             }); 
+        }
+
+        function updateSoundUI() {
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundStatusText');
+            if(icon && text) {
+                if(myProfile.appSoundEnabled) {
+                    icon.className = 'fa-solid fa-volume-high';
+                    text.innerText = 'ON';
+                    text.style.color = 'var(--success-green)';
+                } else {
+                    icon.className = 'fa-solid fa-volume-xmark';
+                    text.innerText = 'OFF';
+                    text.style.color = 'var(--text-secondary)';
+                }
+            }
+        }
+
+        window.toggleAppSound = function() {
+            myProfile.appSoundEnabled = !myProfile.appSoundEnabled;
+            saveProfile();
+            updateSoundUI();
+            showToast(myProfile.appSoundEnabled ? "Sounds Enabled" : "Sounds Disabled", "success");
         }
 
         window.editBio = function() { 
@@ -2337,8 +2392,9 @@ function sendNotification(title, body, icon) {
             db.ref(`recentChats/${user.uid}`).orderByChild('time').on('child_changed', snap => {
                 if (initialLoad) return;
                 const d = snap.val();
+                const targetUid = snap.key;
                 if (d.senderUid && d.senderUid !== user.uid) {
-                    if (room !== (user.uid < d.uid ? user.uid + '_' + d.uid : d.uid + '_' + user.uid) || !document.hasFocus()) {
+                    if (room !== (user.uid < targetUid ? user.uid + '_' + targetUid : targetUid + '_' + user.uid) || !document.hasFocus()) {
                         sendNotification(d.name, d.lastMsg, d.pic);
                     }
                 }
@@ -2347,8 +2403,9 @@ function sendNotification(title, body, icon) {
             db.ref(`recentChats/${user.uid}`).orderByChild('time').on('child_added', snap => {
                 if (initialLoad) return;
                 const d = snap.val();
+                const targetUid = snap.key;
                 if (d.senderUid && d.senderUid !== user.uid) {
-                    if (room !== (user.uid < d.uid ? user.uid + '_' + d.uid : d.uid + '_' + user.uid) || !document.hasFocus()) {
+                    if (room !== (user.uid < targetUid ? user.uid + '_' + targetUid : targetUid + '_' + user.uid) || !document.hasFocus()) {
                         sendNotification(d.name, d.lastMsg, d.pic);
                     }
                 }
@@ -2958,6 +3015,8 @@ function sendNotification(title, body, icon) {
             if(burnerMode) { setTimeout(() => { newRef.remove(); }, burnerTime); }
             if(type === 'text' && msgInput) msgInput.value = "";
             
+            playSendSound();
+
             document.querySelectorAll('.picker').forEach(p => { 
                 if(p) {
                     p.style.opacity = '0'; 
@@ -2990,10 +3049,19 @@ function sendNotification(title, body, icon) {
                 }
 
                 // Send notification for global room if not me
-                if (!initialRoomLoad && !isMe && room === 'GlobalLobby') {
-                    if (!document.hasFocus()) {
-                        let msgPreview = d.type === 'image' ? '🖼️ Image' : (d.type === 'gif' ? '🎞️ GIF' : d.txt);
-                        sendNotification(`Global Lounge: ${d.name}`, msgPreview, d.pic);
+                if (!initialRoomLoad && !isMe) {
+                    if (room === 'GlobalLobby') {
+                        if (!document.hasFocus()) {
+                            let msgPreview = d.type === 'image' ? '🖼️ Image' : (d.type === 'gif' ? '🎞️ GIF' : d.txt);
+                            sendNotification(`Global Lounge: ${d.name}`, msgPreview, d.pic);
+                        } else {
+                            playReceiveSound();
+                        }
+                    } else if (currentChatFriend) {
+                        // We are in a DM room and received a message
+                        if (document.hasFocus()) {
+                            playReceiveSound();
+                        }
                     }
                 }
                 
