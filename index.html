@@ -1526,12 +1526,14 @@
             <i class="fa-solid fa-shield-halved" style="color:var(--success-green); font-size:14px;"></i>
         </div>
 
-        <div id="reactPicker" class="picker" style="flex-direction: row; gap: 15px; justify-content: center; padding: 15px;">
+        <div id="reactPicker" class="picker" style="flex-direction: row; gap: 15px; justify-content: center; padding: 15px; align-items: center;">
             <span class="react-emoji" onclick="sendReaction('❤️')">❤️</span>
             <span class="react-emoji" onclick="sendReaction('😂')">😂</span>
             <span class="react-emoji" onclick="sendReaction('👍')">👍</span>
             <span class="react-emoji" onclick="sendReaction('🔥')">🔥</span>
             <span class="react-emoji" onclick="sendReaction('😮')">😮</span>
+            <div style="width: 1px; height: 24px; background: var(--glass-border); margin: 0 5px;"></div>
+            <button class="icon-btn" onclick="initiateReply()" style="width: 30px; height: 30px; color: var(--accent-yellow); font-size: 16px;" aria-label="Reply to message"><i class="fa-solid fa-reply"></i></button>
         </div>
 
         <div id="emojiPicker" class="picker">
@@ -1562,6 +1564,14 @@
         <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="uploadImageToSupabase(event)">
 
         <div class="chat-footer">
+            <div id="replyContextBox" style="display: none; align-items: center; justify-content: space-between; padding: 8px 15px; background: var(--island); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 8px; width: calc(100% - 60px);">
+                <div style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--accent-yellow); margin-bottom: 2px;">Replying to <span id="replyToName">Name</span></span>
+                    <span id="replyToText" style="font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Message preview...</span>
+                </div>
+                <button onclick="cancelReply()" style="background: none; border: none; color: var(--text-secondary); font-size: 16px; cursor: pointer; padding: 5px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
             <div class="island-container">
                 <div class="island" id="islandInputBox">
                     <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
@@ -1773,6 +1783,7 @@ function sendNotification(title, body, icon) {
         let burnerMode = false;
         let burnerTime = 10000;
         let typingTimeout = null;
+        let replyingTo = null; // { key, name, txt, type }
         let currentRoomRef = null; 
         let currentChatFriend = null; 
         let myFriendsMap = {}; 
@@ -2792,6 +2803,49 @@ function sendNotification(title, body, icon) {
             showToast(`Burner set to ${ms/1000}s`, 'success'); 
         }
 
+        // MESSAGE REPLIES
+        window.initiateReply = function() {
+            if(!activeReactionMsgKey) return;
+            const ref = db.ref('rooms/'+room+'/'+activeReactionMsgKey);
+            ref.once('value', snap => {
+                if(!snap.exists()) return;
+                const d = snap.val();
+                replyingTo = {
+                    key: activeReactionMsgKey,
+                    name: d.name,
+                    txt: d.txt,
+                    type: d.type
+                };
+
+                document.getElementById('replyToName').innerText = d.name;
+                document.getElementById('replyToText').innerText = d.type === 'text' ? d.txt : (d.type === 'image' ? '🖼️ Image' : '🎞️ GIF');
+                document.getElementById('replyContextBox').style.display = 'flex';
+
+                toggleChatPicker('reactPicker'); // close the picker
+                const input = document.getElementById('msg-input');
+                if (input) input.focus();
+            });
+        }
+
+        window.cancelReply = function() {
+            replyingTo = null;
+            document.getElementById('replyContextBox').style.display = 'none';
+        }
+
+        window.scrollToMessage = function(key) {
+            const el = document.getElementById(key);
+            if(el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const bubble = el.querySelector('.bubble');
+                if (bubble) {
+                    bubble.style.transition = '0.3s';
+                    const originalShadow = bubble.style.boxShadow;
+                    bubble.style.boxShadow = '0 0 20px var(--accent-yellow)';
+                    setTimeout(() => { bubble.style.boxShadow = originalShadow; }, 1500);
+                }
+            }
+        }
+
         // MESSAGE REACTIONS
         window.openReactionPicker = function(key) {
             activeReactionMsgKey = key;
@@ -2976,8 +3030,7 @@ function sendNotification(title, body, icon) {
             const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
             const badgeIcon = bdg && bdg.icon ? bdg.icon : '';
 
-            const newRef = db.ref('rooms/'+room).push();
-            newRef.set({ 
+            let msgData = {
                 txt: txt, 
                 type: type, 
                 uid: user.uid, 
@@ -2989,7 +3042,16 @@ function sendNotification(title, body, icon) {
                 chatColor: myProfile.chatColor, 
                 chatTextColor: myProfile.chatTextColor,
                 read: false 
-            }).catch(err => console.error(err.message));
+            };
+
+            if (replyingTo) {
+                msgData.replyTo = replyingTo;
+            }
+
+            const newRef = db.ref('rooms/'+room).push();
+            newRef.set(msgData).catch(err => console.error(err.message));
+
+            cancelReply();
 
             if (currentChatFriend) {
                 let msgPreview = type === 'image' ? '🖼️ Image' : (type === 'gif' ? '🎞️ GIF' : txt);
@@ -3088,6 +3150,17 @@ function sendNotification(title, body, icon) {
                         <span style="font-weight:700; font-size:11px; opacity:0.8; color: ${isMe ? 'inherit' : 'var(--accent-yellow)'}">${isMe ? 'You' : safeName} ${badgeHtml}</span>
                     </div>`;
 
+                let replyHtml = '';
+                if (d.replyTo) {
+                    let rPreview = d.replyTo.type === 'text' ? d.replyTo.txt : (d.replyTo.type === 'image' ? '🖼️ Image' : '🎞️ GIF');
+                    replyHtml = `
+                    <div onclick="scrollToMessage('${d.replyTo.key}')" style="display:flex; align-items:center; gap:8px; font-size:11px; opacity:0.7; margin-bottom:5px; cursor:pointer; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width: 100%;">
+                        <i class="fa-solid fa-reply" style="transform: scaleX(-1);"></i>
+                        <span style="font-weight:700;">${d.replyTo.name}:</span>
+                        <span style="overflow:hidden; text-overflow:ellipsis;">${rPreview}</span>
+                    </div>`;
+                }
+
                 let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
                 let burnerIcon = d.burner ? `<i class="fa-solid fa-fire" style="color:var(--fire);"></i> ` : '';
                 let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>`;
@@ -3103,6 +3176,7 @@ function sendNotification(title, body, icon) {
 
                 div.innerHTML = `
                     <div class="bubble ${d.burner ? 'burner-msg' : ''}" style="${customStyle}">
+                        ${replyHtml}
                         ${header}
                         ${content}
                         <div id="reactions-${key}" class="reactions-container"></div>
