@@ -2804,6 +2804,59 @@ function sendNotification(title, body, icon) {
         }
 
         // MESSAGE REPLIES
+
+        let touchTimer;
+        let touchStarted = false;
+
+        window.handleTouchStart = function(key, e) {
+            // Only trigger on actual message bubble, not buttons/reactions
+            if (e.target.closest('button') || e.target.closest('.reaction-pill') || e.target.closest('.chat-img')) return;
+
+            touchStarted = true;
+            touchTimer = setTimeout(() => {
+                if (touchStarted) {
+                    initiateReplyDirect(key);
+                    // Provide some haptic feedback if supported
+                    if (navigator.vibrate) navigator.vibrate(50);
+                }
+            }, 500); // 500ms long press
+        }
+
+        window.handleTouchEnd = function() {
+            touchStarted = false;
+            if (touchTimer) clearTimeout(touchTimer);
+        }
+
+        window.handleTouchMove = function() {
+            // Cancel long press if they start scrolling
+            touchStarted = false;
+            if (touchTimer) clearTimeout(touchTimer);
+        }
+
+        window.initiateReplyDirect = function(key) {
+            const ref = db.ref('rooms/'+room+'/'+key);
+            ref.once('value', snap => {
+                if(!snap.exists()) return;
+                const d = snap.val();
+                replyingTo = {
+                    key: key,
+                    name: d.name,
+                    txt: d.txt,
+                    type: d.type
+                };
+
+                document.getElementById('replyToName').innerText = d.name;
+                document.getElementById('replyToText').innerText = d.type === 'text' ? d.txt : (d.type === 'image' ? '🖼️ Image' : '🎞️ GIF');
+                document.getElementById('replyContextBox').style.display = 'flex';
+
+                // close the picker if open
+                const reactPicker = document.getElementById('reactPicker');
+                if(reactPicker && reactPicker.style.display === 'flex') toggleChatPicker('reactPicker');
+
+                const input = document.getElementById('msg-input');
+                if (input) input.focus();
+            });
+        }
         window.initiateReply = function() {
             if(!activeReactionMsgKey) return;
             const ref = db.ref('rooms/'+room+'/'+activeReactionMsgKey);
@@ -3175,7 +3228,12 @@ function sendNotification(title, body, icon) {
                 let customStyle = isMe ? `background: ${d.chatColor || 'var(--accent-yellow)'}; color: ${d.chatTextColor || '#000'};` : '';
 
                 div.innerHTML = `
-                    <div class="bubble ${d.burner ? 'burner-msg' : ''}" style="${customStyle}">
+                    <div class="bubble ${d.burner ? 'burner-msg' : ''}" style="${customStyle}"
+                         ondblclick="initiateReplyDirect('${key}')"
+                         ontouchstart="handleTouchStart('${key}', event)"
+                         ontouchend="handleTouchEnd()"
+                         ontouchcancel="handleTouchEnd()"
+                         ontouchmove="handleTouchMove()">
                         ${replyHtml}
                         ${header}
                         ${content}
