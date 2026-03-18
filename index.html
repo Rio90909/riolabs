@@ -1267,18 +1267,64 @@
             <div class="sheet-btn primary ripple-target" onclick="confirmJoinPrivate()"><i class="fa-solid fa-lock"></i> Enter Room</div>
         </div>
 
+        <div id="sheetContentGames" style="width: 100%; display:none; flex-direction: column; align-items: center; max-height: 70vh; overflow-y: auto;">
+             <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 15px;">Challenge strangers to live minigames!</p>
+             <div class="hub-grid" style="padding:0;">
+                <div class="hub-card ripple-target" onclick="findStrangerGame('TicTacToe')">
+                    <div class="card-icon" style="color: #ffcc00;"><i class="fa-solid fa-hashtag"></i></div>
+                    <div class="card-text"><h3 style="color: #ffcc00;">Tic-Tac-Toe</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('RPS')">
+                    <div class="card-icon" style="color: #00e5ff;"><i class="fa-solid fa-hand-back-fist"></i></div>
+                    <div class="card-text"><h3 style="color: #00e5ff;">Rock-Paper-Scissors</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
+                    <div class="card-icon" style="color: #ff007f;"><i class="fa-solid fa-table-cells-large"></i></div>
+                    <div class="card-text"><h3 style="color: #ff007f;">Connect 4</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Pong')">
+                    <div class="card-icon" style="color: #ff0000;"><i class="fa-solid fa-table-tennis-paddle-ball"></i></div>
+                    <div class="card-text"><h3 style="color: #ff0000;">Pong</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Battleship')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-ship"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Battleship</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('TypingRacer')">
+                    <div class="card-icon" style="color: #9C27B0;"><i class="fa-solid fa-keyboard"></i></div>
+                    <div class="card-text"><h3 style="color: #9C27B0;">Typing Racer</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('AirHockey')">
+                    <div class="card-icon" style="color: #FF9800;"><i class="fa-solid fa-hockey-puck"></i></div>
+                    <div class="card-text"><h3 style="color: #FF9800;">Air Hockey</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
+                    <div class="card-icon" style="color: #03A9F4;"><i class="fa-solid fa-brain"></i></div>
+                    <div class="card-text"><h3 style="color: #03A9F4;">Memory Match</h3></div>
+                </div>
+             </div>
+        </div>
+
         <div id="sheetContentShop" style="width: 100%; display:none; flex-direction: column; align-items: center;">
              <div style="display:flex; justify-content:space-between; align-items:center; width:100%; max-width:400px; margin-bottom:15px;">
                  <h3 style="margin:0; color:var(--text-primary);">The VIP Shop</h3>
                  <div class="orb-badge" style="margin:0;"><i class="fa-solid fa-gem"></i> <span id="shopOrbCount">0</span></div>
              </div>
              
-             <div class="picker-tabs" style="max-width: 400px; width: 100%;">
-                 <div id="tabShopBubbles" class="p-tab active" onclick="switchShopTab('bubbles')">Chat Bubbles</div>
-                 <div id="tabShopThemes" class="p-tab" onclick="switchShopTab('themes')">App Themes</div>
+             <div class="picker-tabs" style="max-width: 400px; width: 100%; flex-wrap: wrap;">
+                 <div id="tabShopBubbles" class="p-tab active" onclick="switchShopTab('bubbles')">Bubbles</div>
+                 <div id="tabShopThemes" class="p-tab" onclick="switchShopTab('themes')">Themes</div>
                  <div id="tabShopBadges" class="p-tab" onclick="switchShopTab('badges')">Badges</div>
+                 <div id="tabShopFonts" class="p-tab" onclick="switchShopTab('fonts')">Fonts</div>
+                 <div id="tabShopNameColors" class="p-tab" onclick="switchShopTab('nameColors')">Name Colors</div>
+                 <div id="tabShopAvatarRings" class="p-tab" onclick="switchShopTab('avatarRings')">Avatar Rings</div>
              </div>
              
+             <div style="width: 100%; max-width: 400px; display: flex; gap: 10px; margin-bottom: 15px;">
+                 <button class="sheet-btn ripple-target" onclick="buyMegaphone()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,204,0,0.1); border-color: var(--accent-yellow); color: var(--accent-yellow);"><i class="fa-solid fa-bullhorn"></i> Buy Megaphone (1000 <i class="fa-solid fa-gem"></i>)</button>
+                 <button class="sheet-btn ripple-target" onclick="buyGiftBox()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,0,127,0.1); border-color: #ff007f; color: #ff007f;"><i class="fa-solid fa-gift"></i> Buy Gift Box (300 <i class="fa-solid fa-gem"></i>)</button>
+             </div>
+
              <div id="shopGridContent" class="shop-grid">
                   </div>
         </div>
@@ -1295,7 +1341,9 @@
 
         <div class="sheet-drag-handle" onclick="closeSheet()" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
         
-        <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); margin-bottom: 5px; object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5); z-index: 2;" alt="User Avatar">
+        <div id="upAvatarRing" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; z-index: 2;">
+            <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5);" alt="User Avatar">
+        </div>
         
         <h2 id="upName" style="margin: 0 0 5px 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
             Name <span id="upOnlineDot" class="dot grey"></span>
@@ -1312,6 +1360,26 @@
     </div>
 
     <div id="auth-screen" class="screen active">
+
+    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
+        <button onclick="leaveGame()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Tic-Tac-Toe</h2>
+        <p id="gameStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 300px; background: var(--glass-border); padding: 10px; border-radius: 16px;">
+            <div class="ttt-cell" id="ttt-0" onclick="makeMove(0)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-1" onclick="makeMove(1)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-2" onclick="makeMove(2)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-3" onclick="makeMove(3)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-4" onclick="makeMove(4)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-5" onclick="makeMove(5)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-6" onclick="makeMove(6)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-7" onclick="makeMove(7)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-8" onclick="makeMove(8)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+        </div>
+
+        <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
         <div class="auth-container">
             <div class="logo-wrap">
                 <div class="orbit-ring"></div>
@@ -1432,6 +1500,18 @@
                     </div>
                 </div>
 
+                <div class="hub-card ripple-target" onclick="openSheet('Mini-Games Hub', 'games')">
+                    <div class="card-icon" style="color: #00ff66;">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div class="card-text">
+                        <h3 style="color: #00ff66;">Mini-Games</h3>
+                        <div class="pill-row" style="justify-content: flex-start;">
+                            <span class="status-pill" style="color: #00ff66; border-color: rgba(0,255,102,0.2);"><div class="dot" style="background: #00ff66; box-shadow: 0 0 8px #00ff66;"></div> Live Play</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -1472,9 +1552,10 @@
         <div id="tab-profile" class="hub-tab">
             <div class="profile-hero">
                 <input type="file" id="profileUploadInput" accept="image/*" style="display: none;" onchange="uploadProfileToSupabase(event)">
+                <input type="file" id="chatBgUploadInput" accept="image/*" style="display: none;" onchange="uploadChatBg(event)">
                 
-                <div class="profile-avatar-ring" onclick="document.getElementById('profileUploadInput').click()" title="Tap to upload new avatar">
-                    <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" class="avatar-img" alt="My Profile Avatar">
+                <div id="myAvatarRing" style="width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; z-index: 2; cursor: pointer;" onclick="document.getElementById('profileUploadInput').click()" title="Tap to upload new avatar">
+                    <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--island); object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5);" alt="My Profile Avatar">
                 </div>
                 
                 <div class="profile-name" id="displayUsername" onclick="editProfileName()">Guest User</div>
@@ -1493,6 +1574,17 @@
                 </div>
             </div>
             <div class="profile-menu-list">
+                <div class="profile-menu-item ripple-target" onclick="activateGhostMode()">
+                    <div class="profile-menu-icon" style="color: var(--accent-yellow);"><i class="fa-solid fa-ghost"></i></div>
+                    <span style="flex: 1;">Ghost Mode</span>
+                    <div class="status-toggle-bg" style="margin-top: 0; background: transparent; border: none; padding: 0;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">-200 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i></span>
+                    </div>
+                </div>
+                <div class="profile-menu-item ripple-target" onclick="document.getElementById('chatBgUploadInput').click()">
+                    <div class="profile-menu-icon"><i class="fa-solid fa-image"></i></div>
+                    <span style="flex: 1;">Custom Chat Wallpaper</span>
+                </div>
                 <div class="profile-menu-item ripple-target" onclick="toggleAppSound()">
                     <div class="profile-menu-icon"><i class="fa-solid fa-volume-high" id="soundIcon"></i></div>
                     <span style="flex: 1;">Message Sounds</span>
@@ -1529,8 +1621,8 @@
         
         <div class="chat-header">
             <div class="chat-back-btn" onclick="leaveChat()"><i class="fa-solid fa-chevron-left"></i></div>
-            <div class="chat-title-container">
-                <div class="chat-room-status"></div>
+            <div class="chat-title-container" onclick="openChatMenu()" style="cursor: pointer;">
+                <div class="chat-room-status" id="chatRoomStatusDot"></div>
                 <div class="chat-room-name" id="chatRoomTitle">ROOM NAME</div>
             </div>
             <i class="fa-solid fa-shield-halved" style="color:var(--success-green); font-size:14px;"></i>
@@ -1547,13 +1639,7 @@
         </div>
 
         <div id="emojiPicker" class="picker">
-            <div class="picker-tabs">
-                <div id="tabEmoji" class="p-tab active" onclick="switchPickerMode('emoji')">Emojis</div>
-                <div id="tabGif" class="p-tab" onclick="switchPickerMode('gif')">GIFs</div>
-            </div>
-            <input type="text" id="gifSearchInput" class="picker-search" placeholder="Search GIFs..." style="display:none;" oninput="debounceGifSearch()">
             <div id="emojiGrid" class="grid-view emoji-grid"></div>
-            <div id="gifGrid" class="grid-view" style="display:none;"></div>
         </div>
 
         <div id="timerPicker" class="picker">
@@ -1570,6 +1656,10 @@
         <div id="chat-messages"></div>
         
         <div id="typing-indicator">Someone is typing...</div>
+
+        <div class="fab ripple-target" id="scrollToBottomBtn" onclick="scrollToBottom()" style="bottom: 100px; right: 20px; width: 45px; height: 45px; z-index: 100; transition: all 0.3s ease;">
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
 
         <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="uploadImageToSupabase(event)">
 
@@ -1723,16 +1813,16 @@
         // --- APP STATE ---
 
         // --- BLOCK SYSTEM & FILTER ---
-        const badWords = ['fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'pussy', 'nigger', 'nigga', 'faggot', 'slut', 'whore'];
-
-        function applyProfanityFilter(text) {
+        async function applyProfanityFilterAsync(text) {
             if (!myProfile.profanityFilterEnabled || !text) return text;
-            let filtered = text;
-            badWords.forEach(word => {
-                const regex = new RegExp(`\\b${word}\\b`, 'gi');
-                filtered = filtered.replace(regex, '*'.repeat(word.length));
-            });
-            return filtered;
+            try {
+                const res = await fetch(`https://www.purgomalum.com/service/json?text=${encodeURIComponent(text)}`);
+                const data = await res.json();
+                return data.result;
+            } catch (err) {
+                console.error("Profanity filter API failed", err);
+                return text; // fallback to original text if API fails
+            }
         }
 
         window.blockUser = function(targetUid) {
@@ -1821,10 +1911,14 @@ function sendNotification(title, body, icon) {
             chatTextColor: '#000', 
             appTheme: 't_free', 
             badge: 'badge_none',
+            chatFont: 'f_default',
+            nameColor: 'nc_white',
+            avatarRing: 'ar_none',
+            chatWallpaper: '',
             appSoundEnabled: true,
             profanityFilterEnabled: true,
             blockedUsers: [],
-            unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none'] 
+            unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none', 'f_default', 'nc_white', 'ar_none']
         };
         let mode = 'login';
         let burnerMode = false;
@@ -1846,7 +1940,12 @@ function sendNotification(title, body, icon) {
             amOnline.on('value', function(snapshot) {
                 if (snapshot.val()) {
                     userStatusRef.onDisconnect().set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
-                    userStatusRef.set({ state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP });
+
+                    if (myProfile.ghostModeUntil && Date.now() < myProfile.ghostModeUntil) {
+                        userStatusRef.set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
+                    } else {
+                        userStatusRef.set({ state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP });
+                    }
                 }
             });
         }
@@ -1868,7 +1967,9 @@ function sendNotification(title, body, icon) {
                 { id: 'b_black', name: 'Stealth Black', color: '#111111', text: '#fff', price: 0 },
                 { id: 'b_diamond', name: 'Diamond VIP', color: '#b9f2ff', text: '#003366', price: 500 },
                 { id: 'b_holographic', name: 'Holographic', color: 'linear-gradient(45deg, #ff00cc, #3333ff)', text: '#fff', price: 1000 },
-                { id: 'b_crown', name: 'Golden Crown', color: 'linear-gradient(180deg, #ffd700, #b8860b)', text: '#000', price: 1500 }
+                { id: 'b_crown', name: 'Golden Crown', color: 'linear-gradient(180deg, #ffd700, #b8860b)', text: '#000', price: 1500 },
+                { id: 'b_matrix', name: 'The Matrix', color: 'black', text: '#0f0', price: 2000, isClass: true },
+                { id: 'b_starry', name: 'Starry Night', color: '#090a0f', text: 'white', price: 2500, isClass: true }
             ],
             themes: [
                 { id: 't_free', name: 'Default Dark', bg: '#0f1014', acc: '#ffcc00', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
@@ -1890,6 +1991,24 @@ function sendNotification(title, body, icon) {
                 { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 500 },
                 { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 1000 },
                 { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 2000 }
+            ],
+            fonts: [
+                { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
+                { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 300 },
+                { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 300 },
+                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 500 }
+            ],
+            nameColors: [
+                { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
+                { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 500 },
+                { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 500 },
+                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1500 }
+            ],
+            avatarRings: [
+                { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
+                { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 600 },
+                { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 1200 },
+                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1500 }
             ]
         };
 
@@ -2042,6 +2161,168 @@ function sendNotification(title, body, icon) {
         }
 
         // --- PROFILE LOGIC ---
+
+        // --- SHOP CONSUMABLES ---
+        window.buyMegaphone = function() {
+            if (myProfile.orbs >= 1000) {
+                const msg = prompt("Enter your Global Megaphone message (Max 100 chars):");
+                if (msg && msg.trim().length > 0) {
+                    const cleanMsg = msg.trim().substring(0, 100);
+                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 1000);
+
+                    const newRef = db.ref('rooms/GlobalLobby').push();
+                    newRef.set({
+                        txt: `📢 MEGAPHONE: ${cleanMsg}`,
+                        type: 'text',
+                        uid: user.uid,
+                        name: myProfile.name,
+                        nameColor: myProfile.nameColor,
+                        pic: myProfile.pic,
+                        avatarRing: myProfile.avatarRing,
+                        badge: myProfile.badge,
+                        time: firebase.database.ServerValue.TIMESTAMP,
+                        burner: false,
+                        chatColor: 'linear-gradient(45deg, #ff00cc, #3333ff)',
+                        chatTextColor: '#fff',
+                        chatFont: myProfile.chatFont,
+                        read: false,
+                        delivered: false,
+                        edited: false
+                    });
+
+                    document.getElementById('shopOrbCount').innerText = myProfile.orbs - 1000;
+                    showToast("Megaphone Activated!", "success");
+                    closeSheet();
+                }
+            } else {
+                showToast("Not enough Orbs! (1000 required)", "error");
+            }
+        }
+
+        window.buyGiftBox = function() {
+            if (!currentChatFriend) return showToast("You must be in a DM to send a Gift Box!", "error");
+
+            if (myProfile.orbs >= 300) {
+                db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 300);
+
+                const boxValue = Math.floor(Math.random() * (500 - 50 + 1) + 50); // random between 50 and 500
+                const giftId = `gift_${Date.now()}`;
+
+                const newRef = db.ref('rooms/'+room).push();
+                newRef.set({
+                    txt: `🎁 Sent a Mystery Gift Box!`,
+                    type: 'gift',
+                    giftValue: boxValue,
+                    giftId: giftId,
+                    giftOpened: false,
+                    uid: user.uid,
+                    name: myProfile.name,
+                    nameColor: myProfile.nameColor,
+                    pic: myProfile.pic,
+                    avatarRing: myProfile.avatarRing,
+                    badge: myProfile.badge,
+                    time: firebase.database.ServerValue.TIMESTAMP,
+                    burner: false,
+                    chatColor: '#ff007f',
+                    chatTextColor: '#fff',
+                    chatFont: myProfile.chatFont,
+                    read: false,
+                    delivered: false,
+                    edited: false
+                });
+
+                document.getElementById('shopOrbCount').innerText = myProfile.orbs - 300;
+                showToast("Gift Box Sent!", "success");
+                closeSheet();
+            } else {
+                showToast("Not enough Orbs! (300 required)", "error");
+            }
+        }
+
+        window.openGift = function(key, value, senderUid) {
+            if (user.uid === senderUid) return showToast("You cannot open your own gift!", "error");
+
+            const ref = db.ref('rooms/'+room+'/'+key);
+            ref.once('value', snap => {
+                if(snap.exists() && !snap.val().giftOpened) {
+                    ref.update({ giftOpened: true, txt: `🎉 Opened Gift Box: +${value} Orbs!` });
+                    db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + value);
+                    showToast(`You won ${value} Orbs!`, "success");
+                    playReactionAnimation();
+                } else {
+                    showToast("Gift already opened!", "error");
+                }
+            });
+        }
+
+        // --- GHOST MODE & MESSAGE NUKE ---
+        window.activateGhostMode = function() {
+            if (myProfile.orbs >= 200) {
+                if (confirm("Spend 200 Orbs to activate Ghost Mode for 24 hours? You will be hidden from the online list and won't send read receipts.")) {
+                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 200);
+                    myProfile.ghostModeUntil = Date.now() + (24 * 60 * 60 * 1000);
+                    saveProfile();
+
+                    // Force status to offline
+                    db.ref('status/' + user.uid).set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
+
+                    showToast("Ghost Mode Activated!", "success");
+                    document.getElementById('shopOrbCount').innerText = myProfile.orbs - 200;
+                }
+            } else {
+                showToast("Not enough Orbs!", "error");
+            }
+        }
+
+        window.nukeChat = function(targetUid) {
+            if (myProfile.orbs >= 500) {
+                if (confirm("WARNING: Spend 500 Orbs to NUKE this chat history for both of you? This cannot be undone.")) {
+                    const roomId = user.uid < targetUid ? user.uid + '_' + targetUid : targetUid + '_' + user.uid;
+
+                    // Nuke room history
+                    db.ref('rooms/'+roomId).remove();
+
+                    // Nuke recent chats
+                    db.ref(`recentChats/${user.uid}/${targetUid}`).remove();
+                    db.ref(`recentChats/${targetUid}/${user.uid}`).remove();
+
+                    // Charge orbs
+                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 500);
+                    saveProfile();
+
+                    showToast("Chat Nuked 💥", "success");
+                    leaveChat();
+                }
+            } else {
+                showToast("Not enough Orbs!", "error");
+            }
+        }
+
+        // --- CUSTOM CHAT WALLPAPERS ---
+        window.uploadChatBg = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            showToast("Uploading wallpaper...", "success", true);
+            const fileName = `bg/${user.uid}_${Date.now()}.${file.name.split('.').pop()}`;
+            const { data, error } = await supabaseClient.storage.from('chat-uploads').upload(fileName, file, { cacheControl: '3600', upsert: false });
+            if (error) return showToast("Upload failed", "error");
+            const { data: urlData } = supabaseClient.storage.from('chat-uploads').getPublicUrl(fileName);
+            myProfile.chatWallpaper = urlData.publicUrl;
+            saveProfile();
+            applyWallpaper();
+            showToast("Wallpaper updated!", "success");
+        }
+
+        function applyWallpaper() {
+            const screen = document.getElementById('chat-screen');
+            if (myProfile.chatWallpaper) {
+                screen.style.backgroundImage = `url(${myProfile.chatWallpaper})`;
+                screen.style.backgroundSize = 'cover';
+                screen.style.backgroundPosition = 'center';
+            } else {
+                screen.style.backgroundImage = 'none';
+            }
+        }
         // --- DAILY LOGIN REWARDS ---
         function checkDailyReward() {
             if(!user || !myProfile) return;
@@ -2072,13 +2353,20 @@ function sendNotification(title, body, icon) {
                 myProfile.chatTextColor = d.chatTextColor || '#000';
                 myProfile.appTheme = d.appTheme || 't_free';
                 myProfile.badge = d.badge || 'badge_none';
+                myProfile.chatFont = d.chatFont || 'f_default';
+                myProfile.nameColor = d.nameColor || 'nc_white';
+                myProfile.avatarRing = d.avatarRing || 'ar_none';
+                myProfile.chatWallpaper = d.chatWallpaper || '';
+                myProfile.ghostModeUntil = d.ghostModeUntil || null;
                 myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 myProfile.profanityFilterEnabled = d.profanityFilterEnabled !== undefined ? d.profanityFilterEnabled : true;
                 myProfile.blockedUsers = d.blockedUsers || [];
+
+                applyWallpaper();
                 
                 // Guarantee all free items are unlocked
                 let unlocked = d.unlocked || [];
-                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges].filter(i => i.price === 0).map(i => i.id);
+                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges, ...shopData.fonts, ...shopData.nameColors, ...shopData.avatarRings].filter(i => i.price === 0).map(i => i.id);
                 allFreeItems.forEach(freeId => {
                     if (!unlocked.includes(freeId)) unlocked.push(freeId);
                 });
@@ -2087,7 +2375,29 @@ function sendNotification(title, body, icon) {
                 applyAppTheme(myProfile.appTheme);
 
                 const bdg = shopData.badges.find(b => b.id === myProfile.badge);
-                document.getElementById('displayUsername').innerHTML = `${myProfile.name} ${bdg && bdg.icon ? bdg.icon : ''}`; 
+                const nColor = shopData.nameColors.find(n => n.id === myProfile.nameColor);
+                const rStyle = shopData.avatarRings.find(r => r.id === myProfile.avatarRing);
+
+                const du = document.getElementById('displayUsername');
+                du.innerHTML = `${myProfile.name} ${bdg && bdg.icon ? bdg.icon : ''}`;
+                du.style.color = 'var(--text-primary)';
+                du.style.background = 'none';
+                du.style.webkitTextFillColor = 'initial';
+
+                if (nColor && nColor.value.startsWith('linear')) {
+                    du.style.background = nColor.value;
+                    du.style.webkitBackgroundClip = 'text';
+                    du.style.webkitTextFillColor = 'transparent';
+                } else if (nColor) {
+                    du.style.color = nColor.value;
+                }
+
+                const myRing = document.getElementById('myAvatarRing');
+                if (myRing && rStyle) {
+                    myRing.style.border = rStyle.value.split(';')[0].split(':')[1] || 'none';
+                    myRing.style.boxShadow = rStyle.value.split('box-shadow:')[1] || 'none';
+                }
+
                 document.getElementById('userAvatar').src = myProfile.pic; 
                 document.getElementById('orbCountDisplay').innerText = myProfile.orbs; 
                 document.getElementById('displayBio').innerText = myProfile.bio;
@@ -2114,6 +2424,11 @@ function sendNotification(title, body, icon) {
                 chatTextColor: myProfile.chatTextColor, 
                 appTheme: myProfile.appTheme,
                 badge: myProfile.badge,
+                chatFont: myProfile.chatFont,
+                nameColor: myProfile.nameColor,
+                avatarRing: myProfile.avatarRing,
+                chatWallpaper: myProfile.chatWallpaper,
+                ghostModeUntil: myProfile.ghostModeUntil || null,
                 appSoundEnabled: myProfile.appSoundEnabled,
                 profanityFilterEnabled: myProfile.profanityFilterEnabled,
                 blockedUsers: myProfile.blockedUsers,
@@ -2305,8 +2620,30 @@ function sendNotification(title, body, icon) {
                 document.getElementById('upAvatar').src = uData.pic;
                 
                 const bdg = shopData.badges.find(b => b.id === (uData.badge || 'badge_none'));
+                const nColor = shopData.nameColors.find(n => n.id === (uData.nameColor || 'nc_white'));
+                const rStyle = shopData.avatarRings.find(r => r.id === (uData.avatarRing || 'ar_none'));
+
                 const iconHtml = bdg && bdg.icon ? bdg.icon : '';
-                document.getElementById('upName').innerHTML = `${uData.name} ${iconHtml} <span id="upOnlineDot" class="dot grey"></span>`;
+                const un = document.getElementById('upName');
+                un.innerHTML = `${uData.name} ${iconHtml} <span id="upOnlineDot" class="dot grey"></span>`;
+                un.style.color = 'var(--text-primary)';
+                un.style.background = 'none';
+                un.style.webkitTextFillColor = 'initial';
+
+                if (nColor && nColor.value.startsWith('linear')) {
+                    un.style.background = nColor.value;
+                    un.style.webkitBackgroundClip = 'text';
+                    un.style.webkitTextFillColor = 'transparent';
+                } else if (nColor) {
+                    un.style.color = nColor.value;
+                }
+
+                const upRing = document.getElementById('upAvatarRing');
+                if (upRing && rStyle) {
+                    upRing.style.border = rStyle.value.split(';')[0].split(':')[1] || 'none';
+                    upRing.style.boxShadow = rStyle.value.split('box-shadow:')[1] || 'none';
+                }
+
                 document.getElementById('upBio').innerText = uData.bio || 'Hey! I am using VIP Direct Chat.';
                 
                 const jd = new Date(uData.joinDate || Date.now()); 
@@ -2333,6 +2670,7 @@ function sendNotification(title, body, icon) {
                     actionHtml = `
                         <button class="sheet-btn primary ripple-target" onclick="closeSheet(); openDM('${targetUid}', '${safeName}', '${uData.pic}')" style="justify-content:center;"><i class="fa-solid fa-message"></i> Message VIP</button>
                         <button class="sheet-btn ripple-target" onclick="tipUser('${targetUid}', '${safeName}')" style="justify-content:center; color: var(--accent-yellow); border-color: var(--accent-yellow);"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Orbs</button>
+                        <button class="sheet-btn ripple-target" onclick="nukeChat('${targetUid}')" style="justify-content:center; color: var(--fire); border-color: rgba(255,106,0,0.3); background: rgba(255,106,0,0.1);"><i class="fa-solid fa-bomb"></i> Nuke Chat (-500 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i>)</button>
                         <button class="sheet-btn ripple-target" onclick="blockUser('${targetUid}')" style="justify-content:center; color: var(--error-red); border-color: rgba(255,59,48,0.3); background: rgba(255,59,48,0.1);"><i class="fa-solid fa-ban"></i> Block User</button>
                     `;
                 } else {
@@ -2390,6 +2728,9 @@ function sendNotification(title, body, icon) {
             document.getElementById('tabShopBubbles').classList.toggle('active', tab === 'bubbles');
             document.getElementById('tabShopThemes').classList.toggle('active', tab === 'themes');
             document.getElementById('tabShopBadges').classList.toggle('active', tab === 'badges');
+            document.getElementById('tabShopFonts').classList.toggle('active', tab === 'fonts');
+            document.getElementById('tabShopNameColors').classList.toggle('active', tab === 'nameColors');
+            document.getElementById('tabShopAvatarRings').classList.toggle('active', tab === 'avatarRings');
             renderShop(tab);
         }
 
@@ -2406,18 +2747,26 @@ function sendNotification(title, body, icon) {
                 if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color);
                 if(tab === 'themes') isEquipped = (myProfile.appTheme === item.id);
                 if(tab === 'badges') isEquipped = (myProfile.badge === item.id);
+                if(tab === 'fonts') isEquipped = (myProfile.chatFont === item.id);
+                if(tab === 'nameColors') isEquipped = (myProfile.nameColor === item.id);
+                if(tab === 'avatarRings') isEquipped = (myProfile.avatarRing === item.id);
                 
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : `Buy (${item.price} Orbs)`);
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                // If it's a badge, display the icon instead of a color circle
-                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color};"></div>`;
+                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value};"></div>`;
                 if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
+                } else if(tab === 'fonts') {
+                    previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
+                } else if (tab === 'nameColors') {
+                    previewHtml = `<div class="color-preview" style="background: ${item.value};"></div>`;
+                } else if (tab === 'avatarRings') {
+                    previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
                 }
                 
                 grid.innerHTML += `
-                <div class="shop-item ripple-target" style="border-color: ${isEquipped ? (item.acc || item.color || '#ffcc00') : 'var(--glass-border)'}; box-shadow: ${isEquipped ? '0 0 15px '+(item.acc || item.color || '#ffcc00') : 'none'};" onclick="handleShopClick('${tab}', '${item.id}')">
+                <div class="shop-item ripple-target" style="border-color: ${isEquipped ? 'var(--accent-yellow)' : 'var(--glass-border)'}; box-shadow: ${isEquipped ? '0 0 15px var(--accent-yellow)' : 'none'};" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
                     <button class="${btnClass} shop-btn" style="padding: 5px; font-size: 11px; height: 30px; margin-top: 5px; width: 100%; border-radius: 10px;">${btnText}</button>
@@ -2433,6 +2782,9 @@ function sendNotification(title, body, icon) {
                 if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
                 else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
                 else if (tab === 'badges') { myProfile.badge = item.id; }
+                else if (tab === 'fonts') { myProfile.chatFont = item.id; }
+                else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
+                else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
                 
                 if(!unlocked.includes(itemId)) unlocked.push(itemId);
                 
@@ -2449,6 +2801,9 @@ function sendNotification(title, body, icon) {
                     if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
                     else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
                     else if (tab === 'badges') { myProfile.badge = item.id; }
+                    else if (tab === 'fonts') { myProfile.chatFont = item.id; }
+                    else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
+                    else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
                     
                     saveProfile(); 
                     renderShop(tab); 
@@ -2491,15 +2846,30 @@ function sendNotification(title, body, icon) {
                     
                     chats.forEach(c => {
                         const safeName = c.name.replace(/'/g, "\\'");
+                        const unreadBadge = c.unreadCount ? `<div style="background:var(--error-red); color:white; font-size:10px; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; right:15px; top:50%; transform:translateY(-50%); box-shadow: 0 0 10px var(--error-red);">${c.unreadCount}</div>` : '';
                         html += `
                         <div class="chat-list-card ripple-target" onclick="openDM('${c.uid}', '${safeName}', '${c.pic}')">
                             <img src="${c.pic}" class="chat-list-avatar" alt="${c.name} avatar">
-                            <div class="chat-list-info">
+                            <div class="chat-list-info" style="padding-right: 30px;">
                                 <h3 class="chat-list-name">${c.name}</h3>
                                 <p class="chat-list-msg" id="recent-msg-${c.uid}">${c.lastMsg}</p>
                             </div>
-                            <i class="fa-solid fa-chevron-right" style="color: var(--text-secondary); opacity: 0.5; font-size: 14px;"></i>
+                            ${unreadBadge}
                         </div>`;
+
+                        // Mark as delivered since we are connected and seeing this chat list
+                        if (c.unreadCount && c.unreadCount > 0) {
+                            const roomKey = user.uid < c.uid ? user.uid + '_' + c.uid : c.uid + '_' + user.uid;
+                            db.ref(`rooms/${roomKey}`).orderByChild('delivered').equalTo(false).once('value', msgs => {
+                                if (msgs.exists()) {
+                                    msgs.forEach(m => {
+                                        if (m.val().uid !== user.uid) {
+                                            m.ref.update({ delivered: true });
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     });
                     chatsBox.innerHTML = html;
                     
@@ -2729,7 +3099,8 @@ function sendNotification(title, body, icon) {
             
             document.getElementById('sheetContentGlobal').style.display = type === 'global' ? 'flex' : 'none';
             document.getElementById('sheetContentPrivate').style.display = type === 'private' ? 'flex' : 'none';
-            document.getElementById('sheetContentShop').style.display = 'none';
+            document.getElementById('sheetContentShop').style.display = type === 'shop' ? 'flex' : 'none';
+            document.getElementById('sheetContentGames').style.display = type === 'games' ? 'flex' : 'none';
             
             if(type === 'private') {
                 const ski = document.getElementById('secretKeyInput');
@@ -2851,6 +3222,160 @@ function sendNotification(title, body, icon) {
         }
 
         // --- CHAT ROOM LOGIC ---
+
+        window.scrollToBottom = function() {
+            const chatMessages = document.getElementById('chat-messages');
+            if(chatMessages) {
+                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        // --- TIC TAC TOE LOGIC ---
+
+        // --- MORE MINI GAMES ---
+        window.findStrangerGameConnect4 = function() {
+            // Placeholder for connect 4 structure
+            showToast("Connect 4 initializing...", "success", true);
+            setTimeout(() => showToast("Connect 4 coming in future patch!", "error"), 1500);
+        }
+        window.findStrangerGameRPS = function() {
+            showToast("Rock Paper Scissors initializing...", "success", true);
+            setTimeout(() => showToast("RPS coming in future patch!", "error"), 1500);
+        }
+        window.findStrangerGamePong = function() {
+            showToast("Pong initializing...", "success", true);
+            setTimeout(() => showToast("Pong coming in future patch!", "error"), 1500);
+        }
+
+        let gameRoom = null;
+        let mySymbol = '';
+        let gameRef = null;
+
+        let activeGameType = null;
+        window.findStrangerGame = function(gameType) {
+            if (gameType !== 'TicTacToe') {
+                showToast(gameType + " initializing...", "success", true);
+                setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
+                return;
+            }
+
+            activeGameType = gameType;
+            closeSheet();
+            const queueRef = db.ref('gameQueue/'+gameType);
+
+            document.getElementById('ticTacToeOverlay').style.display = 'flex';
+            document.getElementById('gameStatus').innerText = "Searching for opponent...";
+
+            queueRef.once('value', snap => {
+                let found = false;
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        if (child.key !== user.uid && child.val() === true) {
+                            found = true;
+                            const matchedUid = child.key;
+                            gameRoom = "game_" + user.uid + "_" + matchedUid;
+                            mySymbol = 'O'; // Joiner is O
+
+                            db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
+                            setTimeout(() => { startGameSession(); }, 500);
+                            return true;
+                        }
+                    });
+                }
+
+                if (!found) {
+                    db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
+                    mySymbol = 'X'; // Creator is X
+
+                    db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
+                        const val = matchSnap.val();
+                        if (val && typeof val === 'string') {
+                            db.ref('gameQueue/'+gameType+'/' + user.uid).off();
+                            gameRoom = val;
+                            startGameSession();
+                        }
+                    });
+                    db.ref('gameQueue/'+gameType+'/' + user.uid).onDisconnect().remove();
+                }
+            });
+        }
+
+        function startGameSession() {
+            document.getElementById('gameStatus').innerText = "Opponent found! Game starting...";
+            gameRef = db.ref('games/' + gameRoom);
+
+            // Initialize board if X
+            if (mySymbol === 'X') {
+                gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+            }
+
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                updateBoardUI(data.board);
+
+                if (data.winner) {
+                    document.getElementById('gameStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : `${data.winner} Wins!`;
+                    document.getElementById('rematchBtn').style.display = 'block';
+                } else {
+                    document.getElementById('gameStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
+                    document.getElementById('rematchBtn').style.display = 'none';
+                }
+            });
+        }
+
+        window.makeMove = function(index) {
+            if(!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if(data && data.turn === mySymbol && !data.winner && data.board[index] === '') {
+                    data.board[index] = mySymbol;
+                    data.winner = checkWin(data.board);
+                    data.turn = mySymbol === 'X' ? 'O' : 'X';
+                    gameRef.update(data);
+                }
+            });
+        }
+
+        function updateBoardUI(board) {
+            for(let i=0; i<9; i++) {
+                const cell = document.getElementById('ttt-'+i);
+                if(cell) {
+                    cell.innerText = board[i];
+                    cell.style.color = board[i] === 'X' ? 'var(--accent-yellow)' : '#00e5ff';
+                }
+            }
+        }
+
+        function checkWin(b) {
+            const lines = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            for(let line of lines) {
+                if(b[line[0]] && b[line[0]] === b[line[1]] && b[line[0]] === b[line[2]]) return b[line[0]];
+            }
+            if(!b.includes('')) return 'Draw';
+            return null;
+        }
+
+        window.resetGame = function() {
+            if(gameRef) {
+                gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+            }
+        }
+
+        window.leaveGame = function() {
+            if(gameRef) { gameRef.off(); gameRef.remove(); }
+            document.getElementById('ticTacToeOverlay').style.display = 'none';
+            db.ref('gameQueue/TicTacToe/' + user.uid).off();
+            db.ref('gameQueue/TicTacToe/' + user.uid).remove();
+            gameRoom = null;
+        }
+        // --- CHAT HEADER ACTIONS ---
+        function openChatMenu() {
+            if(room !== 'GlobalLobby' && currentChatFriend) {
+                openUserProfile(currentChatFriend.uid);
+            }
+        }
 window.burnImage = function(element, url, key) {
     element.innerHTML = '';
     const img = document.createElement('img');
@@ -2867,32 +3392,70 @@ window.burnImage = function(element, url, key) {
     }, 5000);
 }
         window.openDM = function(fUid, fName, fPic) { 
-            currentChatFriend = { uid: fUid, name: fName, pic: fPic }; 
+            currentChatFriend = { uid: fUid, name: fName, pic: fPic };
+            db.ref(`recentChats/${user.uid}/${fUid}`).update({ unreadCount: 0 });
             enterRoom(user.uid < fUid ? user.uid + '_' + fUid : fUid + '_' + user.uid, fName); 
         }
+
+        let messageLimit = 20;
+        let isPaginating = false;
         
         window.enterRoom = function(k, customTitle) {
             if (currentRoomRef) currentRoomRef.off(); 
             if (room) db.ref('typing/'+room).off();
             
             room = k.replace(/[^a-zA-Z0-9_]/g, ""); 
+            messageLimit = 20;
             switchScreen('chat-screen');
             
             const crTitle = document.getElementById('chatRoomTitle');
+            const dot = document.getElementById('chatRoomStatusDot');
+
             if (customTitle && crTitle) { 
-                crTitle.innerText = customTitle; 
+                crTitle.innerText = customTitle;
+                if(dot) dot.style.display = 'block';
             } else if (crTitle) { 
                 currentChatFriend = null; 
                 crTitle.innerText = room === "GlobalLobby" ? "Global Lounge" : "KEY: " + room; 
+                if(dot) dot.style.display = 'none';
+            }
+
+            if (currentChatFriend && dot) {
+                db.ref('status/' + currentChatFriend.uid).on('value', snap => {
+                    if (room) {
+                        if(snap.exists() && snap.val().state === 'online') {
+                            dot.style.background = 'var(--success-green)';
+                            dot.style.boxShadow = '0 0 8px var(--success-green)';
+                        } else {
+                            dot.style.background = '#888';
+                            dot.style.boxShadow = '0 0 8px #888';
+                        }
+                    }
+                });
             }
             
             const chatMessages = document.getElementById('chat-messages');
             if(chatMessages) {
                 chatMessages.innerHTML = `<div class="msg-row other" style="width:100%; max-width:100%;"><div class="bubble" style="background:var(--glass-surface); border:1px solid var(--accent-yellow); color:var(--accent-yellow); width:100%; text-align:center; margin-bottom:15px; font-size:12px;">Connection Secure. End-to-End Encryption Enabled.</div></div>`;
+
+                chatMessages.onscroll = () => {
+                    if (chatMessages.scrollTop === 0 && !isPaginating) {
+                        isPaginating = true;
+                        messageLimit += 20;
+                        currentRoomRef.off();
+                        currentRoomRef = db.ref('rooms/'+room).orderByChild('time').limitToLast(messageLimit);
+                        const oldHeight = chatMessages.scrollHeight;
+                        listen(true); // pass true for pagination
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight - oldHeight;
+                            isPaginating = false;
+                        }, 500);
+                    }
+                };
             }
             
-            currentRoomRef = db.ref('rooms/'+room).orderByChild('time').limitToLast(100); 
-            listen(); 
+            currentRoomRef = db.ref('rooms/'+room).orderByChild('time').limitToLast(messageLimit);
+            listen(false);
             listenTyping();
         }
 
@@ -2947,12 +3510,31 @@ window.burnImage = function(element, url, key) {
             showToast(`Burner set to ${ms/1000}s`, 'success'); 
         }
 
-        // MESSAGE REPLIES
+        // MESSAGE REPLIES AND EDITS
+        let editingKey = null;
+
+        window.initiateEdit = function(key, encodedText) {
+            const currentText = decodeURIComponent(escape(atob(encodedText)));
+            editingKey = key;
+            document.getElementById('replyToName').innerText = "Edit Message";
+            document.getElementById('replyToText').innerText = currentText;
+            document.getElementById('replyContextBox').style.display = 'flex';
+
+            const input = document.getElementById('msg-input');
+            if (input) {
+                input.value = currentText;
+                input.focus();
+            }
+        }
 
         let touchTimer;
         let touchStarted = false;
 
         window.handleTouchStart = function(key, e) {
+            if (e.touches && e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+            }
+
             // Only trigger on actual message bubble, not buttons/reactions
             if (e.target.closest('button') || e.target.closest('.reaction-pill') || e.target.closest('.chat-img')) return;
 
@@ -2971,10 +3553,35 @@ window.burnImage = function(element, url, key) {
             if (touchTimer) clearTimeout(touchTimer);
         }
 
-        window.handleTouchMove = function() {
-            // Cancel long press if they start scrolling
+        let touchStartX = 0;
+        let touchCurrentX = 0;
+
+        window.handleTouchMove = function(key, e) {
+            // Cancel long press if they start scrolling vertically
             touchStarted = false;
             if (touchTimer) clearTimeout(touchTimer);
+
+            if (e.touches && e.touches.length > 0) {
+                touchCurrentX = e.touches[0].clientX;
+                const diff = touchStartX - touchCurrentX;
+
+                // If swiped left significantly
+                if (diff > 60) {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        const bubble = el.querySelector('.bubble');
+                        if (bubble && !bubble.dataset.swiped) {
+                            bubble.dataset.swiped = 'true';
+                            bubble.style.transform = 'translateX(-30px)';
+                            setTimeout(() => {
+                                bubble.style.transform = 'translateX(0)';
+                                bubble.dataset.swiped = '';
+                                initiateReplyDirect(key);
+                            }, 150);
+                        }
+                    }
+                }
+            }
         }
 
         window.initiateReplyDirect = function(key) {
@@ -3026,7 +3633,9 @@ window.burnImage = function(element, url, key) {
 
         window.cancelReply = function() {
             replyingTo = null;
+            editingKey = null;
             document.getElementById('replyContextBox').style.display = 'none';
+            document.getElementById('msg-input').value = '';
         }
 
         window.scrollToMessage = function(key) {
@@ -3044,6 +3653,26 @@ window.burnImage = function(element, url, key) {
         }
 
         // MESSAGE REACTIONS
+        function playReactionAnimation() {
+            for(let i=0; i<15; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.zIndex = '999999';
+                heart.style.pointerEvents = 'none';
+                heart.style.transition = 'transform 2s ease-out, opacity 2s ease-out';
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.style.transform = `translateY(-100vh) rotate(${Math.random() * 360}deg)`;
+                    heart.style.opacity = '0';
+                }, 50);
+                setTimeout(() => heart.remove(), 2050);
+            }
+        }
         window.openReactionPicker = function(key) {
             activeReactionMsgKey = key;
             toggleChatPicker('reactPicker');
@@ -3052,6 +3681,7 @@ window.burnImage = function(element, url, key) {
         window.sendReaction = function(emoji) {
             if(!activeReactionMsgKey) return;
             toggleReaction(activeReactionMsgKey, emoji);
+            playReactionAnimation();
             toggleChatPicker('reactPicker');
         }
 
@@ -3120,61 +3750,6 @@ window.burnImage = function(element, url, key) {
             });
         }
 
-        window.switchPickerMode = function(mode) {
-            const tabEmoji = document.getElementById('tabEmoji');
-            if(tabEmoji) tabEmoji.classList.toggle('active', mode === 'emoji'); 
-            
-            const tabGif = document.getElementById('tabGif');
-            if(tabGif) tabGif.classList.toggle('active', mode === 'gif');
-            
-            const emojiGrid = document.getElementById('emojiGrid');
-            if(emojiGrid) emojiGrid.style.display = mode === 'emoji' ? 'grid' : 'none'; 
-            
-            const gifGrid = document.getElementById('gifGrid');
-            if(gifGrid) gifGrid.style.display = mode === 'gif' ? 'grid' : 'none';
-            
-            const gifSearchInput = document.getElementById('gifSearchInput');
-            if(gifSearchInput) gifSearchInput.style.display = mode === 'gif' ? 'block' : 'none'; 
-            
-            if(mode === 'gif' && gifGrid && gifGrid.innerHTML === '') loadGiphy('');
-        }
-        
-        let gifTimeout; 
-        window.debounceGifSearch = function() { 
-            clearTimeout(gifTimeout); 
-            const gifSearchInput = document.getElementById('gifSearchInput');
-            if(gifSearchInput) {
-                gifTimeout = setTimeout(() => loadGiphy(gifSearchInput.value), 500); 
-            }
-        }
-        
-        async function loadGiphy(query) {
-            const GIPHY_KEY = 'jp4KSpOQtYjzdnKKycLCbWQML4ugDuBs'; 
-            const url = query ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(query)}&limit=12` : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=12`;
-            try {
-                const res = await fetch(url); 
-                const json = await res.json(); 
-                const grid = document.getElementById('gifGrid'); 
-                if(!grid) return;
-                grid.innerHTML = '';
-                
-                json.data.forEach(gif => {
-                    const img = document.createElement('img'); 
-                    img.src = gif.images.fixed_height_small.url; 
-                    img.style.width = '100%'; 
-                    img.style.borderRadius = '8px'; 
-                    img.style.cursor = 'pointer';
-                    img.onclick = () => { 
-                        sendMsg('gif', gif.images.original.url); 
-                        toggleChatPicker('emojiPicker'); 
-                    }; 
-                    grid.appendChild(img);
-                });
-            } catch (error) { 
-                showToast("Failed to load GIFs", "error"); 
-            }
-        }
-
         const emojis = ["😀","😃","😄","😁","😆","😅","😂","🤣","🥲","☺️","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚","😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥸","🤩","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️","😣","😖","😫","😩","🥺","😢","😭","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓","🤗","🤔","🤭","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","🤤","😪","😵","🤐","🥴","🤢","🤮","🤧","😷","🤒","🤕","🤑","🤠","😈","👿","👹","👺","🤡","💩","👻","💀","☠️","👽","👾","🤖","🎃","😺","😸","😹","😻","😼","😽","🙀","😿","😾","👋","🤚","🖐","✋","🖖","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦾","🦵","🦿","🦶","👣","👂","🦻","👃","🫀","🫁","🧠","🦷","🦴","👀","👁","👅","👄","💋","🩸","🔥","💎","👑","⚡","🚀","🍕","🎮","❤️","✨","💯","🌟","🎉"];
         const eGrid = document.getElementById('emojiGrid'); 
         
@@ -3216,19 +3791,35 @@ window.burnImage = function(element, url, key) {
         }
 
         // SEND MESSAGES TO FIREBASE
+        let offlineQueue = [];
+        window.addEventListener('online', () => {
+            showToast("Back online. Sending queued messages...", "success");
+            offlineQueue.forEach(msg => {
+                const newRef = db.ref('rooms/'+msg.room).push();
+                newRef.set(msg.data).catch(err => console.error(err.message));
+            });
+            offlineQueue = [];
+        });
+
+        window.addEventListener('offline', () => {
+            showToast("You are offline. Messages will queue.", "error");
+        });
 
         // --- VOICE MESSAGES ---
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
 
+        let isStartingRecording = false;
         async function startRecording() {
-            if (isRecording) return;
+            if (isRecording || isStartingRecording) return;
+            isStartingRecording = true;
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.start();
                 isRecording = true;
+                isStartingRecording = false;
 
                 const micBtn = document.getElementById('micBtn');
                 if (micBtn) {
@@ -3250,6 +3841,7 @@ window.burnImage = function(element, url, key) {
                     uploadAudioToSupabase(audioBlob);
                 });
             } catch (err) {
+                isStartingRecording = false;
                 showToast("Mic permission denied", "error");
             }
         }
@@ -3278,12 +3870,26 @@ window.burnImage = function(element, url, key) {
             const t = document.getElementById('toast');
             if(t) t.classList.remove('show');
         }
-        window.sendMsg = function(type, content) {
+        window.sendMsg = async function(type, content) {
             let txt = content; 
             const msgInput = document.getElementById('msg-input');
             if(type === 'text') { 
                 if(msgInput) txt = msgInput.value.trim(); 
                 if(!txt) return; 
+
+                // Filter profanity before sending
+                if (myProfile.profanityFilterEnabled) {
+                    txt = await applyProfanityFilterAsync(txt);
+                }
+            }
+
+            if (editingKey) {
+                db.ref('rooms/'+room+'/'+editingKey).update({
+                    txt: txt,
+                    edited: true
+                });
+                cancelReply();
+                return;
             }
             
             const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
@@ -3294,21 +3900,31 @@ window.burnImage = function(element, url, key) {
                 type: type, 
                 uid: user.uid, 
                 name: myProfile.name, 
+                nameColor: myProfile.nameColor,
                 pic: myProfile.pic, 
+                avatarRing: myProfile.avatarRing,
                 badge: badgeIcon, 
                 time: firebase.database.ServerValue.TIMESTAMP, 
                 burner: burnerMode, 
                 chatColor: myProfile.chatColor, 
                 chatTextColor: myProfile.chatTextColor,
-                read: false 
+                chatFont: myProfile.chatFont,
+                read: false,
+                delivered: false,
+                edited: false
             };
 
             if (replyingTo) {
                 msgData.replyTo = replyingTo;
             }
 
-            const newRef = db.ref('rooms/'+room).push();
-            newRef.set(msgData).catch(err => console.error(err.message));
+            if (!navigator.onLine) {
+                offlineQueue.push({ room: room, data: msgData });
+                showToast("Message queued offline", "error");
+            } else {
+                const newRef = db.ref('rooms/'+room).push();
+                newRef.set(msgData).catch(err => console.error(err.message));
+            }
 
             cancelReply();
 
@@ -3321,16 +3937,21 @@ window.burnImage = function(element, url, key) {
                     pic: currentChatFriend.pic, 
                     lastMsg: msgPreview, 
                     senderUid: user.uid,
-                    time: firebase.database.ServerValue.TIMESTAMP 
+                    time: firebase.database.ServerValue.TIMESTAMP,
+                    unreadCount: 0
                 });
                 
-                db.ref(`recentChats/${currentChatFriend.uid}/${user.uid}`).set({ 
-                    uid: user.uid, 
-                    name: myProfile.name, 
-                    pic: myProfile.pic, 
-                    lastMsg: msgPreview, 
-                    senderUid: user.uid,
-                    time: firebase.database.ServerValue.TIMESTAMP 
+                db.ref(`recentChats/${currentChatFriend.uid}/${user.uid}`).transaction(curr => {
+                    let newCount = (curr && curr.unreadCount) ? curr.unreadCount + 1 : 1;
+                    return {
+                        uid: user.uid,
+                        name: myProfile.name,
+                        pic: myProfile.pic,
+                        lastMsg: msgPreview,
+                        senderUid: user.uid,
+                        time: firebase.database.ServerValue.TIMESTAMP,
+                        unreadCount: newCount
+                    };
                 });
             }
             
@@ -3357,25 +3978,47 @@ window.burnImage = function(element, url, key) {
         }
 
         // LISTEN FOR MESSAGES (DISCORD BUBBLES INJECTED & REACTIONS)
-        function listen() {
+        function listen(isPagination = false) {
             let initialRoomLoad = true;
+
+            // If paginating, we only fetch historical nodes and PREPEND them, we don't re-attach real-time listeners.
+            if (isPagination) {
+                currentRoomRef.once('value', snap => {
+                    const chatMessagesDiv = document.getElementById('chat-messages');
+                    if (!chatMessagesDiv) return;
+                    let nodes = [];
+                    snap.forEach(child => {
+                        if (!document.getElementById(child.key)) {
+                            nodes.push(createMessageNode(child.key, child.val(), true));
+                        }
+                    });
+                    // Insert immediately after the secure connection banner
+                    for(let i=nodes.length-1; i>=0; i--) {
+                        chatMessagesDiv.insertBefore(nodes[i], chatMessagesDiv.children[1]);
+                    }
+                });
+                return; // Early return to avoid duplicate `on` event bindings
+            }
+
             currentRoomRef.once('value').then(() => { initialRoomLoad = false; });
+
             currentRoomRef.on('child_added', snap => {
                 const d = snap.val();
                 const key = snap.key;
-                const isMe = d.uid === user.uid;
                 
                 if(document.getElementById(key)) return;
 
                 if (myProfile.blockedUsers && myProfile.blockedUsers.includes(d.uid)) return;
 
                 // Mark received message as read in a DM
-                if (!isMe && !d.read && currentChatFriend) {
-                    db.ref(`rooms/${room}/${key}`).update({ read: true });
+                if (d.uid !== user.uid && !d.read && currentChatFriend) {
+                    if (!(myProfile.ghostModeUntil && Date.now() < myProfile.ghostModeUntil)) {
+                        db.ref(`rooms/${room}/${key}`).update({ read: true });
+                    }
                 }
 
                 // Send notification for DM or Global if not me
-                if (!initialRoomLoad && !isMe) {
+                if (!initialRoomLoad && d.uid !== user.uid) {
                     if (room === 'GlobalLobby') {
                         if (!document.hasFocus()) {
                             let msgPreview = d.type === 'image' ? '🖼️ Image' : (d.type === 'gif' ? '🎞️ GIF' : (d.type === 'audio' ? '🎤 Voice Message' : d.txt));
@@ -3390,147 +4033,12 @@ window.burnImage = function(element, url, key) {
                     }
                 }
                 
-                const div = document.createElement('div'); 
-                div.className = isMe ? 'msg-row me' : 'msg-row other'; 
-                div.id = key;
-                
-                let tStr = d.time ? new Date(d.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "";
-                
-                let content = d.txt;
-
-                // Sanitize string content
-                const safeUrl = document.createElement('a');
-                safeUrl.href = d.txt;
-                const sanitizedUrl = safeUrl.href; // encodes quotes, etc.
-
-                if (d.type === 'image') {
-                    if (d.burner) {
-                        content = `<div class="chat-img" style="display:flex; align-items:center; justify-content:center; height:150px; background:#000; border:2px dashed var(--fire); cursor:pointer;" onclick="burnImage(this, '${sanitizedUrl}', '${key}')"><i class="fa-solid fa-fire" style="font-size:30px; color:var(--fire);"></i><span style="margin-left:10px; font-weight:700;">Tap to View (5s)</span></div>`;
-                    } else {
-                        content = `<img src="${sanitizedUrl}" class="chat-img" onclick="openImageModal('${sanitizedUrl}')" alt="Chat Image">`;
-                    }
-                }
-                else if (d.type === 'gif') content = `<img src="${sanitizedUrl}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${sanitizedUrl}')" alt="Chat GIF">`;
-                else if (d.type === 'audio') content = `<audio controls src="${sanitizedUrl}" style="width: 200px; height: 35px; margin-top: 5px; outline: none;"></audio>`;
-                else {
-                    content = applyProfanityFilter(content);
-
-                    // Link Previews
-                    const urlRegex = /(https?:\/\/[^\s]+)/g;
-                    const urls = content.match(urlRegex);
-
-                    if (urls && urls.length > 0) {
-                        const url = urls[0]; // just grab the first one for the preview card
-
-                        // Sanitize URLs to prevent XSS payloads inside <a href> or onclick strings
-                        const safePreviewUrl = document.createElement('a');
-                        safePreviewUrl.href = url;
-                        const sPreviewUrl = safePreviewUrl.href;
-
-                        content = content.replace(urlRegex, function(u) {
-                            const su = document.createElement('a');
-                            su.href = u;
-                            return '<a href="' + su.href + '" target="_blank" style="color: ' + (isMe ? 'inherit' : 'var(--accent-yellow)') + '; text-decoration: underline;">' + su.href + '</a>';
-                        });
-
-                        // Async fetch the link preview and append it to this specific message bubble
-                        fetch(`https://api.microlink.io/?url=${encodeURIComponent(sPreviewUrl)}`)
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.status === 'success' && data.data.title) {
-                                    const previewContainer = document.getElementById(`preview-${key}`);
-                                    if (previewContainer) {
-                                        // Sanitize inputs to prevent XSS
-                                        const safeTitle = document.createElement('div');
-                                        safeTitle.innerText = data.data.title;
-
-                                        const safeDesc = document.createElement('div');
-                                        safeDesc.innerText = data.data.description || sPreviewUrl;
-
-                                        let imgHtml = '';
-                                        if (data.data.image) {
-                                            const simg = document.createElement('a');
-                                            simg.href = data.data.image.url;
-                                            imgHtml = `<img src="${simg.href}" style="width:100%; height:120px; object-fit:cover; border-radius:8px 8px 0 0;">`;
-                                        }
-
-                                        previewContainer.innerHTML = `
-                                            <a href="${sPreviewUrl}" target="_blank" style="display:block; text-decoration:none; color:inherit; margin-top:8px; border:1px solid var(--glass-border); border-radius:8px; background:var(--glass-surface); overflow:hidden; cursor:pointer;">
-                                                ${imgHtml}
-                                                <div style="padding:8px;">
-                                                    <div style="font-weight:700; font-size:12px; margin-bottom:4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${safeTitle.innerHTML}</div>
-                                                    <div style="font-size:10px; color:var(--text-secondary); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${safeDesc.innerHTML}</div>
-                                                </div>
-                                            </a>
-                                        `;
-                                    }
-                                }
-                            }).catch(err => console.log('Link preview fetch failed'));
-
-                        content += `<div id="preview-${key}"></div>`;
-                    }
-                }
-                
-                let safeName = d.name || "Unknown User";
-                let badgeHtml = d.badge || '';
-                
-                // DISCORD STYLE PROFILE CLICKER WITH BADGE
-                let header = `
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer;" onclick="openUserProfile('${d.uid}')">
-                        <img src="${d.pic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; border: 1px solid rgba(255,255,255,0.1); background: black;" alt="${safeName} Avatar">
-                        <span style="font-weight:700; font-size:11px; opacity:0.8; color: ${isMe ? 'inherit' : 'var(--accent-yellow)'}">${isMe ? 'You' : safeName} ${badgeHtml}</span>
-                    </div>`;
-
-                let replyHtml = '';
-                if (d.replyTo) {
-                    let rPreview = d.replyTo.type === 'text' ? d.replyTo.txt : (d.replyTo.type === 'image' ? '🖼️ Image' : (d.replyTo.type === 'audio' ? '🎤 Voice Message' : '🎞️ GIF'));
-                    replyHtml = `
-                    <div onclick="scrollToMessage('${d.replyTo.key}')" style="display:flex; align-items:center; gap:8px; font-size:11px; opacity:0.7; margin-bottom:5px; cursor:pointer; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width: 100%;">
-                        <i class="fa-solid fa-reply" style="transform: scaleX(-1);"></i>
-                        <span style="font-weight:700;">${d.replyTo.name}:</span>
-                        <span style="overflow:hidden; text-overflow:ellipsis;">${rPreview}</span>
-                    </div>`;
-                }
-
-                let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
-                let burnerIcon = d.burner ? `<i class="fa-solid fa-fire" style="color:var(--fire);"></i> ` : '';
-                let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>`;
-                
-                let receiptHtml = '';
-                if (isMe && currentChatFriend) {
-                    receiptHtml = d.read 
-                        ? `<i class="fa-solid fa-check-double" style="color: #00e5ff; margin-left: 4px; font-size: 10px;" id="receipt-${key}"></i>` 
-                        : `<i class="fa-solid fa-check" style="color: rgba(255,255,255,0.4); margin-left: 4px; font-size: 10px;" id="receipt-${key}"></i>`;
-                }
-
-                let customStyle = isMe ? `background: ${d.chatColor || 'var(--accent-yellow)'}; color: ${d.chatTextColor || '#000'};` : '';
-
-                div.innerHTML = `
-                    <div class="bubble ${d.burner ? 'burner-msg' : ''}" style="${customStyle}"
-                         ontouchstart="handleTouchStart('${key}', event)"
-                         ontouchend="handleTouchEnd()"
-                         ontouchcancel="handleTouchEnd()"
-                         ontouchmove="handleTouchMove()"
-                         onmousedown="handleTouchStart('${key}', event)"
-                         onmouseup="handleTouchEnd()"
-                         onmouseleave="handleTouchEnd()">
-                        ${replyHtml}
-                        ${header}
-                        ${content}
-                        <div id="reactions-${key}" class="reactions-container"></div>
-                        <div class="msg-time" style="opacity: 0.8; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
-                            ${burnerIcon} ${tStr} ${receiptHtml} ${reactBtn} ${trash}
-                        </div>
-                    </div>`;
-                
+                const node = createMessageNode(key, d, false);
                 const chatMessagesDiv = document.getElementById('chat-messages');
-                if(chatMessagesDiv) {
-                    chatMessagesDiv.appendChild(div);
+                if(chatMessagesDiv && node) {
+                    chatMessagesDiv.appendChild(node);
                     updateReactionsUI(key, d.reactions);
-                    
-                    setTimeout(() => { 
-                        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; 
-                    }, 150);
+                    setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 150);
                 }
             });
 
@@ -3539,13 +4047,43 @@ window.burnImage = function(element, url, key) {
                 const d = snap.val();
                 const key = snap.key;
                 
-                if (d.read) {
-                    const rec = document.getElementById(`receipt-${key}`);
-                    if (rec) {
+                // Update Read Receipts
+                const rec = document.getElementById(`receipt-${key}`);
+                if (rec) {
+                    if (d.read) {
                         rec.className = 'fa-solid fa-check-double';
                         rec.style.color = '#00e5ff';
+                    } else if (d.delivered) {
+                        rec.className = 'fa-solid fa-check-double';
+                        rec.style.color = 'rgba(255,255,255,0.4)';
                     }
                 }
+
+                // Update Edited Messages
+                if (d.edited) {
+                    const contentEl = document.getElementById(`content-${key}`);
+                    if (contentEl && d.type === 'text') {
+                        let safeContent = d.txt;
+
+                        // Link Previews Logic Re-applied
+                        const urlRegex = /(https?:\/\/[^\s]+)/g;
+                        const urls = safeContent.match(urlRegex);
+                        if (urls && urls.length > 0) {
+                            const url = urls[0];
+                            const safePreviewUrl = document.createElement('a');
+                            safePreviewUrl.href = url;
+
+                            safeContent = safeContent.replace(urlRegex, function(u) {
+                                const su = document.createElement('a');
+                                su.href = u;
+                                return '<a href="' + su.href + '" target="_blank" style="color: inherit; text-decoration: underline;">' + su.href + '</a>';
+                            });
+                        }
+
+                        contentEl.innerHTML = safeContent;
+                    }
+                }
+
                 updateReactionsUI(key, d.reactions);
             });
             
@@ -3559,19 +4097,201 @@ window.burnImage = function(element, url, key) {
             });
         }
 
+        function createMessageNode(key, d, isHistorical) {
+            const isMe = d.uid === user.uid;
+            const div = document.createElement('div');
+            div.className = isMe ? 'msg-row me' : 'msg-row other';
+            div.id = key;
+            if (!isHistorical) div.style.animation = 'slideUp 0.3s ease';
+
+            let tStr = d.time ? new Date(d.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "";
+
+            let content = d.txt;
+
+            // Sanitize string content
+            const safeUrl = document.createElement('a');
+            safeUrl.href = d.txt;
+            const sanitizedUrl = safeUrl.href; // encodes quotes, etc.
+
+            if (d.type === 'image') {
+                if (d.burner) {
+                    content = `<div class="chat-img" style="display:flex; align-items:center; justify-content:center; height:150px; background:#000; border:2px dashed var(--fire); cursor:pointer;" onclick="burnImage(this, '${sanitizedUrl}', '${key}')"><i class="fa-solid fa-fire" style="font-size:30px; color:var(--fire);"></i><span style="margin-left:10px; font-weight:700;">Tap to View (5s)</span></div>`;
+                } else {
+                    content = `<img src="${sanitizedUrl}" class="chat-img" onclick="openImageModal('${sanitizedUrl}')" alt="Chat Image">`;
+                }
+            }
+            else if (d.type === 'gif') content = `<img src="${sanitizedUrl}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${sanitizedUrl}')" alt="Chat GIF">`;
+            else if (d.type === 'audio') content = `<audio controls src="${sanitizedUrl}" style="width: 200px; height: 35px; margin-top: 5px; outline: none;"></audio>`;
+            else if (d.type === 'gift') {
+                if (d.giftOpened) {
+                    content = `<div style="font-weight: 700;">${d.txt}</div>`;
+                } else {
+                    const giftVal = d.giftValue;
+                    const sender = d.uid;
+                    content = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px; border:2px dashed white; border-radius:12px; cursor:pointer;" onclick="openGift('${key}', ${giftVal}, '${sender}')"><i class="fa-solid fa-gift fa-bounce" style="font-size:30px; color:white; margin-bottom:10px;"></i><span style="font-weight:700;">Tap to Open Gift Box</span></div>`;
+                }
+            }
+            else {
+                // Link Previews
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                const urls = content.match(urlRegex);
+
+                if (urls && urls.length > 0) {
+                    const url = urls[0]; // just grab the first one for the preview card
+
+                    // Sanitize URLs to prevent XSS payloads inside <a href> or onclick strings
+                    const safePreviewUrl = document.createElement('a');
+                    safePreviewUrl.href = url;
+                    const sPreviewUrl = safePreviewUrl.href;
+
+                    content = content.replace(urlRegex, function(u) {
+                        const su = document.createElement('a');
+                        su.href = u;
+                        return '<a href="' + su.href + '" target="_blank" style="color: ' + (isMe ? 'inherit' : 'var(--accent-yellow)') + '; text-decoration: underline;">' + su.href + '</a>';
+                    });
+
+                    // Async fetch the link preview and append it to this specific message bubble
+                    fetch(`https://api.microlink.io/?url=${encodeURIComponent(sPreviewUrl)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === 'success' && data.data.title) {
+                                const previewContainer = document.getElementById(`preview-${key}`);
+                                if (previewContainer) {
+                                    // Sanitize inputs to prevent XSS
+                                    const safeTitle = document.createElement('div');
+                                    safeTitle.innerText = data.data.title;
+
+                                    const safeDesc = document.createElement('div');
+                                    safeDesc.innerText = data.data.description || sPreviewUrl;
+
+                                    let imgHtml = '';
+                                    if (data.data.image) {
+                                        const simg = document.createElement('a');
+                                        simg.href = data.data.image.url;
+                                        imgHtml = `<img src="${simg.href}" style="width:100%; height:120px; object-fit:cover; border-radius:8px 8px 0 0;">`;
+                                    }
+
+                                    previewContainer.innerHTML = `
+                                        <a href="${sPreviewUrl}" target="_blank" style="display:block; text-decoration:none; color:inherit; margin-top:8px; border:1px solid var(--glass-border); border-radius:8px; background:var(--glass-surface); overflow:hidden; cursor:pointer;">
+                                            ${imgHtml}
+                                            <div style="padding:8px;">
+                                                <div style="font-weight:700; font-size:12px; margin-bottom:4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${safeTitle.innerHTML}</div>
+                                                <div style="font-size:10px; color:var(--text-secondary); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${safeDesc.innerHTML}</div>
+                                            </div>
+                                        </a>
+                                    `;
+                                }
+                            }
+                        }).catch(err => console.log('Link preview fetch failed'));
+
+                    content += `<div id="preview-${key}"></div>`;
+                }
+            }
+
+            let safeName = d.name || "Unknown User";
+            let badgeHtml = d.badge || '';
+
+            const nColor = shopData.nameColors.find(n => n.id === (d.nameColor || 'nc_white'));
+            let nameStyle = `color: ${isMe ? 'inherit' : 'var(--accent-yellow)'};`;
+            if (!isMe && nColor) {
+                if (nColor.value.startsWith('linear')) {
+                    nameStyle = `background: ${nColor.value}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;`;
+                } else {
+                    nameStyle = `color: ${nColor.value};`;
+                }
+            }
+
+            const rStyle = shopData.avatarRings.find(r => r.id === (d.avatarRing || 'ar_none'));
+            let ringStyle = 'border: 1px solid rgba(255,255,255,0.1);';
+            if (!isMe && rStyle && rStyle.id !== 'ar_none') {
+                ringStyle = rStyle.value.replace('4px', '2px'); // scale down the border for chat
+            }
+
+            // DISCORD STYLE PROFILE CLICKER WITH BADGE
+            let header = `
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer;" onclick="openUserProfile('${d.uid}')">
+                    <img src="${d.pic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; background: black; ${ringStyle}" alt="${safeName} Avatar">
+                    <span style="font-weight:700; font-size:11px; opacity:0.8; ${nameStyle}">${isMe ? 'You' : safeName} ${badgeHtml}</span>
+                </div>`;
+
+            let replyHtml = '';
+            if (d.replyTo) {
+                let rPreview = d.replyTo.type === 'text' ? d.replyTo.txt : (d.replyTo.type === 'image' ? '🖼️ Image' : (d.replyTo.type === 'audio' ? '🎤 Voice Message' : '🎞️ GIF'));
+                replyHtml = `
+                <div onclick="scrollToMessage('${d.replyTo.key}')" style="display:flex; align-items:center; gap:8px; font-size:11px; opacity:0.7; margin-bottom:5px; cursor:pointer; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width: 100%;">
+                    <i class="fa-solid fa-reply" style="transform: scaleX(-1);"></i>
+                    <span style="font-weight:700;">${d.replyTo.name}:</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis;">${rPreview}</span>
+                </div>`;
+            }
+
+            const b64Txt = btoa(unescape(encodeURIComponent(d.txt))); // Base64 safe string encoding
+            let editBtn = isMe && d.type === 'text' ? `<button class="react-btn" onclick="initiateEdit('${key}', '${b64Txt}')" aria-label="Edit message"><i class="fa-solid fa-pen"></i></button>` : '';
+            let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
+            let burnerIcon = d.burner ? `<i class="fa-solid fa-fire" style="color:var(--fire);"></i> ` : '';
+            let editedTag = d.edited ? `<span style="font-size:9px; font-style:italic; opacity:0.6; margin-right:4px;">(edited)</span>` : '';
+            let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>`;
+
+            let receiptHtml = '';
+            if (isMe && currentChatFriend) {
+                if (d.read) {
+                    receiptHtml = `<i class="fa-solid fa-check-double" style="color: #00e5ff; margin-left: 4px; font-size: 10px;" id="receipt-${key}"></i>`;
+                } else if (d.delivered) {
+                    receiptHtml = `<i class="fa-solid fa-check-double" style="color: rgba(255,255,255,0.4); margin-left: 4px; font-size: 10px;" id="receipt-${key}"></i>`;
+                } else {
+                    receiptHtml = `<i class="fa-solid fa-check" style="color: rgba(255,255,255,0.4); margin-left: 4px; font-size: 10px;" id="receipt-${key}"></i>`;
+                }
+            }
+
+            const bStyle = shopData.bubbles.find(b => b.color === d.chatColor) || { id: 'b_free' };
+            let customClass = bStyle.isClass ? ` ${bStyle.id}` : '';
+            let customStyle = isMe ? `background: ${d.chatColor || 'var(--accent-yellow)'}; color: ${d.chatTextColor || '#000'};` : '';
+            const fontStyle = shopData.fonts.find(f => f.id === (d.chatFont || 'f_default'));
+            if (fontStyle) customStyle += `font-family: ${fontStyle.value};`;
+
+            div.innerHTML = `
+                <div class="bubble ${d.burner ? 'burner-msg' : ''}${isMe ? customClass : ''}" style="${customStyle}"
+                     ontouchstart="handleTouchStart('${key}', event)"
+                     ontouchend="handleTouchEnd()"
+                     ontouchcancel="handleTouchEnd()"
+                     ontouchmove="handleTouchMove('${key}', event)"
+                     onmousedown="handleTouchStart('${key}', event)"
+                     onmouseup="handleTouchEnd()"
+                     onmouseleave="handleTouchEnd()">
+                    ${replyHtml}
+                    ${header}
+                    <div id="content-${key}">${content}</div>
+                    <div id="reactions-${key}" class="reactions-container"></div>
+                    <div class="msg-time" style="opacity: 0.8; display: flex; align-items: center; justify-content: flex-end; gap: 4px;">
+                        ${burnerIcon} ${editedTag} ${tStr} ${receiptHtml} ${editBtn} ${reactBtn} ${trash}
+                    </div>
+                </div>`;
+
+            return div;
+        }
+
         window.handleTyping = function() { 
-            db.ref('typing/'+room+'/'+user.uid).set(myProfile.name); 
+            const inputVal = document.getElementById('msg-input').value;
+            db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
             if(typingTimeout) clearTimeout(typingTimeout); 
             typingTimeout = setTimeout(() => { db.ref('typing/'+room+'/'+user.uid).remove(); }, 2000); 
         }
         
         function listenTyping() { 
             db.ref('typing/'+room).on('value', snap => { 
-                const names = Object.values(snap.val() || {}).filter(n => n !== myProfile.name); 
+                const typers = Object.values(snap.val() || {}).filter(t => t.name !== myProfile.name);
                 const indicator = document.getElementById('typing-indicator'); 
                 if(!indicator) return; 
-                indicator.innerText = names.length > 0 ? names.join(", ") + " is typing..." : ""; 
-                indicator.style.display = names.length > 0 ? "block" : "none"; 
+
+                if (typers.length > 0) {
+                    const t = typers[0];
+                    let previewText = t.text && t.text.length > 0 ? `"${t.text}..."` : "is typing...";
+                    indicator.innerText = `${t.name} ${previewText}`;
+                    indicator.style.display = "block";
+                } else {
+                    indicator.innerText = "";
+                    indicator.style.display = "none";
+                }
             }); 
         }
 
