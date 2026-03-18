@@ -805,8 +805,8 @@
             width: 100%; 
             max-width: 400px; 
             overflow-y: auto; 
-            max-height: 50vh; 
-            padding-bottom: 20px; 
+            height: calc(100vh - 250px);
+            padding-bottom: 120px;
             padding-right: 5px;
         }
         .shop-item { 
@@ -1208,8 +1208,9 @@
         .friend-action-btn:active { transform: scale(0.95); }
         .friend-action-btn.reject { background: rgba(255, 59, 48, 0.1); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.3); }
 
-        .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; }
-        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; }
+        .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .picker-tabs::-webkit-scrollbar { display: none; }
+        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: max-content;}
         .p-tab.active { background: var(--glass-border); color: var(--text-primary); }
         
         .chat-list-card { background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; width: 100%; max-width: 380px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
@@ -1569,7 +1570,7 @@
                  <div class="orb-badge" style="margin:0;"><i class="fa-solid fa-gem"></i> <span id="shopOrbCount">0</span></div>
              </div>
 
-             <div class="picker-tabs" style="max-width: 400px; width: 100%; flex-wrap: wrap; padding: 0 10px; margin-bottom: 10px;">
+             <div class="picker-tabs" style="max-width: 400px; width: 100%; padding: 0 10px; margin-bottom: 10px; flex-wrap: nowrap; overflow-x: auto;">
                  <div id="tabShopBubbles" class="p-tab active" onclick="switchShopTab('bubbles')">Bubbles</div>
                  <div id="tabShopThemes" class="p-tab" onclick="switchShopTab('themes')">Themes</div>
                  <div id="tabShopBadges" class="p-tab" onclick="switchShopTab('badges')">Badges</div>
@@ -2007,6 +2008,8 @@ function sendNotification(title, body, icon) {
             ],
             sounds: [
                 { id: 's_default', name: 'Soft Peep', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', price: 0 },
+                { id: 's_wood', name: 'Wood Block', url: 'https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3', price: 0 },
+                { id: 's_pop', name: 'Pop Click', url: 'https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', price: 0 },
                 { id: 's_retro', name: 'Retro Coin', url: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3', price: 150 },
                 { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 400 },
                 { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 600 },
@@ -3103,10 +3106,17 @@ function sendNotification(title, body, icon) {
                 st.innerText = title;
             }
             
-            document.getElementById('sheetContentGlobal').style.display = type === 'global' ? 'flex' : 'none';
-            document.getElementById('sheetContentPrivate').style.display = type === 'private' ? 'flex' : 'none';
-            document.getElementById('sheetContentShop').style.display = type === 'shop' ? 'flex' : 'none';
-            document.getElementById('sheetContentGames').style.display = type === 'games' ? 'flex' : 'none';
+            const contentGlobal = document.getElementById('sheetContentGlobal');
+            if (contentGlobal) contentGlobal.style.display = type === 'global' ? 'flex' : 'none';
+
+            const contentPrivate = document.getElementById('sheetContentPrivate');
+            if (contentPrivate) contentPrivate.style.display = type === 'private' ? 'flex' : 'none';
+
+            const contentShop = document.getElementById('sheetContentShop');
+            if (contentShop) contentShop.style.display = type === 'shop' ? 'flex' : 'none';
+
+            const contentGames = document.getElementById('sheetContentGames');
+            if (contentGames) contentGames.style.display = type === 'games' ? 'flex' : 'none';
             
             if(type === 'private') {
                 const ski = document.getElementById('secretKeyInput');
