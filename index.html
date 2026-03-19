@@ -4042,15 +4042,18 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveAirHockey = function() {
-            ahPlaying = false;
-            if(ahLoop) cancelAnimationFrame(ahLoop);
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof ahPlaying !== 'undefined') ahPlaying = false;
+            if(typeof ahLoop !== 'undefined' && ahLoop) cancelAnimationFrame(ahLoop);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ahOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/AirHockey/' + user.uid).off();
-            db.ref('gameQueue/AirHockey/' + user.uid).remove();
-            gameRoom = null;
+            if (typeof user !== 'undefined' && user) {
+                db.ref('gameQueue/AirHockey/' + user.uid).off();
+                db.ref('gameQueue/AirHockey/' + user.uid).remove();
+            }
+            if(typeof gameRoom !== 'undefined') gameRoom = null;
+            switchScreen('hub-screen');
         }
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
