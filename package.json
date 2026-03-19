@@ -1,0 +1,28 @@
+{
+  "devDependencies": {
+    "playwright": "^1.58.2"
+  },
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@playwright/test": "^1.58.2",
+    "playwright-core": "^1.58.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rio90909/riolabs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Rio90909/riolabs/issues"
+  },
+  "homepage": "https://github.com/Rio90909/riolabs#readme"
+}

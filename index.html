@@ -2756,15 +2756,21 @@ function sendNotification(title, body, icon) {
                 
                 let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 if(tab === 'bubbles') {
-                    // Show a split gradient of bubble background and text color
+                    // Show a split background using nested divs to support complex gradients and vars
                     const bg = item.color || 'var(--island)';
                     const text = item.text || '#fff';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow: hidden; position: relative; background: #000;">
+                        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: ${bg};"></div>
+                        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: ${text};"></div>
+                    </div>`;
                 } else if(tab === 'themes') {
-                    // Show a split gradient of theme background and accent color
+                    // Show a split background using nested divs to support complex gradients and vars
                     const bg = item.bg || 'var(--bg-dark)';
                     const acc = item.acc || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow: hidden; position: relative; background: #000;">
+                        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: ${bg};"></div>
+                        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: ${acc};"></div>
+                    </div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
