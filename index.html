@@ -2751,26 +2751,26 @@ function sendNotification(title, body, icon) {
                 if(tab === 'avatarRings') isEquipped = (myProfile.avatarRing === item.id);
                 if(tab === 'sounds') isEquipped = (myProfile.chatSound === item.id);
                 
-                let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : `Buy (${item.price} Orbs)`);
+                let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 40px; height: 10px; border-radius: 5px; margin: 0 auto 5px auto;"></div>`;
+                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 if(tab === 'bubbles') {
                     // Show a split gradient of bubble background and text color
                     const bg = item.color || 'var(--island)';
                     const text = item.text || '#fff';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 40px; height: 10px; border-radius: 5px; margin: 0 auto 5px auto; border: 1px solid var(--glass-border);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 } else if(tab === 'themes') {
                     // Show a split gradient of theme background and accent color
                     const bg = item.bg || 'var(--bg-dark)';
                     const acc = item.acc || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 40px; height: 10px; border-radius: 5px; margin: 0 auto 5px auto; border: 1px solid var(--glass-border);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
                 } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="color-preview" style="background: ${item.value};"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 } else if (tab === 'avatarRings') {
                     previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
                 } else if (tab === 'sounds') {
@@ -2781,6 +2781,7 @@ function sendNotification(title, body, icon) {
                 <div class="shop-item ripple-target" style="border-color: ${isEquipped ? 'var(--accent-yellow)' : 'var(--glass-border)'}; box-shadow: ${isEquipped ? '0 0 15px var(--accent-yellow)' : 'none'};" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
+                    ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top:2px;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top:2px;">Owned</span>`}
                     <button class="${btnClass} shop-btn" style="padding: 5px; font-size: 11px; height: 30px; margin-top: 5px; width: 100%; border-radius: 10px;">${btnText}</button>
                 </div>`;
             });
