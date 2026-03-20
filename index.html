@@ -1210,7 +1210,7 @@
 
         .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
         .picker-tabs::-webkit-scrollbar { display: none; }
-        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: max-content;}
+        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: calc(50% - 4px); flex-shrink: 0; box-sizing: border-box; }
         .p-tab.active { background: var(--glass-border); color: var(--text-primary); }
         
         .chat-list-card { background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; width: 100%; max-width: 380px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
@@ -1282,22 +1282,6 @@
                 <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
                     <div class="card-icon" style="color: #ff007f;"><i class="fa-solid fa-table-cells-large"></i></div>
                     <div class="card-text"><h3 style="color: #ff007f;">Connect 4</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Pong')">
-                    <div class="card-icon" style="color: #ff0000;"><i class="fa-solid fa-table-tennis-paddle-ball"></i></div>
-                    <div class="card-text"><h3 style="color: #ff0000;">Pong</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Battleship')">
-                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-ship"></i></div>
-                    <div class="card-text"><h3 style="color: #4CAF50;">Battleship</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('TypingRacer')">
-                    <div class="card-icon" style="color: #9C27B0;"><i class="fa-solid fa-keyboard"></i></div>
-                    <div class="card-text"><h3 style="color: #9C27B0;">Typing Racer</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('AirHockey')">
-                    <div class="card-icon" style="color: #FF9800;"><i class="fa-solid fa-hockey-puck"></i></div>
-                    <div class="card-text"><h3 style="color: #FF9800;">Air Hockey</h3></div>
                 </div>
                 <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
                     <div class="card-icon" style="color: #03A9F4;"><i class="fa-solid fa-brain"></i></div>
@@ -3259,18 +3243,13 @@ function sendNotification(title, body, icon) {
         // --- TIC TAC TOE LOGIC ---
 
         // --- MORE MINI GAMES ---
-        window.findStrangerGamePong = function() {
-            showToast("Pong initializing...", "success", true);
-            setTimeout(() => showToast("Pong coming in future patch!", "error"), 1500);
-        }
-
         let gameRoom = null;
         let mySymbol = '';
         let gameRef = null;
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (gameType !== 'TicTacToe' && gameType !== 'RPS' && gameType !== 'Connect4' && gameType !== 'Battleship' && gameType !== 'Pong' && gameType !== 'TypingRacer' && gameType !== 'AirHockey' && gameType !== 'MemoryMatch') {
+            if (gameType !== 'TicTacToe' && gameType !== 'RPS' && gameType !== 'Connect4' && gameType !== 'MemoryMatch') {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -3290,28 +3269,6 @@ function sendNotification(title, body, icon) {
                 document.getElementById('connect4Overlay').style.display = 'flex';
                 document.getElementById('c4Status').innerText = "Searching for opponent...";
                 renderC4Board();
-            } else if (gameType === 'Battleship') {
-                document.getElementById('battleshipOverlay').style.display = 'flex';
-                document.getElementById('bsStatus').innerText = "Searching for opponent...";
-                initBattleshipBoards();
-            } else if (gameType === 'Pong') {
-                document.getElementById('pongOverlay').style.display = 'flex';
-                document.getElementById('pongStatus').innerText = "Searching for opponent...";
-                document.getElementById('pongScoreX').innerText = "0";
-                document.getElementById('pongScoreO').innerText = "0";
-            } else if (gameType === 'TypingRacer') {
-                document.getElementById('typingOverlay').style.display = 'flex';
-                document.getElementById('typeStatus').innerText = "Searching for opponent...";
-                document.getElementById('typeTextPrompt').innerText = "Waiting for game to start...";
-                document.getElementById('typeProgX').style.width = "0%";
-                document.getElementById('typeProgO').style.width = "0%";
-                document.getElementById('typeInput').value = "";
-                document.getElementById('typeInput').disabled = true;
-            } else if (gameType === 'AirHockey') {
-                document.getElementById('ahOverlay').style.display = 'flex';
-                document.getElementById('ahStatus').innerText = "Searching for opponent...";
-                document.getElementById('ahScoreX').innerText = "0";
-                document.getElementById('ahScoreO').innerText = "0";
             } else if (gameType === 'MemoryMatch') {
                 document.getElementById('mmOverlay').style.display = 'flex';
                 document.getElementById('mmStatus').innerText = "Searching for opponent...";
@@ -3454,31 +3411,6 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchC4Btn').style.display = 'none';
                     }
                 });
-            } else if (activeGameType === 'Battleship') {
-                document.getElementById('bsStatus').innerText = "Place your 5 ships!";
-                gameRef = db.ref('games/' + gameRoom);
-
-                if (mySymbol === 'X') {
-                    gameRef.set({
-                        boardX: Array(100).fill(''), boardO: Array(100).fill(''),
-                        shotsX: Array(100).fill(''), shotsO: Array(100).fill(''),
-                        readyX: false, readyO: false,
-                        turn: 'X', winner: null
-                    });
-                }
-
-                gameRef.on('value', snap => {
-                    const data = snap.val();
-                    if(!data) return;
-
-                    if(data.readyX && data.readyO && !data.winner) {
-                        document.getElementById('bsStatus').innerText = data.turn === mySymbol ? "Your Turn to Fire!" : "Opponent's Turn";
-                        updateBsBoards(data);
-                    } else if (data.winner) {
-                        document.getElementById('bsStatus').innerText = data.winner === mySymbol ? "You Win!" : "You Lose!";
-                        document.getElementById('rematchBsBtn').style.display = 'block';
-                    }
-                });
             } else if (activeGameType === 'MemoryMatch') {
                 document.getElementById('mmStatus').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
@@ -3521,194 +3453,6 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchMmBtn').style.display = 'none';
                     }
                 });
-            } else if (activeGameType === 'Pong') {
-                document.getElementById('pongStatus').innerText = "Opponent found! Game starting...";
-                gameRef = db.ref('games/' + gameRoom);
-                if (mySymbol === 'X') {
-                    gameRef.set({ ball: {x: 150, y: 200, dx: 3, dy: -3}, padX: 100, padO: 100, scoreX: 0, scoreO: 0, playing: true });
-                }
-                pongPlaying = true;
-                initPong();
-            } else if (activeGameType === 'TypingRacer') {
-                document.getElementById('typeStatus').innerText = "Opponent found! Get ready...";
-                gameRef = db.ref('games/' + gameRoom);
-                const words = "The quick brown fox jumps over the lazy dog. Programming is a valuable skill in the modern world.".split(" ");
-                if (mySymbol === 'X') {
-                    gameRef.set({ text: words.join(" "), progX: 0, progO: 0, wpmX: 0, wpmO: 0, playing: true, winner: null });
-                }
-                initTyping();
-            } else if (activeGameType === 'AirHockey') {
-                document.getElementById('ahStatus').innerText = "Opponent found! Game starting...";
-                gameRef = db.ref('games/' + gameRoom);
-                if (mySymbol === 'X') {
-                    gameRef.set({ puck: {x: 150, y: 200, dx: 0, dy: 0}, padX: {x: 150, y: 350}, padO: {x: 150, y: 50}, scoreX: 0, scoreO: 0, playing: true });
-                }
-                ahPlaying = true;
-                initAirHockey();
-            }
-        }
-
-        let pongPlaying = false;
-        let pongLoop;
-        function initPong() {
-            const canvas = document.getElementById('pongCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.addEventListener('touchmove', e => {
-                const rect = canvas.getBoundingClientRect();
-                const touch = e.touches[0];
-                const x = touch.clientX - rect.left;
-                if(gameRef && mySymbol === 'X') gameRef.update({padX: x});
-                if(gameRef && mySymbol === 'O') gameRef.update({padO: x});
-            });
-            function draw() {
-                if(!pongPlaying) return;
-                gameRef.once('value', snap => {
-                    const data = snap.val();
-                    if(!data || !data.playing) return;
-
-                    if(mySymbol === 'X') {
-                        let b = data.ball;
-                        b.x += b.dx; b.y += b.dy;
-                        if(b.x <= 0 || b.x >= 300) b.dx *= -1;
-                        if(b.y <= 10 && Math.abs(b.x - data.padO) < 30) b.dy *= -1;
-                        if(b.y >= 390 && Math.abs(b.x - data.padX) < 30) b.dy *= -1;
-
-                        if(b.y < 0) { data.scoreX++; b = {x:150, y:200, dx:3, dy:-3}; }
-                        if(b.y > 400) { data.scoreO++; b = {x:150, y:200, dx:-3, dy:3}; }
-                        gameRef.update({ball: b, scoreX: data.scoreX, scoreO: data.scoreO});
-                    }
-
-                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,300,400);
-                    ctx.fillStyle = 'white';
-                    ctx.fillRect(data.padO - 25, 0, 50, 10);
-                    ctx.fillRect(data.padX - 25, 390, 50, 10);
-                    ctx.beginPath(); ctx.arc(data.ball.x, data.ball.y, 5, 0, Math.PI*2); ctx.fill();
-
-                    document.getElementById('pongScoreX').innerText = data.scoreX;
-                    document.getElementById('pongScoreO').innerText = data.scoreO;
-
-                    if(data.scoreX >= 5 || data.scoreO >= 5) {
-                        if(typeof pongPlaying !== 'undefined') pongPlaying = false;
-                        document.getElementById('pongStatus').innerText = data.scoreX >= 5 ? "X Wins!" : "O Wins!";
-                        document.getElementById('rematchPongBtn').style.display = 'block';
-                    }
-                });
-                pongLoop = requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        window.resetPong = function() {
-            if(gameRef) {
-                gameRef.update({ ball: {x: 150, y: 200, dx: 3, dy: -3}, scoreX: 0, scoreO: 0, playing: true });
-                pongPlaying = true;
-                document.getElementById('rematchPongBtn').style.display = 'none';
-                initPong();
-            }
-        }
-
-        function initTyping() {
-            const input = document.getElementById('typeInput');
-            input.oninput = () => {
-                if(!gameRef) return;
-                gameRef.once('value', snap => {
-                    const data = snap.val();
-                    if(!data || data.winner) return;
-
-                    const text = data.text;
-                    const val = input.value;
-                    let prog = (val.length / text.length) * 100;
-                    if(!text.startsWith(val)) return; // typo
-
-                    if(mySymbol === 'X') gameRef.update({progX: prog});
-                    if(mySymbol === 'O') gameRef.update({progO: prog});
-
-                    if(val === text) {
-                        gameRef.update({winner: mySymbol});
-                    }
-                });
-            };
-
-            gameRef.on('value', snap => {
-                const data = snap.val();
-                if(!data) return;
-                document.getElementById('typeTextPrompt').innerText = data.text;
-                document.getElementById('typeProgX').style.width = data.progX + '%';
-                document.getElementById('typeProgO').style.width = data.progO + '%';
-
-                if(data.winner) {
-                    document.getElementById('typeStatus').innerText = data.winner === mySymbol ? "You Win!" : "You Lose!";
-                }
-            });
-        }
-
-        let ahPlaying = false;
-        let ahLoop;
-        function initAirHockey() {
-            const canvas = document.getElementById('ahCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.addEventListener('touchmove', e => {
-                const rect = canvas.getBoundingClientRect();
-                const touch = e.touches[0];
-                const x = touch.clientX - rect.left;
-                const y = touch.clientY - rect.top;
-                if(gameRef && mySymbol === 'X' && y > 200) gameRef.update({padX: {x, y}});
-                if(gameRef && mySymbol === 'O' && y < 200) gameRef.update({padO: {x, y}});
-            });
-            function draw() {
-                if(!ahPlaying) return;
-                gameRef.once('value', snap => {
-                    const data = snap.val();
-                    if(!data || !data.playing) return;
-
-                    if(mySymbol === 'X') {
-                        let p = data.puck;
-                        p.x += p.dx; p.y += p.dy;
-                        if(p.x < 10 || p.x > 290) p.dx *= -1;
-                        if(p.y < 10 || p.y > 390) p.dy *= -1;
-
-                        const distX = Math.hypot(p.x - data.padX.x, p.y - data.padX.y);
-                        if(distX < 20) { p.dx = (p.x - data.padX.x)*0.2; p.dy = (p.y - data.padX.y)*0.2; }
-
-                        const distO = Math.hypot(p.x - data.padO.x, p.y - data.padO.y);
-                        if(distO < 20) { p.dx = (p.x - data.padO.x)*0.2; p.dy = (p.y - data.padO.y)*0.2; }
-
-                        p.dx *= 0.99; p.dy *= 0.99;
-
-                        if(p.y < 5 && p.x > 100 && p.x < 200) { data.scoreX++; p = {x:150, y:200, dx:0, dy:0}; }
-                        if(p.y > 395 && p.x > 100 && p.x < 200) { data.scoreO++; p = {x:150, y:200, dx:0, dy:0}; }
-
-                        gameRef.update({puck: p, scoreX: data.scoreX, scoreO: data.scoreO});
-                    }
-
-                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,300,400);
-                    ctx.fillStyle = '#ff0000'; ctx.fillRect(100, 0, 100, 5);
-                    ctx.fillStyle = '#0000ff'; ctx.fillRect(100, 395, 100, 5);
-
-                    ctx.fillStyle = 'blue'; ctx.beginPath(); ctx.arc(data.padX.x, data.padX.y, 15, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(data.padO.x, data.padO.y, 15, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(data.puck.x, data.puck.y, 10, 0, Math.PI*2); ctx.fill();
-
-                    document.getElementById('ahScoreX').innerText = data.scoreX;
-                    document.getElementById('ahScoreO').innerText = data.scoreO;
-
-                    if(data.scoreX >= 7 || data.scoreO >= 7) {
-                        ahPlaying = false;
-                        document.getElementById('ahStatus').innerText = data.scoreX >= 7 ? "X Wins!" : "O Wins!";
-                        document.getElementById('rematchAhBtn').style.display = 'block';
-                    }
-                });
-                ahLoop = requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        window.resetAirHockey = function() {
-            if(gameRef) {
-                gameRef.update({ puck: {x: 150, y: 200, dx: 0, dy: 0}, scoreX: 0, scoreO: 0, playing: true });
-                ahPlaying = true;
-                document.getElementById('rematchAhBtn').style.display = 'none';
-                initAirHockey();
             }
         }
 
@@ -3864,145 +3608,6 @@ function sendNotification(title, body, icon) {
             if(gameRef) {
                 gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
                 document.getElementById('rematchC4Btn').style.display = 'none';
-            }
-        }
-
-        let myBsBoard = Array(100).fill('');
-        let bsShipsPlaced = 0;
-        let bsPhase = 'place'; // 'place' or 'play'
-
-        window.initBattleshipBoards = function() {
-            myBsBoard = Array(100).fill('');
-            bsShipsPlaced = 0;
-            bsPhase = 'place';
-            document.getElementById('bsReadyBtn').style.display = 'none';
-            document.getElementById('bsShipCount').innerText = '(0/5)';
-
-            const oppBoard = document.getElementById('bsOpponentBoard');
-            const myBoard = document.getElementById('bsMyBoard');
-            oppBoard.innerHTML = '';
-            myBoard.innerHTML = '';
-
-            for(let i=0; i<100; i++) {
-                // Opponent cell (for firing)
-                const oCell = document.createElement('div');
-                oCell.id = 'bs-o-' + i;
-                oCell.style.cssText = 'background: var(--bg-dark); cursor: crosshair;';
-                oCell.onclick = () => fireBattleship(i);
-                oppBoard.appendChild(oCell);
-
-                // My cell (for placing/viewing my board)
-                const mCell = document.createElement('div');
-                mCell.id = 'bs-m-' + i;
-                mCell.style.cssText = 'background: var(--bg-dark); cursor: pointer;';
-                mCell.onclick = () => placeShip(i);
-                myBoard.appendChild(mCell);
-            }
-        }
-
-        window.placeShip = function(idx) {
-            if(bsPhase !== 'place' || bsShipsPlaced >= 5) return;
-            if(myBsBoard[idx] === '') {
-                myBsBoard[idx] = 'S';
-                bsShipsPlaced++;
-                document.getElementById('bs-m-' + idx).style.background = '#4CAF50';
-                document.getElementById('bsShipCount').innerText = `(${bsShipsPlaced}/5)`;
-
-                if(bsShipsPlaced === 5) {
-                    document.getElementById('bsReadyBtn').style.display = 'block';
-                }
-            }
-        }
-
-        window.submitBattleshipShips = function() {
-            if(bsShipsPlaced < 5 || !gameRef) return;
-            bsPhase = 'play';
-            document.getElementById('bsReadyBtn').style.display = 'none';
-            document.getElementById('bsStatus').innerText = "Waiting for opponent...";
-
-            let updates = {};
-            if(mySymbol === 'X') {
-                updates.boardX = myBsBoard;
-                updates.readyX = true;
-            } else {
-                updates.boardO = myBsBoard;
-                updates.readyO = true;
-            }
-            gameRef.update(updates);
-        }
-
-        window.fireBattleship = function(idx) {
-            if(bsPhase !== 'play' || !gameRef) return;
-            gameRef.once('value', snap => {
-                const data = snap.val();
-                if(data && data.readyX && data.readyO && data.turn === mySymbol && !data.winner) {
-                    let myShots = mySymbol === 'X' ? data.shotsX : data.shotsO;
-                    let oppBoard = mySymbol === 'X' ? data.boardO : data.boardX;
-
-                    if(myShots[idx] === '') {
-                        if(oppBoard[idx] === 'S') {
-                            myShots[idx] = 'H'; // Hit
-                        } else {
-                            myShots[idx] = 'M'; // Miss
-                        }
-
-                        let updates = {};
-                        if(mySymbol === 'X') updates.shotsX = myShots;
-                        else updates.shotsO = myShots;
-
-                        updates.turn = mySymbol === 'X' ? 'O' : 'X';
-
-                        // Check win
-                        if(myShots.filter(s => s === 'H').length === 5) {
-                            updates.winner = mySymbol;
-                        }
-
-                        gameRef.update(updates);
-                    }
-                }
-            });
-        }
-
-        window.updateBsBoards = function(data) {
-            let myShots = mySymbol === 'X' ? data.shotsX : data.shotsO;
-            let oppShots = mySymbol === 'X' ? data.shotsO : data.shotsX;
-            let myBoardState = mySymbol === 'X' ? data.boardX : data.boardO;
-
-            for(let i=0; i<100; i++) {
-                // Update opponent board (my shots)
-                const oCell = document.getElementById('bs-o-' + i);
-                if(oCell) {
-                    if(myShots[i] === 'H') oCell.style.background = '#ff003c'; // Hit
-                    else if(myShots[i] === 'M') oCell.style.background = '#00e5ff'; // Miss
-                    else oCell.style.background = 'var(--bg-dark)';
-                }
-
-                // Update my board (my ships + opp shots)
-                const mCell = document.getElementById('bs-m-' + i);
-                if(mCell) {
-                    if(oppShots[i] === 'H') {
-                        mCell.style.background = '#ff003c'; // Opp Hit my ship
-                    } else if (oppShots[i] === 'M') {
-                        mCell.style.background = '#00e5ff'; // Opp Missed
-                    } else if (myBoardState[i] === 'S') {
-                        mCell.style.background = '#4CAF50'; // My ship alive
-                    } else {
-                        mCell.style.background = 'var(--bg-dark)';
-                    }
-                }
-            }
-        }
-
-        window.resetBattleship = function() {
-            if(gameRef) {
-                gameRef.set({
-                    boardX: Array(100).fill(''), boardO: Array(100).fill(''),
-                    shotsX: Array(100).fill(''), shotsO: Array(100).fill(''),
-                    readyX: false, readyO: false,
-                    turn: 'X', winner: null
-                });
-                initBattleshipBoards();
-                document.getElementById('rematchBsBtn').style.display = 'none';
             }
         }
 
@@ -4187,16 +3792,6 @@ function sendNotification(title, body, icon) {
             gameRoom = null;
         }
 
-        window.leaveBattleship = function() {
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
-            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('battleshipOverlay').style.display = 'none';
-            document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/Battleship/' + user.uid).off();
-            db.ref('gameQueue/Battleship/' + user.uid).remove();
-            gameRoom = null;
-        }
-
         window.leaveMemoryMatch = function() {
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
@@ -4205,43 +3800,6 @@ function sendNotification(title, body, icon) {
             if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).off();
             if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).remove();
             gameRoom = null;
-        }
-
-        window.leavePong = function() {
-            if(typeof pongPlaying !== 'undefined') pongPlaying = false;
-            if(typeof pongLoop !== 'undefined' && pongLoop) cancelAnimationFrame(pongLoop);
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
-            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('pongOverlay').style.display = 'none';
-            document.getElementById('gameChatContainer').style.display = 'none';
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Pong/' + user.uid).off();
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Pong/' + user.uid).remove();
-            gameRoom = null;
-        }
-
-        window.leaveTypingRacer = function() {
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
-            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('typingOverlay').style.display = 'none';
-            document.getElementById('gameChatContainer').style.display = 'none';
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/TypingRacer/' + user.uid).off();
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/TypingRacer/' + user.uid).remove();
-            gameRoom = null;
-        }
-
-        window.leaveAirHockey = function() {
-            if(typeof ahPlaying !== 'undefined') ahPlaying = false;
-            if(typeof ahLoop !== 'undefined' && ahLoop) cancelAnimationFrame(ahLoop);
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
-            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('ahOverlay').style.display = 'none';
-            document.getElementById('gameChatContainer').style.display = 'none';
-            if (typeof user !== 'undefined' && user) {
-                db.ref('gameQueue/AirHockey/' + user.uid).off();
-                db.ref('gameQueue/AirHockey/' + user.uid).remove();
-            }
-            if(typeof gameRoom !== 'undefined') gameRoom = null;
-            switchScreen('hub-screen');
         }
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
@@ -5281,76 +4839,6 @@ window.burnImage = function(element, url, key) {
         </div>
 
         <button id="rematchC4Btn" onclick="resetConnect4()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
-
-    <div id="battleshipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; overflow-y: auto;">
-        <button onclick="leaveBattleship()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #4CAF50; margin-bottom: 5px;">Battleship</h2>
-        <p id="bsStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
-
-        <div style="display: flex; flex-direction: column; gap: 20px; align-items: center; padding-bottom: 35vh;">
-            <div style="text-align: center;">
-                <h3 style="color: var(--text-primary); margin-bottom: 5px; font-size: 14px;">Opponent's Grid</h3>
-                <div id="bsOpponentBoard" style="display: grid; grid-template-columns: repeat(10, 25px); grid-template-rows: repeat(10, 25px); gap: 2px; width: fit-content; background: var(--glass-border); padding: 5px; border-radius: 8px;">
-                    <!-- Generated by JS -->
-                </div>
-            </div>
-
-            <div style="text-align: center;">
-                <h3 style="color: var(--text-primary); margin-bottom: 5px; font-size: 14px;">Your Grid <span id="bsShipCount" style="color: var(--accent-yellow); font-size: 12px;"></span></h3>
-                <div id="bsMyBoard" style="display: grid; grid-template-columns: repeat(10, 25px); grid-template-rows: repeat(10, 25px); gap: 2px; width: fit-content; background: var(--glass-border); padding: 5px; border-radius: 8px;">
-                    <!-- Generated by JS -->
-                </div>
-            </div>
-            <button id="bsReadyBtn" onclick="submitBattleshipShips()" style="display:none; padding: 10px 20px; border-radius: 20px; background: #4CAF50; color: white; font-weight: 700; border: none;">Ready</button>
-            <button id="rematchBsBtn" onclick="resetBattleship()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-        </div>
-    </div>
-
-    <div id="pongOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: center;">
-        <button onclick="leavePong()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <div style="position: absolute; top: 20px; display: flex; gap: 50px; font-size: 40px; font-family: monospace; color: white; font-weight: bold;">
-            <span id="pongScoreX">0</span> - <span id="pongScoreO">0</span>
-        </div>
-        <p id="pongStatus" style="position: absolute; top: 80px; color: var(--text-secondary);">Waiting for opponent...</p>
-        <canvas id="pongCanvas" width="300" height="400" style="background: #111; border: 2px solid white; border-radius: 8px; touch-action: none; margin-bottom: 30vh;"></canvas>
-        <button id="rematchPongBtn" onclick="resetPong()" style="display:none; position: absolute; bottom: 35vh; padding: 15px 30px; border-radius: 30px; background: #ff0000; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
-
-    <div id="typingOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-left: 20px; padding-right: 20px;">
-        <button onclick="leaveTypingRacer()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #9C27B0; margin-bottom: 5px;">Typing Racer</h2>
-        <p id="typeStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
-
-        <div style="width: 100%; max-width: 400px; margin-bottom: 20px;">
-            <p style="color: var(--text-primary); font-size: 14px; margin-bottom: 5px;">You (<span id="typeWpmX">0</span> WPM)</p>
-            <div style="width: 100%; background: var(--glass-border); height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px;">
-                <div id="typeProgX" style="width: 0%; height: 100%; background: var(--accent-yellow); transition: width 0.3s;"></div>
-            </div>
-
-            <p style="color: var(--text-primary); font-size: 14px; margin-bottom: 5px;">Opponent (<span id="typeWpmO">0</span> WPM)</p>
-            <div style="width: 100%; background: var(--glass-border); height: 20px; border-radius: 10px; overflow: hidden;">
-                <div id="typeProgO" style="width: 0%; height: 100%; background: #00e5ff; transition: width 0.3s;"></div>
-            </div>
-        </div>
-
-        <div id="typeTextPrompt" style="font-size: 18px; color: var(--text-primary); line-height: 1.5; margin-bottom: 20px; user-select: none; text-align: left; max-width: 400px; width: 100%; background: var(--island); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border);">
-            Waiting for game to start...
-        </div>
-
-        <input type="text" id="typeInput" placeholder="Start typing here..." disabled style="width: 100%; max-width: 400px; padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-dark); color: var(--text-primary); font-size: 16px; outline: none;">
-
-        <button id="rematchTypeBtn" onclick="resetTypingRacer()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: #9C27B0; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
-
-    <div id="ahOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: center;">
-        <button onclick="leaveAirHockey()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <div style="position: absolute; top: 20px; display: flex; gap: 50px; font-size: 40px; font-family: monospace; color: white; font-weight: bold;">
-            <span id="ahScoreX">0</span> - <span id="ahScoreO">0</span>
-        </div>
-        <p id="ahStatus" style="position: absolute; top: 80px; color: var(--text-secondary);">Waiting for opponent...</p>
-        <canvas id="ahCanvas" width="300" height="400" style="background: #2196F3; border: 4px solid white; border-radius: 16px; touch-action: none; margin-bottom: 30vh;"></canvas>
-        <button id="rematchAhBtn" onclick="resetAirHockey()" style="display:none; position: absolute; bottom: 35vh; padding: 15px 30px; border-radius: 30px; background: #FF9800; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 30vh; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column;">
