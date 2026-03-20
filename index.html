@@ -1137,6 +1137,7 @@
             transition: all 0.2s ease; 
             opacity: 0; 
             transform: translateY(20px); 
+            overflow: hidden;
         }
         .picker-search { width: 100%; background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 15px; padding: 12px; color: var(--text-primary); margin-bottom: 15px; font-size: 14px; box-sizing: border-box; outline: none;}
         .grid-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow-y: auto; flex: 1; }
@@ -1208,9 +1209,9 @@
         .friend-action-btn:active { transform: scale(0.95); }
         .friend-action-btn.reject { background: rgba(255, 59, 48, 0.1); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.3); }
 
-        .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; flex-shrink: 0; }
         .picker-tabs::-webkit-scrollbar { display: none; }
-        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: max-content;}
+        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: max-content; flex-shrink: 0;}
         .p-tab.active { background: var(--glass-border); color: var(--text-primary); }
         
         .chat-list-card { background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; width: 100%; max-width: 380px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
