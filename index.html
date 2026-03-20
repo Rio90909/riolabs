@@ -2756,21 +2756,15 @@ function sendNotification(title, body, icon) {
                 
                 let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 if(tab === 'bubbles') {
-                    // Show a split background using nested divs to support complex gradients and vars
+                    // Show a split gradient of bubble background and text color
                     const bg = item.color || 'var(--island)';
                     const text = item.text || '#fff';
-                    previewHtml = `<div class="color-preview" style="width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow: hidden; position: relative; background: #000;">
-                        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: ${bg};"></div>
-                        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: ${text};"></div>
-                    </div>`;
+                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 } else if(tab === 'themes') {
-                    // Show a split background using nested divs to support complex gradients and vars
+                    // Show a split gradient of theme background and accent color
                     const bg = item.bg || 'var(--bg-dark)';
                     const acc = item.acc || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5); overflow: hidden; position: relative; background: #000;">
-                        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: ${bg};"></div>
-                        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: ${acc};"></div>
-                    </div>`;
+                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
@@ -3528,6 +3522,194 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchMmBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType === 'Pong') {
+                document.getElementById('pongStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ ball: {x: 150, y: 200, dx: 3, dy: -3}, padX: 100, padO: 100, scoreX: 0, scoreO: 0, playing: true });
+                }
+                pongPlaying = true;
+                initPong();
+            } else if (activeGameType === 'TypingRacer') {
+                document.getElementById('typeStatus').innerText = "Opponent found! Get ready...";
+                gameRef = db.ref('games/' + gameRoom);
+                const words = "The quick brown fox jumps over the lazy dog. Programming is a valuable skill in the modern world.".split(" ");
+                if (mySymbol === 'X') {
+                    gameRef.set({ text: words.join(" "), progX: 0, progO: 0, wpmX: 0, wpmO: 0, playing: true, winner: null });
+                }
+                initTyping();
+            } else if (activeGameType === 'AirHockey') {
+                document.getElementById('ahStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ puck: {x: 150, y: 200, dx: 0, dy: 0}, padX: {x: 150, y: 350}, padO: {x: 150, y: 50}, scoreX: 0, scoreO: 0, playing: true });
+                }
+                ahPlaying = true;
+                initAirHockey();
+            }
+        }
+
+        let pongPlaying = false;
+        let pongLoop;
+        function initPong() {
+            const canvas = document.getElementById('pongCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.addEventListener('touchmove', e => {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = touch.clientX - rect.left;
+                if(gameRef && mySymbol === 'X') gameRef.update({padX: x});
+                if(gameRef && mySymbol === 'O') gameRef.update({padO: x});
+            });
+            function draw() {
+                if(!pongPlaying) return;
+                gameRef.once('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.playing) return;
+
+                    if(mySymbol === 'X') {
+                        let b = data.ball;
+                        b.x += b.dx; b.y += b.dy;
+                        if(b.x <= 0 || b.x >= 300) b.dx *= -1;
+                        if(b.y <= 10 && Math.abs(b.x - data.padO) < 30) b.dy *= -1;
+                        if(b.y >= 390 && Math.abs(b.x - data.padX) < 30) b.dy *= -1;
+
+                        if(b.y < 0) { data.scoreX++; b = {x:150, y:200, dx:3, dy:-3}; }
+                        if(b.y > 400) { data.scoreO++; b = {x:150, y:200, dx:-3, dy:3}; }
+                        gameRef.update({ball: b, scoreX: data.scoreX, scoreO: data.scoreO});
+                    }
+
+                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,300,400);
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(data.padO - 25, 0, 50, 10);
+                    ctx.fillRect(data.padX - 25, 390, 50, 10);
+                    ctx.beginPath(); ctx.arc(data.ball.x, data.ball.y, 5, 0, Math.PI*2); ctx.fill();
+
+                    document.getElementById('pongScoreX').innerText = data.scoreX;
+                    document.getElementById('pongScoreO').innerText = data.scoreO;
+
+                    if(data.scoreX >= 5 || data.scoreO >= 5) {
+                        if(typeof pongPlaying !== 'undefined') pongPlaying = false;
+                        document.getElementById('pongStatus').innerText = data.scoreX >= 5 ? "X Wins!" : "O Wins!";
+                        document.getElementById('rematchPongBtn').style.display = 'block';
+                    }
+                });
+                pongLoop = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        window.resetPong = function() {
+            if(gameRef) {
+                gameRef.update({ ball: {x: 150, y: 200, dx: 3, dy: -3}, scoreX: 0, scoreO: 0, playing: true });
+                pongPlaying = true;
+                document.getElementById('rematchPongBtn').style.display = 'none';
+                initPong();
+            }
+        }
+
+        function initTyping() {
+            const input = document.getElementById('typeInput');
+            input.oninput = () => {
+                if(!gameRef) return;
+                gameRef.once('value', snap => {
+                    const data = snap.val();
+                    if(!data || data.winner) return;
+
+                    const text = data.text;
+                    const val = input.value;
+                    let prog = (val.length / text.length) * 100;
+                    if(!text.startsWith(val)) return; // typo
+
+                    if(mySymbol === 'X') gameRef.update({progX: prog});
+                    if(mySymbol === 'O') gameRef.update({progO: prog});
+
+                    if(val === text) {
+                        gameRef.update({winner: mySymbol});
+                    }
+                });
+            };
+
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+                document.getElementById('typeTextPrompt').innerText = data.text;
+                document.getElementById('typeProgX').style.width = data.progX + '%';
+                document.getElementById('typeProgO').style.width = data.progO + '%';
+
+                if(data.winner) {
+                    document.getElementById('typeStatus').innerText = data.winner === mySymbol ? "You Win!" : "You Lose!";
+                }
+            });
+        }
+
+        let ahPlaying = false;
+        let ahLoop;
+        function initAirHockey() {
+            const canvas = document.getElementById('ahCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.addEventListener('touchmove', e => {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                if(gameRef && mySymbol === 'X' && y > 200) gameRef.update({padX: {x, y}});
+                if(gameRef && mySymbol === 'O' && y < 200) gameRef.update({padO: {x, y}});
+            });
+            function draw() {
+                if(!ahPlaying) return;
+                gameRef.once('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.playing) return;
+
+                    if(mySymbol === 'X') {
+                        let p = data.puck;
+                        p.x += p.dx; p.y += p.dy;
+                        if(p.x < 10 || p.x > 290) p.dx *= -1;
+                        if(p.y < 10 || p.y > 390) p.dy *= -1;
+
+                        const distX = Math.hypot(p.x - data.padX.x, p.y - data.padX.y);
+                        if(distX < 20) { p.dx = (p.x - data.padX.x)*0.2; p.dy = (p.y - data.padX.y)*0.2; }
+
+                        const distO = Math.hypot(p.x - data.padO.x, p.y - data.padO.y);
+                        if(distO < 20) { p.dx = (p.x - data.padO.x)*0.2; p.dy = (p.y - data.padO.y)*0.2; }
+
+                        p.dx *= 0.99; p.dy *= 0.99;
+
+                        if(p.y < 5 && p.x > 100 && p.x < 200) { data.scoreX++; p = {x:150, y:200, dx:0, dy:0}; }
+                        if(p.y > 395 && p.x > 100 && p.x < 200) { data.scoreO++; p = {x:150, y:200, dx:0, dy:0}; }
+
+                        gameRef.update({puck: p, scoreX: data.scoreX, scoreO: data.scoreO});
+                    }
+
+                    ctx.fillStyle = '#111'; ctx.fillRect(0,0,300,400);
+                    ctx.fillStyle = '#ff0000'; ctx.fillRect(100, 0, 100, 5);
+                    ctx.fillStyle = '#0000ff'; ctx.fillRect(100, 395, 100, 5);
+
+                    ctx.fillStyle = 'blue'; ctx.beginPath(); ctx.arc(data.padX.x, data.padX.y, 15, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = 'red'; ctx.beginPath(); ctx.arc(data.padO.x, data.padO.y, 15, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(data.puck.x, data.puck.y, 10, 0, Math.PI*2); ctx.fill();
+
+                    document.getElementById('ahScoreX').innerText = data.scoreX;
+                    document.getElementById('ahScoreO').innerText = data.scoreO;
+
+                    if(data.scoreX >= 7 || data.scoreO >= 7) {
+                        ahPlaying = false;
+                        document.getElementById('ahStatus').innerText = data.scoreX >= 7 ? "X Wins!" : "O Wins!";
+                        document.getElementById('rematchAhBtn').style.display = 'block';
+                    }
+                });
+                ahLoop = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        window.resetAirHockey = function() {
+            if(gameRef) {
+                gameRef.update({ puck: {x: 150, y: 200, dx: 0, dy: 0}, scoreX: 0, scoreO: 0, playing: true });
+                ahPlaying = true;
+                document.getElementById('rematchAhBtn').style.display = 'none';
+                initAirHockey();
             }
         }
 
@@ -3975,8 +4157,8 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveGame = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ticTacToeOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
             db.ref('gameQueue/TicTacToe/' + user.uid).off();
@@ -3985,8 +4167,8 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveRPS = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('rpsOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
             document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
@@ -3997,8 +4179,8 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveConnect4 = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('connect4Overlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
             db.ref('gameQueue/Connect4/' + user.uid).off();
@@ -4007,8 +4189,8 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveBattleship = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('battleshipOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
             db.ref('gameQueue/Battleship/' + user.uid).off();
@@ -4017,34 +4199,34 @@ function sendNotification(title, body, icon) {
         }
 
         window.leaveMemoryMatch = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('mmOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/MemoryMatch/' + user.uid).off();
-            db.ref('gameQueue/MemoryMatch/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).remove();
             gameRoom = null;
         }
 
         window.leavePong = function() {
-            pongPlaying = false;
-            if(pongLoop) cancelAnimationFrame(pongLoop);
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof pongPlaying !== 'undefined') pongPlaying = false;
+            if(typeof pongLoop !== 'undefined' && pongLoop) cancelAnimationFrame(pongLoop);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('pongOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/Pong/' + user.uid).off();
-            db.ref('gameQueue/Pong/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Pong/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Pong/' + user.uid).remove();
             gameRoom = null;
         }
 
         window.leaveTypingRacer = function() {
-            if(gameRef) { gameRef.off(); gameRef.remove(); }
-            if(gameChatRef) { gameChatRef.off(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('typingOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/TypingRacer/' + user.uid).off();
-            db.ref('gameQueue/TypingRacer/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/TypingRacer/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/TypingRacer/' + user.uid).remove();
             gameRoom = null;
         }
 
