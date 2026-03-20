@@ -2175,7 +2175,7 @@ function sendNotification(title, body, icon) {
                     const cleanMsg = msg.trim().substring(0, 100);
                     db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 1000);
 
-                    const newRef = db.ref('rooms/GlobalLobby').push();
+                    let newRef = db.ref('rooms/GlobalLobby').push();
                     newRef.set({
                         txt: `📢 MEGAPHONE: ${cleanMsg}`,
                         type: 'text',
@@ -2213,7 +2213,7 @@ function sendNotification(title, body, icon) {
                 const boxValue = Math.floor(Math.random() * (500 - 50 + 1) + 50); // random between 50 and 500
                 const giftId = `gift_${Date.now()}`;
 
-                const newRef = db.ref('rooms/'+room).push();
+                let newRef = db.ref('rooms/'+room).push();
                 newRef.set({
                     txt: `🎁 Sent a Mystery Gift Box!`,
                     type: 'gift',
@@ -2385,7 +2385,7 @@ function sendNotification(title, body, icon) {
                 });
                 myProfile.unlocked = unlocked;
 
-                applyAppTheme(myProfile.appTheme);
+                window.applyAppTheme(myProfile.appTheme);
 
                 const bdg = shopData.badges.find(b => b.id === myProfile.badge);
                 const nColor = shopData.nameColors.find(n => n.id === myProfile.nameColor);
@@ -2793,7 +2793,7 @@ function sendNotification(title, body, icon) {
             
             if (unlocked.includes(itemId) || item.price === 0) {
                 if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                 else if (tab === 'badges') { myProfile.badge = item.id; }
                 else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                 else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -2813,7 +2813,7 @@ function sendNotification(title, body, icon) {
                     myProfile.unlocked = unlocked;
                     
                     if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                    else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                    else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                     else if (tab === 'badges') { myProfile.badge = item.id; }
                     else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                     else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -4726,7 +4726,7 @@ window.burnImage = function(element, url, key) {
         window.addEventListener('online', () => {
             showToast("Back online. Sending queued messages...", "success");
             offlineQueue.forEach(msg => {
-                const newRef = db.ref('rooms/'+msg.room).push();
+                let newRef = db.ref('rooms/'+msg.room).push();
                 newRef.set(msg.data).catch(err => console.error(err.message));
             });
             offlineQueue = [];
@@ -4742,7 +4742,7 @@ window.burnImage = function(element, url, key) {
         let isRecording = false;
 
         let isStartingRecording = false;
-        async function startRecording() {
+        window.startRecording = async function() {
             if (isRecording || isStartingRecording) return;
             isStartingRecording = true;
             try {
@@ -4777,7 +4777,7 @@ window.burnImage = function(element, url, key) {
             }
         }
 
-        function stopRecording() {
+        window.stopRecording = function() {
             if (!isRecording || !mediaRecorder) return;
             mediaRecorder.stop();
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
@@ -4850,11 +4850,12 @@ window.burnImage = function(element, url, key) {
                 msgData.replyTo = replyingTo;
             }
 
+            let newRef = null;
             if (!navigator.onLine) {
                 offlineQueue.push({ room: room, data: msgData });
                 showToast("Message queued offline", "error");
             } else {
-                const newRef = db.ref('rooms/'+room).push();
+                newRef = db.ref('rooms/'+room).push();
                 newRef.set(msgData).catch(err => console.error(err.message));
             }
 
@@ -4889,7 +4890,7 @@ window.burnImage = function(element, url, key) {
             
             db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + 1);
 
-            if(burnerMode) { setTimeout(() => { newRef.remove(); }, burnerTime); }
+            if(burnerMode && newRef) { setTimeout(() => { newRef.remove(); }, burnerTime); }
             if(type === 'text' && msgInput) msgInput.value = "";
             
             playSendSound();
