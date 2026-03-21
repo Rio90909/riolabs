@@ -1208,9 +1208,9 @@
         .friend-action-btn:active { transform: scale(0.95); }
         .friend-action-btn.reject { background: rgba(255, 59, 48, 0.1); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.3); }
 
-        .picker-tabs { display: flex; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .picker-tabs { display: flex; gap: 5px; width: 100%; background: var(--glass-surface); border-radius: 12px; margin-bottom: 12px; padding: 4px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; box-sizing: border-box; }
         .picker-tabs::-webkit-scrollbar { display: none; }
-        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; min-width: calc(50% - 4px); flex-shrink: 0; box-sizing: border-box; }
+        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700; color: var(--text-secondary); cursor: pointer; border-radius: 8px; transition: 0.2s; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0 !important; width: auto !important; }
         .p-tab.active { background: var(--glass-border); color: var(--text-primary); }
         
         .chat-list-card { background: var(--glass-surface); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; width: 100%; max-width: 380px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
@@ -4299,99 +4299,110 @@ window.burnImage = function(element, url, key) {
             if(type === 'text') { 
                 if(msgInput) txt = msgInput.value.trim(); 
                 if(!txt) return; 
-
-                // Filter profanity before sending
-                if (myProfile.profanityFilterEnabled) {
-                    txt = await applyProfanityFilterAsync(txt);
-                }
+                if(msgInput) msgInput.value = ""; // Clear immediately for UX
             }
 
-            if (editingKey) {
-                db.ref('rooms/'+room+'/'+editingKey).update({
-                    txt: txt,
-                    edited: true
-                });
-                cancelReply();
-                return;
-            }
+            // Capture current editing/reply state before clearing it
+            const currentEditingKey = editingKey;
+            const currentReplyingTo = replyingTo;
             
-            const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
-            const badgeIcon = bdg && bdg.icon ? bdg.icon : '';
-
-            let msgData = {
-                txt: txt, 
-                type: type, 
-                uid: user.uid, 
-                name: myProfile.name, 
-                nameColor: myProfile.nameColor,
-                pic: myProfile.pic, 
-                avatarRing: myProfile.avatarRing,
-                badge: badgeIcon, 
-                time: firebase.database.ServerValue.TIMESTAMP, 
-                burner: burnerMode,
-                expiresAt: burnerMode ? Date.now() + burnerTime : null,
-                chatColor: myProfile.chatColor, 
-                chatTextColor: myProfile.chatTextColor,
-                chatFont: myProfile.chatFont,
-                read: false,
-                delivered: false,
-                edited: false
-            };
-
-            if (replyingTo) {
-                msgData.replyTo = replyingTo;
-            }
-
-            if (!navigator.onLine) {
-                offlineQueue.push({ room: room, data: msgData });
-                showToast("Message queued offline", "error");
-            } else {
-                const newRef = db.ref('rooms/'+room).push();
-                newRef.set(msgData).catch(err => console.error(err.message));
-            }
-
             cancelReply();
+            playSendSound();
 
-            if (currentChatFriend) {
-                let msgPreview = type === 'image' ? '🖼️ Image' : (type === 'gif' ? '🎞️ GIF' : (type === 'audio' ? '🎤 Voice Message' : txt));
-                
-                db.ref(`recentChats/${user.uid}/${currentChatFriend.uid}`).set({ 
-                    uid: currentChatFriend.uid, 
-                    name: currentChatFriend.name, 
-                    pic: currentChatFriend.pic, 
-                    lastMsg: msgPreview, 
-                    senderUid: user.uid,
+            document.querySelectorAll('.picker').forEach(p => {
+                if(p) {
+                    p.style.opacity = '0';
+                    setTimeout(()=>p.style.display='none', 200);
+                }
+            });
+
+            // Offload database updates and slow tasks so the UI doesn't freeze
+            setTimeout(async () => {
+                if(type === 'text') {
+                    if (myProfile.profanityFilterEnabled) {
+                        txt = await applyProfanityFilterAsync(txt);
+                    }
+                }
+
+                if (currentEditingKey) {
+                    db.ref('rooms/'+room+'/'+currentEditingKey).update({
+                        txt: txt,
+                        edited: true
+                    });
+                    return;
+                }
+
+                const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
+                const badgeIcon = bdg && bdg.icon ? bdg.icon : '';
+
+                let msgData = {
+                    txt: txt,
+                    type: type,
+                    uid: user.uid,
+                    name: myProfile.name,
+                    nameColor: myProfile.nameColor,
+                    pic: myProfile.pic,
+                    avatarRing: myProfile.avatarRing,
+                    badge: badgeIcon,
                     time: firebase.database.ServerValue.TIMESTAMP,
-                    unreadCount: 0
-                });
-                
-                db.ref(`recentChats/${currentChatFriend.uid}/${user.uid}`).transaction(curr => {
-                    let newCount = (curr && curr.unreadCount) ? curr.unreadCount + 1 : 1;
-                    return {
-                        uid: user.uid,
-                        name: myProfile.name,
-                        pic: myProfile.pic,
+                    burner: burnerMode,
+                    expiresAt: burnerMode ? Date.now() + burnerTime : null,
+                    chatColor: myProfile.chatColor,
+                    chatTextColor: myProfile.chatTextColor,
+                    chatFont: myProfile.chatFont,
+                    read: false,
+                    delivered: false,
+                    edited: false
+                };
+
+                if (currentReplyingTo) {
+                    msgData.replyTo = currentReplyingTo;
+                }
+
+                let newRef = null;
+                if (!navigator.onLine) {
+                    offlineQueue.push({ room: room, data: msgData });
+                    showToast("Message queued offline", "error");
+                } else {
+                    newRef = db.ref('rooms/'+room).push();
+                    newRef.set(msgData).catch(err => console.error(err.message));
+                }
+
+                if (currentChatFriend) {
+                    let msgPreview = type === 'image' ? '🖼️ Image' : (type === 'gif' ? '🎞️ GIF' : (type === 'audio' ? '🎤 Voice Message' : txt));
+
+                    db.ref(`recentChats/${user.uid}/${currentChatFriend.uid}`).set({
+                        uid: currentChatFriend.uid,
+                        name: currentChatFriend.name,
+                        pic: currentChatFriend.pic,
                         lastMsg: msgPreview,
                         senderUid: user.uid,
                         time: firebase.database.ServerValue.TIMESTAMP,
-                        unreadCount: newCount
-                    };
-                });
-            }
-            
-            db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + 1);
+                        unreadCount: 0
+                    });
 
-            if(burnerMode) { setTimeout(() => { newRef.remove(); }, burnerTime); }
-            if(type === 'text' && msgInput) msgInput.value = "";
-            
-            playSendSound();
-
-            document.querySelectorAll('.picker').forEach(p => { 
-                if(p) {
-                    p.style.opacity = '0'; 
-                    setTimeout(()=>p.style.display='none', 200); 
+                    db.ref(`recentChats/${currentChatFriend.uid}/${user.uid}`).transaction(curr => {
+                        let newCount = (curr && curr.unreadCount) ? curr.unreadCount + 1 : 1;
+                        return {
+                            uid: user.uid,
+                            name: myProfile.name,
+                            pic: myProfile.pic,
+                            lastMsg: msgPreview,
+                            senderUid: user.uid,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                            unreadCount: newCount
+                        };
+                    });
                 }
-            });
+
+                db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + 1);
+
+                if(burnerMode && newRef) { setTimeout(() => { newRef.remove(); }, burnerTime); }
+            }, 0);
+
+            // Give visual feedback and reset input right away
+            scrollToBottom();
+            if(msgInput) msgInput.focus();
         }
         
         const msgInputGlobal = document.getElementById('msg-input');
@@ -4852,7 +4863,7 @@ window.burnImage = function(element, url, key) {
     <div id="mmOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px;">
         <button onclick="leaveMemoryMatch()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #03A9F4; margin-bottom: 5px;">Memory Match</h2>
-        <div style="display: flex; gap: 40px; font-size: 24px; font-weight: bold; color: white; margin-bottom: 10px;">
+        <div style="display: none; gap: 40px; font-size: 24px; font-weight: bold; color: white; margin-bottom: 10px;">
             <span id="mmScoreX" style="color: #ff003c;">0</span> - <span id="mmScoreO" style="color: #ffcc00;">0</span>
         </div>
         <p id="mmStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
