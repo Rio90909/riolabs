@@ -800,26 +800,32 @@
         /* ================= SHOP ITEMS ================= */
         .shop-grid { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             width: 100%; 
             max-width: 400px; 
             overflow-y: auto; 
             height: calc(100vh - 250px);
-            padding-bottom: 120px;
+            padding-bottom: 250px; /* Increased to fix cutoff behind floating dock */
             padding-right: 5px;
+            box-sizing: border-box;
         }
         .shop-item { 
-            background: var(--glass-surface); 
+            background: var(--island);
             border: 1px solid var(--glass-border); 
-            border-radius: 16px; 
-            padding: 15px; 
+            border-radius: 12px;
+            padding: 10px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 8px; 
+            gap: 8px;
+            min-width: 0;
             transition: 0.2s;
             cursor: pointer;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            min-height: 140px;
         }
         .shop-item:active { transform: scale(0.95); }
         .color-preview { 
@@ -828,17 +834,34 @@
             border-radius: 50%; 
             border: 2px solid rgba(150,150,150,0.2); 
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2); 
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
         .shop-item-name { 
-            font-size: 13px; 
+            font-size: 11px;
             font-weight: 700; 
             color: var(--text-primary); 
             text-align: center;
+            line-height: 1.2;
+            word-wrap: break-word;
+            width: 100%;
+            margin-bottom: auto;
+        }
+        .shop-btn {
+            width: 100%;
+            box-shadow: none;
+            border-radius: 8px;
+            padding: 6px 4px;
+            font-size: 11px;
+            height: auto;
+            min-height: 28px;
+            line-height: 1.2;
+            flex: 0 0 auto; /* Prevent stretching */
+            font-weight: 700;
         }
 
         /* ================= FLOATING DOCK & FAB ================= */
@@ -1569,7 +1592,7 @@
                  <button class="sheet-btn ripple-target" onclick="buyGiftBox()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,0,127,0.1); border-color: #ff007f; color: #ff007f;"><i class="fa-solid fa-gift"></i> Buy Gift Box</button>
              </div>
 
-             <div id="shopGridContent" class="shop-grid" style="padding: 0 10px;"></div>
+             <div id="shopGridContent" class="shop-grid" style="padding: 0 10px 250px 10px;"></div>
         </div>
 
         <div class="fab ripple-target" id="composeFab" onclick="document.querySelector('.dock-btn[data-tab=\'tab-dashboard\']').click();">
@@ -1650,7 +1673,7 @@
                 <div class="island" id="islandInputBox">
                     <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
                     <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()" aria-label="Upload Image"><i class="fa-solid fa-image"></i></button>
-                    <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTyping()">
+                    <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTypingThrottled()">
                     <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')" aria-label="Open Emoji Picker"><i class="fa-regular fa-face-smile"></i></button>
                 </div>
                 <button class="send-btn" onclick="sendMsg('text')" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
@@ -1936,74 +1959,74 @@ function sendNotification(title, body, icon) {
         // --- FREE SHOP DATA (10 Free Themes, 8 Free Bubbles + Premium Options) ---
         const shopData = {
             bubbles: [
-                { id: 'b_free', name: 'Classic Gold', color: '#ffcc00', text: '#000', price: 0 },
-                { id: 'b_gray', name: 'Ghost Gray', color: '#e0e0e0', text: '#000', price: 0 },
-                { id: 'b_pink', name: 'Neon Pink', color: '#ff007f', text: '#fff', price: 0 },
-                { id: 'b_purple', name: 'Cyber Purple', color: '#8a2be2', text: '#fff', price: 0 },
-                { id: 'b_green', name: 'Matrix Green', color: '#00ff66', text: '#000', price: 0 },
-                { id: 'b_red', name: 'Fire Red', color: '#ff003c', text: '#fff', price: 0 },
-                { id: 'b_blue', name: 'Ocean Blue', color: '#00aaff', text: '#000', price: 0 },
-                { id: 'b_black', name: 'Stealth Black', color: '#111111', text: '#fff', price: 0 },
-                { id: 'b_diamond', name: 'Diamond VIP', color: '#b9f2ff', text: '#003366', price: 500 },
-                { id: 'b_holographic', name: 'Holographic', color: 'linear-gradient(45deg, #ff00cc, #3333ff)', text: '#fff', price: 1000 },
-                { id: 'b_crown', name: 'Golden Crown', color: 'linear-gradient(180deg, #ffd700, #b8860b)', text: '#000', price: 1500 },
-                { id: 'b_matrix', name: 'The Matrix', color: 'black', text: '#0f0', price: 2000, isClass: true },
-                { id: 'b_starry', name: 'Starry Night', color: '#090a0f', text: 'white', price: 2500, isClass: true }
+                { id: 'b_white', name: 'Classic White', color: '#ffffff', text: '#000', price: 0 },
+                { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
+                { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 800 },
+                { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 1200 },
+                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 1000, isCustom: true }
             ],
             themes: [
-                { id: 't_free', name: 'Default Dark', bg: '#0f1014', acc: '#ffcc00', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_day', name: 'Day Mode', bg: '#f0f2f5', acc: '#ff9900', isl: '#ffffff', txt: '#000000', txtSec: '#666666', price: 0 },
-                { id: 't_midnight', name: 'Midnight Blue', bg: '#020b14', acc: '#00d4ff', isl: '#06182c', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_sakura', name: 'Sakura Pink', bg: '#2b0f19', acc: '#ffb7c5', isl: '#3d1624', txt: '#ffffff', txtSec: '#ffb7c5', price: 0 },
-                { id: 't_cyberpunk', name: 'Cyberpunk 2077', bg: '#100c24', acc: '#fcee0a', isl: '#1c163b', txt: '#00f0ff', txtSec: '#fcee0a', price: 0 },
-                { id: 't_sunset', name: 'Sunset Orange', bg: '#1a0b02', acc: '#ff5e00', isl: '#2b1204', txt: '#ffffff', txtSec: '#ffb48a', price: 0 },
-                { id: 't_mint', name: 'Mint Fresh', bg: '#081710', acc: '#3bdf91', isl: '#0e2419', txt: '#ffffff', txtSec: '#9be8c2', price: 0 },
-                { id: 't_hacker', name: 'Hacker Terminal', bg: '#000000', acc: '#00ff00', isl: '#0a0a0a', txt: '#00ff00', txtSec: '#008800', price: 0 },
-                { id: 't_dracula', name: 'Vampire Red', bg: '#120202', acc: '#ff003c', isl: 'rgba(20, 5, 5, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_royal', name: 'Royal Purple', bg: '#0d0214', acc: '#b200ff', isl: 'rgba(15, 5, 25, 0.98)', txt: '#ffffff', txtSec: '#c8a2c8', price: 0 },
-                { id: 't_obsidian', name: 'Obsidian Black', bg: '#000000', acc: '#444444', isl: '#111111', txt: '#ffffff', txtSec: '#888888', price: 500 },
-                { id: 't_luxury', name: 'Gold Luxury', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 1000 },
-                { id: 't_galactic', name: 'Galactic Void', bg: '#050014', acc: '#ff00ff', isl: '#0a0029', txt: '#00ffff', txtSec: '#ff00ff', price: 2000 }
+                { id: 't_white', name: 'Dark Mode', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
+                { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 800 },
+                { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 1200 },
+                { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 2000 },
+                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
             ],
             badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
-                { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 500 },
-                { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 1000 },
-                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 2000 }
+                { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 400 },
+                { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 800 },
+                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
-                { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 300 },
-                { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 300 },
-                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 500 }
+                { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 400 },
+                { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 800 },
+                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 1200 }
             ],
             nameColors: [
                 { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
-                { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 500 },
-                { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 500 },
-                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1500 }
+                { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 400 },
+                { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 800 },
+                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1200 },
+                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 1000, isCustom: true }
             ],
             avatarRings: [
                 { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
-                { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 600 },
-                { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 1200 },
-                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1500 }
+                { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 400 },
+                { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 800 },
+                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1200 }
             ],
             sounds: [
                 { id: 's_default', name: 'Soft Peep', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', price: 0 },
-                { id: 's_wood', name: 'Wood Block', url: 'https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3', price: 0 },
-                { id: 's_pop', name: 'Pop Click', url: 'https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', price: 0 },
-                { id: 's_retro', name: 'Retro Coin', url: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3', price: 150 },
-                { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 400 },
-                { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 600 },
-                { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 1000 }
+                { id: 's_wood', name: 'Wood Block', url: 'https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3', price: 400 },
+                { id: 's_pop', name: 'Pop Click', url: 'https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', price: 400 },
+                { id: 's_retro', name: 'Retro Coin', url: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3', price: 800 },
+                { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 800 },
+                { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 1200 },
+                { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 1200 }
             ]
         };
 
+        function getContrastYIQ(hexcolor){
+            if (!hexcolor) return '#ffffff';
+            hexcolor = hexcolor.replace("#", "");
+            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c+c).join('');
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? '#000000' : '#ffffff';
+        }
+
         window.applyAppTheme = function(themeId) {
             const theme = shopData.themes.find(t => t.id === themeId) || shopData.themes[0];
+            let accent = theme.acc;
+            if (theme.isCustom && myProfile.customThemeAcc) {
+                accent = myProfile.customThemeAcc;
+            }
             document.documentElement.style.setProperty('--bg-dark', theme.bg);
-            document.documentElement.style.setProperty('--accent-yellow', theme.acc);
+            document.documentElement.style.setProperty('--accent-yellow', accent);
             document.documentElement.style.setProperty('--island', theme.isl);
             document.documentElement.style.setProperty('--text-primary', theme.txt);
             document.documentElement.style.setProperty('--text-secondary', theme.txtSec);
@@ -2726,7 +2749,7 @@ function sendNotification(title, body, icon) {
             items.forEach(item => {
                 const isUnlocked = (myProfile.unlocked && myProfile.unlocked.includes(item.id)) || item.price === 0;
                 let isEquipped = false;
-                if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color);
+                if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color || myProfile.chatColor === item.id);
                 if(tab === 'themes') isEquipped = (myProfile.appTheme === item.id);
                 if(tab === 'badges') isEquipped = (myProfile.badge === item.id);
                 if(tab === 'fonts') isEquipped = (myProfile.chatFont === item.id);
@@ -2737,23 +2760,27 @@ function sendNotification(title, body, icon) {
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                let dynamicColor = item.acc || item.color || item.value;
+                if (item.isCustom) {
+                    if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
+                    if (tab === 'themes' && myProfile.customThemeAcc) dynamicColor = myProfile.customThemeAcc;
+                    if (tab === 'nameColors' && myProfile.customNameColor) dynamicColor = myProfile.customNameColor;
+                }
+
+                let previewHtml = '';
+
                 if(tab === 'bubbles') {
-                    // Show a split gradient of bubble background and text color
-                    const bg = item.color || 'var(--island)';
-                    const text = item.text || '#fff';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    const bg = dynamicColor || 'var(--island)';
+                    previewHtml = `<div class="color-preview" style="background: ${bg};"></div>`;
                 } else if(tab === 'themes') {
-                    // Show a split gradient of theme background and accent color
-                    const bg = item.bg || 'var(--bg-dark)';
-                    const acc = item.acc || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    const acc = dynamicColor || 'var(--accent-yellow)';
+                    previewHtml = `<div class="color-preview" style="background: ${acc};"></div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
                 } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="color-preview" style="background: ${item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${dynamicColor};"></div>`;
                 } else if (tab === 'avatarRings') {
                     previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
                 } else if (tab === 'sounds') {
@@ -2764,8 +2791,10 @@ function sendNotification(title, body, icon) {
                 <div class="shop-item ripple-target" style="border-color: ${isEquipped ? 'var(--accent-yellow)' : 'var(--glass-border)'}; box-shadow: ${isEquipped ? '0 0 15px var(--accent-yellow)' : 'none'};" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
-                    ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top:2px;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top:2px;">Owned</span>`}
-                    <button class="${btnClass} shop-btn" style="padding: 5px; font-size: 11px; height: 30px; margin-top: 5px; width: 100%; border-radius: 10px;">${btnText}</button>
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex-grow: 1; width: 100%; gap: 6px;">
+                        ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top: auto;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top: auto;">Owned</span>`}
+                        <button class="${btnClass} shop-btn">${btnText}</button>
+                    </div>
                 </div>`;
             });
         }
@@ -2775,8 +2804,30 @@ function sendNotification(title, body, icon) {
             let unlocked = myProfile.unlocked || [];
             
             if (unlocked.includes(itemId) || item.price === 0) {
+                if (item.isCustom) {
+                    // Open native color picker
+                    const colorInput = document.createElement('input');
+                    colorInput.type = 'color';
+                    if (tab === 'bubbles') colorInput.value = myProfile.customBubbleColor || '#ffffff';
+                    if (tab === 'themes') colorInput.value = myProfile.customThemeAcc || '#ffffff';
+                    if (tab === 'nameColors') colorInput.value = myProfile.customNameColor || '#ffffff';
+
+                    colorInput.oninput = (e) => {
+                        const newColor = e.target.value;
+                        if (tab === 'bubbles') { myProfile.customBubbleColor = newColor; myProfile.chatColor = item.id; myProfile.chatTextColor = getContrastYIQ(newColor); }
+                        else if (tab === 'themes') { myProfile.customThemeAcc = newColor; myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
+                        else if (tab === 'nameColors') { myProfile.customNameColor = newColor; myProfile.nameColor = item.id; }
+
+                        myProfile.unlocked = unlocked;
+                        saveProfile();
+                        renderShop(tab);
+                    };
+                    colorInput.click();
+                    return; // exit early so we don't show the generic "equipped!" toast immediately
+                }
+
                 if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                 else if (tab === 'badges') { myProfile.badge = item.id; }
                 else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                 else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -2795,8 +2846,17 @@ function sendNotification(title, body, icon) {
                     unlocked.push(itemId); 
                     myProfile.unlocked = unlocked;
                     
+                    if (item.isCustom) {
+                        saveProfile();
+                        renderShop(tab);
+                        document.getElementById('shopOrbCount').innerText = myProfile.orbs - item.price;
+                        showToast("Successfully purchased " + item.name + "!", "success");
+                        handleShopClick(tab, itemId); // Open picker immediately after purchase
+                        return;
+                    }
+
                     if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                    else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                    else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                     else if (tab === 'badges') { myProfile.badge = item.id; }
                     else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                     else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -4305,16 +4365,22 @@ window.burnImage = function(element, url, key) {
             // Capture current editing/reply state before clearing it
             const currentEditingKey = editingKey;
             const currentReplyingTo = replyingTo;
+            const currentRoom = room;
             
             cancelReply();
             playSendSound();
+            scrollToBottom();
+            if(msgInput) msgInput.focus();
 
-            document.querySelectorAll('.picker').forEach(p => {
-                if(p) {
-                    p.style.opacity = '0';
-                    setTimeout(()=>p.style.display='none', 200);
-                }
-            });
+            // Offload DOM updates for pickers
+            setTimeout(() => {
+                document.querySelectorAll('.picker').forEach(p => {
+                    if(p && p.style.display !== 'none') {
+                        p.style.opacity = '0';
+                        setTimeout(()=>p.style.display='none', 200);
+                    }
+                });
+            }, 0);
 
             // Offload database updates and slow tasks so the UI doesn't freeze
             setTimeout(async () => {
@@ -4335,20 +4401,27 @@ window.burnImage = function(element, url, key) {
                 const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
                 const badgeIcon = bdg && bdg.icon ? bdg.icon : '';
 
+                let appliedNameColor = myProfile.nameColor;
+                if (appliedNameColor === 'nc_custom' && myProfile.customNameColor) appliedNameColor = myProfile.customNameColor;
+                else {
+                    let ncObj = shopData.nameColors.find(n => n.id === myProfile.nameColor);
+                    if (ncObj) appliedNameColor = ncObj.value;
+                }
+
                 let msgData = {
                     txt: txt,
                     type: type,
                     uid: user.uid,
                     name: myProfile.name,
-                    nameColor: myProfile.nameColor,
+                    nameColor: appliedNameColor,
                     pic: myProfile.pic,
                     avatarRing: myProfile.avatarRing,
                     badge: badgeIcon,
                     time: firebase.database.ServerValue.TIMESTAMP,
                     burner: burnerMode,
                     expiresAt: burnerMode ? Date.now() + burnerTime : null,
-                    chatColor: myProfile.chatColor,
-                    chatTextColor: myProfile.chatTextColor,
+                    chatColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? myProfile.customBubbleColor : myProfile.chatColor,
+                    chatTextColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? getContrastYIQ(myProfile.customBubbleColor) : myProfile.chatTextColor,
                     chatFont: myProfile.chatFont,
                     read: false,
                     delivered: false,
@@ -4399,10 +4472,6 @@ window.burnImage = function(element, url, key) {
 
                 if(burnerMode && newRef) { setTimeout(() => { newRef.remove(); }, burnerTime); }
             }, 0);
-
-            // Give visual feedback and reset input right away
-            scrollToBottom();
-            if(msgInput) msgInput.focus();
         }
         
         const msgInputGlobal = document.getElementById('msg-input');
@@ -4471,9 +4540,17 @@ window.burnImage = function(element, url, key) {
                 const node = createMessageNode(key, d, false);
                 const chatMessagesDiv = document.getElementById('chat-messages');
                 if(chatMessagesDiv && node) {
-                    chatMessagesDiv.appendChild(node);
-                    updateReactionsUI(key, d.reactions);
-                    setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 150);
+                    // Use requestAnimationFrame for smoother UI updates instead of direct append blocking
+                    requestAnimationFrame(() => {
+                        chatMessagesDiv.appendChild(node);
+                        updateReactionsUI(key, d.reactions);
+
+                        // Only auto-scroll if user is already near bottom or it's my message
+                        const isAtBottom = chatMessagesDiv.scrollHeight - chatMessagesDiv.scrollTop - chatMessagesDiv.clientHeight < 100;
+                        if (d.uid === user.uid || isAtBottom || !initialRoomLoad) {
+                            setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 10);
+                        }
+                    });
                 }
             });
 
@@ -4719,9 +4796,34 @@ window.burnImage = function(element, url, key) {
             return div;
         }
 
+        let lastTypingUpdate = 0;
+        let typingInputThrottleTimer = null;
+
+        window.handleTypingThrottled = function() {
+            if(typingInputThrottleTimer) clearTimeout(typingInputThrottleTimer);
+            typingInputThrottleTimer = setTimeout(() => {
+                window.handleTyping();
+            }, 300); // Wait 300ms after last keystroke to emit typing indicator to network
+        }
+
         window.handleTyping = function() { 
             const inputVal = document.getElementById('msg-input').value;
-            db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+
+            const now = Date.now();
+            if (now - lastTypingUpdate > 500) {
+                // Throttle Firebase writes to prevent UI thread blocking and lag
+                setTimeout(() => {
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                }, 0);
+                lastTypingUpdate = now;
+            } else {
+                if(window.typingThrottleTimer) clearTimeout(window.typingThrottleTimer);
+                window.typingThrottleTimer = setTimeout(() => {
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                    lastTypingUpdate = Date.now();
+                }, 500);
+            }
+
             if(typingTimeout) clearTimeout(typingTimeout); 
             typingTimeout = setTimeout(() => { db.ref('typing/'+room+'/'+user.uid).remove(); }, 2000); 
         }
