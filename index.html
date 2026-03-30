@@ -800,7 +800,7 @@
         /* ================= SHOP ITEMS ================= */
         .shop-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
             gap: 12px; 
             width: 100%; 
             max-width: 400px; 
@@ -814,11 +814,12 @@
             background: var(--glass-surface); 
             border: 1px solid var(--glass-border); 
             border-radius: 16px; 
-            padding: 15px 10px;
+            padding: 12px 8px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 8px; 
+            gap: 6px;
+            min-width: 0;
             transition: 0.2s;
             cursor: pointer;
             box-sizing: border-box;
@@ -838,10 +839,13 @@
             font-size: 20px;
         }
         .shop-item-name { 
-            font-size: 13px; 
+            font-size: 12px;
             font-weight: 700; 
             color: var(--text-primary); 
             text-align: center;
+            line-height: 1.2;
+            word-wrap: break-word;
+            width: 100%;
         }
 
         /* ================= FLOATING DOCK & FAB ================= */
