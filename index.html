@@ -1527,7 +1527,7 @@
                 <span class="secure-badge" style="margin-bottom: 8px;"><i class="fa-solid fa-lock" style="margin-right:3px;"></i>Tap Name/Pic to Edit</span>
                 
                 <p id="displayBio" class="profile-bio" onclick="editBio()" title="Tap to edit">Tap to add "About Me" bio...</p>
-                <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined: <span id="displayJoinDate">Today</span></div>
+                <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined: <span id="displayJoinDate" ondblclick="openAdminPanel()">Today</span></div>
                 
         <div class="orb-badge" onclick="document.querySelector('.dock-btn[data-tab=\'tab-shop\']').click();"><i class="fa-solid fa-gem"></i> <span id="orbCountDisplay">0</span> Orbs</div>
                 <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px;">Tap to open Shop</div>
@@ -1539,6 +1539,10 @@
                 </div>
             </div>
             <div class="profile-menu-list">
+                <div id="adminBtn" class="profile-menu-item ripple-target" onclick="openAdminPanel()" style="display: none; background: rgba(255, 59, 48, 0.1); border-color: rgba(255, 59, 48, 0.3);">
+                    <div class="profile-menu-icon" style="color: var(--error-red);"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span style="flex: 1; color: var(--error-red);">Admin Panel</span>
+                </div>
                 <div class="profile-menu-item ripple-target" onclick="activateGhostMode()">
                     <div class="profile-menu-icon" style="color: var(--accent-yellow);"><i class="fa-solid fa-ghost"></i></div>
                     <span style="flex: 1;">Ghost Mode</span>
@@ -1605,6 +1609,39 @@
             <div class="dock-btn" data-tab="tab-contacts"><i class="fa-solid fa-user-group"></i></div>
             <div class="dock-btn" data-tab="tab-shop"><i class="fa-solid fa-store"></i></div>
             <div class="dock-btn" data-tab="tab-profile"><i class="fa-solid fa-user"></i></div>
+        </div>
+    </div>
+
+    <div id="admin-screen" class="screen" style="background: var(--bg-dark);">
+        <div class="chat-header">
+            <div class="chat-back-btn" onclick="switchScreen('hub-screen')"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="chat-title-container">
+                <div class="chat-room-name" style="color: var(--error-red);">ADMIN DASHBOARD</div>
+            </div>
+            <i class="fa-solid fa-shield-halved" style="color:var(--error-red); font-size:14px;"></i>
+        </div>
+
+        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
+                <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
+                    <i class="fa-solid fa-broom"></i> Clear Global Lounge
+                </button>
+                <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
+                    <i class="fa-solid fa-bullhorn"></i> System Broadcast
+                </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
+                <div class="search-glass" style="height: 40px; border-radius: 12px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="adminSearchInput" placeholder="Search usernames..." autocomplete="off" oninput="adminSearchUsers()">
+                </div>
+                <div id="adminSearchResults" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                    <!-- Results populated here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1920,6 +1957,8 @@ function sendNotification(title, body, icon) {
             appSoundEnabled: true,
             profanityFilterEnabled: true,
             blockedUsers: [],
+            isAdmin: false,
+            isBanned: false,
             unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none', 'f_default', 'nc_white', 'ar_none', 's_default']
         };
         let mode = 'login';
@@ -2361,6 +2400,13 @@ function sendNotification(title, body, icon) {
         function loadMyProfile() { 
             db.ref('users/'+user.uid).on('value', snap => { 
                 const d = snap.val() || {}; 
+                myProfile.isBanned = d.isBanned || false;
+                if (myProfile.isBanned) {
+                    showToast("Your account has been banned.", "error");
+                    logoutApp();
+                    return;
+                }
+                myProfile.isAdmin = d.isAdmin || false;
                 myProfile.name = d.name || user.displayName || document.getElementById('userInput').value || "Guest User"; 
                 myProfile.pic = d.pic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}&backgroundColor=b6e3f4`; 
                 myProfile.banner = d.banner || ''; 
@@ -2380,6 +2426,11 @@ function sendNotification(title, body, icon) {
                 myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 myProfile.profanityFilterEnabled = d.profanityFilterEnabled !== undefined ? d.profanityFilterEnabled : true;
                 myProfile.blockedUsers = d.blockedUsers || [];
+
+                const adminBtn = document.getElementById('adminBtn');
+                if (adminBtn) {
+                    adminBtn.style.display = myProfile.isAdmin ? 'flex' : 'none';
+                }
 
                 applyWallpaper();
                 
@@ -2432,6 +2483,7 @@ function sendNotification(title, body, icon) {
 
         function saveProfile() { 
             if(!user) return;
+            // SECURITY PATCH: Do not write isAdmin or isBanned back to the database.
             db.ref('users/'+user.uid).update({ 
                 name: myProfile.name, 
                 pic: myProfile.pic, 
@@ -3297,6 +3349,116 @@ function sendNotification(title, body, icon) {
             const chatMessages = document.getElementById('chat-messages');
             if(chatMessages) {
                 chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        // --- ADMIN PANEL LOGIC ---
+        window.openAdminPanel = function() {
+            if(!myProfile.isAdmin) return showToast("Unauthorized", "error");
+            switchScreen('admin-screen');
+        }
+
+        window.adminClearGlobal = function() {
+            if(!myProfile.isAdmin) return;
+            if(confirm("Are you sure you want to clear the Global Lounge? This cannot be undone.")) {
+                db.ref('rooms/GlobalLobby').remove().then(() => {
+                    showToast("Global Lounge cleared.", "success");
+                }).catch(err => showToast(err.message, "error"));
+            }
+        }
+
+        window.adminSystemMessage = function() {
+            if(!myProfile.isAdmin) return;
+            const msg = prompt("Enter system broadcast message:");
+            if(msg && msg.trim().length > 0) {
+                const newRef = db.ref('rooms/GlobalLobby').push();
+                newRef.set({
+                    txt: `⚠️ SYSTEM: ${msg.trim()}`,
+                    type: 'text',
+                    uid: 'system',
+                    name: 'SYSTEM ADMIN',
+                    nameColor: '#ff3b30',
+                    pic: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin&backgroundColor=ff3b30',
+                    avatarRing: 'ar_fire',
+                    badge: '<i class="fa-solid fa-shield" style="color:#ff3b30;"></i>',
+                    time: firebase.database.ServerValue.TIMESTAMP,
+                    burner: false,
+                    chatColor: 'rgba(255, 59, 48, 0.2)',
+                    chatTextColor: '#ff3b30',
+                    chatFont: 'f_default',
+                    read: true,
+                    delivered: true,
+                    edited: false
+                }).then(() => showToast("Broadcast sent.", "success"));
+            }
+        }
+
+        let adminSearchTimeout = null;
+        window.adminSearchUsers = function() {
+            if(!myProfile.isAdmin) return;
+            const query = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+            const resultsBox = document.getElementById('adminSearchResults');
+
+            if (query.length < 2) {
+                resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">Type at least 2 characters</div>';
+                return;
+            }
+
+            clearTimeout(adminSearchTimeout);
+            adminSearchTimeout = setTimeout(() => {
+                db.ref('users').once('value', snap => {
+                    resultsBox.innerHTML = '';
+                    let found = false;
+
+                    snap.forEach(child => {
+                        const ud = child.val();
+                        if (ud.name && ud.name.toLowerCase().includes(query)) {
+                            found = true;
+                            const isBanned = ud.isBanned || false;
+
+                            resultsBox.innerHTML += `
+                                <div class="friend-list-item" style="flex-wrap: wrap; gap: 10px;">
+                                    <div class="friend-info" style="flex: 1; min-width: 150px;">
+                                        <img src="${ud.pic}" class="friend-avatar">
+                                        <div style="display:flex; flex-direction:column;">
+                                            <span class="friend-name">${ud.name}</span>
+                                            <span style="font-size:10px; color:var(--text-secondary);">${ud.uid} | ${ud.orbs} Orbs</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; gap:5px;">
+                                        <button class="friend-action-btn" style="background:var(--accent-yellow); color:var(--bg-dark);" onclick="adminGiveOrbs('${child.key}')">Give Orbs</button>
+                                        <button class="friend-action-btn ${isBanned ? 'reject' : ''}" style="${isBanned ? '' : 'background:rgba(255,59,48,0.1); color:var(--error-red); border:1px solid rgba(255,59,48,0.3);'}" onclick="adminToggleBan('${child.key}', ${isBanned})">${isBanned ? 'Unban' : 'Ban'}</button>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+
+                    if(!found) resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">No users found</div>';
+                });
+            }, 500);
+        }
+
+        window.adminToggleBan = function(targetUid, currentState) {
+            if(!myProfile.isAdmin) return;
+            if(targetUid === user.uid) return showToast("You cannot ban yourself.", "error");
+
+            const action = currentState ? "UNBAN" : "BAN";
+            if(confirm(`Are you sure you want to ${action} this user?`)) {
+                db.ref(`users/${targetUid}/isBanned`).set(!currentState).then(() => {
+                    showToast(`User ${action}NED successfully.`, "success");
+                    adminSearchUsers(); // Refresh results
+                }).catch(err => showToast(err.message, "error"));
+            }
+        }
+
+        window.adminGiveOrbs = function(targetUid) {
+            if(!myProfile.isAdmin) return;
+            const amount = parseInt(prompt("Enter amount of Orbs to give (can be negative to remove):", "100"));
+            if(!isNaN(amount)) {
+                db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + amount).then(() => {
+                    showToast(`Gave ${amount} Orbs to user.`, "success");
+                    adminSearchUsers(); // Refresh results
+                }).catch(err => showToast(err.message, "error"));
             }
         }
 
