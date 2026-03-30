@@ -1653,7 +1653,7 @@
                 <div class="island" id="islandInputBox">
                     <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
                     <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()" aria-label="Upload Image"><i class="fa-solid fa-image"></i></button>
-                    <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTyping()">
+                    <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTypingThrottled()">
                     <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')" aria-label="Open Emoji Picker"><i class="fa-regular fa-face-smile"></i></button>
                 </div>
                 <button class="send-btn" onclick="sendMsg('text')" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
@@ -1940,15 +1940,27 @@ function sendNotification(title, body, icon) {
         const shopData = {
             bubbles: [
                 { id: 'b_white', name: 'Classic White', color: '#ffffff', text: '#000', price: 0 },
-                { id: 'b_gold', name: 'Solid Gold', color: '#ffd700', text: '#000', price: 500 },
-                { id: 'b_electric', name: 'Electric Blue', color: '#00e5ff', text: '#000', price: 500 },
-                { id: 'b_rainbow', name: 'Rainbow Flow', color: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', text: '#000', price: 1500 }
+                { id: 'b_slate', name: 'Slate Gray', color: '#708090', text: '#fff', price: 200 },
+                { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
+                { id: 'b_salmon', name: 'Fresh Salmon', color: '#ff8c69', text: '#fff', price: 500 },
+                { id: 'b_lavender', name: 'Soft Lavender', color: '#e6e6fa', text: '#000', price: 600 },
+                { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 800 },
+                { id: 'b_crimson', name: 'Dark Crimson', color: '#dc143c', text: '#fff', price: 1000 },
+                { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 1200 },
+                { id: 'b_matrix', name: 'Matrix Green', color: '#00ff41', text: '#000', price: 1500 },
+                { id: 'b_sunset', name: 'Sunset Glow', color: 'linear-gradient(45deg, #ff7e5f, #feb47b)', text: '#000', price: 2000 },
+                { id: 'b_galaxy', name: 'Galaxy', color: 'linear-gradient(45deg, #4b0082, #0000ff)', text: '#fff', price: 2500 }
             ],
             themes: [
-                { id: 't_white', name: 'Classic White', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_gold', name: 'Solid Gold', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 500 },
-                { id: 't_electric', name: 'Electric Blue', bg: '#020b14', acc: '#00e5ff', isl: '#06182c', txt: '#ffffff', txtSec: '#9ca3af', price: 500 },
-                { id: 't_rainbow', name: 'Rainbow Flow', bg: '#000000', acc: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', isl: '#111111', txt: '#ffffff', txtSec: '#888888', price: 1500 }
+                { id: 't_white', name: 'Dark Mode', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
+                { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 300 },
+                { id: 't_forest', name: 'Deep Forest', bg: '#08140c', acc: '#2e8b57', isl: '#0f2416', txt: '#e8f5e9', txtSec: '#8fbc8f', price: 500 },
+                { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 800 },
+                { id: 't_coffee', name: 'Coffee Roast', bg: '#1f1612', acc: '#d2b48c', isl: '#2e211b', txt: '#fff8dc', txtSec: '#deb887', price: 800 },
+                { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 1000 },
+                { id: 't_crimson', name: 'Blood Moon', bg: '#140000', acc: '#ff1414', isl: '#260404', txt: '#ffe6e6', txtSec: '#cc8888', price: 1200 },
+                { id: 't_aquatic', name: 'Coral Reef', bg: '#00131f', acc: '#00ffcc', isl: '#002633', txt: '#e0ffff', txtSec: '#66cccc', price: 1500 },
+                { id: 't_gold', name: 'Billionaire Gold', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 2000 }
             ],
             badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
@@ -2748,7 +2760,7 @@ function sendNotification(title, body, icon) {
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
                     ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top:2px;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top:2px;">Owned</span>`}
-                    <button class="${btnClass} shop-btn" style="padding: 5px; font-size: 11px; height: 30px; margin-top: 5px; width: 100%; border-radius: 10px;">${btnText}</button>
+                    <button class="${btnClass} shop-btn" style="padding: 4px 10px; font-size: 10px; height: 26px; margin-top: 5px; width: auto; min-width: 60px; border-radius: 10px;">${btnText}</button>
                 </div>`;
             });
         }
@@ -4288,16 +4300,22 @@ window.burnImage = function(element, url, key) {
             // Capture current editing/reply state before clearing it
             const currentEditingKey = editingKey;
             const currentReplyingTo = replyingTo;
+            const currentRoom = room;
             
             cancelReply();
             playSendSound();
+            scrollToBottom();
+            if(msgInput) msgInput.focus();
 
-            document.querySelectorAll('.picker').forEach(p => {
-                if(p) {
-                    p.style.opacity = '0';
-                    setTimeout(()=>p.style.display='none', 200);
-                }
-            });
+            // Offload DOM updates for pickers
+            setTimeout(() => {
+                document.querySelectorAll('.picker').forEach(p => {
+                    if(p && p.style.display !== 'none') {
+                        p.style.opacity = '0';
+                        setTimeout(()=>p.style.display='none', 200);
+                    }
+                });
+            }, 0);
 
             // Offload database updates and slow tasks so the UI doesn't freeze
             setTimeout(async () => {
@@ -4382,10 +4400,6 @@ window.burnImage = function(element, url, key) {
 
                 if(burnerMode && newRef) { setTimeout(() => { newRef.remove(); }, burnerTime); }
             }, 0);
-
-            // Give visual feedback and reset input right away
-            scrollToBottom();
-            if(msgInput) msgInput.focus();
         }
         
         const msgInputGlobal = document.getElementById('msg-input');
@@ -4454,9 +4468,17 @@ window.burnImage = function(element, url, key) {
                 const node = createMessageNode(key, d, false);
                 const chatMessagesDiv = document.getElementById('chat-messages');
                 if(chatMessagesDiv && node) {
-                    chatMessagesDiv.appendChild(node);
-                    updateReactionsUI(key, d.reactions);
-                    setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 150);
+                    // Use requestAnimationFrame for smoother UI updates instead of direct append blocking
+                    requestAnimationFrame(() => {
+                        chatMessagesDiv.appendChild(node);
+                        updateReactionsUI(key, d.reactions);
+
+                        // Only auto-scroll if user is already near bottom or it's my message
+                        const isAtBottom = chatMessagesDiv.scrollHeight - chatMessagesDiv.scrollTop - chatMessagesDiv.clientHeight < 100;
+                        if (d.uid === user.uid || isAtBottom || !initialRoomLoad) {
+                            setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 10);
+                        }
+                    });
                 }
             });
 
@@ -4702,9 +4724,34 @@ window.burnImage = function(element, url, key) {
             return div;
         }
 
+        let lastTypingUpdate = 0;
+        let typingInputThrottleTimer = null;
+
+        window.handleTypingThrottled = function() {
+            if(typingInputThrottleTimer) clearTimeout(typingInputThrottleTimer);
+            typingInputThrottleTimer = setTimeout(() => {
+                window.handleTyping();
+            }, 300); // Wait 300ms after last keystroke to emit typing indicator to network
+        }
+
         window.handleTyping = function() { 
             const inputVal = document.getElementById('msg-input').value;
-            db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+
+            const now = Date.now();
+            if (now - lastTypingUpdate > 500) {
+                // Throttle Firebase writes to prevent UI thread blocking and lag
+                setTimeout(() => {
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                }, 0);
+                lastTypingUpdate = now;
+            } else {
+                if(window.typingThrottleTimer) clearTimeout(window.typingThrottleTimer);
+                window.typingThrottleTimer = setTimeout(() => {
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                    lastTypingUpdate = Date.now();
+                }, 500);
+            }
+
             if(typingTimeout) clearTimeout(typingTimeout); 
             typingTimeout = setTimeout(() => { db.ref('typing/'+room+'/'+user.uid).remove(); }, 2000); 
         }
