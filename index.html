@@ -1947,14 +1947,14 @@ function sendNotification(title, body, icon) {
                 { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
                 { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 800 },
                 { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 1200 },
-                { id: 'b_sunset', name: 'Sunset Glow', color: 'linear-gradient(45deg, #ff7e5f, #feb47b)', text: '#000', price: 2000 }
+                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 1000, isCustom: true }
             ],
             themes: [
                 { id: 't_white', name: 'Dark Mode', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
                 { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 300 },
                 { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 800 },
                 { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 1000 },
-                { id: 't_gold', name: 'Billionaire Gold', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 2000 }
+                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
             ],
             badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
@@ -1972,7 +1972,8 @@ function sendNotification(title, body, icon) {
                 { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
                 { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 500 },
                 { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 500 },
-                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1500 }
+                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1500 },
+                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 1000, isCustom: true }
             ],
             avatarRings: [
                 { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
@@ -1991,10 +1992,25 @@ function sendNotification(title, body, icon) {
             ]
         };
 
+        function getContrastYIQ(hexcolor){
+            if (!hexcolor) return '#ffffff';
+            hexcolor = hexcolor.replace("#", "");
+            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c+c).join('');
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? '#000000' : '#ffffff';
+        }
+
         window.applyAppTheme = function(themeId) {
             const theme = shopData.themes.find(t => t.id === themeId) || shopData.themes[0];
+            let accent = theme.acc;
+            if (theme.isCustom && myProfile.customThemeAcc) {
+                accent = myProfile.customThemeAcc;
+            }
             document.documentElement.style.setProperty('--bg-dark', theme.bg);
-            document.documentElement.style.setProperty('--accent-yellow', theme.acc);
+            document.documentElement.style.setProperty('--accent-yellow', accent);
             document.documentElement.style.setProperty('--island', theme.isl);
             document.documentElement.style.setProperty('--text-primary', theme.txt);
             document.documentElement.style.setProperty('--text-secondary', theme.txtSec);
@@ -2728,21 +2744,29 @@ function sendNotification(title, body, icon) {
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value};"></div>`;
+                let previewHtml = '';
+
+                let dynamicColor = item.acc || item.color || item.value;
+                if (item.isCustom) {
+                    if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
+                    if (tab === 'themes' && myProfile.customThemeAcc) dynamicColor = myProfile.customThemeAcc;
+                    if (tab === 'nameColors' && myProfile.customNameColor) dynamicColor = myProfile.customNameColor;
+                }
+
                 if(tab === 'bubbles') {
                     // Show solid bubble background color exactly to match nameColors
-                    const bg = item.color || 'var(--island)';
+                    const bg = dynamicColor || 'var(--island)';
                     previewHtml = `<div class="color-preview" style="background: ${bg};"></div>`;
                 } else if(tab === 'themes') {
                     // Show solid theme accent color exactly to match nameColors
-                    const acc = item.acc || 'var(--accent-yellow)';
+                    const acc = dynamicColor || 'var(--accent-yellow)';
                     previewHtml = `<div class="color-preview" style="background: ${acc};"></div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
                 } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="color-preview" style="background: ${item.value};"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${dynamicColor};"></div>`;
                 } else if (tab === 'avatarRings') {
                     previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
                 } else if (tab === 'sounds') {
@@ -2764,8 +2788,30 @@ function sendNotification(title, body, icon) {
             let unlocked = myProfile.unlocked || [];
             
             if (unlocked.includes(itemId) || item.price === 0) {
+                if (item.isCustom) {
+                    // Open native color picker
+                    const colorInput = document.createElement('input');
+                    colorInput.type = 'color';
+                    if (tab === 'bubbles') colorInput.value = myProfile.customBubbleColor || '#ffffff';
+                    if (tab === 'themes') colorInput.value = myProfile.customThemeAcc || '#ffffff';
+                    if (tab === 'nameColors') colorInput.value = myProfile.customNameColor || '#ffffff';
+
+                    colorInput.oninput = (e) => {
+                        const newColor = e.target.value;
+                        if (tab === 'bubbles') { myProfile.customBubbleColor = newColor; myProfile.chatColor = item.id; myProfile.chatTextColor = getContrastYIQ(newColor); }
+                        else if (tab === 'themes') { myProfile.customThemeAcc = newColor; myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
+                        else if (tab === 'nameColors') { myProfile.customNameColor = newColor; myProfile.nameColor = item.id; }
+
+                        myProfile.unlocked = unlocked;
+                        saveProfile();
+                        renderShop(tab);
+                    };
+                    colorInput.click();
+                    return; // exit early so we don't show the generic "equipped!" toast immediately
+                }
+
                 if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                 else if (tab === 'badges') { myProfile.badge = item.id; }
                 else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                 else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -2785,7 +2831,7 @@ function sendNotification(title, body, icon) {
                     myProfile.unlocked = unlocked;
                     
                     if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                    else if (tab === 'themes') { myProfile.appTheme = item.id; applyAppTheme(item.id); }
+                    else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                     else if (tab === 'badges') { myProfile.badge = item.id; }
                     else if (tab === 'fonts') { myProfile.chatFont = item.id; }
                     else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
@@ -4330,20 +4376,27 @@ window.burnImage = function(element, url, key) {
                 const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
                 const badgeIcon = bdg && bdg.icon ? bdg.icon : '';
 
+                let appliedNameColor = myProfile.nameColor;
+                if (appliedNameColor === 'nc_custom' && myProfile.customNameColor) appliedNameColor = myProfile.customNameColor;
+                else {
+                    let ncObj = shopData.nameColors.find(n => n.id === myProfile.nameColor);
+                    if (ncObj) appliedNameColor = ncObj.value;
+                }
+
                 let msgData = {
                     txt: txt,
                     type: type,
                     uid: user.uid,
                     name: myProfile.name,
-                    nameColor: myProfile.nameColor,
+                    nameColor: appliedNameColor,
                     pic: myProfile.pic,
                     avatarRing: myProfile.avatarRing,
                     badge: badgeIcon,
                     time: firebase.database.ServerValue.TIMESTAMP,
                     burner: burnerMode,
                     expiresAt: burnerMode ? Date.now() + burnerTime : null,
-                    chatColor: myProfile.chatColor,
-                    chatTextColor: myProfile.chatTextColor,
+                    chatColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? myProfile.customBubbleColor : myProfile.chatColor,
+                    chatTextColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? getContrastYIQ(myProfile.customBubbleColor) : myProfile.chatTextColor,
                     chatFont: myProfile.chatFont,
                     read: false,
                     delivered: false,
