@@ -800,30 +800,32 @@
         /* ================= SHOP ITEMS ================= */
         .shop-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 12px; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             width: 100%; 
             max-width: 400px; 
             overflow-y: auto; 
             height: calc(100vh - 250px);
-            padding-bottom: 120px;
+            padding-bottom: 250px; /* Increased to fix cutoff behind floating dock */
             padding-right: 5px;
             box-sizing: border-box;
         }
         .shop-item { 
-            background: var(--glass-surface); 
+            background: var(--island);
             border: 1px solid var(--glass-border); 
-            border-radius: 16px; 
-            padding: 12px 8px;
+            border-radius: 12px;
+            padding: 10px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 6px;
+            gap: 8px;
             min-width: 0;
             transition: 0.2s;
             cursor: pointer;
             box-sizing: border-box;
             width: 100%;
+            height: 100%;
+            min-height: 140px;
         }
         .shop-item:active { transform: scale(0.95); }
         .color-preview { 
@@ -832,20 +834,34 @@
             border-radius: 50%; 
             border: 2px solid rgba(150,150,150,0.2); 
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2); 
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 20px;
+            flex-shrink: 0;
         }
         .shop-item-name { 
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700; 
             color: var(--text-primary); 
             text-align: center;
             line-height: 1.2;
             word-wrap: break-word;
             width: 100%;
+            margin-bottom: auto;
+        }
+        .shop-btn {
+            width: 100%;
+            box-shadow: none;
+            border-radius: 8px;
+            padding: 6px 4px;
+            font-size: 11px;
+            height: auto;
+            min-height: 28px;
+            line-height: 1.2;
+            flex: 0 0 auto; /* Prevent stretching */
+            font-weight: 700;
         }
 
         /* ================= FLOATING DOCK & FAB ================= */
@@ -1576,7 +1592,7 @@
                  <button class="sheet-btn ripple-target" onclick="buyGiftBox()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,0,127,0.1); border-color: #ff007f; color: #ff007f;"><i class="fa-solid fa-gift"></i> Buy Gift Box</button>
              </div>
 
-             <div id="shopGridContent" class="shop-grid" style="padding: 0 10px;"></div>
+             <div id="shopGridContent" class="shop-grid" style="padding: 0 10px 250px 10px;"></div>
         </div>
 
         <div class="fab ripple-target" id="composeFab" onclick="document.querySelector('.dock-btn[data-tab=\'tab-dashboard\']').click();">
@@ -1944,51 +1960,51 @@ function sendNotification(title, body, icon) {
         const shopData = {
             bubbles: [
                 { id: 'b_white', name: 'Classic White', color: '#ffffff', text: '#000', price: 0 },
-                { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 0 },
-                { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 0 },
-                { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 0 },
-                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 0, isCustom: true }
+                { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
+                { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 800 },
+                { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 1200 },
+                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 1000, isCustom: true }
             ],
             themes: [
                 { id: 't_white', name: 'Dark Mode', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 0 },
-                { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 0 },
-                { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 0 },
-                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 0, isCustom: true }
+                { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 800 },
+                { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 1200 },
+                { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 2000 },
+                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
             ],
             badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
-                { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 0 },
-                { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 0 },
-                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 0 }
+                { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 400 },
+                { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 800 },
+                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
-                { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 0 },
-                { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 0 },
-                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 0 }
+                { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 400 },
+                { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 800 },
+                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 1200 }
             ],
             nameColors: [
                 { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
-                { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 0 },
-                { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 0 },
-                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 0 },
-                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 0, isCustom: true }
+                { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 400 },
+                { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 800 },
+                { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1200 },
+                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 1000, isCustom: true }
             ],
             avatarRings: [
                 { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
-                { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 0 },
-                { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 0 },
-                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 0 }
+                { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 400 },
+                { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 800 },
+                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1200 }
             ],
             sounds: [
                 { id: 's_default', name: 'Soft Peep', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', price: 0 },
-                { id: 's_wood', name: 'Wood Block', url: 'https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3', price: 0 },
-                { id: 's_pop', name: 'Pop Click', url: 'https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', price: 0 },
-                { id: 's_retro', name: 'Retro Coin', url: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3', price: 0 },
-                { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 0 },
-                { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 0 },
-                { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 0 }
+                { id: 's_wood', name: 'Wood Block', url: 'https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3', price: 400 },
+                { id: 's_pop', name: 'Pop Click', url: 'https://assets.mixkit.co/active_storage/sfx/2360/2360-preview.mp3', price: 400 },
+                { id: 's_retro', name: 'Retro Coin', url: 'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3', price: 800 },
+                { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 800 },
+                { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 1200 },
+                { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 1200 }
             ]
         };
 
@@ -2733,7 +2749,7 @@ function sendNotification(title, body, icon) {
             items.forEach(item => {
                 const isUnlocked = (myProfile.unlocked && myProfile.unlocked.includes(item.id)) || item.price === 0;
                 let isEquipped = false;
-                if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color);
+                if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color || myProfile.chatColor === item.id);
                 if(tab === 'themes') isEquipped = (myProfile.appTheme === item.id);
                 if(tab === 'badges') isEquipped = (myProfile.badge === item.id);
                 if(tab === 'fonts') isEquipped = (myProfile.chatFont === item.id);
@@ -2744,8 +2760,6 @@ function sendNotification(title, body, icon) {
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                let previewHtml = '';
-
                 let dynamicColor = item.acc || item.color || item.value;
                 if (item.isCustom) {
                     if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
@@ -2753,12 +2767,12 @@ function sendNotification(title, body, icon) {
                     if (tab === 'nameColors' && myProfile.customNameColor) dynamicColor = myProfile.customNameColor;
                 }
 
+                let previewHtml = '';
+
                 if(tab === 'bubbles') {
-                    // Show solid bubble background color exactly to match nameColors
                     const bg = dynamicColor || 'var(--island)';
                     previewHtml = `<div class="color-preview" style="background: ${bg};"></div>`;
                 } else if(tab === 'themes') {
-                    // Show solid theme accent color exactly to match nameColors
                     const acc = dynamicColor || 'var(--accent-yellow)';
                     previewHtml = `<div class="color-preview" style="background: ${acc};"></div>`;
                 } else if(tab === 'badges') {
@@ -2777,8 +2791,10 @@ function sendNotification(title, body, icon) {
                 <div class="shop-item ripple-target" style="border-color: ${isEquipped ? 'var(--accent-yellow)' : 'var(--glass-border)'}; box-shadow: ${isEquipped ? '0 0 15px var(--accent-yellow)' : 'none'};" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
-                    ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top:2px;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top:2px;">Owned</span>`}
-                    <button class="${btnClass} shop-btn" style="padding: 4px 10px; font-size: 10px; height: 26px; margin-top: 5px; width: auto; min-width: 60px; border-radius: 10px;">${btnText}</button>
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex-grow: 1; width: 100%; gap: 6px;">
+                        ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top: auto;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top: auto;">Owned</span>`}
+                        <button class="${btnClass} shop-btn">${btnText}</button>
+                    </div>
                 </div>`;
             });
         }
@@ -2830,6 +2846,15 @@ function sendNotification(title, body, icon) {
                     unlocked.push(itemId); 
                     myProfile.unlocked = unlocked;
                     
+                    if (item.isCustom) {
+                        saveProfile();
+                        renderShop(tab);
+                        document.getElementById('shopOrbCount').innerText = myProfile.orbs - item.price;
+                        showToast("Successfully purchased " + item.name + "!", "success");
+                        handleShopClick(tab, itemId); // Open picker immediately after purchase
+                        return;
+                    }
+
                     if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
                     else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
                     else if (tab === 'badges') { myProfile.badge = item.id; }
