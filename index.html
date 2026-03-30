@@ -800,7 +800,7 @@
         /* ================= SHOP ITEMS ================= */
         .shop-grid { 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 12px; 
             width: 100%; 
             max-width: 400px; 
@@ -808,18 +808,21 @@
             height: calc(100vh - 250px);
             padding-bottom: 120px;
             padding-right: 5px;
+            box-sizing: border-box;
         }
         .shop-item { 
             background: var(--glass-surface); 
             border: 1px solid var(--glass-border); 
             border-radius: 16px; 
-            padding: 15px; 
+            padding: 15px 10px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             gap: 8px; 
             transition: 0.2s;
             cursor: pointer;
+            box-sizing: border-box;
+            width: 100%;
         }
         .shop-item:active { transform: scale(0.95); }
         .color-preview { 
@@ -1936,34 +1939,16 @@ function sendNotification(title, body, icon) {
         // --- FREE SHOP DATA (10 Free Themes, 8 Free Bubbles + Premium Options) ---
         const shopData = {
             bubbles: [
-                { id: 'b_free', name: 'Classic Gold', color: '#ffcc00', text: '#000', price: 0 },
-                { id: 'b_gray', name: 'Ghost Gray', color: '#e0e0e0', text: '#000', price: 0 },
-                { id: 'b_pink', name: 'Neon Pink', color: '#ff007f', text: '#fff', price: 0 },
-                { id: 'b_purple', name: 'Cyber Purple', color: '#8a2be2', text: '#fff', price: 0 },
-                { id: 'b_green', name: 'Matrix Green', color: '#00ff66', text: '#000', price: 0 },
-                { id: 'b_red', name: 'Fire Red', color: '#ff003c', text: '#fff', price: 0 },
-                { id: 'b_blue', name: 'Ocean Blue', color: '#00aaff', text: '#000', price: 0 },
-                { id: 'b_black', name: 'Stealth Black', color: '#111111', text: '#fff', price: 0 },
-                { id: 'b_diamond', name: 'Diamond VIP', color: '#b9f2ff', text: '#003366', price: 500 },
-                { id: 'b_holographic', name: 'Holographic', color: 'linear-gradient(45deg, #ff00cc, #3333ff)', text: '#fff', price: 1000 },
-                { id: 'b_crown', name: 'Golden Crown', color: 'linear-gradient(180deg, #ffd700, #b8860b)', text: '#000', price: 1500 },
-                { id: 'b_matrix', name: 'The Matrix', color: 'black', text: '#0f0', price: 2000, isClass: true },
-                { id: 'b_starry', name: 'Starry Night', color: '#090a0f', text: 'white', price: 2500, isClass: true }
+                { id: 'b_white', name: 'Classic White', color: '#ffffff', text: '#000', price: 0 },
+                { id: 'b_gold', name: 'Solid Gold', color: '#ffd700', text: '#000', price: 500 },
+                { id: 'b_electric', name: 'Electric Blue', color: '#00e5ff', text: '#000', price: 500 },
+                { id: 'b_rainbow', name: 'Rainbow Flow', color: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', text: '#000', price: 1500 }
             ],
             themes: [
-                { id: 't_free', name: 'Default Dark', bg: '#0f1014', acc: '#ffcc00', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_day', name: 'Day Mode', bg: '#f0f2f5', acc: '#ff9900', isl: '#ffffff', txt: '#000000', txtSec: '#666666', price: 0 },
-                { id: 't_midnight', name: 'Midnight Blue', bg: '#020b14', acc: '#00d4ff', isl: '#06182c', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_sakura', name: 'Sakura Pink', bg: '#2b0f19', acc: '#ffb7c5', isl: '#3d1624', txt: '#ffffff', txtSec: '#ffb7c5', price: 0 },
-                { id: 't_cyberpunk', name: 'Cyberpunk 2077', bg: '#100c24', acc: '#fcee0a', isl: '#1c163b', txt: '#00f0ff', txtSec: '#fcee0a', price: 0 },
-                { id: 't_sunset', name: 'Sunset Orange', bg: '#1a0b02', acc: '#ff5e00', isl: '#2b1204', txt: '#ffffff', txtSec: '#ffb48a', price: 0 },
-                { id: 't_mint', name: 'Mint Fresh', bg: '#081710', acc: '#3bdf91', isl: '#0e2419', txt: '#ffffff', txtSec: '#9be8c2', price: 0 },
-                { id: 't_hacker', name: 'Hacker Terminal', bg: '#000000', acc: '#00ff00', isl: '#0a0a0a', txt: '#00ff00', txtSec: '#008800', price: 0 },
-                { id: 't_dracula', name: 'Vampire Red', bg: '#120202', acc: '#ff003c', isl: 'rgba(20, 5, 5, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
-                { id: 't_royal', name: 'Royal Purple', bg: '#0d0214', acc: '#b200ff', isl: 'rgba(15, 5, 25, 0.98)', txt: '#ffffff', txtSec: '#c8a2c8', price: 0 },
-                { id: 't_obsidian', name: 'Obsidian Black', bg: '#000000', acc: '#444444', isl: '#111111', txt: '#ffffff', txtSec: '#888888', price: 500 },
-                { id: 't_luxury', name: 'Gold Luxury', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 1000 },
-                { id: 't_galactic', name: 'Galactic Void', bg: '#050014', acc: '#ff00ff', isl: '#0a0029', txt: '#00ffff', txtSec: '#ff00ff', price: 2000 }
+                { id: 't_white', name: 'Classic White', bg: '#0f1014', acc: '#ffffff', isl: 'rgba(22, 22, 22, 0.98)', txt: '#ffffff', txtSec: '#9ca3af', price: 0 },
+                { id: 't_gold', name: 'Solid Gold', bg: '#141108', acc: '#ffd700', isl: '#241f0f', txt: '#ffffff', txtSec: '#ffd700', price: 500 },
+                { id: 't_electric', name: 'Electric Blue', bg: '#020b14', acc: '#00e5ff', isl: '#06182c', txt: '#ffffff', txtSec: '#9ca3af', price: 500 },
+                { id: 't_rainbow', name: 'Rainbow Flow', bg: '#000000', acc: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', isl: '#111111', txt: '#ffffff', txtSec: '#888888', price: 1500 }
             ],
             badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
@@ -2737,23 +2722,21 @@ function sendNotification(title, body, icon) {
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
                 
-                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                let previewHtml = `<div class="color-preview" style="background: ${item.acc || item.color || item.value};"></div>`;
                 if(tab === 'bubbles') {
-                    // Show a split gradient of bubble background and text color
+                    // Show solid bubble background color exactly to match nameColors
                     const bg = item.color || 'var(--island)';
-                    const text = item.text || '#fff';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${text} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${bg};"></div>`;
                 } else if(tab === 'themes') {
-                    // Show a split gradient of theme background and accent color
-                    const bg = item.bg || 'var(--bg-dark)';
+                    // Show solid theme accent color exactly to match nameColors
                     const acc = item.acc || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="background: linear-gradient(135deg, ${bg} 50%, ${acc} 50%); width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${acc};"></div>`;
                 } else if(tab === 'badges') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
                 } else if(tab === 'fonts') {
                     previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
                 } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="color-preview" style="background: ${item.value}; width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 5px auto; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>`;
+                    previewHtml = `<div class="color-preview" style="background: ${item.value};"></div>`;
                 } else if (tab === 'avatarRings') {
                     previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
                 } else if (tab === 'sounds') {
