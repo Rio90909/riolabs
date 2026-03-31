@@ -2580,6 +2580,11 @@ function sendNotification(title, body, icon) {
                     return;
                 }
                 myProfile.isAdmin = d.isAdmin || false;
+
+                // Re-evaluate maintenance lock since we just loaded the profile
+                if (typeof checkMaintenanceLock === 'function') {
+                    checkMaintenanceLock();
+                }
                 myProfile.name = d.name || user.displayName || document.getElementById('userInput').value || "Guest User"; 
                 myProfile.pic = d.pic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}&backgroundColor=b6e3f4`; 
                 myProfile.banner = d.banner || ''; 
@@ -3575,29 +3580,39 @@ function sendNotification(title, body, icon) {
         }
 
         // Listen for Maintenance Mode
+        let isMaintenanceActive = false;
         db.ref('globalSettings/maintenance').on('value', snap => {
-            const isMaintenance = snap.val() || false;
+            isMaintenanceActive = snap.val() || false;
 
             // Sync the admin toggle switch if they are looking at it
             const toggle = document.getElementById('adminMaintenanceToggle');
-            if (toggle) toggle.checked = isMaintenance;
+            if (toggle) toggle.checked = isMaintenanceActive;
 
-            // Enforce maintenance mode for non-admins
-            if (isMaintenance) {
-                if (!myProfile || !myProfile.isAdmin) {
+            checkMaintenanceLock();
+        });
+
+        // Helper to evaluate if we should lock the screen
+        function checkMaintenanceLock() {
+            if (isMaintenanceActive) {
+                // Do not lock if user is explicitly an admin (checking both profile object or local token if bypassing auth)
+                const isUserAdmin = (window.myProfile && window.myProfile.isAdmin === true);
+                if (!isUserAdmin) {
                     switchScreen('maintenance-screen');
+                } else if (document.getElementById('maintenance-screen').classList.contains('active')) {
+                    // Admin might have been briefly locked while profile loaded, let them back in
+                    switchScreen('hub-screen');
                 }
             } else {
                 // If maintenance turns off and they were stuck on the screen, reload or send to auth/hub
                 if (document.getElementById('maintenance-screen').classList.contains('active')) {
-                    if (user && myProfile) {
+                    if (user && window.myProfile) {
                         switchScreen('hub-screen');
                     } else {
                         switchScreen('auth-screen');
                     }
                 }
             }
-        });
+        }
 
         let adminLiveChatRef = null;
         window.adminToggleLiveChat = function() {
