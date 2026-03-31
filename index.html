@@ -1298,7 +1298,29 @@
                     <option value="admin">Administrator</option>
                 </select>
             </div>
-            <button class="btn-primary ripple-target" style="margin-top:10px; background:var(--error-red); color:#fff;" onclick="adminSaveUserEdit()">Save Changes</button>
+
+            <div style="display:flex; flex-direction:column; gap:5px; margin-top: 10px;">
+                <label style="font-size:12px; color:var(--accent-purple);"><i class="fa-solid fa-box-open"></i> Inventory Editor</label>
+                <div style="display:flex; gap: 10px;">
+                    <select id="adminEditInventoryCat" class="auth-input" style="height:40px; flex: 1;" onchange="adminUpdateInventorySelect()">
+                        <option value="bubbles">Bubbles</option>
+                        <option value="themes">Themes</option>
+                        <option value="badges">Badges</option>
+                        <option value="fonts">Fonts</option>
+                        <option value="nameColors">Name Colors</option>
+                        <option value="avatarRings">Rings</option>
+                    </select>
+                    <select id="adminEditInventoryItem" class="auth-input" style="height:40px; flex: 2;">
+                        <!-- populated by JS -->
+                    </select>
+                </div>
+                <div style="display:flex; gap: 10px; margin-top: 5px;">
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 35px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4);" onclick="adminInventoryAction('grant')">Grant</button>
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 35px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminInventoryAction('revoke')">Revoke</button>
+                </div>
+            </div>
+
+            <button class="btn-primary ripple-target" style="margin-top:10px; background:var(--error-red); color:#fff;" onclick="adminSaveUserEdit()">Save Profile Changes</button>
         </div>
     </div>
 
@@ -1306,7 +1328,16 @@
         <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
         <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
         <div style="flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 15px;">
-            <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create a new item in the global shop database. Be careful with custom CSS values.</p>
+            <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create or Edit items in the global shop database.</p>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Mode</label>
+                <select id="adminShopMode" class="auth-input" style="height:40px;" onchange="adminToggleShopMode()">
+                    <option value="new">Create New Item</option>
+                    <option value="edit">Edit Existing Item</option>
+                </select>
+            </div>
+
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Category</label>
                 <select id="adminShopCategory" class="auth-input" style="height:40px;" onchange="adminUpdateShopFields()">
@@ -1318,9 +1349,17 @@
                     <option value="avatarRings">Avatar Rings</option>
                 </select>
             </div>
+
+            <div id="adminShopEditSelectContainer" style="display:none; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Select Item to Edit</label>
+                <select id="adminShopEditSelect" class="auth-input" style="height:40px;" onchange="adminLoadExistingShopItem()">
+                    <!-- Populated by JS -->
+                </select>
+            </div>
+
             <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID (e.g. b_custom_1)</label>
-                <input type="text" id="adminShopId" class="auth-input" style="height:40px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID</label>
+                <input type="text" id="adminShopId" class="auth-input" style="height:40px;" placeholder="e.g. b_custom_1">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
@@ -1408,6 +1447,16 @@
         
         <div id="upActions" style="width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center;">
             </div>
+    </div>
+
+    <div id="maintenance-screen" class="screen" style="background: var(--bg-dark); z-index: 100000; justify-content: center;">
+        <div class="auth-container" style="text-align: center;">
+            <div class="logo-wrap" style="background: rgba(255, 204, 0, 0.1); color: var(--accent-yellow);">
+                <i class="fa-solid fa-person-digging logo-icon"></i>
+            </div>
+            <h2 style="margin: 0 0 5px 0;">Under Maintenance</h2>
+            <p style="color: var(--text-secondary); font-size: 14px; margin: 0 0 20px 0;">We are currently upgrading the servers. Please check back soon!</p>
+        </div>
     </div>
 
     <div id="auth-screen" class="screen active">
@@ -1696,6 +1745,13 @@
                 <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
                     <i class="fa-solid fa-bullhorn"></i> System Broadcast
                 </button>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 13px; color: var(--text-secondary);"><i class="fa-solid fa-person-digging"></i> Maintenance Mode</div>
+                    <label class="switch">
+                        <input type="checkbox" id="adminMaintenanceToggle" onchange="adminToggleMaintenance()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
 
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
@@ -1715,6 +1771,19 @@
                 <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Manage Shop Items
                 </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin: 0; font-size: 15px; color: var(--accent-blue);"><i class="fa-solid fa-eye"></i> Live Chat Viewer</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="adminLiveChatToggle" onchange="adminToggleLiveChat()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                    <div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -3497,6 +3566,93 @@ function sendNotification(title, body, icon) {
             }
         }
 
+        window.adminToggleMaintenance = function() {
+            if(!myProfile.isAdmin) return;
+            const isChecked = document.getElementById('adminMaintenanceToggle').checked;
+            db.ref('globalSettings/maintenance').set(isChecked).then(() => {
+                showToast(isChecked ? "Maintenance Mode ENABLED" : "Maintenance Mode DISABLED", isChecked ? "error" : "success");
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        // Listen for Maintenance Mode
+        db.ref('globalSettings/maintenance').on('value', snap => {
+            const isMaintenance = snap.val() || false;
+
+            // Sync the admin toggle switch if they are looking at it
+            const toggle = document.getElementById('adminMaintenanceToggle');
+            if (toggle) toggle.checked = isMaintenance;
+
+            // Enforce maintenance mode for non-admins
+            if (isMaintenance) {
+                if (!myProfile || !myProfile.isAdmin) {
+                    switchScreen('maintenance-screen');
+                }
+            } else {
+                // If maintenance turns off and they were stuck on the screen, reload or send to auth/hub
+                if (document.getElementById('maintenance-screen').classList.contains('active')) {
+                    if (user && myProfile) {
+                        switchScreen('hub-screen');
+                    } else {
+                        switchScreen('auth-screen');
+                    }
+                }
+            }
+        });
+
+        let adminLiveChatRef = null;
+        window.adminToggleLiveChat = function() {
+            if(!myProfile.isAdmin) return;
+            const isChecked = document.getElementById('adminLiveChatToggle').checked;
+            const box = document.getElementById('adminLiveChatBox');
+
+            if (isChecked) {
+                box.style.display = 'flex';
+                box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>';
+
+                adminLiveChatRef = db.ref('rooms/GlobalLobby');
+                adminLiveChatRef.limitToLast(15).on('child_added', snap => {
+                    const msg = snap.val();
+                    const key = snap.key;
+                    if(box.innerHTML.includes('Connecting')) box.innerHTML = '';
+
+                    const safeName = escapeAdminHTML(msg.name || 'Unknown');
+                    const safeTxt = escapeAdminHTML(msg.txt || '');
+
+                    const msgDiv = document.createElement('div');
+                    msgDiv.id = `admin-msg-${key}`;
+                    msgDiv.style.cssText = "display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; margin-bottom:5px;";
+                    msgDiv.innerHTML = `
+                        <div style="flex:1; padding-right:10px;">
+                            <span style="color:${msg.nameColor || 'var(--accent-blue)'}; font-weight:bold;">${safeName}:</span>
+                            <span style="color:var(--text-primary);">${safeTxt}</span>
+                        </div>
+                        <button style="background:none; border:none; color:var(--error-red); cursor:pointer; font-size:12px; padding:2px 5px;" onclick="adminDeleteLiveMsg('${key}')"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    box.appendChild(msgDiv);
+                    box.scrollTop = box.scrollHeight;
+                });
+
+                adminLiveChatRef.on('child_removed', snap => {
+                    const el = document.getElementById(`admin-msg-${snap.key}`);
+                    if(el) el.remove();
+                });
+
+            } else {
+                box.style.display = 'none';
+                if(adminLiveChatRef) {
+                    adminLiveChatRef.off();
+                    adminLiveChatRef = null;
+                }
+            }
+        }
+
+        window.adminDeleteLiveMsg = function(msgKey) {
+            if(!myProfile.isAdmin) return;
+            db.ref(`rooms/GlobalLobby/${msgKey}`).remove().then(() => {
+                showToast("Message deleted.", "success");
+            }).catch(err => showToast(err.message, "error"));
+        }
+
         function escapeAdminHTML(str) {
             if(!str) return '';
             return str.replace(/[&<>'"]/g,
@@ -3581,6 +3737,7 @@ function sendNotification(title, body, icon) {
             }
         }
 
+        let adminCurrentEditUserUnlocked = [];
         window.adminEditUser = function(targetUid) {
             if(!myProfile.isAdmin) return;
             db.ref(`users/${targetUid}`).once('value').then(snap => {
@@ -3593,10 +3750,54 @@ function sendNotification(title, body, icon) {
                 document.getElementById('adminEditOrbs').value = userData.orbs || 0;
                 document.getElementById('adminEditRole').value = userData.isAdmin ? "admin" : "user";
 
+                adminCurrentEditUserUnlocked = userData.unlocked || [];
+                adminUpdateInventorySelect(); // initialize the dropdown
+
                 const overlay = document.getElementById('sheetOverlay');
                 if(overlay) overlay.classList.add('show');
                 const sheet = document.getElementById('adminEditUserSheet');
                 if(sheet) sheet.classList.add('show');
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminUpdateInventorySelect = function() {
+            const cat = document.getElementById('adminEditInventoryCat').value;
+            const select = document.getElementById('adminEditInventoryItem');
+            select.innerHTML = '';
+
+            const items = shopData[cat] || [];
+            items.forEach(item => {
+                // Determine if user has it
+                const hasIt = item.price === 0 || adminCurrentEditUserUnlocked.includes(item.id);
+                select.innerHTML += `<option value="${item.id}" ${hasIt ? 'style="color:var(--success-green);"' : ''}>${hasIt ? '✓ ' : ''}${item.name}</option>`;
+            });
+        }
+
+        window.adminInventoryAction = function(action) {
+            if(!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            const itemId = document.getElementById('adminEditInventoryItem').value;
+            if(!uid || !itemId) return;
+
+            if (action === 'grant') {
+                if (!adminCurrentEditUserUnlocked.includes(itemId)) {
+                    adminCurrentEditUserUnlocked.push(itemId);
+                } else {
+                    return showToast("User already has this item.", "error");
+                }
+            } else if (action === 'revoke') {
+                const index = adminCurrentEditUserUnlocked.indexOf(itemId);
+                if (index > -1) {
+                    adminCurrentEditUserUnlocked.splice(index, 1);
+                } else {
+                    return showToast("User doesn't own this item.", "error");
+                }
+            }
+
+            // Immediately save to DB
+            db.ref(`users/${uid}/unlocked`).set(adminCurrentEditUserUnlocked).then(() => {
+                showToast(`Item ${action}ed successfully!`, "success");
+                adminUpdateInventorySelect(); // refresh the visual ✓
             }).catch(err => showToast(err.message, "error"));
         }
 
@@ -3621,6 +3822,75 @@ function sendNotification(title, body, icon) {
             if(overlay) overlay.classList.remove('show');
             const sheet = document.getElementById('adminShopSheet');
             if(sheet) sheet.classList.remove('show');
+        }
+
+        window.adminToggleShopMode = function() {
+            const mode = document.getElementById('adminShopMode').value;
+            const editSelectContainer = document.getElementById('adminShopEditSelectContainer');
+            const idInput = document.getElementById('adminShopId');
+
+            if (mode === 'edit') {
+                editSelectContainer.style.display = 'flex';
+                idInput.readOnly = true;
+                idInput.style.opacity = '0.5';
+                adminPopulateEditDropdown();
+            } else {
+                editSelectContainer.style.display = 'none';
+                idInput.readOnly = false;
+                idInput.style.opacity = '1';
+
+                // Clear fields for new item
+                document.getElementById('adminShopId').value = '';
+                document.getElementById('adminShopName').value = '';
+                document.getElementById('adminShopPrice').value = '1000';
+                adminUpdateShopFields(); // Re-render empty dynamic fields
+            }
+        }
+
+        window.adminPopulateEditDropdown = function() {
+            const cat = document.getElementById('adminShopCategory').value;
+            const select = document.getElementById('adminShopEditSelect');
+            select.innerHTML = '<option value="">-- Select Item --</option>';
+
+            const items = shopData[cat] || [];
+            items.forEach(item => {
+                select.innerHTML += `<option value="${item.id}">${item.name} (${item.id})</option>`;
+            });
+        }
+
+        window.adminLoadExistingShopItem = function() {
+            const cat = document.getElementById('adminShopCategory').value;
+            const id = document.getElementById('adminShopEditSelect').value;
+            if (!id) return;
+
+            const item = (shopData[cat] || []).find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('adminShopId').value = item.id;
+            document.getElementById('adminShopName').value = item.name;
+            document.getElementById('adminShopPrice').value = item.price;
+
+            // Make sure fields are rendered
+            adminUpdateShopFields();
+
+            setTimeout(() => {
+                if (cat === 'bubbles') {
+                    if(document.getElementById('adminShopBubbleBg')) document.getElementById('adminShopBubbleBg').value = item.color || '';
+                    if(document.getElementById('adminShopBubbleText')) document.getElementById('adminShopBubbleText').value = item.text || '';
+                } else if (cat === 'themes') {
+                    if(document.getElementById('adminShopThemeBg')) document.getElementById('adminShopThemeBg').value = item.bg || '';
+                    if(document.getElementById('adminShopThemeAcc')) document.getElementById('adminShopThemeAcc').value = item.acc || '';
+                    if(document.getElementById('adminShopThemeIsl')) document.getElementById('adminShopThemeIsl').value = item.isl || '';
+                    if(document.getElementById('adminShopThemeTxt')) document.getElementById('adminShopThemeTxt').value = item.txt || '';
+                    if(document.getElementById('adminShopThemeTxtSec')) document.getElementById('adminShopThemeTxtSec').value = item.txtSec || '';
+                } else if (cat === 'badges') {
+                    if(document.getElementById('adminShopBadgeIcon')) document.getElementById('adminShopBadgeIcon').value = item.icon || '';
+                    if(document.getElementById('adminShopBadgeColor')) document.getElementById('adminShopBadgeColor').value = item.color || '';
+                } else if (cat === 'fonts' || cat === 'nameColors' || cat === 'avatarRings') {
+                    const valInput = document.getElementById(cat === 'fonts' ? 'adminShopFontVal' : (cat === 'nameColors' ? 'adminShopNameColorVal' : 'adminShopRingVal'));
+                    if (valInput) valInput.value = item.value || '';
+                }
+            }, 50);
         }
 
         window.adminUpdateShopFields = function() {
@@ -3660,11 +3930,19 @@ function sendNotification(title, body, icon) {
                 `;
             }
             container.innerHTML = html;
+
+            // If in edit mode, re-populate dropdown and load data
+            if (document.getElementById('adminShopMode').value === 'edit') {
+                adminPopulateEditDropdown();
+                document.getElementById('adminShopId').value = '';
+                document.getElementById('adminShopName').value = '';
+            }
         }
 
         window.adminSaveNewShopItem = function() {
             if(!myProfile.isAdmin) return;
 
+            const mode = document.getElementById('adminShopMode').value;
             const cat = document.getElementById('adminShopCategory').value;
             const id = document.getElementById('adminShopId').value.trim();
             const name = document.getElementById('adminShopName').value.trim();
@@ -3696,18 +3974,26 @@ function sendNotification(title, body, icon) {
                 newItem.value = document.getElementById('adminShopRingVal').value.trim();
             }
 
-            // Grab existing array from shopData, append, and save
+            // Grab existing array from shopData
             let currentArray = shopData[cat] || [];
 
-            // Prevent duplicate IDs
-            if(currentArray.find(i => i.id === id)) {
-                return showToast("An item with this ID already exists in this category.", "error");
+            if (mode === 'new') {
+                // Prevent duplicate IDs
+                if(currentArray.find(i => i.id === id)) {
+                    return showToast("An item with this ID already exists in this category.", "error");
+                }
+                currentArray.push(newItem);
+            } else {
+                // Edit existing
+                const index = currentArray.findIndex(i => i.id === id);
+                if (index === -1) return showToast("Original item not found.", "error");
+                // Preserve the isCustom flag if it exists
+                if (currentArray[index].isCustom) newItem.isCustom = true;
+                currentArray[index] = newItem;
             }
 
-            currentArray.push(newItem);
-
             db.ref(`globalSettings/shopData/${cat}`).set(currentArray).then(() => {
-                showToast(`New ${cat} item created successfully!`, "success");
+                showToast(mode === 'new' ? `New ${cat} item created successfully!` : `Item edited successfully!`, "success");
                 closeAdminShopSheet();
             }).catch(err => showToast(err.message, "error"));
         }
