@@ -1527,7 +1527,7 @@
                 <span class="secure-badge" style="margin-bottom: 8px;"><i class="fa-solid fa-lock" style="margin-right:3px;"></i>Tap Name/Pic to Edit</span>
                 
                 <p id="displayBio" class="profile-bio" onclick="editBio()" title="Tap to edit">Tap to add "About Me" bio...</p>
-                <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined: <span id="displayJoinDate" ondblclick="openAdminPanel()">Today</span></div>
+                <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined: <span id="displayJoinDate">Today</span></div>
                 
         <div class="orb-badge" onclick="document.querySelector('.dock-btn[data-tab=\'tab-shop\']').click();"><i class="fa-solid fa-gem"></i> <span id="orbCountDisplay">0</span> Orbs</div>
                 <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px;">Tap to open Shop</div>
@@ -3393,10 +3393,17 @@ function sendNotification(title, body, icon) {
             }
         }
 
+        function escapeAdminHTML(str) {
+            if(!str) return '';
+            return str.replace(/[&<>'"]/g,
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
+            );
+        }
+
         let adminSearchTimeout = null;
         window.adminSearchUsers = function() {
             if(!myProfile.isAdmin) return;
-            const query = document.getElementById('adminSearchInput').value.toLowerCase().trim();
+            const query = document.getElementById('adminSearchInput').value.trim();
             const resultsBox = document.getElementById('adminSearchResults');
 
             if (query.length < 2) {
@@ -3406,23 +3413,30 @@ function sendNotification(title, body, icon) {
 
             clearTimeout(adminSearchTimeout);
             adminSearchTimeout = setTimeout(() => {
-                db.ref('users').once('value', snap => {
+                // PERFORMANCE FIX: Query the specific start index instead of pulling all users at once
+                db.ref('users').orderByChild('name').startAt(query).endAt(query + "\uf8ff").limitToFirst(20).once('value', snap => {
                     resultsBox.innerHTML = '';
                     let found = false;
 
                     snap.forEach(child => {
                         const ud = child.val();
-                        if (ud.name && ud.name.toLowerCase().includes(query)) {
+                        if (ud.name) {
                             found = true;
                             const isBanned = ud.isBanned || false;
+
+                            // XSS FIX: Safely escape rendering strings and encode URI for pic
+                            const safeName = escapeAdminHTML(ud.name);
+                            const safeUid = escapeAdminHTML(ud.uid || child.key);
+                            const safePic = encodeURI(ud.pic || 'https://api.dicebear.com/7.x/avataaars/svg?seed=fallback');
+                            const orbs = parseInt(ud.orbs) || 0;
 
                             resultsBox.innerHTML += `
                                 <div class="friend-list-item" style="flex-wrap: wrap; gap: 10px;">
                                     <div class="friend-info" style="flex: 1; min-width: 150px;">
-                                        <img src="${ud.pic}" class="friend-avatar">
+                                        <img src="${safePic}" class="friend-avatar">
                                         <div style="display:flex; flex-direction:column;">
-                                            <span class="friend-name">${ud.name}</span>
-                                            <span style="font-size:10px; color:var(--text-secondary);">${ud.uid} | ${ud.orbs} Orbs</span>
+                                            <span class="friend-name">${safeName}</span>
+                                            <span style="font-size:10px; color:var(--text-secondary);">${safeUid} | ${orbs} Orbs</span>
                                         </div>
                                     </div>
                                     <div style="display:flex; gap:5px;">
