@@ -1324,10 +1324,10 @@
         </div>
     </div>
 
-    <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; height: 90vh; padding-bottom: 20px;">
+    <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
         <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
-        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
             <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create or Edit items in the global shop database.</p>
 
             <input type="hidden" id="adminShopMode" value="new">
@@ -3793,6 +3793,7 @@ function sendNotification(title, body, icon) {
                 idInput.readOnly = true;
                 idInput.style.opacity = '0.5';
                 adminPopulateEditDropdown();
+                adminUpdateShopFields(); // Initial render for edit mode
             } else {
                 editSelectContainer.style.display = 'none';
                 idInput.readOnly = false;
@@ -3825,12 +3826,13 @@ function sendNotification(title, body, icon) {
             const item = (shopData[cat] || []).find(i => i.id === id);
             if (!item) return;
 
+            // Update main fields
             document.getElementById('adminShopId').value = item.id;
             document.getElementById('adminShopName').value = item.name;
             document.getElementById('adminShopPrice').value = item.price;
 
-            // Make sure fields are rendered
-            adminUpdateShopFields();
+            // Re-render HTML dynamically but don't reset dropdowns/inputs
+            adminUpdateShopFields(true);
 
             setTimeout(() => {
                 if (cat === 'bubbles') {
@@ -3852,7 +3854,7 @@ function sendNotification(title, body, icon) {
             }, 50);
         }
 
-        window.adminUpdateShopFields = function() {
+        window.adminUpdateShopFields = function(skipRepopulate = false) {
             const cat = document.getElementById('adminShopCategory').value;
             const container = document.getElementById('adminShopDynamicFields');
             let html = '';
@@ -3888,13 +3890,21 @@ function sendNotification(title, body, icon) {
                     <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Border/Box-Shadow Value</label><input type="text" id="adminShopRingVal" class="auth-input" style="height:40px;" placeholder="4px solid #ff0000; box-shadow: 0 0 10px #ff0000;"></div>
                 `;
             }
-            container.innerHTML = html;
+            // Determine if the structure changed. If yes, re-render html, otherwise skip it if skipRepopulate is true
+            // To be totally safe, just always replace it unless skipRepopulate is explicitly true AND there's already content.
+            // Actually, we shouldn't skip recreating HTML. We just shouldn't clear the inputs if skipRepopulate is true.
+            if (!skipRepopulate || container.innerHTML.trim() === '') {
+                container.innerHTML = html;
+            }
 
             // If in edit mode, re-populate dropdown and load data
             if (document.getElementById('adminShopMode').value === 'edit') {
-                adminPopulateEditDropdown();
-                document.getElementById('adminShopId').value = '';
-                document.getElementById('adminShopName').value = '';
+                if (!skipRepopulate) {
+                    adminPopulateEditDropdown();
+                    document.getElementById('adminShopId').value = '';
+                    document.getElementById('adminShopName').value = '';
+                    document.getElementById('adminShopPrice').value = '1000';
+                }
             }
         }
 
