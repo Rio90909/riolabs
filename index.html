@@ -1449,16 +1449,6 @@
             </div>
     </div>
 
-    <div id="maintenance-screen" class="screen" style="background: var(--bg-dark); z-index: 100000; justify-content: center;">
-        <div class="auth-container" style="text-align: center;">
-            <div class="logo-wrap" style="background: rgba(255, 204, 0, 0.1); color: var(--accent-yellow);">
-                <i class="fa-solid fa-person-digging logo-icon"></i>
-            </div>
-            <h2 style="margin: 0 0 5px 0;">Under Maintenance</h2>
-            <p style="color: var(--text-secondary); font-size: 14px; margin: 0 0 20px 0;">We are currently upgrading the servers. Please check back soon!</p>
-        </div>
-    </div>
-
     <div id="auth-screen" class="screen active">
         <div class="auth-container">
             <div class="logo-wrap">
@@ -1745,13 +1735,6 @@
                 <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
                     <i class="fa-solid fa-bullhorn"></i> System Broadcast
                 </button>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 13px; color: var(--text-secondary);"><i class="fa-solid fa-person-digging"></i> Maintenance Mode</div>
-                    <label class="switch">
-                        <input type="checkbox" id="adminMaintenanceToggle" onchange="adminToggleMaintenance()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
             </div>
 
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
@@ -2580,11 +2563,6 @@ function sendNotification(title, body, icon) {
                     return;
                 }
                 myProfile.isAdmin = d.isAdmin || false;
-
-                // Re-evaluate maintenance lock since we just loaded the profile
-                if (typeof checkMaintenanceLock === 'function') {
-                    checkMaintenanceLock();
-                }
                 myProfile.name = d.name || user.displayName || document.getElementById('userInput').value || "Guest User"; 
                 myProfile.pic = d.pic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}&backgroundColor=b6e3f4`; 
                 myProfile.banner = d.banner || ''; 
@@ -3568,49 +3546,6 @@ function sendNotification(title, body, icon) {
                     delivered: true,
                     edited: false
                 }).then(() => showToast("Broadcast sent.", "success"));
-            }
-        }
-
-        window.adminToggleMaintenance = function() {
-            if(!myProfile.isAdmin) return;
-            const isChecked = document.getElementById('adminMaintenanceToggle').checked;
-            db.ref('globalSettings/maintenance').set(isChecked).then(() => {
-                showToast(isChecked ? "Maintenance Mode ENABLED" : "Maintenance Mode DISABLED", isChecked ? "error" : "success");
-            }).catch(err => showToast(err.message, "error"));
-        }
-
-        // Listen for Maintenance Mode
-        let isMaintenanceActive = false;
-        db.ref('globalSettings/maintenance').on('value', snap => {
-            isMaintenanceActive = snap.val() || false;
-
-            // Sync the admin toggle switch if they are looking at it
-            const toggle = document.getElementById('adminMaintenanceToggle');
-            if (toggle) toggle.checked = isMaintenanceActive;
-
-            checkMaintenanceLock();
-        });
-
-        // Helper to evaluate if we should lock the screen
-        function checkMaintenanceLock() {
-            if (isMaintenanceActive) {
-                // Do not lock if user is explicitly an admin (checking both profile object or local token if bypassing auth)
-                const isUserAdmin = (window.myProfile && window.myProfile.isAdmin === true);
-                if (!isUserAdmin) {
-                    switchScreen('maintenance-screen');
-                } else if (document.getElementById('maintenance-screen').classList.contains('active')) {
-                    // Admin might have been briefly locked while profile loaded, let them back in
-                    switchScreen('hub-screen');
-                }
-            } else {
-                // If maintenance turns off and they were stuck on the screen, reload or send to auth/hub
-                if (document.getElementById('maintenance-screen').classList.contains('active')) {
-                    if (user && window.myProfile) {
-                        switchScreen('hub-screen');
-                    } else {
-                        switchScreen('auth-screen');
-                    }
-                }
             }
         }
 
