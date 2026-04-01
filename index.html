@@ -1277,7 +1277,7 @@
     <div class="bottom-sheet" id="adminEditUserSheet" style="z-index: 10000; height: 85vh; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminEditUserSheet()"></div>
         <div class="sheet-title" style="color:var(--error-red);"><i class="fa-solid fa-user-pen"></i> Edit User Profile</div>
-        <div style="flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 15px;">
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
             <input type="hidden" id="adminEditUid">
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Username</label>
@@ -1327,47 +1327,48 @@
     <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; height: 90vh; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
         <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
-        <div style="flex: 1; overflow-y: auto; padding: 10px 20px; display: flex; flex-direction: column; gap: 15px;">
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
             <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create or Edit items in the global shop database.</p>
 
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:12px; color:var(--text-secondary);">Mode</label>
-                <select id="adminShopMode" class="auth-input" style="height:40px;" onchange="adminToggleShopMode()">
-                    <option value="new">Create New Item</option>
-                    <option value="edit">Edit Existing Item</option>
-                </select>
+            <input type="hidden" id="adminShopMode" value="new">
+            <div class="picker-tabs" style="background: rgba(150,150,150,0.05); padding: 4px; border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 5px;">
+                <div id="tabShopModeNew" class="p-tab active" onclick="adminToggleShopModeTab('new')" style="flex:1;">Create New Item</div>
+                <div id="tabShopModeEdit" class="p-tab" onclick="adminToggleShopModeTab('edit')" style="flex:1;">Edit Existing</div>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Category</label>
-                <select id="adminShopCategory" class="auth-input" style="height:40px;" onchange="adminUpdateShopFields()">
-                    <option value="bubbles">Chat Bubbles</option>
-                    <option value="themes">App Themes</option>
-                    <option value="badges">Profile Badges</option>
-                    <option value="fonts">Chat Fonts</option>
-                    <option value="nameColors">Name Colors</option>
-                    <option value="avatarRings">Avatar Rings</option>
+                <select id="adminShopCategory" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;" onchange="adminUpdateShopFields()">
+                    <option value="bubbles" style="background:var(--bg-dark);">Chat Bubbles</option>
+                    <option value="themes" style="background:var(--bg-dark);">App Themes</option>
+                    <option value="badges" style="background:var(--bg-dark);">Profile Badges</option>
+                    <option value="fonts" style="background:var(--bg-dark);">Chat Fonts</option>
+                    <option value="nameColors" style="background:var(--bg-dark);">Name Colors</option>
+                    <option value="avatarRings" style="background:var(--bg-dark);">Avatar Rings</option>
                 </select>
             </div>
 
             <div id="adminShopEditSelectContainer" style="display:none; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Select Item to Edit</label>
-                <select id="adminShopEditSelect" class="auth-input" style="height:40px;" onchange="adminLoadExistingShopItem()">
+                <select id="adminShopEditSelect" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:8px; padding:0 10px; outline:none;" onchange="adminLoadExistingShopItem()">
                     <!-- Populated by JS -->
                 </select>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID</label>
-                <input type="text" id="adminShopId" class="auth-input" style="height:40px;" placeholder="e.g. b_custom_1">
+                <input type="text" id="adminShopId" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;" placeholder="e.g. b_custom_1">
             </div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
-                <input type="text" id="adminShopName" class="auth-input" style="height:40px;">
-            </div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
-                <input type="number" id="adminShopPrice" class="auth-input" style="height:40px; color:var(--accent-yellow);" value="1000">
+
+            <div style="display:flex; gap: 10px; width: 100%;">
+                <div style="display:flex; flex-direction:column; gap:5px; flex:2;">
+                    <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
+                    <input type="text" id="adminShopName" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
+                    <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
+                    <input type="number" id="adminShopPrice" class="auth-input" style="height:40px; color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:8px; padding:0 10px; outline:none;" value="1000">
+                </div>
             </div>
 
             <!-- Dynamic Fields Based on Category -->
@@ -1375,7 +1376,7 @@
                 <!-- Filled by JS -->
             </div>
 
-            <button class="btn-primary ripple-target" style="margin-top:10px; background:var(--accent-purple); color:#fff;" onclick="adminSaveNewShopItem()">Create Global Item</button>
+            <button id="adminShopSubmitBtn" class="btn-primary ripple-target" style="margin-top:10px; flex-shrink:0; height:50px; min-height:50px; border-radius:12px; font-weight:700; background:var(--accent-purple); color:#fff;" onclick="adminSaveNewShopItem()">Create Global Item</button>
         </div>
     </div>
 
@@ -3774,8 +3775,16 @@ function sendNotification(title, body, icon) {
             if(sheet) sheet.classList.remove('show');
         }
 
-        window.adminToggleShopMode = function() {
-            const mode = document.getElementById('adminShopMode').value;
+        window.adminToggleShopModeTab = function(mode) {
+            document.getElementById('adminShopMode').value = mode;
+            document.getElementById('tabShopModeNew').classList.toggle('active', mode === 'new');
+            document.getElementById('tabShopModeEdit').classList.toggle('active', mode === 'edit');
+
+            const submitBtn = document.getElementById('adminShopSubmitBtn');
+            if (submitBtn) {
+                submitBtn.innerText = mode === 'new' ? 'Create Global Item' : 'Save Edits';
+            }
+
             const editSelectContainer = document.getElementById('adminShopEditSelectContainer');
             const idInput = document.getElementById('adminShopId');
 
