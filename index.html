@@ -1346,6 +1346,32 @@
         </div>
     </div>
 
+    <div class="bottom-sheet" id="adminSettingsSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closeAdminSettingsSheet()"></div>
+        <div class="sheet-title" style="color:var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</div>
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
+
+            <h3 style="margin: 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Dynamic Rooms</h3>
+            <div id="adminRoomsList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- Rooms populated here -->
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px; background:var(--island); padding:10px; border-radius:12px; border:1px dashed var(--glass-border);">
+                <label style="font-size:12px; color:var(--text-secondary);">Create New Room</label>
+                <input type="text" id="adminNewRoomName" class="auth-input" placeholder="Display Name (e.g. Lounge 3)">
+                <input type="text" id="adminNewRoomId" class="auth-input" placeholder="Room ID (e.g. Lounge3)">
+                <input type="text" id="adminNewRoomDesc" class="auth-input" placeholder="Description (Optional)">
+                <input type="number" id="adminNewRoomOrder" class="auth-input" placeholder="Order (e.g. 30)">
+                <button class="btn-primary ripple-target" style="margin-top:5px; background: rgba(52, 199, 89, 0.2); color: var(--success-green);" onclick="adminCreateRoom()">Add Room</button>
+            </div>
+
+            <h3 style="margin: 15px 0 0 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Feature Toggles</h3>
+            <div id="adminSettingsList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- Settings populated here -->
+            </div>
+        </div>
+    </div>
+
     <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
         <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
@@ -1407,7 +1433,7 @@
         <div class="sheet-title" id="sheetTitle">Room Actions</div>
         
         <div id="sheetContentGlobal" style="width: 100%; display:none; flex-direction: column; align-items: center;">
-            <div class="sheet-btn primary ripple-target" onclick="closeSheet(); enterRoom('GlobalLobby')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Global Lounge</div>
+            <div class="sheet-btn primary ripple-target" id="btnJoinGlobal" onclick="closeSheet(); enterRoom('GlobalLobby')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Global Lounge</div>
         </div>
 
         <div id="sheetContentPrivate" style="width: 100%; display:none; flex-direction: column; align-items: center;">
@@ -1555,14 +1581,17 @@
                 <div id="searchResults" class="search-results-dropdown"></div>
             </div>
             
-            <div class="hub-grid">
-                <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
-                    <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
-                    <div class="card-text">
-                        <h3>Global Lounge</h3>
-                        <div class="pill-row" style="justify-content: flex-start;">
-                            <span class="status-pill"><div class="dot green"></div> Live</span>
-                            <span class="status-pill">Public</span>
+            <div class="hub-grid" id="mainDashboardGrid">
+                <!-- Dynamic Global Rooms Container -->
+                <div id="dynamicRoomsContainer" style="display:contents;">
+                    <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
+                        <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                        <div class="card-text">
+                            <h3>Global Lounge</h3>
+                            <div class="pill-row" style="justify-content: flex-start;">
+                                <span class="status-pill"><div class="dot green"></div> Live</span>
+                                <span class="status-pill">Public</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1579,7 +1608,7 @@
                     </div>
                 </div>
 
-                <div class="hub-card ripple-target" onclick="findStranger()">
+                <div class="hub-card ripple-target" id="cardStrangerMatch" onclick="findStranger()">
                     <div class="card-icon" style="color: var(--roulette-pink);">
                         <i class="fa-solid fa-masks-theater"></i>
                     </div>
@@ -1593,7 +1622,7 @@
                     </div>
                 </div>
 
-                <div class="hub-card ripple-target" onclick="openSheet('Mini-Games Hub', 'games')">
+                <div class="hub-card ripple-target" id="cardMiniGames" onclick="openSheet('Mini-Games Hub', 'games')">
                     <div class="card-icon" style="color: #00ff66;">
                         <i class="fa-solid fa-gamepad"></i>
                     </div>
@@ -1752,17 +1781,17 @@
         <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
-                <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
+                <button class="btn-primary ripple-target" style="min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
                     <i class="fa-solid fa-broom"></i> Clear Global Lounge
                 </button>
-                <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
+                <button class="btn-primary ripple-target" style="min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
                     <i class="fa-solid fa-bullhorn"></i> System Broadcast
                 </button>
             </div>
 
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
-                <div class="search-glass" style="height: 40px; border-radius: 12px;">
+                <div class="search-glass" style="min-height: 44px; padding: 10px; border-radius: 12px;">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="adminSearchInput" placeholder="Search usernames..." autocomplete="off" oninput="adminSearchUsers()">
                 </div>
@@ -1774,7 +1803,7 @@
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
                 <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
-                <button class="btn-primary ripple-target" style="height: 40px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
+                <button class="btn-primary ripple-target" style="min-height: 44px; padding: 10px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Manage Shop Items
                 </button>
             </div>
@@ -1790,6 +1819,14 @@
                 <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
                     <div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>
                 </div>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Create new public lounges or toggle features globally.</p>
+                <button class="btn-primary ripple-target" style="min-height: 44px; padding: 10px; font-size: 13px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
+                    <i class="fa-solid fa-sliders"></i> Manage Rooms & Settings
+                </button>
             </div>
         </div>
     </div>
@@ -2343,6 +2380,7 @@ function sendNotification(title, body, icon) {
                 listenForFriends(); 
                 listenForRecentChats();
                 requestNotificationPermission();
+                loadDynamicDashboard();
                 
                 db.ref('queue/' + user.uid).remove(); 
                 
@@ -2576,6 +2614,68 @@ function sendNotification(title, body, icon) {
                 }
             });
         }
+        window.loadDynamicDashboard = function() {
+            db.ref('globalSettings/features').on('value', snap => {
+                const features = snap.val() || {
+                    enableStrangerMatch: true,
+                    enableMiniGames: true,
+                    enableGlobalLounge: true
+                };
+
+                const cardStranger = document.getElementById('cardStrangerMatch');
+                if (cardStranger) cardStranger.style.display = features.enableStrangerMatch !== false ? 'flex' : 'none';
+
+                const cardGames = document.getElementById('cardMiniGames');
+                if (cardGames) cardGames.style.display = features.enableMiniGames !== false ? 'flex' : 'none';
+
+                const containerRooms = document.getElementById('dynamicRoomsContainer');
+                if (containerRooms) containerRooms.style.display = features.enableGlobalLounge !== false ? 'contents' : 'none';
+            });
+
+            db.ref('globalSettings/rooms').on('value', snap => {
+                const container = document.getElementById('dynamicRoomsContainer');
+                if(!container) return;
+                container.innerHTML = '';
+
+                if(snap.exists()) {
+                    let roomsArr = [];
+                    snap.forEach(child => {
+                        roomsArr.push({ key: child.key, ...child.val() });
+                    });
+                    roomsArr.sort((a,b) => (a.order || 0) - (b.order || 0));
+
+                    roomsArr.forEach(r => {
+                        container.innerHTML += `
+                            <div class="hub-card ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
+                                <div class="card-icon">${r.icon || '<i class="fa-solid fa-earth-americas"></i>'}</div>
+                                <div class="card-text">
+                                    <h3>${r.name}</h3>
+                                    <div class="pill-row" style="justify-content: flex-start;">
+                                        <span class="status-pill"><div class="dot green"></div> Live</span>
+                                        ${r.desc ? `<span class="status-pill">${r.desc}</span>` : `<span class="status-pill">Public</span>`}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Fallback default
+                    container.innerHTML = `
+                        <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global', 'GlobalLobby')">
+                            <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                            <div class="card-text">
+                                <h3>Global Lounge</h3>
+                                <div class="pill-row" style="justify-content: flex-start;">
+                                    <span class="status-pill"><div class="dot green"></div> Live</span>
+                                    <span class="status-pill">Public</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
         function loadMyProfile() { 
             db.ref('users/'+user.uid).on('value', snap => { 
                 const d = snap.val() || {}; 
@@ -3384,7 +3484,7 @@ function sendNotification(title, body, icon) {
 
         // --- BOTTOM SHEETS & ROOM GENERATION ---
 
-        window.openSheet = function(title, type) {
+        window.openSheet = function(title, type, overrideRoomId = null) {
             const st = document.getElementById('sheetTitle');
             if(st) {
                 st.style.display = 'block';
@@ -3392,7 +3492,15 @@ function sendNotification(title, body, icon) {
             }
             
             const contentGlobal = document.getElementById('sheetContentGlobal');
-            if (contentGlobal) contentGlobal.style.display = type === 'global' ? 'flex' : 'none';
+            if (contentGlobal) {
+                contentGlobal.style.display = type === 'global' ? 'flex' : 'none';
+                if(type === 'global') {
+                    const btn = document.getElementById('btnJoinGlobal');
+                    const targetRoomId = overrideRoomId || 'GlobalLobby';
+                    btn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> Join ${title}`;
+                    btn.onclick = () => { closeSheet(); enterRoom(targetRoomId); };
+                }
+            }
 
             const contentPrivate = document.getElementById('sheetContentPrivate');
             if (contentPrivate) contentPrivate.style.display = type === 'private' ? 'flex' : 'none';
@@ -3781,6 +3889,23 @@ function sendNotification(title, body, icon) {
             if(sheet) sheet.classList.remove('show');
         }
 
+        window.openAdminSettingsManager = function() {
+            if(!myProfile.isAdmin) return;
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.add('show');
+            const sheet = document.getElementById('adminSettingsSheet');
+            if(sheet) sheet.classList.add('show');
+            adminLoadRooms();
+            adminLoadSettings();
+        }
+
+        window.closeAdminSettingsSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.remove('show');
+            const sheet = document.getElementById('adminSettingsSheet');
+            if(sheet) sheet.classList.remove('show');
+        }
+
         window.openAdminShopManager = function() {
             if(!myProfile.isAdmin) return;
             const overlay = document.getElementById('sheetOverlay');
@@ -3987,6 +4112,113 @@ function sendNotification(title, body, icon) {
                 showToast(mode === 'new' ? `New ${cat} item created successfully!` : `Item edited successfully!`, "success");
                 closeAdminShopSheet();
             }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminLoadRooms = function() {
+            if(!myProfile.isAdmin) return;
+            db.ref('globalSettings/rooms').on('value', snap => {
+                const container = document.getElementById('adminRoomsList');
+                if(!container) return;
+                container.innerHTML = '';
+                if(snap.exists()) {
+                    let roomsArr = [];
+                    snap.forEach(child => {
+                        roomsArr.push({ key: child.key, ...child.val() });
+                    });
+                    roomsArr.sort((a,b) => (a.order || 0) - (b.order || 0));
+
+                    roomsArr.forEach(r => {
+                        container.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span style="font-size:14px; color:var(--text-primary);">${r.name}</span>
+                                    <span style="font-size:11px; color:var(--text-secondary);">ID: ${r.key} | Order: ${r.order || 0}</span>
+                                </div>
+                                <button class="btn-primary" style="height:30px; font-size:12px; background:var(--error-red); border:none; padding: 0 10px;" onclick="adminDeleteRoom('${r.key}')">Delete</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<span style="color:var(--text-secondary); font-size:12px;">No custom rooms found. Defaults will be used.</span>';
+                }
+            });
+        }
+
+        window.adminCreateRoom = function() {
+            if(!myProfile.isAdmin) return;
+            const id = document.getElementById('adminNewRoomId').value.trim();
+            const name = document.getElementById('adminNewRoomName').value.trim();
+            const desc = document.getElementById('adminNewRoomDesc').value.trim();
+            const order = parseInt(document.getElementById('adminNewRoomOrder').value) || 0;
+
+            if(!id || !name) return showToast("Room ID and Display Name are required.", "error");
+
+            db.ref('globalSettings/rooms/' + id).set({
+                name: name,
+                desc: desc,
+                order: order,
+                icon: '<i class="fa-solid fa-users"></i>'
+            }).then(() => {
+                showToast("Room added!", "success");
+                document.getElementById('adminNewRoomId').value = '';
+                document.getElementById('adminNewRoomName').value = '';
+                document.getElementById('adminNewRoomDesc').value = '';
+                document.getElementById('adminNewRoomOrder').value = '';
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminDeleteRoom = function(id) {
+            if(!myProfile.isAdmin) return;
+            if(confirm(`Are you sure you want to delete room: ${id}?`)) {
+                db.ref('globalSettings/rooms/' + id).remove().then(() => {
+                    showToast("Room deleted.", "success");
+                });
+            }
+        }
+
+        window.adminLoadSettings = function() {
+            if(!myProfile.isAdmin) return;
+            db.ref('globalSettings/features').on('value', snap => {
+                const container = document.getElementById('adminSettingsList');
+                if(!container) return;
+
+                const features = snap.val() || {
+                    enableStrangerMatch: true,
+                    enableMiniGames: true,
+                    enableGlobalLounge: true
+                };
+
+                container.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Stranger Match</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableStrangerMatch !== false ? 'checked' : ''} onchange="adminToggleFeature('enableStrangerMatch', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Mini Games</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableMiniGames !== false ? 'checked' : ''} onchange="adminToggleFeature('enableMiniGames', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Global Lounges Tab</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableGlobalLounge !== false ? 'checked' : ''} onchange="adminToggleFeature('enableGlobalLounge', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            });
+        }
+
+        window.adminToggleFeature = function(featureKey, state) {
+            if(!myProfile.isAdmin) return;
+            db.ref(`globalSettings/features/${featureKey}`).set(state).then(() => {
+                showToast("Setting updated", "success");
+            });
         }
 
         window.adminSaveUserEdit = function() {
