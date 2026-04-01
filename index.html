@@ -234,7 +234,29 @@
             backdrop-filter: blur(10px); 
             transition: 0.3s; 
         }
-        .floating-label { 
+
+        .auth-input {
+            width: 100%;
+            height: 50px;
+            min-height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+            appearance: none;
+        }
+        .auth-input:focus {
+            border-color: var(--accent-yellow);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.1);
+        }
+.floating-label {
             position: absolute; 
             left: 20px; 
             top: 50%; 
@@ -1281,19 +1303,19 @@
             <input type="hidden" id="adminEditUid">
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Username</label>
-                <input type="text" id="adminEditName" class="auth-input" style="height:40px;">
+                <input type="text" id="adminEditName" class="auth-input">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Bio</label>
-                <input type="text" id="adminEditBio" class="auth-input" style="height:40px;">
+                <input type="text" id="adminEditBio" class="auth-input">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Orbs Balance</label>
-                <input type="number" id="adminEditOrbs" class="auth-input" style="height:40px; color:var(--accent-yellow);">
+                <input type="number" id="adminEditOrbs" class="auth-input" style=" color:var(--accent-yellow);">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Role</label>
-                <select id="adminEditRole" class="auth-input" style="height:40px;">
+                <select id="adminEditRole" class="auth-input">
                     <option value="user">Standard User</option>
                     <option value="admin">Administrator</option>
                 </select>
@@ -1302,7 +1324,7 @@
             <div style="display:flex; flex-direction:column; gap:5px; margin-top: 10px;">
                 <label style="font-size:12px; color:var(--accent-purple);"><i class="fa-solid fa-box-open"></i> Inventory Editor</label>
                 <div style="display:flex; gap: 10px;">
-                    <select id="adminEditInventoryCat" class="auth-input" style="height:40px; flex: 1;" onchange="adminUpdateInventorySelect()">
+                    <select id="adminEditInventoryCat" class="auth-input" style=" flex: 1;" onchange="adminUpdateInventorySelect()">
                         <option value="bubbles">Bubbles</option>
                         <option value="themes">Themes</option>
                         <option value="badges">Badges</option>
@@ -1310,7 +1332,7 @@
                         <option value="nameColors">Name Colors</option>
                         <option value="avatarRings">Rings</option>
                     </select>
-                    <select id="adminEditInventoryItem" class="auth-input" style="height:40px; flex: 2;">
+                    <select id="adminEditInventoryItem" class="auth-input" style=" flex: 2;">
                         <!-- populated by JS -->
                     </select>
                 </div>
@@ -1338,7 +1360,7 @@
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Category</label>
-                <select id="adminShopCategory" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;" onchange="adminUpdateShopFields()">
+                <select id="adminShopCategory" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" onchange="adminUpdateShopFields()">
                     <option value="bubbles" style="background:var(--bg-dark);">Chat Bubbles</option>
                     <option value="themes" style="background:var(--bg-dark);">App Themes</option>
                     <option value="badges" style="background:var(--bg-dark);">Profile Badges</option>
@@ -1350,24 +1372,24 @@
 
             <div id="adminShopEditSelectContainer" style="display:none; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Select Item to Edit</label>
-                <select id="adminShopEditSelect" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:8px; padding:0 10px; outline:none;" onchange="adminLoadExistingShopItem()">
+                <select id="adminShopEditSelect" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:8px;  outline:none;" onchange="adminLoadExistingShopItem()">
                     <!-- Populated by JS -->
                 </select>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID</label>
-                <input type="text" id="adminShopId" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;" placeholder="e.g. b_custom_1">
+                <input type="text" id="adminShopId" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" placeholder="e.g. b_custom_1">
             </div>
 
             <div style="display:flex; gap: 10px; width: 100%;">
                 <div style="display:flex; flex-direction:column; gap:5px; flex:2;">
                     <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
-                    <input type="text" id="adminShopName" class="auth-input" style="height:40px; background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px; padding:0 10px; outline:none;">
+                    <input type="text" id="adminShopName" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
                     <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
-                    <input type="number" id="adminShopPrice" class="auth-input" style="height:40px; color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:8px; padding:0 10px; outline:none;" value="1000">
+                    <input type="number" id="adminShopPrice" class="auth-input" style=" color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:8px;  outline:none;" value="1000">
                 </div>
             </div>
 
@@ -3861,33 +3883,33 @@ function sendNotification(title, body, icon) {
 
             if (cat === 'bubbles') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background Color (Hex, rgba, linear-gradient)</label><input type="text" id="adminShopBubbleBg" class="auth-input" style="height:40px;" placeholder="#ff0000"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Text Color</label><input type="text" id="adminShopBubbleText" class="auth-input" style="height:40px;" placeholder="#ffffff"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background Color (Hex, rgba, linear-gradient)</label><input type="text" id="adminShopBubbleBg" class="auth-input" placeholder="#ff0000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Text Color</label><input type="text" id="adminShopBubbleText" class="auth-input" placeholder="#ffffff"></div>
                 `;
             } else if (cat === 'themes') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background (bg)</label><input type="text" id="adminShopThemeBg" class="auth-input" style="height:40px;" placeholder="#000000"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Accent (acc)</label><input type="text" id="adminShopThemeAcc" class="auth-input" style="height:40px;" placeholder="#ff0000"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Island/Card (isl)</label><input type="text" id="adminShopThemeIsl" class="auth-input" style="height:40px;" placeholder="#111111"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Primary Text (txt)</label><input type="text" id="adminShopThemeTxt" class="auth-input" style="height:40px;" placeholder="#ffffff"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Secondary Text (txtSec)</label><input type="text" id="adminShopThemeTxtSec" class="auth-input" style="height:40px;" placeholder="#aaaaaa"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background (bg)</label><input type="text" id="adminShopThemeBg" class="auth-input" placeholder="#000000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Accent (acc)</label><input type="text" id="adminShopThemeAcc" class="auth-input" placeholder="#ff0000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Island/Card (isl)</label><input type="text" id="adminShopThemeIsl" class="auth-input" placeholder="#111111"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Primary Text (txt)</label><input type="text" id="adminShopThemeTxt" class="auth-input" placeholder="#ffffff"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Secondary Text (txtSec)</label><input type="text" id="adminShopThemeTxtSec" class="auth-input" placeholder="#aaaaaa"></div>
                 `;
             } else if (cat === 'badges') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Icon (HTML/Emoji)</label><input type="text" id="adminShopBadgeIcon" class="auth-input" style="height:40px;" placeholder="<i class='fa-solid fa-star'></i> or ⭐"></div>
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Brand Color</label><input type="text" id="adminShopBadgeColor" class="auth-input" style="height:40px;" placeholder="#ffd700"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Icon (HTML/Emoji)</label><input type="text" id="adminShopBadgeIcon" class="auth-input" placeholder="<i class='fa-solid fa-star'></i> or ⭐"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Brand Color</label><input type="text" id="adminShopBadgeColor" class="auth-input" placeholder="#ffd700"></div>
                 `;
             } else if (cat === 'fonts') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Font Family CSS Value</label><input type="text" id="adminShopFontVal" class="auth-input" style="height:40px;" placeholder="'Courier New', Courier, monospace"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Font Family CSS Value</label><input type="text" id="adminShopFontVal" class="auth-input" placeholder="'Courier New', Courier, monospace"></div>
                 `;
             } else if (cat === 'nameColors') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Color Value (Hex or Gradient)</label><input type="text" id="adminShopNameColorVal" class="auth-input" style="height:40px;" placeholder="linear-gradient(...)"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Color Value (Hex or Gradient)</label><input type="text" id="adminShopNameColorVal" class="auth-input" placeholder="linear-gradient(...)"></div>
                 `;
             } else if (cat === 'avatarRings') {
                 html = `
-                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Border/Box-Shadow Value</label><input type="text" id="adminShopRingVal" class="auth-input" style="height:40px;" placeholder="4px solid #ff0000; box-shadow: 0 0 10px #ff0000;"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Border/Box-Shadow Value</label><input type="text" id="adminShopRingVal" class="auth-input" placeholder="4px solid #ff0000; box-shadow: 0 0 10px #ff0000;"></div>
                 `;
             }
             // Determine if the structure changed. If yes, re-render html, otherwise skip it if skipRepopulate is true
