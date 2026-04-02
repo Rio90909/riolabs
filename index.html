@@ -3895,7 +3895,7 @@ function sendNotification(title, body, icon) {
 
                     const info = document.createElement('div');
                     info.innerHTML = `
-                        <div style="font-weight:bold; color:var(--text-primary);">${escapeHTML(u.username || 'Unknown')}</div>
+                        <div style="font-weight:bold; color:var(--text-primary);">${escapeAdminHTML(u.username || 'Unknown')}</div>
                         <div style="font-size:10px; color:var(--text-secondary);">UID: ${uid}</div>
                         <div style="font-size:10px; color:var(--accent-yellow);"><i class="fa-solid fa-gem"></i> ${u.orbs || 0}</div>
                     `;
