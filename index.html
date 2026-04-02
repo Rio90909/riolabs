@@ -234,7 +234,29 @@
             backdrop-filter: blur(10px); 
             transition: 0.3s; 
         }
-        .floating-label { 
+
+        .auth-input {
+            width: 100%;
+            height: 50px;
+            min-height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+            appearance: none;
+        }
+        .auth-input:focus {
+            border-color: var(--accent-yellow);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.1);
+        }
+.floating-label {
             position: absolute; 
             left: 20px; 
             top: 50%; 
@@ -1274,12 +1296,144 @@
 
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
     
+    <div class="bottom-sheet" id="adminEditUserSheet" style="z-index: 10000; height: 85vh; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closeAdminEditUserSheet()"></div>
+        <div class="sheet-title" style="color:var(--error-red);"><i class="fa-solid fa-user-pen"></i> Edit User Profile</div>
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
+            <input type="hidden" id="adminEditUid">
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Username</label>
+                <input type="text" id="adminEditName" class="auth-input">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Bio</label>
+                <input type="text" id="adminEditBio" class="auth-input">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Orbs Balance</label>
+                <input type="number" id="adminEditOrbs" class="auth-input" style=" color:var(--accent-yellow);">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Role</label>
+                <select id="adminEditRole" class="auth-input">
+                    <option value="user">Standard User</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px; margin-top: 10px;">
+                <label style="font-size:12px; color:var(--accent-purple);"><i class="fa-solid fa-box-open"></i> Inventory Editor</label>
+                <div style="display:flex; gap: 10px;">
+                    <select id="adminEditInventoryCat" class="auth-input" style=" flex: 1;" onchange="adminUpdateInventorySelect()">
+                        <option value="bubbles">Bubbles</option>
+                        <option value="themes">Themes</option>
+                        <option value="badges">Badges</option>
+                        <option value="fonts">Fonts</option>
+                        <option value="nameColors">Name Colors</option>
+                        <option value="avatarRings">Rings</option>
+                    </select>
+                    <select id="adminEditInventoryItem" class="auth-input" style=" flex: 2;">
+                        <!-- populated by JS -->
+                    </select>
+                </div>
+                <div style="display:flex; gap: 10px; margin-top: 5px;">
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 35px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4);" onclick="adminInventoryAction('grant')">Grant</button>
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 35px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminInventoryAction('revoke')">Revoke</button>
+                </div>
+            </div>
+
+            <button class="btn-primary ripple-target" style="margin-top:10px; background:var(--error-red); color:#fff;" onclick="adminSaveUserEdit()">Save Profile Changes</button>
+        </div>
+    </div>
+
+    <div class="bottom-sheet" id="adminSettingsSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closeAdminSettingsSheet()"></div>
+        <div class="sheet-title" style="color:var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</div>
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
+
+            <h3 style="margin: 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Dynamic Rooms</h3>
+            <div id="adminRoomsList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- Rooms populated here -->
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px; background:var(--island); padding:10px; border-radius:12px; border:1px dashed var(--glass-border);">
+                <label style="font-size:12px; color:var(--text-secondary);">Create New Room</label>
+                <input type="text" id="adminNewRoomName" class="auth-input" placeholder="Display Name (e.g. Lounge 3)">
+                <input type="text" id="adminNewRoomId" class="auth-input" placeholder="Room ID (e.g. Lounge3)">
+                <input type="text" id="adminNewRoomDesc" class="auth-input" placeholder="Description (Optional)">
+                <input type="number" id="adminNewRoomOrder" class="auth-input" placeholder="Order (e.g. 30)">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; margin-top:5px; background: rgba(52, 199, 89, 0.2); color: var(--success-green);" onclick="adminCreateRoom()">Add Room</button>
+            </div>
+
+            <h3 style="margin: 15px 0 0 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Feature Toggles</h3>
+            <div id="adminSettingsList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- Settings populated here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
+        <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
+            <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create or Edit items in the global shop database.</p>
+
+            <input type="hidden" id="adminShopMode" value="new">
+            <div class="picker-tabs" style="background: rgba(150,150,150,0.05); padding: 4px; border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 5px;">
+                <div id="tabShopModeNew" class="p-tab active" onclick="adminToggleShopModeTab('new')" style="flex:1;">Create New Item</div>
+                <div id="tabShopModeEdit" class="p-tab" onclick="adminToggleShopModeTab('edit')" style="flex:1;">Edit Existing</div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Category</label>
+                <select id="adminShopCategory" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" onchange="adminUpdateShopFields()">
+                    <option value="bubbles" style="background:var(--bg-dark);">Chat Bubbles</option>
+                    <option value="themes" style="background:var(--bg-dark);">App Themes</option>
+                    <option value="badges" style="background:var(--bg-dark);">Profile Badges</option>
+                    <option value="fonts" style="background:var(--bg-dark);">Chat Fonts</option>
+                    <option value="nameColors" style="background:var(--bg-dark);">Name Colors</option>
+                    <option value="avatarRings" style="background:var(--bg-dark);">Avatar Rings</option>
+                </select>
+            </div>
+
+            <div id="adminShopEditSelectContainer" style="display:none; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Select Item to Edit</label>
+                <select id="adminShopEditSelect" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:8px;  outline:none;" onchange="adminLoadExistingShopItem()">
+                    <!-- Populated by JS -->
+                </select>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID</label>
+                <input type="text" id="adminShopId" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" placeholder="e.g. b_custom_1">
+            </div>
+
+            <div style="display:flex; gap: 10px; width: 100%;">
+                <div style="display:flex; flex-direction:column; gap:5px; flex:2;">
+                    <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
+                    <input type="text" id="adminShopName" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
+                    <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
+                    <input type="number" id="adminShopPrice" class="auth-input" style=" color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:8px;  outline:none;" value="1000">
+                </div>
+            </div>
+
+            <!-- Dynamic Fields Based on Category -->
+            <div id="adminShopDynamicFields" style="display:flex; flex-direction:column; gap:15px; border-top: 1px solid var(--glass-border); padding-top: 15px;">
+                <!-- Filled by JS -->
+            </div>
+
+            <button id="adminShopSubmitBtn" class="btn-primary ripple-target" style="flex: none; margin-top:10px; height:50px; min-height:50px; border-radius:12px; font-weight:700; background:var(--accent-purple); color:#fff;" onclick="adminSaveNewShopItem()">Create Global Item</button>
+        </div>
+    </div>
+
     <div class="bottom-sheet" id="bottomSheet">
         <div class="sheet-drag-handle" onclick="closeSheet()"></div>
         <div class="sheet-title" id="sheetTitle">Room Actions</div>
         
         <div id="sheetContentGlobal" style="width: 100%; display:none; flex-direction: column; align-items: center;">
-            <div class="sheet-btn primary ripple-target" onclick="closeSheet(); enterRoom('GlobalLobby')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Global Lounge</div>
+            <div class="sheet-btn primary ripple-target" id="btnJoinGlobal" onclick="closeSheet(); enterRoom('GlobalLobby')"><i class="fa-solid fa-arrow-right-to-bracket"></i> Join Global Lounge</div>
         </div>
 
         <div id="sheetContentPrivate" style="width: 100%; display:none; flex-direction: column; align-items: center;">
@@ -1427,14 +1581,17 @@
                 <div id="searchResults" class="search-results-dropdown"></div>
             </div>
             
-            <div class="hub-grid">
-                <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
-                    <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
-                    <div class="card-text">
-                        <h3>Global Lounge</h3>
-                        <div class="pill-row" style="justify-content: flex-start;">
-                            <span class="status-pill"><div class="dot green"></div> Live</span>
-                            <span class="status-pill">Public</span>
+            <div class="hub-grid" id="mainDashboardGrid">
+                <!-- Dynamic Global Rooms Container -->
+                <div id="dynamicRoomsContainer" style="display:contents;">
+                    <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
+                        <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                        <div class="card-text">
+                            <h3>Global Lounge</h3>
+                            <div class="pill-row" style="justify-content: flex-start;">
+                                <span class="status-pill"><div class="dot green"></div> Live</span>
+                                <span class="status-pill">Public</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1451,7 +1608,7 @@
                     </div>
                 </div>
 
-                <div class="hub-card ripple-target" onclick="findStranger()">
+                <div class="hub-card ripple-target" id="cardStrangerMatch" onclick="findStranger()">
                     <div class="card-icon" style="color: var(--roulette-pink);">
                         <i class="fa-solid fa-masks-theater"></i>
                     </div>
@@ -1465,7 +1622,7 @@
                     </div>
                 </div>
 
-                <div class="hub-card ripple-target" onclick="openSheet('Mini-Games Hub', 'games')">
+                <div class="hub-card ripple-target" id="cardMiniGames" onclick="openSheet('Mini-Games Hub', 'games')">
                     <div class="card-icon" style="color: #00ff66;">
                         <i class="fa-solid fa-gamepad"></i>
                     </div>
@@ -1539,6 +1696,10 @@
                 </div>
             </div>
             <div class="profile-menu-list">
+                <div id="adminBtn" class="profile-menu-item ripple-target" onclick="openAdminPanel()" style="display: none; background: rgba(255, 59, 48, 0.1); border-color: rgba(255, 59, 48, 0.3);">
+                    <div class="profile-menu-icon" style="color: var(--error-red);"><i class="fa-solid fa-shield-halved"></i></div>
+                    <span style="flex: 1; color: var(--error-red);">Admin Panel</span>
+                </div>
                 <div class="profile-menu-item ripple-target" onclick="activateGhostMode()">
                     <div class="profile-menu-icon" style="color: var(--accent-yellow);"><i class="fa-solid fa-ghost"></i></div>
                     <span style="flex: 1;">Ghost Mode</span>
@@ -1605,6 +1766,68 @@
             <div class="dock-btn" data-tab="tab-contacts"><i class="fa-solid fa-user-group"></i></div>
             <div class="dock-btn" data-tab="tab-shop"><i class="fa-solid fa-store"></i></div>
             <div class="dock-btn" data-tab="tab-profile"><i class="fa-solid fa-user"></i></div>
+        </div>
+    </div>
+
+    <div id="admin-screen" class="screen" style="background: var(--bg-dark);">
+        <div class="chat-header">
+            <div class="chat-back-btn" onclick="switchScreen('hub-screen')"><i class="fa-solid fa-chevron-left"></i></div>
+            <div class="chat-title-container">
+                <div class="chat-room-name" style="color: var(--error-red);">ADMIN DASHBOARD</div>
+            </div>
+            <i class="fa-solid fa-shield-halved" style="color:var(--error-red); font-size:14px;"></i>
+        </div>
+
+        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
+                    <i class="fa-solid fa-broom"></i> Clear Global Lounge
+                </button>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
+                    <i class="fa-solid fa-bullhorn"></i> System Broadcast
+                </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
+                <div class="search-glass" style="min-height: 44px; padding: 10px; border-radius: 12px;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="adminSearchInput" placeholder="Search usernames..." autocomplete="off" oninput="adminSearchUsers()">
+                </div>
+                <div id="adminSearchResults" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                    <!-- Results populated here -->
+                </div>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Manage Shop Items
+                </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin: 0; font-size: 15px; color: var(--accent-blue);"><i class="fa-solid fa-eye"></i> Live Chat Viewer</h3>
+                    <label class="switch">
+                        <input type="checkbox" id="adminLiveChatToggle" onchange="adminToggleLiveChat()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                    <div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>
+                </div>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Create new public lounges or toggle features globally.</p>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
+                    <i class="fa-solid fa-sliders"></i> Manage Rooms & Settings
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1920,6 +2143,8 @@ function sendNotification(title, body, icon) {
             appSoundEnabled: true,
             profanityFilterEnabled: true,
             blockedUsers: [],
+            isAdmin: false,
+            isBanned: false,
             unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none', 'f_default', 'nc_white', 'ar_none', 's_default']
         };
         let mode = 'login';
@@ -1957,7 +2182,7 @@ function sendNotification(title, body, icon) {
         });
 
         // --- FREE SHOP DATA (10 Free Themes, 8 Free Bubbles + Premium Options) ---
-        const shopData = {
+        let shopData = {
             bubbles: [
                 { id: 'b_white', name: 'Classic White', color: '#ffffff', text: '#000', price: 0 },
                 { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
@@ -2007,6 +2232,36 @@ function sendNotification(title, body, icon) {
                 { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 1200 }
             ]
         };
+
+        // Sync shopData with Firebase
+        db.ref('globalSettings/shopData').on('value', snap => {
+            const remoteData = snap.val();
+            if (remoteData) {
+                // Merge remote data over local defaults
+                Object.keys(remoteData).forEach(cat => {
+                    if(remoteData[cat] && Array.isArray(remoteData[cat])) {
+                        shopData[cat] = remoteData[cat];
+                    }
+                });
+                // Re-render current shop tab if open
+                const activeTabEl = document.querySelector('.p-tab.active');
+                if (activeTabEl && activeTabEl.id.startsWith('tabShop')) {
+                    const tabMap = {
+                        'tabShopBubbles': 'bubbles',
+                        'tabShopThemes': 'themes',
+                        'tabShopBadges': 'badges',
+                        'tabShopFonts': 'fonts',
+                        'tabShopNameColors': 'nameColors',
+                        'tabShopAvatarRings': 'avatarRings',
+                        'tabShopSounds': 'sounds'
+                    };
+                    switchShopTab(tabMap[activeTabEl.id]);
+                }
+            } else {
+                // Initialize Firebase with defaults if empty
+                db.ref('globalSettings/shopData').set(shopData);
+            }
+        });
 
         function getContrastYIQ(hexcolor){
             if (!hexcolor) return '#ffffff';
@@ -2125,6 +2380,7 @@ function sendNotification(title, body, icon) {
                 listenForFriends(); 
                 listenForRecentChats();
                 requestNotificationPermission();
+                loadDynamicDashboard();
                 
                 db.ref('queue/' + user.uid).remove(); 
                 
@@ -2358,9 +2614,78 @@ function sendNotification(title, body, icon) {
                 }
             });
         }
+        window.loadDynamicDashboard = function() {
+            db.ref('globalSettings/features').on('value', snap => {
+                const features = snap.val() || {
+                    enableStrangerMatch: true,
+                    enableMiniGames: true,
+                    enableGlobalLounge: true
+                };
+
+                const cardStranger = document.getElementById('cardStrangerMatch');
+                if (cardStranger) cardStranger.style.display = features.enableStrangerMatch !== false ? 'flex' : 'none';
+
+                const cardGames = document.getElementById('cardMiniGames');
+                if (cardGames) cardGames.style.display = features.enableMiniGames !== false ? 'flex' : 'none';
+
+                const containerRooms = document.getElementById('dynamicRoomsContainer');
+                if (containerRooms) containerRooms.style.display = features.enableGlobalLounge !== false ? 'contents' : 'none';
+            });
+
+            db.ref('globalSettings/rooms').on('value', snap => {
+                const container = document.getElementById('dynamicRoomsContainer');
+                if(!container) return;
+                container.innerHTML = '';
+
+                if(snap.exists()) {
+                    let roomsArr = [];
+                    snap.forEach(child => {
+                        roomsArr.push({ key: child.key, ...child.val() });
+                    });
+                    roomsArr.sort((a,b) => (a.order || 0) - (b.order || 0));
+
+                    roomsArr.forEach(r => {
+                        container.innerHTML += `
+                            <div class="hub-card ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
+                                <div class="card-icon">${r.icon || '<i class="fa-solid fa-earth-americas"></i>'}</div>
+                                <div class="card-text">
+                                    <h3>${r.name}</h3>
+                                    <div class="pill-row" style="justify-content: flex-start;">
+                                        <span class="status-pill"><div class="dot green"></div> Live</span>
+                                        ${r.desc ? `<span class="status-pill">${r.desc}</span>` : `<span class="status-pill">Public</span>`}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // Fallback default
+                    container.innerHTML = `
+                        <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global', 'GlobalLobby')">
+                            <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
+                            <div class="card-text">
+                                <h3>Global Lounge</h3>
+                                <div class="pill-row" style="justify-content: flex-start;">
+                                    <span class="status-pill"><div class="dot green"></div> Live</span>
+                                    <span class="status-pill">Public</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
         function loadMyProfile() { 
             db.ref('users/'+user.uid).on('value', snap => { 
                 const d = snap.val() || {}; 
+                myProfile.isBanned = d.isBanned || false;
+                if (myProfile.isBanned) {
+                    showToast("Your account has been banned.", "error");
+                    logoutApp();
+                    return;
+                }
+                myProfile.isAdmin = d.isAdmin || false;
                 myProfile.name = d.name || user.displayName || document.getElementById('userInput').value || "Guest User"; 
                 myProfile.pic = d.pic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}&backgroundColor=b6e3f4`; 
                 myProfile.banner = d.banner || ''; 
@@ -2380,6 +2705,11 @@ function sendNotification(title, body, icon) {
                 myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 myProfile.profanityFilterEnabled = d.profanityFilterEnabled !== undefined ? d.profanityFilterEnabled : true;
                 myProfile.blockedUsers = d.blockedUsers || [];
+
+                const adminBtn = document.getElementById('adminBtn');
+                if (adminBtn) {
+                    adminBtn.style.display = myProfile.isAdmin ? 'flex' : 'none';
+                }
 
                 applyWallpaper();
                 
@@ -2432,6 +2762,7 @@ function sendNotification(title, body, icon) {
 
         function saveProfile() { 
             if(!user) return;
+            // SECURITY PATCH: Do not write isAdmin or isBanned back to the database.
             db.ref('users/'+user.uid).update({ 
                 name: myProfile.name, 
                 pic: myProfile.pic, 
@@ -3153,7 +3484,7 @@ function sendNotification(title, body, icon) {
 
         // --- BOTTOM SHEETS & ROOM GENERATION ---
 
-        window.openSheet = function(title, type) {
+        window.openSheet = function(title, type, overrideRoomId = null) {
             const st = document.getElementById('sheetTitle');
             if(st) {
                 st.style.display = 'block';
@@ -3161,7 +3492,15 @@ function sendNotification(title, body, icon) {
             }
             
             const contentGlobal = document.getElementById('sheetContentGlobal');
-            if (contentGlobal) contentGlobal.style.display = type === 'global' ? 'flex' : 'none';
+            if (contentGlobal) {
+                contentGlobal.style.display = type === 'global' ? 'flex' : 'none';
+                if(type === 'global') {
+                    const btn = document.getElementById('btnJoinGlobal');
+                    const targetRoomId = overrideRoomId || 'GlobalLobby';
+                    btn.innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i> Join ${title}`;
+                    btn.onclick = () => { closeSheet(); enterRoom(targetRoomId); };
+                }
+            }
 
             const contentPrivate = document.getElementById('sheetContentPrivate');
             if (contentPrivate) contentPrivate.style.display = type === 'private' ? 'flex' : 'none';
@@ -3298,6 +3637,613 @@ function sendNotification(title, body, icon) {
             if(chatMessages) {
                 chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
             }
+        }
+
+        // --- ADMIN PANEL LOGIC ---
+        window.openAdminPanel = function() {
+            if(!myProfile.isAdmin) return showToast("Unauthorized", "error");
+            switchScreen('admin-screen');
+        }
+
+        window.adminClearGlobal = function() {
+            if(!myProfile.isAdmin) return;
+            if(confirm("Are you sure you want to clear the Global Lounge? This cannot be undone.")) {
+                db.ref('rooms/GlobalLobby').remove().then(() => {
+                    showToast("Global Lounge cleared.", "success");
+                }).catch(err => showToast(err.message, "error"));
+            }
+        }
+
+        window.adminSystemMessage = function() {
+            if(!myProfile.isAdmin) return;
+            const msg = prompt("Enter system broadcast message:");
+            if(msg && msg.trim().length > 0) {
+                const newRef = db.ref('rooms/GlobalLobby').push();
+                newRef.set({
+                    txt: `⚠️ SYSTEM: ${msg.trim()}`,
+                    type: 'text',
+                    uid: 'system',
+                    name: 'SYSTEM ADMIN',
+                    nameColor: '#ff3b30',
+                    pic: 'https://api.dicebear.com/7.x/bottts/svg?seed=Admin&backgroundColor=ff3b30',
+                    avatarRing: 'ar_fire',
+                    badge: '<i class="fa-solid fa-shield" style="color:#ff3b30;"></i>',
+                    time: firebase.database.ServerValue.TIMESTAMP,
+                    burner: false,
+                    chatColor: 'rgba(255, 59, 48, 0.2)',
+                    chatTextColor: '#ff3b30',
+                    chatFont: 'f_default',
+                    read: true,
+                    delivered: true,
+                    edited: false
+                }).then(() => showToast("Broadcast sent.", "success"));
+            }
+        }
+
+        let adminLiveChatRef = null;
+        window.adminToggleLiveChat = function() {
+            if(!myProfile.isAdmin) return;
+            const isChecked = document.getElementById('adminLiveChatToggle').checked;
+            const box = document.getElementById('adminLiveChatBox');
+
+            if (isChecked) {
+                box.style.display = 'flex';
+                box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>';
+
+                adminLiveChatRef = db.ref('rooms/GlobalLobby');
+                adminLiveChatRef.limitToLast(15).on('child_added', snap => {
+                    const msg = snap.val();
+                    const key = snap.key;
+                    if(box.innerHTML.includes('Connecting')) box.innerHTML = '';
+
+                    const safeName = escapeAdminHTML(msg.name || 'Unknown');
+                    const safeTxt = escapeAdminHTML(msg.txt || '');
+
+                    const msgDiv = document.createElement('div');
+                    msgDiv.id = `admin-msg-${key}`;
+                    msgDiv.style.cssText = "display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; margin-bottom:5px;";
+                    msgDiv.innerHTML = `
+                        <div style="flex:1; padding-right:10px;">
+                            <span style="color:${msg.nameColor || 'var(--accent-blue)'}; font-weight:bold;">${safeName}:</span>
+                            <span style="color:var(--text-primary);">${safeTxt}</span>
+                        </div>
+                        <button style="background:none; border:none; color:var(--error-red); cursor:pointer; font-size:12px; padding:2px 5px;" onclick="adminDeleteLiveMsg('${key}')"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    box.appendChild(msgDiv);
+                    box.scrollTop = box.scrollHeight;
+                });
+
+                adminLiveChatRef.on('child_removed', snap => {
+                    const el = document.getElementById(`admin-msg-${snap.key}`);
+                    if(el) el.remove();
+                });
+
+            } else {
+                box.style.display = 'none';
+                if(adminLiveChatRef) {
+                    adminLiveChatRef.off();
+                    adminLiveChatRef = null;
+                }
+            }
+        }
+
+        window.adminDeleteLiveMsg = function(msgKey) {
+            if(!myProfile.isAdmin) return;
+            db.ref(`rooms/GlobalLobby/${msgKey}`).remove().then(() => {
+                showToast("Message deleted.", "success");
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        function escapeAdminHTML(str) {
+            if(!str) return '';
+            return str.replace(/[&<>'"]/g,
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
+            );
+        }
+
+        let adminSearchTimeout = null;
+        window.adminSearchUsers = function() {
+            if(!myProfile.isAdmin) return;
+            const query = document.getElementById('adminSearchInput').value.trim();
+            const resultsBox = document.getElementById('adminSearchResults');
+
+            if (query.length < 2) {
+                resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">Type at least 2 characters</div>';
+                return;
+            }
+
+            clearTimeout(adminSearchTimeout);
+            adminSearchTimeout = setTimeout(() => {
+                // PERFORMANCE FIX: Query the specific start index instead of pulling all users at once
+                db.ref('users').orderByChild('name').startAt(query).endAt(query + "\uf8ff").limitToFirst(20).once('value', snap => {
+                    resultsBox.innerHTML = '';
+                    let found = false;
+
+                    snap.forEach(child => {
+                        const ud = child.val();
+                        if (ud.name) {
+                            found = true;
+                            const isBanned = ud.isBanned || false;
+
+                            // XSS FIX: Safely escape rendering strings and encode URI for pic
+                            const safeName = escapeAdminHTML(ud.name);
+                            const safeUid = escapeAdminHTML(ud.uid || child.key);
+                            const safePic = encodeURI(ud.pic || 'https://api.dicebear.com/7.x/avataaars/svg?seed=fallback');
+                            const orbs = parseInt(ud.orbs) || 0;
+
+                            resultsBox.innerHTML += `
+                                <div class="friend-list-item" style="flex-wrap: wrap; gap: 10px;">
+                                    <div class="friend-info" style="flex: 1; min-width: 150px;">
+                                        <img src="${safePic}" class="friend-avatar">
+                                        <div style="display:flex; flex-direction:column;">
+                                            <span class="friend-name">${safeName}</span>
+                                            <span style="font-size:10px; color:var(--text-secondary);">${safeUid} | ${orbs} Orbs</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:5px;">
+                                        <button class="friend-action-btn" style="background:var(--accent-blue); color:#fff;" onclick="adminEditUser('${child.key}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                                        <button class="friend-action-btn" style="background:var(--accent-yellow); color:var(--bg-dark);" onclick="adminGiveOrbs('${child.key}')">Orbs</button>
+                                        <button class="friend-action-btn ${isBanned ? 'reject' : ''}" style="${isBanned ? '' : 'background:rgba(255,59,48,0.1); color:var(--error-red); border:1px solid rgba(255,59,48,0.3);'}" onclick="adminToggleBan('${child.key}', ${isBanned})">${isBanned ? 'Unban' : 'Ban'}</button>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+
+                    if(!found) resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">No users found</div>';
+                });
+            }, 500);
+        }
+
+        window.adminToggleBan = function(targetUid, currentState) {
+            if(!myProfile.isAdmin) return;
+            if(targetUid === user.uid) return showToast("You cannot ban yourself.", "error");
+
+            const action = currentState ? "UNBAN" : "BAN";
+            if(confirm(`Are you sure you want to ${action} this user?`)) {
+                db.ref(`users/${targetUid}/isBanned`).set(!currentState).then(() => {
+                    showToast(`User ${action}NED successfully.`, "success");
+                    adminSearchUsers(); // Refresh results
+                }).catch(err => showToast(err.message, "error"));
+            }
+        }
+
+        window.adminGiveOrbs = function(targetUid) {
+            if(!myProfile.isAdmin) return;
+            const amount = parseInt(prompt("Enter amount of Orbs to give (can be negative to remove):", "100"));
+            if(!isNaN(amount)) {
+                db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + amount).then(() => {
+                    showToast(`Gave ${amount} Orbs to user.`, "success");
+                    adminSearchUsers(); // Refresh results
+                }).catch(err => showToast(err.message, "error"));
+            }
+        }
+
+        let adminCurrentEditUserUnlocked = [];
+        window.adminEditUser = function(targetUid) {
+            if(!myProfile.isAdmin) return;
+            db.ref(`users/${targetUid}`).once('value').then(snap => {
+                const userData = snap.val();
+                if(!userData) return showToast("User not found.", "error");
+
+                document.getElementById('adminEditUid').value = targetUid;
+                document.getElementById('adminEditName').value = userData.name || '';
+                document.getElementById('adminEditBio').value = userData.bio || '';
+                document.getElementById('adminEditOrbs').value = userData.orbs || 0;
+                document.getElementById('adminEditRole').value = userData.isAdmin ? "admin" : "user";
+
+                adminCurrentEditUserUnlocked = userData.unlocked || [];
+                adminUpdateInventorySelect(); // initialize the dropdown
+
+                const overlay = document.getElementById('sheetOverlay');
+                if(overlay) overlay.classList.add('show');
+                const sheet = document.getElementById('adminEditUserSheet');
+                if(sheet) sheet.classList.add('show');
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminUpdateInventorySelect = function() {
+            const cat = document.getElementById('adminEditInventoryCat').value;
+            const select = document.getElementById('adminEditInventoryItem');
+            select.innerHTML = '';
+
+            const items = shopData[cat] || [];
+            items.forEach(item => {
+                // Determine if user has it
+                const hasIt = item.price === 0 || adminCurrentEditUserUnlocked.includes(item.id);
+                select.innerHTML += `<option value="${item.id}" ${hasIt ? 'style="color:var(--success-green);"' : ''}>${hasIt ? '✓ ' : ''}${item.name}</option>`;
+            });
+        }
+
+        window.adminInventoryAction = function(action) {
+            if(!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            const itemId = document.getElementById('adminEditInventoryItem').value;
+            if(!uid || !itemId) return;
+
+            if (action === 'grant') {
+                if (!adminCurrentEditUserUnlocked.includes(itemId)) {
+                    adminCurrentEditUserUnlocked.push(itemId);
+                } else {
+                    return showToast("User already has this item.", "error");
+                }
+            } else if (action === 'revoke') {
+                const index = adminCurrentEditUserUnlocked.indexOf(itemId);
+                if (index > -1) {
+                    adminCurrentEditUserUnlocked.splice(index, 1);
+                } else {
+                    return showToast("User doesn't own this item.", "error");
+                }
+            }
+
+            // Immediately save to DB
+            db.ref(`users/${uid}/unlocked`).set(adminCurrentEditUserUnlocked).then(() => {
+                showToast(`Item ${action}ed successfully!`, "success");
+                adminUpdateInventorySelect(); // refresh the visual ✓
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.closeAdminEditUserSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.remove('show');
+            const sheet = document.getElementById('adminEditUserSheet');
+            if(sheet) sheet.classList.remove('show');
+        }
+
+        window.openAdminSettingsManager = function() {
+            if(!myProfile.isAdmin) return;
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.add('show');
+            const sheet = document.getElementById('adminSettingsSheet');
+            if(sheet) sheet.classList.add('show');
+            adminLoadRooms();
+            adminLoadSettings();
+        }
+
+        window.closeAdminSettingsSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.remove('show');
+            const sheet = document.getElementById('adminSettingsSheet');
+            if(sheet) sheet.classList.remove('show');
+        }
+
+        window.openAdminShopManager = function() {
+            if(!myProfile.isAdmin) return;
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.add('show');
+            const sheet = document.getElementById('adminShopSheet');
+            if(sheet) sheet.classList.add('show');
+            adminUpdateShopFields();
+        }
+
+        window.closeAdminShopSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            if(overlay) overlay.classList.remove('show');
+            const sheet = document.getElementById('adminShopSheet');
+            if(sheet) sheet.classList.remove('show');
+        }
+
+        window.adminToggleShopModeTab = function(mode) {
+            document.getElementById('adminShopMode').value = mode;
+            document.getElementById('tabShopModeNew').classList.toggle('active', mode === 'new');
+            document.getElementById('tabShopModeEdit').classList.toggle('active', mode === 'edit');
+
+            const submitBtn = document.getElementById('adminShopSubmitBtn');
+            if (submitBtn) {
+                submitBtn.innerText = mode === 'new' ? 'Create Global Item' : 'Save Edits';
+            }
+
+            const editSelectContainer = document.getElementById('adminShopEditSelectContainer');
+            const idInput = document.getElementById('adminShopId');
+
+            if (mode === 'edit') {
+                editSelectContainer.style.display = 'flex';
+                idInput.readOnly = true;
+                idInput.style.opacity = '0.5';
+                adminPopulateEditDropdown();
+                adminUpdateShopFields(); // Initial render for edit mode
+            } else {
+                editSelectContainer.style.display = 'none';
+                idInput.readOnly = false;
+                idInput.style.opacity = '1';
+
+                // Clear fields for new item
+                document.getElementById('adminShopId').value = '';
+                document.getElementById('adminShopName').value = '';
+                document.getElementById('adminShopPrice').value = '1000';
+                adminUpdateShopFields(); // Re-render empty dynamic fields
+            }
+        }
+
+        window.adminPopulateEditDropdown = function() {
+            const cat = document.getElementById('adminShopCategory').value;
+            const select = document.getElementById('adminShopEditSelect');
+            select.innerHTML = '<option value="">-- Select Item --</option>';
+
+            const items = shopData[cat] || [];
+            items.forEach(item => {
+                select.innerHTML += `<option value="${item.id}">${item.name} (${item.id})</option>`;
+            });
+        }
+
+        window.adminLoadExistingShopItem = function() {
+            const cat = document.getElementById('adminShopCategory').value;
+            const id = document.getElementById('adminShopEditSelect').value;
+            if (!id) return;
+
+            const item = (shopData[cat] || []).find(i => i.id === id);
+            if (!item) return;
+
+            // Update main fields
+            document.getElementById('adminShopId').value = item.id;
+            document.getElementById('adminShopName').value = item.name;
+            document.getElementById('adminShopPrice').value = item.price;
+
+            // Re-render HTML dynamically but don't reset dropdowns/inputs
+            adminUpdateShopFields(true);
+
+            setTimeout(() => {
+                if (cat === 'bubbles') {
+                    if(document.getElementById('adminShopBubbleBg')) document.getElementById('adminShopBubbleBg').value = item.color || '';
+                    if(document.getElementById('adminShopBubbleText')) document.getElementById('adminShopBubbleText').value = item.text || '';
+                } else if (cat === 'themes') {
+                    if(document.getElementById('adminShopThemeBg')) document.getElementById('adminShopThemeBg').value = item.bg || '';
+                    if(document.getElementById('adminShopThemeAcc')) document.getElementById('adminShopThemeAcc').value = item.acc || '';
+                    if(document.getElementById('adminShopThemeIsl')) document.getElementById('adminShopThemeIsl').value = item.isl || '';
+                    if(document.getElementById('adminShopThemeTxt')) document.getElementById('adminShopThemeTxt').value = item.txt || '';
+                    if(document.getElementById('adminShopThemeTxtSec')) document.getElementById('adminShopThemeTxtSec').value = item.txtSec || '';
+                } else if (cat === 'badges') {
+                    if(document.getElementById('adminShopBadgeIcon')) document.getElementById('adminShopBadgeIcon').value = item.icon || '';
+                    if(document.getElementById('adminShopBadgeColor')) document.getElementById('adminShopBadgeColor').value = item.color || '';
+                } else if (cat === 'fonts' || cat === 'nameColors' || cat === 'avatarRings') {
+                    const valInput = document.getElementById(cat === 'fonts' ? 'adminShopFontVal' : (cat === 'nameColors' ? 'adminShopNameColorVal' : 'adminShopRingVal'));
+                    if (valInput) valInput.value = item.value || '';
+                }
+            }, 50);
+        }
+
+        window.adminUpdateShopFields = function(skipRepopulate = false) {
+            const cat = document.getElementById('adminShopCategory').value;
+            const container = document.getElementById('adminShopDynamicFields');
+            let html = '';
+
+            if (cat === 'bubbles') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background Color (Hex, rgba, linear-gradient)</label><input type="text" id="adminShopBubbleBg" class="auth-input" placeholder="#ff0000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Text Color</label><input type="text" id="adminShopBubbleText" class="auth-input" placeholder="#ffffff"></div>
+                `;
+            } else if (cat === 'themes') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Background (bg)</label><input type="text" id="adminShopThemeBg" class="auth-input" placeholder="#000000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Accent (acc)</label><input type="text" id="adminShopThemeAcc" class="auth-input" placeholder="#ff0000"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Island/Card (isl)</label><input type="text" id="adminShopThemeIsl" class="auth-input" placeholder="#111111"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Primary Text (txt)</label><input type="text" id="adminShopThemeTxt" class="auth-input" placeholder="#ffffff"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Secondary Text (txtSec)</label><input type="text" id="adminShopThemeTxtSec" class="auth-input" placeholder="#aaaaaa"></div>
+                `;
+            } else if (cat === 'badges') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Icon (HTML/Emoji)</label><input type="text" id="adminShopBadgeIcon" class="auth-input" placeholder="<i class='fa-solid fa-star'></i> or ⭐"></div>
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Brand Color</label><input type="text" id="adminShopBadgeColor" class="auth-input" placeholder="#ffd700"></div>
+                `;
+            } else if (cat === 'fonts') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">Font Family CSS Value</label><input type="text" id="adminShopFontVal" class="auth-input" placeholder="'Courier New', Courier, monospace"></div>
+                `;
+            } else if (cat === 'nameColors') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Color Value (Hex or Gradient)</label><input type="text" id="adminShopNameColorVal" class="auth-input" placeholder="linear-gradient(...)"></div>
+                `;
+            } else if (cat === 'avatarRings') {
+                html = `
+                    <div style="display:flex; flex-direction:column; gap:5px;"><label style="font-size:12px; color:var(--text-secondary);">CSS Border/Box-Shadow Value</label><input type="text" id="adminShopRingVal" class="auth-input" placeholder="4px solid #ff0000; box-shadow: 0 0 10px #ff0000;"></div>
+                `;
+            }
+            // Determine if the structure changed. If yes, re-render html, otherwise skip it if skipRepopulate is true
+            // To be totally safe, just always replace it unless skipRepopulate is explicitly true AND there's already content.
+            // Actually, we shouldn't skip recreating HTML. We just shouldn't clear the inputs if skipRepopulate is true.
+            if (!skipRepopulate || container.innerHTML.trim() === '') {
+                container.innerHTML = html;
+            }
+
+            // If in edit mode, re-populate dropdown and load data
+            if (document.getElementById('adminShopMode').value === 'edit') {
+                if (!skipRepopulate) {
+                    adminPopulateEditDropdown();
+                    document.getElementById('adminShopId').value = '';
+                    document.getElementById('adminShopName').value = '';
+                    document.getElementById('adminShopPrice').value = '1000';
+                }
+            }
+        }
+
+        window.adminSaveNewShopItem = function() {
+            if(!myProfile.isAdmin) return;
+
+            const mode = document.getElementById('adminShopMode').value;
+            const cat = document.getElementById('adminShopCategory').value;
+            const id = document.getElementById('adminShopId').value.trim();
+            const name = document.getElementById('adminShopName').value.trim();
+            const price = parseInt(document.getElementById('adminShopPrice').value) || 0;
+
+            if(!id || !name) return showToast("ID and Name are required.", "error");
+
+            let newItem = { id, name, price };
+
+            if (cat === 'bubbles') {
+                newItem.color = document.getElementById('adminShopBubbleBg').value.trim();
+                newItem.text = document.getElementById('adminShopBubbleText').value.trim();
+                if(!newItem.color) return showToast("Background color required", "error");
+            } else if (cat === 'themes') {
+                newItem.bg = document.getElementById('adminShopThemeBg').value.trim();
+                newItem.acc = document.getElementById('adminShopThemeAcc').value.trim();
+                newItem.isl = document.getElementById('adminShopThemeIsl').value.trim();
+                newItem.txt = document.getElementById('adminShopThemeTxt').value.trim();
+                newItem.txtSec = document.getElementById('adminShopThemeTxtSec').value.trim();
+                if(!newItem.bg || !newItem.acc) return showToast("Theme colors required", "error");
+            } else if (cat === 'badges') {
+                newItem.icon = document.getElementById('adminShopBadgeIcon').value.trim();
+                newItem.color = document.getElementById('adminShopBadgeColor').value.trim();
+            } else if (cat === 'fonts') {
+                newItem.value = document.getElementById('adminShopFontVal').value.trim();
+            } else if (cat === 'nameColors') {
+                newItem.value = document.getElementById('adminShopNameColorVal').value.trim();
+            } else if (cat === 'avatarRings') {
+                newItem.value = document.getElementById('adminShopRingVal').value.trim();
+            }
+
+            // Grab existing array from shopData
+            let currentArray = shopData[cat] || [];
+
+            if (mode === 'new') {
+                // Prevent duplicate IDs
+                if(currentArray.find(i => i.id === id)) {
+                    return showToast("An item with this ID already exists in this category.", "error");
+                }
+                currentArray.push(newItem);
+            } else {
+                // Edit existing
+                const index = currentArray.findIndex(i => i.id === id);
+                if (index === -1) return showToast("Original item not found.", "error");
+                // Preserve the isCustom flag if it exists
+                if (currentArray[index].isCustom) newItem.isCustom = true;
+                currentArray[index] = newItem;
+            }
+
+            db.ref(`globalSettings/shopData/${cat}`).set(currentArray).then(() => {
+                showToast(mode === 'new' ? `New ${cat} item created successfully!` : `Item edited successfully!`, "success");
+                closeAdminShopSheet();
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminLoadRooms = function() {
+            if(!myProfile.isAdmin) return;
+            db.ref('globalSettings/rooms').on('value', snap => {
+                const container = document.getElementById('adminRoomsList');
+                if(!container) return;
+                container.innerHTML = '';
+                if(snap.exists()) {
+                    let roomsArr = [];
+                    snap.forEach(child => {
+                        roomsArr.push({ key: child.key, ...child.val() });
+                    });
+                    roomsArr.sort((a,b) => (a.order || 0) - (b.order || 0));
+
+                    roomsArr.forEach(r => {
+                        container.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span style="font-size:14px; color:var(--text-primary);">${r.name}</span>
+                                    <span style="font-size:11px; color:var(--text-secondary);">ID: ${r.key} | Order: ${r.order || 0}</span>
+                                </div>
+                                <button class="btn-primary" style="height:30px; font-size:12px; background:var(--error-red); border:none; padding: 0 10px;" onclick="adminDeleteRoom('${r.key}')">Delete</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<span style="color:var(--text-secondary); font-size:12px;">No custom rooms found. Defaults will be used.</span>';
+                }
+            });
+        }
+
+        window.adminCreateRoom = function() {
+            if(!myProfile.isAdmin) return;
+            const id = document.getElementById('adminNewRoomId').value.trim();
+            const name = document.getElementById('adminNewRoomName').value.trim();
+            const desc = document.getElementById('adminNewRoomDesc').value.trim();
+            const order = parseInt(document.getElementById('adminNewRoomOrder').value) || 0;
+
+            if(!id || !name) return showToast("Room ID and Display Name are required.", "error");
+
+            db.ref('globalSettings/rooms/' + id).set({
+                name: name,
+                desc: desc,
+                order: order,
+                icon: '<i class="fa-solid fa-users"></i>'
+            }).then(() => {
+                showToast("Room added!", "success");
+                document.getElementById('adminNewRoomId').value = '';
+                document.getElementById('adminNewRoomName').value = '';
+                document.getElementById('adminNewRoomDesc').value = '';
+                document.getElementById('adminNewRoomOrder').value = '';
+            }).catch(err => showToast(err.message, "error"));
+        }
+
+        window.adminDeleteRoom = function(id) {
+            if(!myProfile.isAdmin) return;
+            if(confirm(`Are you sure you want to delete room: ${id}?`)) {
+                db.ref('globalSettings/rooms/' + id).remove().then(() => {
+                    showToast("Room deleted.", "success");
+                });
+            }
+        }
+
+        window.adminLoadSettings = function() {
+            if(!myProfile.isAdmin) return;
+            db.ref('globalSettings/features').on('value', snap => {
+                const container = document.getElementById('adminSettingsList');
+                if(!container) return;
+
+                const features = snap.val() || {
+                    enableStrangerMatch: true,
+                    enableMiniGames: true,
+                    enableGlobalLounge: true
+                };
+
+                container.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Stranger Match</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableStrangerMatch !== false ? 'checked' : ''} onchange="adminToggleFeature('enableStrangerMatch', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Mini Games</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableMiniGames !== false ? 'checked' : ''} onchange="adminToggleFeature('enableMiniGames', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Global Lounges Tab</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.enableGlobalLounge !== false ? 'checked' : ''} onchange="adminToggleFeature('enableGlobalLounge', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            });
+        }
+
+        window.adminToggleFeature = function(featureKey, state) {
+            if(!myProfile.isAdmin) return;
+            db.ref(`globalSettings/features/${featureKey}`).set(state).then(() => {
+                showToast("Setting updated", "success");
+            });
+        }
+
+        window.adminSaveUserEdit = function() {
+            if(!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            if(!uid) return;
+
+            const newName = document.getElementById('adminEditName').value.trim();
+            const newBio = document.getElementById('adminEditBio').value.trim();
+            const newOrbs = parseInt(document.getElementById('adminEditOrbs').value) || 0;
+            const isAdmin = document.getElementById('adminEditRole').value === "admin";
+
+            if(newName.length < 3) return showToast("Name must be at least 3 characters", "error");
+
+            db.ref(`users/${uid}`).update({
+                name: newName,
+                nameLowerCase: newName.toLowerCase(),
+                bio: newBio,
+                orbs: newOrbs,
+                isAdmin: isAdmin
+            }).then(() => {
+                showToast("User profile updated successfully.", "success");
+                closeAdminEditUserSheet();
+                adminSearchUsers(); // Refresh results
+            }).catch(err => showToast(err.message, "error"));
         }
 
         // --- TIC TAC TOE LOGIC ---
