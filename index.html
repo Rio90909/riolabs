@@ -1456,14 +1456,6 @@
                     <div class="card-icon" style="color: #00e5ff;"><i class="fa-solid fa-hand-back-fist"></i></div>
                     <div class="card-text"><h3 style="color: #00e5ff;">Rock-Paper-Scissors</h3></div>
                 </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
-                    <div class="card-icon" style="color: #ff007f;"><i class="fa-solid fa-table-cells-large"></i></div>
-                    <div class="card-text"><h3 style="color: #ff007f;">Connect 4</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
-                    <div class="card-icon" style="color: #03A9F4;"><i class="fa-solid fa-brain"></i></div>
-                    <div class="card-text"><h3 style="color: #03A9F4;">Memory Match</h3></div>
-                </div>
              </div>
         </div>
 
@@ -1778,53 +1770,71 @@
             <i class="fa-solid fa-shield-halved" style="color:var(--error-red); font-size:14px;"></i>
         </div>
 
-        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px 20px 150px 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-            <div class="hub-card" style="flex: none; height: auto; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default;">
-                <h3 style="margin: 0; font-size: 16px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 12px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
+        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-chart-pie"></i> Analytics Dashboard</h3>
+                <div style="display: flex; gap: 10px; justify-content: space-between;">
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--accent-purple);" id="analyticsTotalUsers">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Registered Users</div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #03A9F4;" id="analyticsTotalMessages">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Global Msgs</div>
+                    </div>
+                </div>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none; margin-top: 5px;" onclick="refreshAnalytics()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh Data
+                </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
                     <i class="fa-solid fa-broom"></i> Clear Global Lounge
                 </button>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 12px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
                     <i class="fa-solid fa-bullhorn"></i> System Broadcast
                 </button>
             </div>
 
-            <div class="hub-card" style="flex: none; height: auto; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default;">
-                <h3 style="margin: 0; font-size: 16px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
-                <div class="search-glass" style="min-height: 50px; padding: 12px; border-radius: 12px;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
+                <div class="search-glass" style="min-height: 44px; padding: 10px; border-radius: 12px;">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="adminSearchInput" placeholder="Search usernames..." autocomplete="off" oninput="adminSearchUsers()" style="font-size: 14px;">
+                    <input type="text" id="adminSearchInput" placeholder="Search usernames..." autocomplete="off" oninput="adminSearchUsers()">
                 </div>
                 <div id="adminSearchResults" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
                     <!-- Results populated here -->
                 </div>
             </div>
 
-            <div class="hub-card" style="flex: none; height: auto; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default;">
-                <h3 style="margin: 0; font-size: 16px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
-                <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 12px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Manage Shop Items
                 </button>
             </div>
 
-            <div class="hub-card" style="flex: none; height: auto; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3 style="margin: 0; font-size: 16px; color: var(--accent-blue);"><i class="fa-solid fa-eye"></i> Live Chat Viewer</h3>
+                    <h3 style="margin: 0; font-size: 15px; color: var(--accent-blue);"><i class="fa-solid fa-eye"></i> Live Chat Viewer</h3>
                     <label class="switch">
                         <input type="checkbox" id="adminLiveChatToggle" onchange="adminToggleLiveChat()">
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 13px;">
+                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
                     <div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>
                 </div>
             </div>
 
-            <div class="hub-card" style="flex: none; height: auto; width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default;">
-                <h3 style="margin: 0; font-size: 16px; color: var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</h3>
-                <p style="font-size: 12px; color: var(--text-secondary); margin: 0;">Create new public lounges or toggle features globally.</p>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 12px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Create new public lounges or toggle features globally.</p>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
                     <i class="fa-solid fa-sliders"></i> Manage Rooms & Settings
                 </button>
             </div>
@@ -1949,12 +1959,34 @@
             return t; 
         }
 
+
+        // --- ANALYTICS LOGIC ---
+        window.refreshAnalytics = function() {
+            document.getElementById('analyticsTotalUsers').innerText = "...";
+            document.getElementById('analyticsTotalMessages').innerText = "...";
+
+            db.ref('users').once('value').then(snap => {
+                document.getElementById('analyticsTotalUsers').innerText = snap.numChildren();
+            }).catch(() => {
+                document.getElementById('analyticsTotalUsers').innerText = "Err";
+            });
+
+            db.ref('rooms/GlobalLobby').once('value').then(snap => {
+                document.getElementById('analyticsTotalMessages').innerText = snap.numChildren();
+            }).catch(() => {
+                document.getElementById('analyticsTotalMessages').innerText = "Err";
+            });
+        };
+
         window.switchScreen = function(id) {
             document.querySelectorAll('.screen:not(#matchmakingOverlay)').forEach(s => { 
                 if(s) s.style.opacity = '0'; 
                 setTimeout(() => { if(s) s.classList.remove('active'); }, 300); 
             });
             const target = document.getElementById(id);
+            if (id === 'admin-screen') {
+                if(typeof refreshAnalytics === 'function') refreshAnalytics();
+            }
             if(target) {
                 setTimeout(() => { 
                     target.classList.add('active'); 
@@ -2197,11 +2229,14 @@ function sendNotification(title, body, icon) {
                 { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 2000 },
                 { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
             ],
-            badges: [
+                        badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
                 { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 400 },
                 { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 800 },
-                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 }
+                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 },
+                { id: 'badge_mod', name: 'Moderator', icon: '<i class="fa-solid fa-shield-halved" style="color:var(--success-green);"></i>', color: 'var(--success-green)', price: 0 },
+                { id: 'badge_early', name: 'Early Supporter', icon: '<i class="fa-solid fa-star" style="color:#ff9900;"></i>', color: '#ff9900', price: 0 },
+                { id: 'badge_pro', name: 'Pro Gamer', icon: '<i class="fa-solid fa-gamepad" style="color:#ff007f;"></i>', color: '#ff007f', price: 1500 }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
@@ -4255,7 +4290,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (gameType !== 'TicTacToe' && gameType !== 'RPS' && gameType !== 'Connect4' && gameType !== 'MemoryMatch') {
+            if (gameType !== 'TicTacToe' && gameType !== 'RPS') {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4745,6 +4780,95 @@ function sendNotification(title, body, icon) {
             }
             document.getElementById('rematchMmBtn').style.display = 'none';
         }
+
+
+        // --- TIC TAC TOE & RPS MOVE LOGIC ---
+        window.makeMove = function(idx) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || data.turn !== mySymbol || data.board[idx] !== '') return;
+
+                let newBoard = [...data.board];
+                newBoard[idx] = mySymbol;
+
+                let newTurn = mySymbol === 'X' ? 'O' : 'X';
+                let winner = checkWinner(newBoard);
+
+                gameRef.update({ board: newBoard, turn: newTurn, winner: winner });
+            });
+        };
+
+        function checkWinner(board) {
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (let i = 0; i < lines.length; i++) {
+                const [a, b, c] = lines[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            if (!board.includes('')) return 'Draw';
+            return null;
+        }
+
+        window.updateBoardUI = function(board) {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.getElementById('ttt-' + i);
+                if (cell) cell.innerText = board[i];
+            }
+        };
+
+        window.resetGame = function() {
+            if (!gameRef) return;
+            gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+        };
+
+        window.makeRPSMove = function(move) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner) return;
+
+                let updates = {};
+                if (mySymbol === 'X') {
+                    updates.playerX = move;
+                } else {
+                    updates.playerO = move;
+                }
+
+                if ((mySymbol === 'X' && data.playerO !== '') || (mySymbol === 'O' && data.playerX !== '')) {
+                    let moveX = updates.playerX || data.playerX;
+                    let moveO = updates.playerO || data.playerO;
+                    updates.winner = determineRPSWinner(moveX, moveO);
+                }
+
+                gameRef.update(updates);
+            });
+        };
+
+        function determineRPSWinner(x, o) {
+            if (x === o) return 'Draw';
+            if ((x === 'rock' && o === 'scissors') ||
+                (x === 'paper' && o === 'rock') ||
+                (x === 'scissors' && o === 'paper')) {
+                return 'X';
+            }
+            return 'O';
+        }
+
+        window.resetRPS = function() {
+            if (!gameRef) return;
+            gameRef.set({ playerX: '', playerO: '', winner: null });
+            document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
+            document.getElementById('rpsOpponentBox').style.borderColor = "var(--glass-border)";
+            document.getElementById('rpsStatus').innerText = "Make your move...";
+            document.getElementById('rematchRpsBtn').style.display = 'none';
+        };
+
 
         window.sendGameChat = function() {
             const input = document.getElementById('gameChatInput');
@@ -5846,7 +5970,7 @@ window.burnImage = function(element, url, key) {
         }
     </script>
 
-    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
+    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
         <button onclick="leaveRPS()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #00e5ff; margin-bottom: 5px;">Rock Paper Scissors</h2>
         <p id="rpsStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -5866,7 +5990,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchRpsBtn" onclick="resetRPS()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #00e5ff; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
+    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
         <button onclick="leaveGame()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Tic-Tac-Toe</h2>
         <p id="gameStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -5886,21 +6010,9 @@ window.burnImage = function(element, url, key) {
         <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="connect4Overlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
-        <button onclick="leaveConnect4()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Connect 4</h2>
-        <p id="c4Status" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
 
-        <div style="background: #1e88e5; padding: 10px; border-radius: 16px;">
-            <div id="c4Board" style="display: grid; grid-template-columns: repeat(7, 40px); grid-template-rows: repeat(6, 40px); gap: 5px; width: 310px; height: 265px;">
-                <!-- Generated by JS -->
-            </div>
-        </div>
 
-        <button id="rematchC4Btn" onclick="resetConnect4()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
-
-    <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 30vh; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column;">
+    <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 25vh; min-height: 150px; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column; padding-bottom: env(safe-area-inset-bottom);">
         <div id="gameChatMessages" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px;"></div>
         <div style="padding: 10px; display: flex; gap: 10px; background: var(--bg-dark);">
             <input type="text" id="gameChatInput" placeholder="Chat with opponent..." style="flex: 1; padding: 10px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--island); color: var(--text-primary); outline: none;">
@@ -5908,19 +6020,6 @@ window.burnImage = function(element, url, key) {
         </div>
     </div>
 
-    <div id="mmOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px;">
-        <button onclick="leaveMemoryMatch()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #03A9F4; margin-bottom: 5px;">Memory Match</h2>
-        <div style="display: none; gap: 40px; font-size: 24px; font-weight: bold; color: white; margin-bottom: 10px;">
-            <span id="mmScoreX" style="color: #ff003c;">0</span> - <span id="mmScoreO" style="color: #ffcc00;">0</span>
-        </div>
-        <p id="mmStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
 
-        <div id="mmBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 300px; max-width: 100%;">
-            <!-- Generated by JS -->
-        </div>
-
-        <button id="rematchMmBtn" onclick="resetMemoryMatch()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: #03A9F4; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
 </body>
 </html>
