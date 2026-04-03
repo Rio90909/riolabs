@@ -5160,21 +5160,21 @@ function sendNotification(title, body, icon) {
         });
 
         // Touch/Swipe Logic
-        let touchStartX = 0;
-        let touchStartY = 0;
+        let snakeTouchStartX = 0;
+        let snakeTouchStartY = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             const swipeZone = document.getElementById('snakeSwipeZone');
             if(swipeZone) {
                 swipeZone.addEventListener('touchstart', function(e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                    touchStartY = e.changedTouches[0].screenY;
+                    snakeTouchStartX = e.changedTouches[0].screenX;
+                    snakeTouchStartY = e.changedTouches[0].screenY;
                 }, {passive: true});
 
                 swipeZone.addEventListener('touchend', function(e) {
-                    let touchEndX = e.changedTouches[0].screenX;
-                    let touchEndY = e.changedTouches[0].screenY;
-                    handleSnakeSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+                    let snakeTouchEndX = e.changedTouches[0].screenX;
+                    let snakeTouchEndY = e.changedTouches[0].screenY;
+                    handleSnakeSwipe(snakeTouchStartX, snakeTouchStartY, snakeTouchEndX, snakeTouchEndY);
                 }, {passive: true});
             }
         });
