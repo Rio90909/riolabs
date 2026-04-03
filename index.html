@@ -3871,6 +3871,8 @@ function sendNotification(title, body, icon) {
         let myBsBoard = Array(100).fill('');
         let bsShipsPlaced = 0;
         let bsPhase = 'place'; // 'place' or 'play'
+        let bsOCells = [];
+        let bsMCells = [];
 
         window.initBattleshipBoards = function() {
             myBsBoard = Array(100).fill('');
@@ -3883,6 +3885,8 @@ function sendNotification(title, body, icon) {
             const myBoard = document.getElementById('bsMyBoard');
             oppBoard.innerHTML = '';
             myBoard.innerHTML = '';
+            bsOCells = [];
+            bsMCells = [];
 
             for(let i=0; i<100; i++) {
                 // Opponent cell (for firing)
@@ -3891,6 +3895,7 @@ function sendNotification(title, body, icon) {
                 oCell.style.cssText = 'background: var(--bg-dark); cursor: crosshair;';
                 oCell.onclick = () => fireBattleship(i);
                 oppBoard.appendChild(oCell);
+                bsOCells.push(oCell);
 
                 // My cell (for placing/viewing my board)
                 const mCell = document.createElement('div');
@@ -3898,6 +3903,7 @@ function sendNotification(title, body, icon) {
                 mCell.style.cssText = 'background: var(--bg-dark); cursor: pointer;';
                 mCell.onclick = () => placeShip(i);
                 myBoard.appendChild(mCell);
+                bsMCells.push(mCell);
             }
         }
 
@@ -3971,7 +3977,7 @@ function sendNotification(title, body, icon) {
 
             for(let i=0; i<100; i++) {
                 // Update opponent board (my shots)
-                const oCell = document.getElementById('bs-o-' + i);
+                const oCell = bsOCells[i];
                 if(oCell) {
                     if(myShots[i] === 'H') oCell.style.background = '#ff003c'; // Hit
                     else if(myShots[i] === 'M') oCell.style.background = '#00e5ff'; // Miss
@@ -3979,7 +3985,7 @@ function sendNotification(title, body, icon) {
                 }
 
                 // Update my board (my ships + opp shots)
-                const mCell = document.getElementById('bs-m-' + i);
+                const mCell = bsMCells[i];
                 if(mCell) {
                     if(oppShots[i] === 'H') {
                         mCell.style.background = '#ff003c'; // Opp Hit my ship
