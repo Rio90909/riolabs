@@ -1483,6 +1483,34 @@
                     <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
                     <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
                 </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('StopTimer')">
+                    <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-stopwatch"></i></div>
+                    <div class="card-text"><h3 style="color: #FFD700;">Stop the Timer</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Reaction')">
+                    <div class="card-icon" style="color: #32CD32;"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="card-text"><h3 style="color: #32CD32;">Reaction Tap</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Matchsticks')">
+                    <div class="card-icon" style="color: #ff6b6b;"><i class="fa-solid fa-fire-flame-simple"></i></div>
+                    <div class="card-text"><h3 style="color: #ff6b6b;">Matchsticks (21)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('HighCard')">
+                    <div class="card-icon" style="color: #9b59b6;"><i class="fa-solid fa-diamond"></i></div>
+                    <div class="card-text"><h3 style="color: #9b59b6;">High Card War</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('GuessNumber')">
+                    <div class="card-icon" style="color: #f1c40f;"><i class="fa-solid fa-question"></i></div>
+                    <div class="card-text"><h3 style="color: #f1c40f;">Guess the Number</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('CoinFlip')">
+                    <div class="card-icon" style="color: #bdc3c7;"><i class="fa-solid fa-coins"></i></div>
+                    <div class="card-text"><h3 style="color: #bdc3c7;">Coin Flip</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('HigherLower')">
+                    <div class="card-icon" style="color: #e74c3c;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
+                    <div class="card-text"><h3 style="color: #e74c3c;">Higher or Lower</h3></div>
+                </div>
              </div>
         </div>
 
@@ -4396,7 +4424,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (!['TicTacToe', 'RPS', 'Dots'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4415,6 +4443,30 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'Dots') {
                 document.getElementById('dotsOverlay').style.display = 'flex';
                 document.getElementById('dotsStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'StopTimer') {
+                document.getElementById('stopTimerOverlay').style.display = 'flex';
+                document.getElementById('stStatus').innerText = "Searching for opponent...";
+                document.getElementById('stDisplay').innerText = "0.00";
+            } else if (gameType === 'Reaction') {
+                document.getElementById('reactionOverlay').style.display = 'flex';
+                document.getElementById('rtStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Matchsticks') {
+                document.getElementById('matchsticksOverlay').style.display = 'flex';
+                document.getElementById('msStatus').innerText = "Searching for opponent...";
+                document.getElementById('msContainer').innerHTML = '';
+            } else if (gameType === 'HighCard') {
+                document.getElementById('highCardOverlay').style.display = 'flex';
+                document.getElementById('hcStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'GuessNumber') {
+                document.getElementById('guessNumberOverlay').style.display = 'flex';
+                document.getElementById('gnStatus').innerText = "Searching for opponent...";
+                document.getElementById('gnHistory').innerHTML = '';
+            } else if (gameType === 'CoinFlip') {
+                document.getElementById('coinFlipOverlay').style.display = 'flex';
+                document.getElementById('cfStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'HigherLower') {
+                document.getElementById('higherLowerOverlay').style.display = 'flex';
+                document.getElementById('hlStatus').innerText = "Searching for opponent...";
             }
 
             queueRef.once('value', snap => {
@@ -4492,6 +4544,61 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType === 'StopTimer') {
+                document.getElementById('stStatus').innerText = "Opponent found! Game starting...";
+                document.getElementById('stActionBtn').style.display = 'block';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+                }
+                startStopTimerLoop();
+            } else if (activeGameType === 'Reaction') {
+                document.getElementById('rtStatus').innerText = "Opponent found! Get ready...";
+                document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                }
+                startReactionLoop();
+            } else if (activeGameType === 'Matchsticks') {
+                document.getElementById('msStatus').innerText = "Opponent found!";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ sticks: 21, turn: 'X', winner: null });
+                }
+                startMatchsticksLoop();
+            } else if (activeGameType === 'HighCard') {
+                document.getElementById('hcStatus').innerText = "Opponent found!";
+                document.getElementById('hcDrawBtn').style.display = 'block';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ p1Card: 0, p2Card: 0, winner: null });
+                }
+                startHighCardLoop();
+            } else if (activeGameType === 'GuessNumber') {
+                document.getElementById('gnStatus').innerText = "Opponent found!";
+                document.getElementById('gnControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null });
+                }
+                startGuessNumberLoop();
+            } else if (activeGameType === 'CoinFlip') {
+                document.getElementById('cfStatus').innerText = "Opponent found!";
+                document.getElementById('cfControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ p1Choice: '', p2Choice: '', result: '', winner: null });
+                }
+                startCoinFlipLoop();
+            } else if (activeGameType === 'HigherLower') {
+                document.getElementById('hlStatus').innerText = "Opponent found!";
+                document.getElementById('hlControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.set({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+                }
+                startHigherLowerLoop();
             } else if (activeGameType === 'Dots') {
                 document.getElementById('dotsStatus').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
@@ -5045,12 +5152,15 @@ function sendNotification(title, body, icon) {
 
         // --- DOTS & BOXES LOGIC ---
         let localDotsState = null;
+        let dotsClickBound = false;
 
         window.startDotsGameLoop = function() {
             const canvas = document.getElementById('dotsCanvas');
             const ctx = canvas.getContext('2d');
 
-            canvas.addEventListener('click', function(e) {
+            if(!dotsClickBound) {
+                dotsClickBound = true;
+                canvas.addEventListener('click', function(e) {
                 if(!localDotsState || localDotsState.winner || localDotsState.turn !== mySymbol) return;
 
                 const rect = canvas.getBoundingClientRect();
@@ -5090,7 +5200,8 @@ function sendNotification(title, body, icon) {
                     // Clicked vertical line
                     makeDotsMove('v', vRow*5 + vCol);
                 }
-            });
+                });
+            }
 
             gameRef.on('value', snap => {
                 localDotsState = snap.val();
@@ -5224,6 +5335,463 @@ function sendNotification(title, body, icon) {
                 });
             }
         }
+                // ==========================================
+        // NEW LIGHTWEIGHT GAMES LOGIC
+        // ==========================================
+
+        let stopTimerRaf = null;
+        let reactionRaf = null;
+
+        // --- STOP THE TIMER ---
+        window.startStopTimerLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    cancelAnimationFrame(stopTimerRaf);
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    document.getElementById('rematchStBtn').style.display = 'block';
+                    document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                    document.getElementById('stDisplay').innerText = data.p1Stop > 0 ? (mySymbol === 'X' ? (data.p1Stop/1000).toFixed(2) : (data.p2Stop/1000).toFixed(2)) : "10.00";
+                    return;
+                }
+
+                if(data.status === 'waiting') {
+                    if(Date.now() > data.start) {
+                        gameRef.update({ status: 'playing', start: Date.now() });
+                    } else {
+                        document.getElementById('stDisplay').innerText = "0.00";
+                        document.getElementById('stStatus').innerText = "Get ready...";
+                    }
+                }
+
+                if(data.status === 'playing' && !stopTimerRaf) {
+                    document.getElementById('stStatus').innerText = "Tap STOP at exactly 10.00s!";
+                    function updateDisplay() {
+                        if(data.winner) return;
+                        const myStop = mySymbol === 'X' ? data.p1Stop : data.p2Stop;
+                        if(myStop === 0) {
+                            const elapsed = (Date.now() - data.start) / 1000;
+                            document.getElementById('stDisplay').innerText = elapsed.toFixed(2);
+                            stopTimerRaf = requestAnimationFrame(updateDisplay);
+                        }
+                    }
+                    stopTimerRaf = requestAnimationFrame(updateDisplay);
+                }
+
+                // Both stopped
+                if(data.p1Stop > 0 && data.p2Stop > 0 && mySymbol === 'X') {
+                    let diff1 = Math.abs(10000 - data.p1Stop);
+                    let diff2 = Math.abs(10000 - data.p2Stop);
+                    let win = diff1 < diff2 ? "P1 (Host)" : (diff2 < diff1 ? "P2 (Client)" : "Draw");
+                    gameRef.update({ winner: win });
+                }
+            });
+        }
+        window.stopTimerAction = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && d.status === 'playing') {
+                    const stoppedAt = Date.now() - d.start;
+                    if(mySymbol === 'X' && d.p1Stop === 0) gameRef.update({ p1Stop: stoppedAt });
+                    if(mySymbol === 'O' && d.p2Stop === 0) gameRef.update({ p2Stop: stoppedAt });
+                    document.getElementById('stDisplay').innerText = (stoppedAt/1000).toFixed(2);
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    document.getElementById('stStatus').innerText = "Waiting for opponent to stop...";
+                    cancelAnimationFrame(stopTimerRaf);
+                }
+            });
+        }
+        window.resetStopTimer = function() {
+            if(gameRef && mySymbol === 'X') gameRef.set({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+        }
+
+        // --- REACTION TAP ---
+        window.startReactionLoop = function() {
+            document.getElementById('rtTapZone').style.display = 'block';
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    cancelAnimationFrame(reactionRaf);
+                    document.getElementById('rematchRtBtn').style.display = 'block';
+                    document.getElementById('rtTapZone').style.display = 'none';
+                    if(data.winner === 'Early') {
+                        document.getElementById('rtInstruction').innerText = "Someone false started!";
+                        document.getElementById('rtStatus').innerText = "Match Voided.";
+                    } else {
+                        document.getElementById('rtInstruction').innerText = `${data.winner} Wins!`;
+                        document.getElementById('rtStatus').innerText = `Tap Time: ${Math.min(data.p1Tap || 9999, data.p2Tap || 9999)}ms`;
+                    }
+                    return;
+                }
+
+                if(data.status === 'waiting') {
+                    document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
+                    document.getElementById('rtInstruction').innerText = "Wait for Green...";
+                    if(Date.now() > data.greenTime) {
+                        gameRef.update({ status: 'go', greenTime: Date.now() }); // reset time to exact start
+                    }
+                } else if (data.status === 'go') {
+                    document.getElementById('reactionOverlay').style.background = '#32CD32';
+                    document.getElementById('rtInstruction').innerText = "TAP NOW!";
+                }
+
+                if(data.p1Tap > 0 && data.p2Tap > 0 && mySymbol === 'X') {
+                    let win = data.p1Tap < data.p2Tap ? "P1 (Host)" : "P2 (Client)";
+                    gameRef.update({ winner: win });
+                } else if ((data.p1Tap > 0 || data.p2Tap > 0) && mySymbol === 'X') {
+                    // Give other player 1 second to also tap before declaring winner by default
+                    setTimeout(() => {
+                        gameRef.once('value', s => {
+                            let d2 = s.val();
+                            if(!d2.winner) {
+                                let w = d2.p1Tap > 0 ? "P1 (Host)" : "P2 (Client)";
+                                gameRef.update({ winner: w });
+                            }
+                        });
+                    }, 1000);
+                }
+            });
+
+            function checkTime() {
+                if(!gameRef) return;
+                gameRef.once('value', s => {
+                    const d = s.val();
+                    if(d && d.status === 'waiting' && Date.now() > d.greenTime && mySymbol === 'X') {
+                        gameRef.update({ status: 'go', greenTime: Date.now() });
+                    }
+                });
+                reactionRaf = requestAnimationFrame(checkTime);
+            }
+            if(mySymbol === 'X') reactionRaf = requestAnimationFrame(checkTime);
+        }
+        window.reactionTapAction = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(d.status === 'waiting') {
+                        // False start
+                        gameRef.update({ winner: 'Early' });
+                    } else if(d.status === 'go') {
+                        const tapTime = Date.now() - d.greenTime;
+                        if(mySymbol === 'X' && d.p1Tap === 0) gameRef.update({ p1Tap: tapTime });
+                        if(mySymbol === 'O' && d.p2Tap === 0) gameRef.update({ p2Tap: tapTime });
+                        document.getElementById('rtInstruction').innerText = `You tapped in ${tapTime}ms!`;
+                        document.getElementById('rtTapZone').style.display = 'none';
+                    }
+                }
+            });
+        }
+        window.resetReaction = function() {
+            if(gameRef && mySymbol === 'X') {
+                document.getElementById('rematchRtBtn').style.display = 'none';
+                gameRef.set({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+            }
+        }
+
+        // --- MATCHSTICKS ---
+        window.startMatchsticksLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                document.getElementById('msContainer').innerHTML = '';
+                for(let i=0; i<data.sticks; i++) {
+                    const s = document.createElement('div');
+                    s.style.cssText = "width: 10px; height: 50px; background: #eccc68; border-radius: 5px; position: relative;";
+                    const tip = document.createElement('div');
+                    tip.style.cssText = "width: 14px; height: 14px; background: #ff4757; border-radius: 50%; position: absolute; top: -5px; left: -2px;";
+                    s.appendChild(tip);
+                    document.getElementById('msContainer').appendChild(s);
+                }
+
+                if(data.winner) {
+                    document.getElementById('msControls').style.display = 'none';
+                    document.getElementById('rematchMsBtn').style.display = 'block';
+                    document.getElementById('msStatus').innerText = `${data.winner} Wins!`;
+                    return;
+                }
+
+                if(data.turn === mySymbol) {
+                    document.getElementById('msStatus').innerText = "Your Turn! Pick 1, 2, or 3.";
+                    document.getElementById('msControls').style.display = 'flex';
+                } else {
+                    document.getElementById('msStatus').innerText = "Opponent's Turn...";
+                    document.getElementById('msControls').style.display = 'none';
+                }
+
+                if(data.sticks <= 0 && mySymbol === 'X') { // The person who took the last one loses.
+                    let w = data.turn === 'X' ? "P1" : "P2"; // If it's X's turn, O took the last one.
+                    gameRef.update({ winner: w });
+                }
+            });
+        }
+        window.takeMatchsticks = function(amt) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner && d.turn === mySymbol) {
+                    let rem = d.sticks - amt;
+                    if(rem < 0) rem = 0;
+                    if(rem === 0) {
+                        gameRef.update({ sticks: 0, winner: mySymbol === 'X' ? 'P2 (Client)' : 'P1 (Host)' });
+                    } else {
+                        gameRef.update({ sticks: rem, turn: mySymbol === 'X' ? 'O' : 'X' });
+                    }
+                }
+            });
+        }
+        window.resetMatchsticks = function() {
+            if(gameRef && mySymbol === 'X') gameRef.set({ sticks: 21, turn: 'X', winner: null });
+        }
+
+        // --- HIGH CARD WAR ---
+        const cardsArr = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+        window.startHighCardLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    document.getElementById('rematchHcBtn').style.display = 'block';
+                    document.getElementById('hcDrawBtn').style.display = 'none';
+                    document.getElementById('hcStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                }
+
+                let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
+                let opC = mySymbol === 'X' ? data.p2Card : data.p1Card;
+
+                document.getElementById('hcMyCard').innerHTML = myC ? cardsArr[myC-2] : '<i class="fa-solid fa-question"></i>';
+                document.getElementById('hcOppCard').innerHTML = opC ? cardsArr[opC-2] : '<i class="fa-solid fa-question"></i>';
+
+                if(data.p1Card > 0 && data.p2Card > 0 && mySymbol === 'X' && !data.winner) {
+                    let win = data.p1Card > data.p2Card ? "P1 (Host)" : (data.p2Card > data.p1Card ? "P2 (Client)" : "Draw");
+                    gameRef.update({ winner: win });
+                }
+            });
+        }
+        window.drawHighCard = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    let c = Math.floor(Math.random()*13) + 2; // 2 through 14 (Ace)
+                    if(mySymbol === 'X' && d.p1Card === 0) gameRef.update({ p1Card: c });
+                    if(mySymbol === 'O' && d.p2Card === 0) gameRef.update({ p2Card: c });
+                    document.getElementById('hcDrawBtn').style.display = 'none';
+                    document.getElementById('hcStatus').innerText = "Waiting for opponent to draw...";
+                }
+            });
+        }
+        window.resetHighCard = function() {
+            if(gameRef && mySymbol === 'X') {
+                document.getElementById('hcDrawBtn').style.display = 'block';
+                document.getElementById('rematchHcBtn').style.display = 'none';
+                gameRef.set({ p1Card: 0, p2Card: 0, winner: null });
+            }
+        }
+
+        // --- GUESS THE NUMBER ---
+        window.startGuessNumberLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.lastHint) {
+                    const p = document.createElement('div');
+                    p.innerText = data.lastHint;
+                    const hist = document.getElementById('gnHistory');
+                    hist.appendChild(p);
+                    hist.scrollTop = hist.scrollHeight;
+                    // reset hint so we don't spam it (host resets it)
+                    if(mySymbol === 'X') gameRef.update({ lastHint: '' });
+                }
+
+                if(data.winner) {
+                    document.getElementById('gnControls').style.display = 'none';
+                    document.getElementById('rematchGnBtn').style.display = 'block';
+                    document.getElementById('gnStatus').innerText = `${data.winner} Guessed It!`;
+                }
+            });
+        }
+        window.submitGuessNumber = function() {
+            const v = parseInt(document.getElementById('gnInput').value);
+            if(isNaN(v)) return;
+            document.getElementById('gnInput').value = '';
+
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    let playerStr = mySymbol === 'X' ? 'P1' : 'P2';
+                    if(v === d.secret) {
+                        gameRef.update({ winner: playerStr, lastHint: `${playerStr} guessed ${v} and WON!` });
+                    } else if (v > d.secret) {
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too High)` });
+                    } else {
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too Low)` });
+                    }
+                }
+            });
+        }
+        window.resetGuessNumber = function() {
+            if(gameRef && mySymbol === 'X') {
+                document.getElementById('gnHistory').innerHTML = '';
+                gameRef.set({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', winner: null });
+            }
+        }
+
+        // --- COIN FLIP ---
+        window.startCoinFlipLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    document.getElementById('rematchCfBtn').style.display = 'block';
+                    document.getElementById('cfControls').style.display = 'none';
+                    document.getElementById('cfCoin').innerText = data.result === 'Heads' ? 'H' : 'T';
+                    document.getElementById('cfStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                }
+
+                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
+                    // Server resolve
+                    let res = Math.random() > 0.5 ? 'Heads' : 'Tails';
+                    let p1Win = data.p1Choice === res;
+                    let p2Win = data.p2Choice === res;
+                    let win = (p1Win && !p2Win) ? "P1" : ((p2Win && !p1Win) ? "P2" : "Draw");
+
+                    // Add delay for effect
+                    document.getElementById('cfCoin').style.transform = "rotateY(720deg)";
+                    setTimeout(() => {
+                        gameRef.update({ result: res, winner: win });
+                    }, 1000);
+                }
+            });
+        }
+        window.makeCoinChoice = function(choice) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(mySymbol === 'X' && d.p1Choice === '') gameRef.update({ p1Choice: choice });
+                    if(mySymbol === 'O' && d.p2Choice === '') gameRef.update({ p2Choice: choice });
+                    document.getElementById('cfControls').style.display = 'none';
+                    document.getElementById('cfStatus').innerText = "Flipping coin...";
+                }
+            });
+        }
+        window.resetCoinFlip = function() {
+            if(gameRef && mySymbol === 'X') {
+                document.getElementById('cfCoin').style.transform = "rotateY(0deg)";
+                document.getElementById('cfCoin').innerText = "?";
+                gameRef.set({ p1Choice: '', p2Choice: '', result: '', winner: null });
+            }
+        }
+
+        // --- HIGHER OR LOWER ---
+        window.startHigherLowerLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                document.getElementById('hlCard').innerText = data.currentCard;
+
+                if(data.winner) {
+                    document.getElementById('rematchHlBtn').style.display = 'block';
+                    document.getElementById('hlControls').style.display = 'none';
+                    document.getElementById('hlStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins! Next card was ${data.nextCard}`;
+                }
+
+                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
+                    let nxt = Math.floor(Math.random()*13) + 2; // Generate next card
+                    while(nxt === data.currentCard) nxt = Math.floor(Math.random()*13) + 2; // prevent ties for simplicity
+
+                    let isHigher = nxt > data.currentCard;
+                    let p1Correct = (data.p1Choice === 'Higher' && isHigher) || (data.p1Choice === 'Lower' && !isHigher);
+                    let p2Correct = (data.p2Choice === 'Higher' && isHigher) || (data.p2Choice === 'Lower' && !isHigher);
+
+                    let win = (p1Correct && !p2Correct) ? "P1" : ((p2Correct && !p1Correct) ? "P2" : "Draw");
+                    gameRef.update({ nextCard: nxt, winner: win });
+                }
+            });
+        }
+        window.makeHlChoice = function(choice) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(mySymbol === 'X' && d.p1Choice === '') gameRef.update({ p1Choice: choice });
+                    if(mySymbol === 'O' && d.p2Choice === '') gameRef.update({ p2Choice: choice });
+                    document.getElementById('hlControls').style.display = 'none';
+                    document.getElementById('hlStatus').innerText = "Waiting for opponent...";
+                }
+            });
+        }
+        window.resetHigherLower = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.set({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+            }
+        }
+
+        // LEAVE HANDLERS
+        window.leaveStopTimer = function() {
+            if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('stopTimerOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/StopTimer/' + user.uid).off(); db.ref('gameQueue/StopTimer/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveReaction = function() {
+            if(reactionRaf) cancelAnimationFrame(reactionRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('reactionOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Reaction/' + user.uid).off(); db.ref('gameQueue/Reaction/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveMatchsticks = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('matchsticksOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Matchsticks/' + user.uid).off(); db.ref('gameQueue/Matchsticks/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveHighCard = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('highCardOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/HighCard/' + user.uid).off(); db.ref('gameQueue/HighCard/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveGuessNumber = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('guessNumberOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/GuessNumber/' + user.uid).off(); db.ref('gameQueue/GuessNumber/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveCoinFlip = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('coinFlipOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/CoinFlip/' + user.uid).off(); db.ref('gameQueue/CoinFlip/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveHigherLower = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('higherLowerOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/HigherLower/' + user.uid).off(); db.ref('gameQueue/HigherLower/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
             if(room !== 'GlobalLobby' && currentChatFriend) {
@@ -6319,6 +6887,109 @@ window.burnImage = function(element, url, key) {
 
         <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
+
+
+    <!-- NEW GAMES OVERLAYS -->
+    <div id="stopTimerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveStopTimer()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FFD700; margin-bottom: 5px;">Stop the Timer</h2>
+        <p id="stStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
+        <div style="font-size: 80px; font-weight: 900; margin-bottom: 20px; font-family: monospace;" id="stDisplay">0.00</div>
+        <div style="margin-bottom: 40px; font-size: 16px; text-align: center;">Stop it as close to <strong style="color: #FFD700;">10.00</strong> as possible!</div>
+        <button id="stActionBtn" onclick="stopTimerAction()" style="display:none; padding: 25px 50px; border-radius: 40px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 28px; border: none; box-shadow: 0 4px 15px rgba(255,215,0,0.3);">STOP</button>
+        <button id="rematchStBtn" onclick="resetStopTimer()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="reactionOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto; transition: background 0.1s;">
+        <button onclick="leaveReaction()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: white; font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: white; margin-bottom: 5px;">Reaction Tap</h2>
+        <p id="rtStatus" style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Waiting for opponent...</p>
+        <div id="rtInstruction" style="font-size: 32px; font-weight: bold; color: white; text-align: center; padding: 40px;">Wait for Green...</div>
+        <div id="rtTapZone" onclick="reactionTapAction()" style="display: none; position: absolute; inset: 0; z-index: 1; cursor: pointer;"></div>
+        <button id="rematchRtBtn" onclick="resetReaction()" style="display:none; z-index: 3; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: white; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="matchsticksOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveMatchsticks()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #ff6b6b; margin-bottom: 5px;">Matchsticks (21)</h2>
+        <p id="msStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
+        <div style="font-size: 16px; margin-bottom: 30px; color: white;">Don't take the last one!</div>
+
+        <div id="msContainer" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 320px; margin-bottom: 40px; min-height: 120px;"></div>
+
+        <div id="msControls" style="display: none; gap: 15px;">
+            <button onclick="takeMatchsticks(1)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">1</button>
+            <button onclick="takeMatchsticks(2)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">2</button>
+            <button onclick="takeMatchsticks(3)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">3</button>
+        </div>
+        <button id="rematchMsBtn" onclick="resetMatchsticks()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #ff6b6b; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="highCardOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveHighCard()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #9b59b6; margin-bottom: 5px;">High Card War</h2>
+        <p id="hcStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 30px; margin-bottom: 40px; align-items: center;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="font-size: 16px; color: white;">You</div>
+                <div id="hcMyCard" style="width: 100px; height: 150px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; color: black; font-weight: bold; border: 2px solid var(--glass-border);"><i class="fa-solid fa-question"></i></div>
+            </div>
+            <div style="font-size: 30px; font-weight: bold; color: var(--text-secondary);">VS</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="font-size: 16px; color: white;">Opponent</div>
+                <div id="hcOppCard" style="width: 100px; height: 150px; background: var(--island); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; color: white; font-weight: bold; border: 2px solid var(--glass-border);"><i class="fa-solid fa-question"></i></div>
+            </div>
+        </div>
+
+        <button id="hcDrawBtn" onclick="drawHighCard()" style="display:none; padding: 20px 50px; border-radius: 40px; background: #9b59b6; color: white; font-weight: 900; font-size: 24px; border: none; box-shadow: 0 4px 15px rgba(155,89,182,0.3);">DRAW</button>
+        <button id="rematchHcBtn" onclick="resetHighCard()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #9b59b6; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="guessNumberOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveGuessNumber()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #f1c40f; margin-bottom: 5px;">Guess the Number</h2>
+        <p id="gnStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+        <div style="font-size: 16px; margin-bottom: 30px; color: white;">Guess the secret number between 1 and 100</div>
+
+        <div id="gnHistory" style="width: 280px; height: 180px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 12px; overflow-y: auto; padding: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: white;"></div>
+
+        <div id="gnControls" style="display: none; gap: 10px; width: 280px;">
+            <input type="number" id="gnInput" min="1" max="100" placeholder="1-100" style="flex: 1; padding: 20px; border-radius: 16px; border: 2px solid var(--glass-border); background: var(--bg-dark); color: white; font-size: 24px; outline: none; text-align: center;">
+            <button onclick="submitGuessNumber()" style="padding: 0 25px; border-radius: 16px; background: #f1c40f; color: var(--bg-dark); font-weight: bold; border: none; font-size: 24px;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+        <button id="rematchGnBtn" onclick="resetGuessNumber()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #f1c40f; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="coinFlipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveCoinFlip()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #bdc3c7; margin-bottom: 5px;">Coin Flip</h2>
+        <p id="cfStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
+
+        <div id="cfCoin" style="width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #ecf0f1 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #2c3e50; font-weight: 900; margin-bottom: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: transform 1s ease-in-out;">?</div>
+
+        <div id="cfControls" style="display: none; gap: 20px;">
+            <button onclick="makeCoinChoice('Heads')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Heads</button>
+            <button onclick="makeCoinChoice('Tails')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Tails</button>
+        </div>
+        <button id="rematchCfBtn" onclick="resetCoinFlip()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #bdc3c7; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="higherLowerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+        <button onclick="leaveHigherLower()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #e74c3c; margin-bottom: 5px;">Higher or Lower</h2>
+        <p id="hlStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
+
+        <div id="hlCard" style="width: 120px; height: 180px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 70px; color: black; font-weight: bold; border: 2px solid var(--glass-border); margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">?</div>
+
+        <div id="hlControls" style="display: none; gap: 20px;">
+            <button onclick="makeHlChoice('Higher')" style="padding: 20px 30px; border-radius: 16px; background: #2ecc71; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-up"></i> Higher</button>
+            <button onclick="makeHlChoice('Lower')" style="padding: 20px 30px; border-radius: 16px; background: #e74c3c; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-down"></i> Lower</button>
+        </div>
+        <button id="rematchHlBtn" onclick="resetHigherLower()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #e74c3c; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <!-- GAME CHAT -->
 
     <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 30vh; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column;">
         <div id="gameChatMessages" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px;"></div>
