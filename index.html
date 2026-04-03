@@ -1483,6 +1483,14 @@
                     <div class="card-icon" style="color: #32CD32;"><i class="fa-solid fa-staff-snake"></i></div>
                     <div class="card-text"><h3 style="color: #32CD32;">Multiplayer Snake</h3></div>
                 </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Flappy')">
+                    <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-dove"></i></div>
+                    <div class="card-text"><h3 style="color: #FFD700;">Flappy Bird</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Dots')">
+                    <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
+                    <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
+                </div>
              </div>
         </div>
 
@@ -3899,7 +3907,7 @@ function sendNotification(title, body, icon) {
 
                     const info = document.createElement('div');
                     info.innerHTML = `
-                        <div style="font-weight:bold; color:var(--text-primary);">${escapeAdminHTML(u.username || 'Unknown')}</div>
+                        <div style="font-weight:bold; color:var(--text-primary);">${escapeAdminHTML(u.name || 'Unknown')}</div>
                         <div style="font-size:10px; color:var(--text-secondary);">UID: ${uid}</div>
                         <div style="font-size:10px; color:var(--accent-yellow);"><i class="fa-solid fa-gem"></i> ${u.orbs || 0}</div>
                     `;
@@ -3911,7 +3919,7 @@ function sendNotification(title, body, icon) {
                     delBtn.className = "btn-primary ripple-target";
                     delBtn.style.cssText = "height:30px; font-size:11px; padding:0 10px; background:rgba(255, 59, 48, 0.2); color:var(--error-red); border:1px solid rgba(255, 59, 48, 0.4);";
                     delBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
-                    delBtn.onclick = () => adminDeleteUser(uid, u.username);
+                    delBtn.onclick = () => adminDeleteUser(uid, u.name);
 
                     actions.appendChild(delBtn);
 
@@ -4396,7 +4404,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (gameType !== 'TicTacToe' && gameType !== 'RPS' && gameType !== 'Snake') {
+            if (!['TicTacToe', 'RPS', 'Snake', 'Flappy', 'Dots'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4415,6 +4423,12 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'Snake') {
                 document.getElementById('snakeOverlay').style.display = 'flex';
                 document.getElementById('snakeStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Flappy') {
+                document.getElementById('flappyOverlay').style.display = 'flex';
+                document.getElementById('flappyStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Dots') {
+                document.getElementById('dotsOverlay').style.display = 'flex';
+                document.getElementById('dotsStatus').innerText = "Searching for opponent...";
             } else if (gameType === 'Connect4') {
                 document.getElementById('connect4Overlay').style.display = 'flex';
                 document.getElementById('c4Status').innerText = "Searching for opponent...";
@@ -4519,6 +4533,42 @@ function sendNotification(title, body, icon) {
                 }
 
                 startSnakeGameLoop();
+
+            } else if (activeGameType === 'Flappy') {
+                document.getElementById('flappyStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    // X is P1 (Gold), O is P2 (Cyan)
+                    gameRef.set({
+                        p1: { y: 200, dead: false, score: 0 },
+                        p2: { y: 200, dead: false, score: 0 },
+                        pipes: generatePipes(), // Server/Host dictates pipe layout
+                        winner: null,
+                        status: 'playing',
+                        time: 0
+                    });
+                }
+
+                startFlappyGameLoop();
+
+            } else if (activeGameType === 'Dots') {
+                document.getElementById('dotsStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.set({
+                        hLines: Array(20).fill(false), // 4x5
+                        vLines: Array(20).fill(false), // 5x4
+                        boxes: Array(16).fill(''), // 4x4
+                        turn: 'X',
+                        scoreX: 0,
+                        scoreO: 0,
+                        winner: null
+                    });
+                }
+
+                startDotsGameLoop();
 
             } else if (activeGameType === 'RPS') {
                 document.getElementById('rpsStatus').innerText = "Opponent found! Make your move...";
@@ -5203,6 +5253,7 @@ function sendNotification(title, body, icon) {
             const btn = document.getElementById('snakeFullscreenBtn');
             const title = document.getElementById('snakeTitle');
             const scores = document.getElementById('snakeScoresContainer');
+            const dpad = document.getElementById('snakeDPad');
 
             if(!isSnakeFullscreen) {
                 container.style.position = 'fixed';
@@ -5216,7 +5267,13 @@ function sendNotification(title, body, icon) {
                 title.style.display = 'none';
                 scores.style.position = 'fixed';
                 scores.style.top = '20px';
-                scores.style.zIndex = '9999999';
+                scores.style.zIndex = '1000000';
+
+                dpad.style.position = 'fixed';
+                dpad.style.bottom = '40px';
+                dpad.style.left = '50%';
+                dpad.style.transform = 'translateX(-50%)';
+                dpad.style.zIndex = '1000000';
 
                 btn.innerHTML = '<i class="fa-solid fa-compress"></i>';
                 isSnakeFullscreen = true;
@@ -5274,24 +5331,353 @@ function sendNotification(title, body, icon) {
             gameRoom = null;
         }
 
-        window.leaveConnect4 = function() {
+        window.leaveFlappy = function() {
+            if(typeof flappyRaf !== 'undefined' && flappyRaf) cancelAnimationFrame(flappyRaf);
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('connect4Overlay').style.display = 'none';
+            document.getElementById('flappyOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/Connect4/' + user.uid).off();
-            db.ref('gameQueue/Connect4/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Flappy/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Flappy/' + user.uid).remove();
             gameRoom = null;
         }
 
-        window.leaveMemoryMatch = function() {
+        window.leaveDots = function() {
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('mmOverlay').style.display = 'none';
+            document.getElementById('dotsOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).off();
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Dots/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Dots/' + user.uid).remove();
             gameRoom = null;
+        }
+
+        // --- FLAPPY BIRD MULTIPLAYER LOGIC ---
+        let flappyRaf = null;
+        let localFlappyState = null;
+        let localY = 200;
+        let localVelocity = 0;
+        const GRAVITY = 0.6;
+        const JUMP = -8;
+
+        window.generatePipes = function() {
+            let p = [];
+            for(let i=0; i<50; i++) {
+                let gapY = Math.random() * 200 + 50;
+                p.push({ x: 300 + i * 200, gapY: gapY, passedX: false, passedO: false });
+            }
+            return p;
+        }
+
+        window.startFlappyGameLoop = function() {
+            const canvas = document.getElementById('flappyCanvas');
+            const ctx = canvas.getContext('2d');
+            localY = 200;
+            localVelocity = 0;
+
+            gameRef.on('value', snap => {
+                localFlappyState = snap.val();
+                if(!localFlappyState) return;
+
+                if(localFlappyState.winner) {
+                    document.getElementById('flappyStatus').innerText = localFlappyState.winner === 'Draw' ? "It's a Draw!" : `${localFlappyState.winner} Wins!`;
+                    document.getElementById('rematchFlappyBtn').style.display = 'block';
+                    cancelAnimationFrame(flappyRaf);
+                } else {
+                    document.getElementById('flappyStatus').innerText = "Game in progress...";
+                    document.getElementById('rematchFlappyBtn').style.display = 'none';
+                }
+
+                document.getElementById('flappyScoreP1').innerText = `P1 (Gold): ${localFlappyState.p1.score}`;
+                document.getElementById('flappyScoreP2').innerText = `P2 (Cyan): ${localFlappyState.p2.score}`;
+            });
+
+            let lastTime = 0;
+
+            function flappyLoop(timestamp) {
+                if(!localFlappyState || localFlappyState.status !== 'playing') {
+                    flappyRaf = requestAnimationFrame(flappyLoop);
+                    return;
+                }
+
+                const dt = timestamp - lastTime;
+
+                let me = mySymbol === 'X' ? localFlappyState.p1 : localFlappyState.p2;
+                let opp = mySymbol === 'X' ? localFlappyState.p2 : localFlappyState.p1;
+
+                if(!me.dead) {
+                    localVelocity += GRAVITY;
+                    localY += localVelocity;
+
+                    if(localY > canvas.height || localY < 0) {
+                        me.dead = true;
+                    }
+
+                    let pipeHit = false;
+                    localFlappyState.pipes.forEach(p => {
+                        let px = p.x - localFlappyState.time;
+                        if(px < 60 && px > 10) {
+                            if(localY < p.gapY - 10 || localY > p.gapY + 90) {
+                                pipeHit = true;
+                            }
+                        }
+                    });
+
+                    if(pipeHit) me.dead = true;
+                }
+
+                ctx.fillStyle = '#70c5ce';
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+
+                ctx.fillStyle = '#32CD32';
+                localFlappyState.pipes.forEach(p => {
+                    let px = p.x - localFlappyState.time;
+                    if(px > -50 && px < canvas.width) {
+                        ctx.fillRect(px, 0, 40, p.gapY);
+                        ctx.fillRect(px, p.gapY + 100, 40, canvas.height);
+                    }
+                });
+
+                ctx.fillStyle = '#FFD700';
+                if(mySymbol === 'X') {
+                    if(!localFlappyState.p1.dead) ctx.fillRect(40, localY, 20, 20);
+                } else {
+                    if(!localFlappyState.p1.dead) ctx.fillRect(40, localFlappyState.p1.y, 20, 20);
+                }
+
+                ctx.fillStyle = '#00e5ff';
+                if(mySymbol === 'O') {
+                    if(!localFlappyState.p2.dead) ctx.fillRect(40, localY, 20, 20);
+                } else {
+                    if(!localFlappyState.p2.dead) ctx.fillRect(40, localFlappyState.p2.y, 20, 20);
+                }
+
+                if(mySymbol === 'X' && timestamp - lastTime > 50) {
+                    lastTime = timestamp;
+                    let nextTime = localFlappyState.time + 3;
+                    let updateObj = { time: nextTime };
+
+                    if(localFlappyState.p1.dead && localFlappyState.p2.dead) {
+                        updateObj.winner = 'Draw';
+                    } else if (localFlappyState.p1.dead && !localFlappyState.p2.dead) {
+                        updateObj.winner = 'P2 (Cyan)';
+                    } else if (localFlappyState.p2.dead && !localFlappyState.p1.dead) {
+                        updateObj.winner = 'P1 (Gold)';
+                    } else {
+                        localFlappyState.pipes.forEach((p, idx) => {
+                            if(p.x - nextTime < 40 && !p.passedX && !localFlappyState.p1.dead) { updateObj['pipes/'+idx+'/passedX'] = true; updateObj['p1/score'] = localFlappyState.p1.score + 1; }
+                            if(p.x - nextTime < 40 && !p.passedO && !localFlappyState.p2.dead) { updateObj['pipes/'+idx+'/passedO'] = true; updateObj['p2/score'] = localFlappyState.p2.score + 1; }
+                        });
+                    }
+                    updateObj['p1/y'] = mySymbol === 'X' ? localY : localFlappyState.p1.y;
+                    updateObj['p1/dead'] = localFlappyState.p1.dead;
+                    gameRef.update(updateObj);
+                } else if(mySymbol === 'O' && timestamp - lastTime > 50) {
+                    lastTime = timestamp;
+                    gameRef.update({ 'p2/y': localY, 'p2/dead': localFlappyState.p2.dead });
+                }
+
+                flappyRaf = requestAnimationFrame(flappyLoop);
+            }
+            flappyRaf = requestAnimationFrame(flappyLoop);
+        }
+
+        window.flappyJump = function() {
+            localVelocity = JUMP;
+        }
+
+        window.resetFlappy = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({
+                    p1: { y: 200, dead: false, score: 0 },
+                    p2: { y: 200, dead: false, score: 0 },
+                    pipes: generatePipes(),
+                    winner: null,
+                    time: 0
+                });
+            }
+        }
+
+        // --- DOTS & BOXES LOGIC ---
+        let localDotsState = null;
+
+        window.startDotsGameLoop = function() {
+            const canvas = document.getElementById('dotsCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.addEventListener('click', function(e) {
+                if(!localDotsState || localDotsState.winner || localDotsState.turn !== mySymbol) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // grid is 5x5 dots (4x4 boxes)
+                // canvas is 300x300, dots at 30, 90, 150, 210, 270
+                const gridSpacing = 60;
+                const offset = 30;
+
+                // Determine closest line
+                let minH = 999, hRow = -1, hCol = -1;
+                for(let r=0; r<5; r++) {
+                    for(let c=0; c<4; c++) {
+                        let lineY = offset + r*gridSpacing;
+                        let lineXCenter = offset + c*gridSpacing + gridSpacing/2;
+                        let dist = Math.abs(x - lineXCenter) + Math.abs(y - lineY);
+                        if(dist < minH && !localDotsState.hLines[r*4 + c]) { minH = dist; hRow = r; hCol = c; }
+                    }
+                }
+
+                let minV = 999, vRow = -1, vCol = -1;
+                for(let r=0; r<4; r++) {
+                    for(let c=0; c<5; c++) {
+                        let lineX = offset + c*gridSpacing;
+                        let lineYCenter = offset + r*gridSpacing + gridSpacing/2;
+                        let dist = Math.abs(x - lineX) + Math.abs(y - lineYCenter);
+                        if(dist < minV && !localDotsState.vLines[r*5 + c]) { minV = dist; vRow = r; vCol = c; }
+                    }
+                }
+
+                if(minH < 25 && minH < minV) {
+                    // Clicked horizontal line
+                    makeDotsMove('h', hRow*4 + hCol);
+                } else if (minV < 25) {
+                    // Clicked vertical line
+                    makeDotsMove('v', vRow*5 + vCol);
+                }
+            });
+
+            gameRef.on('value', snap => {
+                localDotsState = snap.val();
+                if(!localDotsState) return;
+
+                if(localDotsState.winner) {
+                    document.getElementById('dotsStatus').innerText = localDotsState.winner === 'Draw' ? "It's a Draw!" : `${localDotsState.winner} Wins!`;
+                    document.getElementById('rematchDotsBtn').style.display = 'block';
+                } else {
+                    document.getElementById('dotsStatus').innerText = localDotsState.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
+                    document.getElementById('rematchDotsBtn').style.display = 'none';
+                }
+
+                document.getElementById('dotsScoreP1').innerText = `P1 (Pink): ${localDotsState.scoreX}`;
+                document.getElementById('dotsScoreP2').innerText = `P2 (Cyan): ${localDotsState.scoreO}`;
+
+                drawDotsBoard(ctx);
+            });
+        }
+
+        function makeDotsMove(type, idx) {
+            let ns = JSON.parse(JSON.stringify(localDotsState));
+            if(type === 'h') ns.hLines[idx] = true;
+            if(type === 'v') ns.vLines[idx] = true;
+
+            // Check for completed boxes
+            let boxesCompleted = 0;
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<4; c++) {
+                    let bIdx = r*4 + c;
+                    if(ns.boxes[bIdx] === '') {
+                        let top = ns.hLines[r*4 + c];
+                        let bottom = ns.hLines[(r+1)*4 + c];
+                        let left = ns.vLines[r*5 + c];
+                        let right = ns.vLines[r*5 + c + 1];
+                        if(top && bottom && left && right) {
+                            ns.boxes[bIdx] = mySymbol;
+                            boxesCompleted++;
+                            if(mySymbol === 'X') ns.scoreX++;
+                            else ns.scoreO++;
+                        }
+                    }
+                }
+            }
+
+            if(boxesCompleted === 0) {
+                ns.turn = ns.turn === 'X' ? 'O' : 'X';
+            }
+
+            // Check win
+            let allFilled = !ns.boxes.includes('');
+            if(allFilled) {
+                if(ns.scoreX > ns.scoreO) ns.winner = 'P1 (Pink)';
+                else if(ns.scoreO > ns.scoreX) ns.winner = 'P2 (Cyan)';
+                else ns.winner = 'Draw';
+            }
+
+            gameRef.update(ns);
+        }
+
+        function drawDotsBoard(ctx) {
+            ctx.clearRect(0,0,300,300);
+            const gridSpacing = 60;
+            const offset = 30;
+
+            // Draw boxes
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<4; c++) {
+                    let bIdx = r*4 + c;
+                    if(localDotsState.boxes[bIdx] === 'X') {
+                        ctx.fillStyle = 'rgba(255, 20, 147, 0.3)';
+                        ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
+                    } else if (localDotsState.boxes[bIdx] === 'O') {
+                        ctx.fillStyle = 'rgba(0, 229, 255, 0.3)';
+                        ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
+                    }
+                }
+            }
+
+            // Draw lines
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+
+            // H lines
+            for(let r=0; r<5; r++) {
+                for(let c=0; c<4; c++) {
+                    if(localDotsState.hLines[r*4 + c]) {
+                        ctx.beginPath();
+                        ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
+                        ctx.lineTo(offset + (c+1)*gridSpacing, offset + r*gridSpacing);
+                        ctx.strokeStyle = '#fff';
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // V lines
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<5; c++) {
+                    if(localDotsState.vLines[r*5 + c]) {
+                        ctx.beginPath();
+                        ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
+                        ctx.lineTo(offset + c*gridSpacing, offset + (r+1)*gridSpacing);
+                        ctx.strokeStyle = '#fff';
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw dots
+            ctx.fillStyle = '#aaa';
+            for(let r=0; r<5; r++) {
+                for(let c=0; c<5; c++) {
+                    ctx.beginPath();
+                    ctx.arc(offset + c*gridSpacing, offset + r*gridSpacing, 6, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        window.resetDots = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.set({
+                    hLines: Array(20).fill(false),
+                    vLines: Array(20).fill(false),
+                    boxes: Array(16).fill(''),
+                    turn: 'X',
+                    scoreX: 0,
+                    scoreO: 0,
+                    winner: null
+                });
+            }
         }
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
@@ -6366,8 +6752,51 @@ window.burnImage = function(element, url, key) {
             <canvas id="snakeCanvas" width="300" height="300" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
 
             <button id="snakeFullscreenBtn" onclick="toggleSnakeFullscreen()" style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: white; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; z-index: 3;"><i class="fa-solid fa-expand"></i></button>
-            <div id="snakeSwipeZone" style="position: absolute; inset: 0; z-index: 2; touch-action: none;"></div>
         </div>
+
+        <div id="snakeDPad" style="display: grid; grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px 60px; gap: 10px; margin-top: 30px; z-index: 1000001; transition: all 0.3s ease;">
+            <div></div>
+            <button onclick="window.setSnakeDir(0, -1)" style="background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); border-radius: 12px; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-arrow-up"></i></button>
+            <div></div>
+
+            <button onclick="window.setSnakeDir(-1, 0)" style="background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); border-radius: 12px; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-arrow-left"></i></button>
+            <button onclick="window.setSnakeDir(0, 1)" style="background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); border-radius: 12px; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-arrow-down"></i></button>
+            <button onclick="window.setSnakeDir(1, 0)" style="background: rgba(255,255,255,0.1); border: 2px solid var(--glass-border); border-radius: 12px; color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div id="flappyOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
+        <button onclick="leaveFlappy()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FFD700; margin-bottom: 5px;" id="flappyTitle">Flappy Bird</h2>
+        <p id="flappyStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px; font-weight: bold;" id="flappyScoresContainer">
+            <div style="color: #FFD700;" id="flappyScoreP1">P1 (Gold): 0</div>
+            <div style="color: #00e5ff;" id="flappyScoreP2">P2 (Cyan): 0</div>
+        </div>
+
+        <div id="flappyGameContainer" onclick="flappyJump()" style="position: relative; width: 300px; height: 400px; background: #70c5ce; border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+            <canvas id="flappyCanvas" width="300" height="400" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
+        </div>
+
+        <button id="rematchFlappyBtn" onclick="resetFlappy()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
+    </div>
+
+    <div id="dotsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
+        <button onclick="leaveDots()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FF1493; margin-bottom: 5px;" id="dotsTitle">Dots & Boxes</h2>
+        <p id="dotsStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px; font-weight: bold;" id="dotsScoresContainer">
+            <div style="color: #FF1493;" id="dotsScoreP1">P1 (Pink): 0</div>
+            <div style="color: #00e5ff;" id="dotsScoreP2">P2 (Cyan): 0</div>
+        </div>
+
+        <div id="dotsGameContainer" style="position: relative; width: 300px; height: 300px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <canvas id="dotsCanvas" width="300" height="300" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
+        </div>
+
+        <button id="rematchDotsBtn" onclick="resetDots()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #FF1493; color: white; font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
     </div>
 
     <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
