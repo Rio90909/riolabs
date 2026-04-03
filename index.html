@@ -4504,7 +4504,7 @@ function sendNotification(title, body, icon) {
                 });
             } else if (activeGameType === 'Snake') {
                 document.getElementById('snakeStatus').innerText = "Opponent found! Game starting...";
-                document.getElementById('snakeControls').style.display = 'block';
+                // document.getElementById('snakeControls').style.display = 'block';
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
