@@ -3667,7 +3667,7 @@ function sendNotification(title, body, icon) {
                 let found = false;
                 if (snap.exists()) {
                     snap.forEach(child => {
-                        if (child.key !== user.uid && child.val() === true) {
+                        if (child.key !== user.uid && child.val() && child.val().active === true) {
                             found = true;
                             const matchedUid = child.key;
                             const rouletteRoomId = "roulette_" + user.uid + "_" + matchedUid;
@@ -4473,11 +4473,12 @@ function sendNotification(title, body, icon) {
                 let found = false;
                 if (snap.exists()) {
                     snap.forEach(child => {
-                        if (child.key !== user.uid && child.val() === true) {
+                        if (child.key !== user.uid && child.val() && child.val().active === true) {
                             found = true;
                             const matchedUid = child.key;
                             gameRoom = "game_" + user.uid + "_" + matchedUid;
-                            mySymbol = 'O'; // Joiner is O
+                            mySymbol = 'O';
+                            window.opponentName = child.val().name || 'Opponent';
 
                             db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
                             setTimeout(() => { startGameSession(); }, 500);
@@ -4488,7 +4489,10 @@ function sendNotification(title, body, icon) {
 
                 if (!found) {
                     db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
-                    mySymbol = 'X'; // Creator is X
+                    mySymbol = 'X';
+                    db.ref('users/'+user.uid+'/name').once('value', snap => {
+                        db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: snap.val() || user.username });
+                    });
 
                     db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
                         const val = matchSnap.val();
@@ -4527,6 +4531,11 @@ function sendNotification(title, body, icon) {
 
                 // Initialize board if X
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
                 }
 
@@ -4549,6 +4558,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('stActionBtn').style.display = 'block';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
                 }
                 startStopTimerLoop();
@@ -4557,12 +4571,22 @@ function sendNotification(title, body, icon) {
                 document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
                 }
                 startReactionLoop();
             } else if (activeGameType === 'Matchsticks') {
                 document.getElementById('msStatus').innerText = "Opponent found!";
                 gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     gameRef.set({ sticks: 21, turn: 'X', winner: null });
                 }
@@ -4572,6 +4596,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hcDrawBtn').style.display = 'block';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ p1Card: 0, p2Card: 0, winner: null });
                 }
                 startHighCardLoop();
@@ -4579,6 +4608,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('gnStatus').innerText = "Opponent found!";
                 document.getElementById('gnControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     gameRef.set({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null });
                 }
@@ -4588,6 +4622,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('cfControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ p1Choice: '', p2Choice: '', result: '', winner: null });
                 }
                 startCoinFlipLoop();
@@ -4596,6 +4635,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hlControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
                 }
                 startHigherLowerLoop();
@@ -4603,6 +4647,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('dotsStatus').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
 
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     gameRef.set({
                         hLines: Array(20).fill(false), // 4x5
@@ -4621,6 +4670,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('rpsStatus').innerText = "Opponent found! Make your move...";
                 gameRef = db.ref('games/' + gameRoom);
 
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     gameRef.set({ playerX: '', playerO: '', winner: null });
                 }
@@ -4657,6 +4711,11 @@ function sendNotification(title, body, icon) {
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
+                if (mySymbol === 'X') {
                     gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
                 }
 
@@ -4680,6 +4739,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('mmStatus').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
 
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     // Initialize deck
                     const emojis = ['🍎', '🍎', '🍌', '🍌', '🍇', '🍇', '🍉', '🍉', '🍓', '🍓', '🍒', '🍒', '🍍', '🍍', '🥝', '🥝'];
@@ -5058,6 +5122,11 @@ function sendNotification(title, body, icon) {
                 if (!data || data.winner) return;
 
                 let updates = {};
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.username });
+                } else {
+                    gameRef.update({ p2Name: myProfile.username });
+                }
                 if (mySymbol === 'X') {
                     updates.playerX = move;
                 } else {
