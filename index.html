@@ -2163,6 +2163,19 @@ const messageReceiveSound = new Audio('https://assets.mixkit.co/active_storage/s
 messageReceiveSound.volume = 0.2;
 const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 notificationSound.volume = 0.2;
+const gameWinSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+gameWinSound.volume = 0.3;
+
+let winSoundPlayed = false;
+function playWinSound() {
+    if(winSoundPlayed) return;
+    winSoundPlayed = true;
+    setTimeout(() => winSoundPlayed = false, 5000);
+    if (myProfile && myProfile.appSoundEnabled) {
+        gameWinSound.currentTime = 0;
+        gameWinSound.play().catch(e => console.log('Audio play blocked:', e));
+    }
+}
 
 function playSendSound() {
     if (myProfile.appSoundEnabled) {
@@ -4499,6 +4512,7 @@ function sendNotification(title, body, icon) {
                         if (val && typeof val === 'string') {
                             db.ref('gameQueue/'+gameType+'/' + user.uid).off();
                             gameRoom = val;
+                            db.ref('games/'+gameRoom).update({ p1Name: myProfile.username || myProfile.name });
                             startGameSession();
                         }
                     });
@@ -4531,12 +4545,12 @@ function sendNotification(title, body, icon) {
 
                 // Initialize board if X
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+                    gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
                 }
 
                 gameRef.on('value', snap => {
@@ -4546,8 +4560,8 @@ function sendNotification(title, body, icon) {
                     updateBoardUI(data.board);
 
                     if (data.winner) {
-                        document.getElementById('gameStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : `${data.winner} Wins!`;
-                        document.getElementById('rematchBtn').style.display = 'block';
+                        document.getElementById('gameStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'X' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        if(mySymbol === 'X') document.getElementById('rematchBtn').style.display = 'block'; else document.getElementById('gameStatus').innerText += ' (Waiting for Host to restart)';
                     } else {
                         document.getElementById('gameStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                         document.getElementById('rematchBtn').style.display = 'none';
@@ -4558,12 +4572,12 @@ function sendNotification(title, body, icon) {
                 document.getElementById('stActionBtn').style.display = 'block';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+                    gameRef.update({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
                 }
                 startStopTimerLoop();
             } else if (activeGameType === 'Reaction') {
@@ -4571,24 +4585,24 @@ function sendNotification(title, body, icon) {
                 document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                    gameRef.update({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
                 }
                 startReactionLoop();
             } else if (activeGameType === 'Matchsticks') {
                 document.getElementById('msStatus').innerText = "Opponent found!";
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ sticks: 21, turn: 'X', winner: null });
+                    gameRef.update({ sticks: 21, turn: 'X', winner: null });
                 }
                 startMatchsticksLoop();
             } else if (activeGameType === 'HighCard') {
@@ -4596,12 +4610,12 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hcDrawBtn').style.display = 'block';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ p1Card: 0, p2Card: 0, winner: null });
+                    gameRef.update({ p1Card: 0, p2Card: 0, winner: null });
                 }
                 startHighCardLoop();
             } else if (activeGameType === 'GuessNumber') {
@@ -4609,12 +4623,12 @@ function sendNotification(title, body, icon) {
                 document.getElementById('gnControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null });
+                    gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null });
                 }
                 startGuessNumberLoop();
             } else if (activeGameType === 'CoinFlip') {
@@ -4622,12 +4636,12 @@ function sendNotification(title, body, icon) {
                 document.getElementById('cfControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ p1Choice: '', p2Choice: '', result: '', winner: null });
+                    gameRef.update({ p1Choice: '', p2Choice: '', result: '', winner: null });
                 }
                 startCoinFlipLoop();
             } else if (activeGameType === 'HigherLower') {
@@ -4635,12 +4649,12 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hlControls').style.display = 'flex';
                 gameRef = db.ref('games/' + gameRoom);
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+                    gameRef.update({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
                 }
                 startHigherLowerLoop();
             } else if (activeGameType === 'Dots') {
@@ -4648,12 +4662,12 @@ function sendNotification(title, body, icon) {
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({
+                    gameRef.update({
                         hLines: Array(20).fill(false), // 4x5
                         vLines: Array(20).fill(false), // 5x4
                         boxes: Array(16).fill(''), // 4x4
@@ -4671,12 +4685,12 @@ function sendNotification(title, body, icon) {
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ playerX: '', playerO: '', winner: null });
+                    gameRef.update({ playerX: '', playerO: '', winner: null });
                 }
 
                 gameRef.on('value', snap => {
@@ -4696,12 +4710,12 @@ function sendNotification(title, body, icon) {
 
                         if (data.winner === 'Draw') {
                             document.getElementById('rpsStatus').innerText = "It's a Draw!";
-                        } else if (data.winner === mySymbol) {
-                            document.getElementById('rpsStatus').innerText = "You Win!";
+                        } else if (data.winner === 'X') {
+                            document.getElementById('rpsStatus').innerText = `${data.p1Name || 'P1'} Wins!`;
                         } else {
-                            document.getElementById('rpsStatus').innerText = "You Lose!";
+                            document.getElementById('rpsStatus').innerText = `${data.p2Name || 'P2'} Wins!`;
                         }
-                        document.getElementById('rematchRpsBtn').style.display = 'block';
+                        playWinSound(); if(mySymbol === 'X') document.getElementById('rematchRpsBtn').style.display = 'block'; else document.getElementById('rpsStatus').innerText += ' (Waiting for Host to restart)';
                     } else {
                         document.getElementById('rematchRpsBtn').style.display = 'none';
                     }
@@ -4711,9 +4725,9 @@ function sendNotification(title, body, icon) {
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
                     gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
@@ -4726,8 +4740,8 @@ function sendNotification(title, body, icon) {
                     updateC4BoardUI(data.board);
 
                     if (data.winner) {
-                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : `${data.winner} Wins!`;
-                        document.getElementById('rematchC4Btn').style.display = 'block';
+                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound(); document.getElementById('rematchC4Btn').style.display = 'block';
                     } else {
                         let colorStr = mySymbol === 'X' ? 'Red' : 'Yellow';
                         let oppColorStr = mySymbol === 'X' ? 'Yellow' : 'Red';
@@ -4740,9 +4754,9 @@ function sendNotification(title, body, icon) {
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
                     // Initialize deck
@@ -4776,7 +4790,7 @@ function sendNotification(title, body, icon) {
 
                     if (data.winner) {
                         document.getElementById('mmStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === mySymbol ? "You Win!" : "You Lose!");
-                        document.getElementById('rematchMmBtn').style.display = 'block';
+                        playWinSound(); document.getElementById('rematchMmBtn').style.display = 'block';
                     } else {
                         document.getElementById('mmStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                         document.getElementById('rematchMmBtn').style.display = 'none';
@@ -4819,7 +4833,7 @@ function sendNotification(title, body, icon) {
 
         window.resetGame = function() {
             if(gameRef) {
-                gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+                gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
                 document.getElementById('rematchBtn').style.display = 'none';
             }
         }
@@ -4848,7 +4862,7 @@ function sendNotification(title, body, icon) {
 
         window.resetRPS = function() {
             if(gameRef) {
-                gameRef.set({ playerX: '', playerO: '', winner: null });
+                gameRef.update({ playerX: '', playerO: '', winner: null });
                 document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
                 document.getElementById('rpsOpponentBox').style.borderColor = "rgba(255,255,255,0.2)";
                 document.getElementById('rpsStatus').innerText = "Make your move...";
@@ -5112,7 +5126,7 @@ function sendNotification(title, body, icon) {
 
         window.resetGame = function() {
             if (!gameRef) return;
-            gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+            gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
         };
 
         window.makeRPSMove = function(move) {
@@ -5123,9 +5137,9 @@ function sendNotification(title, body, icon) {
 
                 let updates = {};
                 if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.username });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
                 } else {
-                    gameRef.update({ p2Name: myProfile.username });
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
                     updates.playerX = move;
@@ -5155,7 +5169,7 @@ function sendNotification(title, body, icon) {
 
         window.resetRPS = function() {
             if (!gameRef) return;
-            gameRef.set({ playerX: '', playerO: '', winner: null });
+            gameRef.update({ playerX: '', playerO: '', winner: null });
             document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
             document.getElementById('rpsOpponentBox').style.borderColor = "var(--glass-border)";
             document.getElementById('rpsStatus').innerText = "Make your move...";
@@ -5277,15 +5291,16 @@ function sendNotification(title, body, icon) {
                 if(!localDotsState) return;
 
                 if(localDotsState.winner) {
-                    document.getElementById('dotsStatus').innerText = localDotsState.winner === 'Draw' ? "It's a Draw!" : `${localDotsState.winner} Wins!`;
-                    document.getElementById('rematchDotsBtn').style.display = 'block';
+                    document.getElementById('dotsStatus').innerText = localDotsState.winner === 'Draw' ? "It's a Draw!" : localDotsState.winner === 'P1' ? `${localDotsState.p1Name || 'P1'} Wins!` : `${localDotsState.p2Name || 'P2'} Wins!`;
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchDotsBtn').style.display = 'block'; else document.getElementById('dotsStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('dotsStatus').innerText = localDotsState.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                     document.getElementById('rematchDotsBtn').style.display = 'none';
                 }
 
-                document.getElementById('dotsScoreP1').innerText = `P1 (Pink): ${localDotsState.scoreX}`;
-                document.getElementById('dotsScoreP2').innerText = `P2 (Cyan): ${localDotsState.scoreO}`;
+                document.getElementById('dotsScoreP1').innerText = `${localDotsState.p1Name || 'P1'} (Pink): ${localDotsState.scoreX}`;
+                document.getElementById('dotsScoreP2').innerText = `${localDotsState.p2Name || 'P2'} (Cyan): ${localDotsState.scoreO}`;
 
                 drawDotsBoard(ctx);
             });
@@ -5323,8 +5338,8 @@ function sendNotification(title, body, icon) {
             // Check win
             let allFilled = !ns.boxes.includes('');
             if(allFilled) {
-                if(ns.scoreX > ns.scoreO) ns.winner = 'P1 (Pink)';
-                else if(ns.scoreO > ns.scoreX) ns.winner = 'P2 (Cyan)';
+                if(ns.scoreX > ns.scoreO) ns.winner = 'P1';
+                else if(ns.scoreO > ns.scoreX) ns.winner = 'P2';
                 else ns.winner = 'Draw';
             }
 
@@ -5410,9 +5425,25 @@ function sendNotification(title, body, icon) {
 
         let stopTimerRaf = null;
         let reactionRaf = null;
+        let checkStartInterval = null;
+        let checkTimeInterval = null;
 
         // --- STOP THE TIMER ---
         window.startStopTimerLoop = function() {
+            if(mySymbol === 'X') {
+                if(checkStartInterval) clearInterval(checkStartInterval);
+                checkStartInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.start) {
+                            gameRef.update({ status: 'playing', start: Date.now() });
+                            clearInterval(checkStartInterval);
+                        }
+                    });
+                }, 100);
+            }
+
             gameRef.on('value', snap => {
                 const data = snap.val();
                 if(!data) return;
@@ -5420,40 +5451,41 @@ function sendNotification(title, body, icon) {
                 if(data.winner) {
                     cancelAnimationFrame(stopTimerRaf);
                     document.getElementById('stActionBtn').style.display = 'none';
-                    document.getElementById('rematchStBtn').style.display = 'block';
-                    document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchStBtn').style.display = 'block'; else document.getElementById('stStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
                     document.getElementById('stDisplay').innerText = data.p1Stop > 0 ? (mySymbol === 'X' ? (data.p1Stop/1000).toFixed(2) : (data.p2Stop/1000).toFixed(2)) : "10.00";
                     return;
                 }
 
                 if(data.status === 'waiting') {
-                    if(Date.now() > data.start) {
-                        gameRef.update({ status: 'playing', start: Date.now() });
-                    } else {
-                        document.getElementById('stDisplay').innerText = "0.00";
-                        document.getElementById('stStatus').innerText = "Get ready...";
-                    }
+                    document.getElementById('stDisplay').innerText = "0.00";
+                    document.getElementById('stStatus').innerText = "Get ready...";
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    document.getElementById('rematchStBtn').style.display = 'none';
                 }
 
-                if(data.status === 'playing' && !stopTimerRaf) {
+                if(data.status === 'playing') {
                     document.getElementById('stStatus').innerText = "Tap STOP at exactly 10.00s!";
-                    function updateDisplay() {
-                        if(data.winner) return;
-                        const myStop = mySymbol === 'X' ? data.p1Stop : data.p2Stop;
-                        if(myStop === 0) {
-                            const elapsed = (Date.now() - data.start) / 1000;
-                            document.getElementById('stDisplay').innerText = elapsed.toFixed(2);
-                            stopTimerRaf = requestAnimationFrame(updateDisplay);
+                    document.getElementById('stActionBtn').style.display = 'block';
+                    if(!stopTimerRaf) {
+                        function updateDisplay() {
+                            if(!gameRef || data.winner) return;
+                            const myStop = mySymbol === 'X' ? data.p1Stop : data.p2Stop;
+                            if(myStop === 0) {
+                                const elapsed = (Date.now() - data.start) / 1000;
+                                document.getElementById('stDisplay').innerText = elapsed.toFixed(2);
+                                stopTimerRaf = requestAnimationFrame(updateDisplay);
+                            }
                         }
+                        stopTimerRaf = requestAnimationFrame(updateDisplay);
                     }
-                    stopTimerRaf = requestAnimationFrame(updateDisplay);
                 }
 
                 // Both stopped
                 if(data.p1Stop > 0 && data.p2Stop > 0 && mySymbol === 'X') {
                     let diff1 = Math.abs(10000 - data.p1Stop);
                     let diff2 = Math.abs(10000 - data.p2Stop);
-                    let win = diff1 < diff2 ? "P1 (Host)" : (diff2 < diff1 ? "P2 (Client)" : "Draw");
+                    let win = diff1 < diff2 ? 'P1' : (diff2 < diff1 ? 'P2' : "Draw");
                     gameRef.update({ winner: win });
                 }
             });
@@ -5473,7 +5505,23 @@ function sendNotification(title, body, icon) {
             });
         }
         window.resetStopTimer = function() {
-            if(gameRef && mySymbol === 'X') gameRef.set({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+            if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
+            stopTimerRaf = null;
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+
+                if(checkStartInterval) clearInterval(checkStartInterval);
+                checkStartInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.start) {
+                            gameRef.update({ status: 'playing', start: Date.now() });
+                            clearInterval(checkStartInterval);
+                        }
+                    });
+                }, 100);
+            }
         }
 
         // --- REACTION TAP ---
@@ -5485,31 +5533,31 @@ function sendNotification(title, body, icon) {
 
                 if(data.winner) {
                     cancelAnimationFrame(reactionRaf);
-                    document.getElementById('rematchRtBtn').style.display = 'block';
+                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchRtBtn').style.display = 'block'; else document.getElementById('rtStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('rtTapZone').style.display = 'none';
                     if(data.winner === 'Early') {
                         document.getElementById('rtInstruction').innerText = "Someone false started!";
                         document.getElementById('rtStatus').innerText = "Match Voided.";
                     } else {
-                        document.getElementById('rtInstruction').innerText = `${data.winner} Wins!`;
+                        document.getElementById('rtInstruction').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
                         document.getElementById('rtStatus').innerText = `Tap Time: ${Math.min(data.p1Tap || 9999, data.p2Tap || 9999)}ms`;
                     }
                     return;
                 }
 
                 if(data.status === 'waiting') {
+                    document.getElementById('rematchRtBtn').style.display = 'none';
                     document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
                     document.getElementById('rtInstruction').innerText = "Wait for Green...";
-                    if(Date.now() > data.greenTime) {
-                        gameRef.update({ status: 'go', greenTime: Date.now() }); // reset time to exact start
-                    }
+                    document.getElementById('rtTapZone').style.display = 'block';
+                    // Let the host's interval handle switching to go
                 } else if (data.status === 'go') {
                     document.getElementById('reactionOverlay').style.background = '#32CD32';
                     document.getElementById('rtInstruction').innerText = "TAP NOW!";
                 }
 
                 if(data.p1Tap > 0 && data.p2Tap > 0 && mySymbol === 'X') {
-                    let win = data.p1Tap < data.p2Tap ? "P1 (Host)" : "P2 (Client)";
+                    let win = data.p1Tap < data.p2Tap ? 'P1' : 'P2';
                     gameRef.update({ winner: win });
                 } else if ((data.p1Tap > 0 || data.p2Tap > 0) && mySymbol === 'X') {
                     // Give other player 1 second to also tap before declaring winner by default
@@ -5517,7 +5565,7 @@ function sendNotification(title, body, icon) {
                         gameRef.once('value', s => {
                             let d2 = s.val();
                             if(!d2.winner) {
-                                let w = d2.p1Tap > 0 ? "P1 (Host)" : "P2 (Client)";
+                                let w = d2.p1Tap > 0 ? 'P1' : 'P2';
                                 gameRef.update({ winner: w });
                             }
                         });
@@ -5525,17 +5573,19 @@ function sendNotification(title, body, icon) {
                 }
             });
 
-            function checkTime() {
-                if(!gameRef) return;
-                gameRef.once('value', s => {
-                    const d = s.val();
-                    if(d && d.status === 'waiting' && Date.now() > d.greenTime && mySymbol === 'X') {
-                        gameRef.update({ status: 'go', greenTime: Date.now() });
-                    }
-                });
-                reactionRaf = requestAnimationFrame(checkTime);
+            let checkTimeInterval = null;
+            if(mySymbol === 'X') {
+                checkTimeInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
+                            gameRef.update({ status: 'go', greenTime: Date.now() });
+                            clearInterval(checkTimeInterval);
+                        }
+                    });
+                }, 100);
             }
-            if(mySymbol === 'X') reactionRaf = requestAnimationFrame(checkTime);
         }
         window.reactionTapAction = function() {
             gameRef.once('value', snap => {
@@ -5555,9 +5605,22 @@ function sendNotification(title, body, icon) {
             });
         }
         window.resetReaction = function() {
+            if(reactionRaf) cancelAnimationFrame(reactionRaf);
+            reactionRaf = null;
             if(gameRef && mySymbol === 'X') {
-                document.getElementById('rematchRtBtn').style.display = 'none';
-                gameRef.set({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                gameRef.update({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+
+                if(checkTimeInterval) clearInterval(checkTimeInterval);
+                checkTimeInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
+                            gameRef.update({ status: 'go', greenTime: Date.now() });
+                            clearInterval(checkTimeInterval);
+                        }
+                    });
+                }, 100);
             }
         }
 
@@ -5579,9 +5642,12 @@ function sendNotification(title, body, icon) {
 
                 if(data.winner) {
                     document.getElementById('msControls').style.display = 'none';
-                    document.getElementById('rematchMsBtn').style.display = 'block';
-                    document.getElementById('msStatus').innerText = `${data.winner} Wins!`;
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchMsBtn').style.display = 'block'; else document.getElementById('msStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('msStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
                     return;
+                } else {
+                    document.getElementById('rematchMsBtn').style.display = 'none';
                 }
 
                 if(data.turn === mySymbol) {
@@ -5605,7 +5671,7 @@ function sendNotification(title, body, icon) {
                     let rem = d.sticks - amt;
                     if(rem < 0) rem = 0;
                     if(rem === 0) {
-                        gameRef.update({ sticks: 0, winner: mySymbol === 'X' ? 'P2 (Client)' : 'P1 (Host)' });
+                        gameRef.update({ sticks: 0, winner: mySymbol === 'X' ? 'P2' : 'P1' });
                     } else {
                         gameRef.update({ sticks: rem, turn: mySymbol === 'X' ? 'O' : 'X' });
                     }
@@ -5613,7 +5679,7 @@ function sendNotification(title, body, icon) {
             });
         }
         window.resetMatchsticks = function() {
-            if(gameRef && mySymbol === 'X') gameRef.set({ sticks: 21, turn: 'X', winner: null });
+            if(gameRef && mySymbol === 'X') gameRef.update({ sticks: 21, turn: 'X', winner: null });
         }
 
         // --- HIGH CARD WAR ---
@@ -5624,9 +5690,20 @@ function sendNotification(title, body, icon) {
                 if(!data) return;
 
                 if(data.winner) {
-                    document.getElementById('rematchHcBtn').style.display = 'block';
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchHcBtn').style.display = 'block'; else document.getElementById('hcStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('hcDrawBtn').style.display = 'none';
-                    document.getElementById('hcStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                    document.getElementById('hcStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                } else {
+                    document.getElementById('rematchHcBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
+                    if(myC === 0) {
+                        document.getElementById('hcDrawBtn').style.display = 'block';
+                        document.getElementById('hcStatus').innerText = "Draw your card!";
+                    } else {
+                        document.getElementById('hcDrawBtn').style.display = 'none';
+                        document.getElementById('hcStatus').innerText = "Waiting for opponent to draw...";
+                    }
                 }
 
                 let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
@@ -5636,7 +5713,7 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hcOppCard').innerHTML = opC ? cardsArr[opC-2] : '<i class="fa-solid fa-question"></i>';
 
                 if(data.p1Card > 0 && data.p2Card > 0 && mySymbol === 'X' && !data.winner) {
-                    let win = data.p1Card > data.p2Card ? "P1 (Host)" : (data.p2Card > data.p1Card ? "P2 (Client)" : "Draw");
+                    let win = data.p1Card > data.p2Card ? 'P1' : (data.p2Card > data.p1Card ? 'P2' : "Draw");
                     gameRef.update({ winner: win });
                 }
             });
@@ -5655,9 +5732,8 @@ function sendNotification(title, body, icon) {
         }
         window.resetHighCard = function() {
             if(gameRef && mySymbol === 'X') {
-                document.getElementById('hcDrawBtn').style.display = 'block';
-                document.getElementById('rematchHcBtn').style.display = 'none';
-                gameRef.set({ p1Card: 0, p2Card: 0, winner: null });
+
+                gameRef.update({ p1Card: 0, p2Card: 0, winner: null });
             }
         }
 
@@ -5679,8 +5755,13 @@ function sendNotification(title, body, icon) {
 
                 if(data.winner) {
                     document.getElementById('gnControls').style.display = 'none';
-                    document.getElementById('rematchGnBtn').style.display = 'block';
-                    document.getElementById('gnStatus').innerText = `${data.winner} Guessed It!`;
+                    if(mySymbol === 'X') document.getElementById('rematchGnBtn').style.display = 'block'; else document.getElementById('gnStatus').innerText += ' (Waiting for Host to restart)';
+                    playWinSound();
+                    document.getElementById('gnStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Guessed It!` : `${data.p2Name || 'P2'} Guessed It!`;
+                } else {
+                    document.getElementById('gnControls').style.display = 'flex';
+                    document.getElementById('rematchGnBtn').style.display = 'none';
+                    document.getElementById('gnStatus').innerText = "Game in progress!";
                 }
             });
         }
@@ -5692,9 +5773,9 @@ function sendNotification(title, body, icon) {
             gameRef.once('value', snap => {
                 const d = snap.val();
                 if(d && !d.winner) {
-                    let playerStr = mySymbol === 'X' ? 'P1' : 'P2';
+                    let playerStr = mySymbol === 'X' ? (d.p1Name || 'P1') : (d.p2Name || 'P2');
                     if(v === d.secret) {
-                        gameRef.update({ winner: playerStr, lastHint: `${playerStr} guessed ${v} and WON!` });
+                        gameRef.update({ winner: mySymbol === 'X' ? 'P1' : 'P2', lastHint: `${playerStr} guessed ${v} and WON!` });
                     } else if (v > d.secret) {
                         gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too High)` });
                     } else {
@@ -5705,8 +5786,7 @@ function sendNotification(title, body, icon) {
         }
         window.resetGuessNumber = function() {
             if(gameRef && mySymbol === 'X') {
-                document.getElementById('gnHistory').innerHTML = '';
-                gameRef.set({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', winner: null });
+                gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', winner: null });
             }
         }
 
@@ -5717,10 +5797,19 @@ function sendNotification(title, body, icon) {
                 if(!data) return;
 
                 if(data.winner) {
-                    document.getElementById('rematchCfBtn').style.display = 'block';
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchCfBtn').style.display = 'block'; else document.getElementById('cfStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('cfControls').style.display = 'none';
                     document.getElementById('cfCoin').innerText = data.result === 'Heads' ? 'H' : 'T';
-                    document.getElementById('cfStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins!`;
+                    document.getElementById('cfStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                } else {
+                    document.getElementById('rematchCfBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
+                    if(myC === '') {
+                        document.getElementById('cfControls').style.display = 'flex';
+                        document.getElementById('cfStatus').innerText = "Make your choice!";
+                        document.getElementById('cfCoin').innerText = "?";
+                    }
                 }
 
                 if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
@@ -5731,7 +5820,7 @@ function sendNotification(title, body, icon) {
                     let win = (p1Win && !p2Win) ? "P1" : ((p2Win && !p1Win) ? "P2" : "Draw");
 
                     // Add delay for effect
-                    document.getElementById('cfCoin').style.transform = "rotateY(720deg)";
+                    document.getElementById('cfCoin').style.transform = "rotateY(" + (Math.random() > 0.5 ? 720 : 1080) + "deg)";
                     setTimeout(() => {
                         gameRef.update({ result: res, winner: win });
                     }, 1000);
@@ -5751,9 +5840,7 @@ function sendNotification(title, body, icon) {
         }
         window.resetCoinFlip = function() {
             if(gameRef && mySymbol === 'X') {
-                document.getElementById('cfCoin').style.transform = "rotateY(0deg)";
-                document.getElementById('cfCoin').innerText = "?";
-                gameRef.set({ p1Choice: '', p2Choice: '', result: '', winner: null });
+                gameRef.update({ p1Choice: '', p2Choice: '', result: '', winner: null });
             }
         }
 
@@ -5766,9 +5853,17 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hlCard').innerText = data.currentCard;
 
                 if(data.winner) {
-                    document.getElementById('rematchHlBtn').style.display = 'block';
+                    if(mySymbol === 'X') document.getElementById('rematchHlBtn').style.display = 'block'; else document.getElementById('hlStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('hlControls').style.display = 'none';
-                    document.getElementById('hlStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : `${data.winner} Wins! Next card was ${data.nextCard}`;
+                    playWinSound();
+                    document.getElementById('hlStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins! Next was ${data.nextCard}` : `${data.p2Name || 'P2'} Wins! Next was ${data.nextCard}`);
+                } else {
+                    document.getElementById('rematchHlBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
+                    if(myC === '') {
+                        document.getElementById('hlControls').style.display = 'flex';
+                        document.getElementById('hlStatus').innerText = "Higher or Lower?";
+                    }
                 }
 
                 if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
@@ -5797,7 +5892,7 @@ function sendNotification(title, body, icon) {
         }
         window.resetHigherLower = function() {
             if(gameRef && mySymbol === 'X') {
-                gameRef.set({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+                gameRef.update({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
             }
         }
 
