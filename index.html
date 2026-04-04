@@ -4577,7 +4577,7 @@ function sendNotification(title, body, icon) {
                     gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.update({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+                    gameRef.update({ start: Date.now() + 1500, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
                 }
                 startStopTimerLoop();
             } else if (activeGameType === 'Reaction') {
@@ -4590,7 +4590,7 @@ function sendNotification(title, body, icon) {
                     gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.update({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                    gameRef.update({ greenTime: Date.now() + 1500 + Math.random()*2000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
                 }
                 startReactionLoop();
             } else if (activeGameType === 'Matchsticks') {
@@ -5441,7 +5441,7 @@ function sendNotification(title, body, icon) {
                             clearInterval(checkStartInterval);
                         }
                     });
-                }, 100);
+                }, 50);
             }
 
             gameRef.on('value', snap => {
@@ -5508,7 +5508,7 @@ function sendNotification(title, body, icon) {
             if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
             stopTimerRaf = null;
             if(gameRef && mySymbol === 'X') {
-                gameRef.update({ start: Date.now() + 3000, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+                gameRef.update({ start: Date.now() + 1500, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
 
                 if(checkStartInterval) clearInterval(checkStartInterval);
                 checkStartInterval = setInterval(() => {
@@ -5520,7 +5520,7 @@ function sendNotification(title, body, icon) {
                             clearInterval(checkStartInterval);
                         }
                     });
-                }, 100);
+                }, 50);
             }
         }
 
@@ -5584,7 +5584,7 @@ function sendNotification(title, body, icon) {
                             clearInterval(checkTimeInterval);
                         }
                     });
-                }, 100);
+                }, 50);
             }
         }
         window.reactionTapAction = function() {
@@ -5608,7 +5608,7 @@ function sendNotification(title, body, icon) {
             if(reactionRaf) cancelAnimationFrame(reactionRaf);
             reactionRaf = null;
             if(gameRef && mySymbol === 'X') {
-                gameRef.update({ greenTime: Date.now() + 3000 + Math.random()*5000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                gameRef.update({ greenTime: Date.now() + 1500 + Math.random()*2000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
 
                 if(checkTimeInterval) clearInterval(checkTimeInterval);
                 checkTimeInterval = setInterval(() => {
@@ -5620,7 +5620,7 @@ function sendNotification(title, body, icon) {
                             clearInterval(checkTimeInterval);
                         }
                     });
-                }, 100);
+                }, 50);
             }
         }
 
@@ -5823,7 +5823,7 @@ function sendNotification(title, body, icon) {
                     document.getElementById('cfCoin').style.transform = "rotateY(" + (Math.random() > 0.5 ? 720 : 1080) + "deg)";
                     setTimeout(() => {
                         gameRef.update({ result: res, winner: win });
-                    }, 1000);
+                    }, 400);
                 }
             });
         }
@@ -6995,7 +6995,7 @@ window.burnImage = function(element, url, key) {
         }
     </script>
 
-    <div id="dotsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
+    <div id="dotsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveDots()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #FF1493; margin-bottom: 5px;" id="dotsTitle">Dots & Boxes</h2>
         <p id="dotsStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
@@ -7012,7 +7012,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchDotsBtn" onclick="resetDots()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #FF1493; color: white; font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
     </div>
 
-    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
+    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveRPS()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #00e5ff; margin-bottom: 5px;">Rock Paper Scissors</h2>
         <p id="rpsStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -7032,7 +7032,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchRpsBtn" onclick="resetRPS()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #00e5ff; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 25vh; overflow-y: auto;">
+    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveGame()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Tic-Tac-Toe</h2>
         <p id="gameStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -7054,7 +7054,7 @@ window.burnImage = function(element, url, key) {
 
 
     <!-- NEW GAMES OVERLAYS -->
-    <div id="stopTimerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="stopTimerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveStopTimer()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #FFD700; margin-bottom: 5px;">Stop the Timer</h2>
         <p id="stStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -7064,7 +7064,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchStBtn" onclick="resetStopTimer()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="reactionOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto; transition: background 0.1s;">
+    <div id="reactionOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto; transition: background 0.1s;">
         <button onclick="leaveReaction()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: white; font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: white; margin-bottom: 5px;">Reaction Tap</h2>
         <p id="rtStatus" style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -7073,7 +7073,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchRtBtn" onclick="resetReaction()" style="display:none; z-index: 3; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: white; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="matchsticksOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="matchsticksOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveMatchsticks()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #ff6b6b; margin-bottom: 5px;">Matchsticks (21)</h2>
         <p id="msStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
@@ -7089,7 +7089,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchMsBtn" onclick="resetMatchsticks()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #ff6b6b; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="highCardOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="highCardOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveHighCard()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #9b59b6; margin-bottom: 5px;">High Card War</h2>
         <p id="hcStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
@@ -7110,7 +7110,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchHcBtn" onclick="resetHighCard()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #9b59b6; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="guessNumberOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="guessNumberOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveGuessNumber()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #f1c40f; margin-bottom: 5px;">Guess the Number</h2>
         <p id="gnStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
@@ -7125,12 +7125,12 @@ window.burnImage = function(element, url, key) {
         <button id="rematchGnBtn" onclick="resetGuessNumber()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #f1c40f; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="coinFlipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="coinFlipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveCoinFlip()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #bdc3c7; margin-bottom: 5px;">Coin Flip</h2>
         <p id="cfStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
 
-        <div id="cfCoin" style="width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #ecf0f1 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #2c3e50; font-weight: 900; margin-bottom: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: transform 1s ease-in-out;">?</div>
+        <div id="cfCoin" style="width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #ecf0f1 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #2c3e50; font-weight: 900; margin-bottom: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: transform 0.4s ease-in-out;">?</div>
 
         <div id="cfControls" style="display: none; gap: 20px;">
             <button onclick="makeCoinChoice('Heads')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Heads</button>
@@ -7139,7 +7139,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchCfBtn" onclick="resetCoinFlip()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #bdc3c7; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="higherLowerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 30vh; overflow-y: auto;">
+    <div id="higherLowerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveHigherLower()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #e74c3c; margin-bottom: 5px;">Higher or Lower</h2>
         <p id="hlStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
