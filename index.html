@@ -1483,6 +1483,10 @@
                     <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
                     <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
                 </div>
+                                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (1v1)</h3></div>
+                </div>
                 <div class="hub-card ripple-target" onclick="findStrangerGame('StopTimer')">
                     <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-stopwatch"></i></div>
                     <div class="card-text"><h3 style="color: #FFD700;">Stop the Timer</h3></div>
@@ -2174,6 +2178,29 @@ function playWinSound() {
     if (myProfile && myProfile.appSoundEnabled) {
         gameWinSound.currentTime = 0;
         gameWinSound.play().catch(e => console.log('Audio play blocked:', e));
+    }
+}
+
+
+let audioCtx;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+function playDiceImpact(timeOffset) {
+    if (!audioCtx) return;
+    const bufferSize = audioCtx.sampleRate * 0.05;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1200 + Math.random() * 500;
+    const gain = audioCtx.createGain(); gain.gain.setValueAtTime(1.5, audioCtx.currentTime + timeOffset); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + timeOffset + 0.04);
+    noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start(audioCtx.currentTime + timeOffset);
+}
+
+function playDiceSound() {
+    if (myProfile && myProfile.appSoundEnabled) {
+        if (!audioCtx) initAudio();
+        playDiceImpact(0); playDiceImpact(0.08 + Math.random() * 0.03); playDiceImpact(0.16 + Math.random() * 0.03); playDiceImpact(0.26 + Math.random() * 0.04);
     }
 }
 
@@ -4437,7 +4464,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (!['TicTacToe', 'RPS', 'Dots', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4456,6 +4483,9 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'Dots') {
                 document.getElementById('dotsOverlay').style.display = 'flex';
                 document.getElementById('dotsStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Ludo') {
+                document.getElementById('ludoOverlay').style.display = 'flex';
+                document.getElementById('ludoStatus').innerText = "Searching for opponent...";
             } else if (gameType === 'StopTimer') {
                 document.getElementById('stopTimerOverlay').style.display = 'flex';
                 document.getElementById('stStatus').innerText = "Searching for opponent...";
@@ -4567,6 +4597,37 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType === 'Ludo') {
+                document.getElementById('ludoStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({
+                        turn: 0, // 0 = Red (Host), 2 = Pink (Client)
+                        diceRoll: 0,
+                        lastRollWasSix: false,
+                        winner: null,
+                        state: 'playing',
+                        // Board state: Array of tokens per team {state, stepsTaken, moveQueue}
+                        tokens_0: [
+                            {id:0, state: 'base', stepsTaken: -1},
+                            {id:1, state: 'base', stepsTaken: -1},
+                            {id:2, state: 'base', stepsTaken: -1},
+                            {id:3, state: 'base', stepsTaken: -1}
+                        ],
+                        tokens_2: [
+                            {id:0, state: 'base', stepsTaken: -1},
+                            {id:1, state: 'base', stepsTaken: -1},
+                            {id:2, state: 'base', stepsTaken: -1},
+                            {id:3, state: 'base', stepsTaken: -1}
+                        ]
+                    });
+                }
+                startLudoGameLoop();
             } else if (activeGameType === 'StopTimer') {
                 document.getElementById('stStatus').innerText = "Opponent found! Game starting...";
                 document.getElementById('stActionBtn').style.display = 'block';
@@ -5233,6 +5294,403 @@ function sendNotification(title, body, icon) {
 
 
 
+                // ==========================================
+        // CLASSIC LUDO (1v1) LOGIC
+        // ==========================================
+        let ludoRaf = null;
+        let ludoState = null;
+        let myLudoTeam = 0; // 0 = Red (Host), 2 = Pink (Joiner)
+        let isLudoAnimating = false;
+
+        const ludoGrid = 600 / 15;
+        const ludoColors = { bg: '#FFFFFF', lines: '#CCCCCC', 0: '#F44336', 2: '#FF1493', inactive: '#EEEEEE', safe: '#E3F2FD' };
+
+        const mainPath = [
+            {x:0,y:6}, {x:1,y:6}, {x:2,y:6}, {x:3,y:6}, {x:4,y:6}, {x:5,y:6}, {x:6,y:5}, {x:6,y:4}, {x:6,y:3}, {x:6,y:2}, {x:6,y:1}, {x:6,y:0},
+            {x:7,y:0}, {x:8,y:0}, {x:8,y:1}, {x:8,y:2}, {x:8,y:3}, {x:8,y:4}, {x:8,y:5}, {x:9,y:6}, {x:10,y:6}, {x:11,y:6}, {x:12,y:6}, {x:13,y:6}, {x:14,y:6},
+            {x:14,y:7}, {x:14,y:8}, {x:13,y:8}, {x:12,y:8}, {x:11,y:8}, {x:10,y:8}, {x:9,y:8}, {x:8,y:9}, {x:8,y:10}, {x:8,y:11}, {x:8,y:12}, {x:8,y:13}, {x:8,y:14},
+            {x:7,y:14}, {x:6,y:14}, {x:6,y:13}, {x:6,y:12}, {x:6,y:11}, {x:6,y:10}, {x:6,y:9}, {x:5,y:8}, {x:4,y:8}, {x:3,y:8}, {x:2,y:8}, {x:1,y:8}, {x:0,y:8},
+            {x:0,y:7}
+        ];
+        const startPos = { 0: 1, 2: 27 };
+        const safeZones = [1, 9, 14, 22, 27, 35, 40, 48];
+        const homePaths = {
+            0: [{x:1,y:7}, {x:2,y:7}, {x:3,y:7}, {x:4,y:7}, {x:5,y:7}],
+            2: [{x:13,y:7},{x:12,y:7},{x:11,y:7},{x:10,y:7},{x:9,y:7}]
+        };
+        const centerHome = {0: {x:6,y:7}, 2: {x:8,y:7}};
+        const baseSlots = [ {x: 1.5, y: 1.5}, {x: 4.5, y: 1.5}, {x: 1.5, y: 4.5}, {x: 4.5, y: 4.5} ];
+        const baseOffsets = { 0: {x:0,y:0}, 2: {x:9,y:9} };
+        const diceFaces = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+
+        // Local copy for smooth animations independent of Firebase ticks
+        let renderTokens = [];
+        let activeLudoTeams = [0, 2];
+
+        window.startLudoGameLoop = function() {
+            const canvas = document.getElementById('ludoCanvas');
+            const ctx = canvas.getContext('2d');
+            myLudoTeam = mySymbol === 'X' ? 0 : 2;
+
+            // Set rotation
+            const rotationAngle = (3 - myLudoTeam) * 90;
+            canvas.style.transform = `rotate(${rotationAngle}deg)`;
+
+            // Build local token state once
+            renderTokens = [];
+            activeLudoTeams.forEach(team => {
+                for(let i=0; i<4; i++) {
+                    let exactX = (baseOffsets[team].x + baseSlots[i].x) * ludoGrid;
+                    let exactY = (baseOffsets[team].y + baseSlots[i].y) * ludoGrid;
+                    renderTokens.push({
+                        team: team, id: i, state: 'base', stepsTaken: -1,
+                        baseX: exactX, baseY: exactY, displayX: exactX, displayY: exactY, moveQueue: []
+                    });
+                }
+            });
+
+            // Click Handler
+            canvas.onclick = (e) => {
+                if(!ludoState || ludoState.winner || ludoState.turn !== myLudoTeam || ludoState.diceRoll === 0 || isLudoAnimating) return;
+
+                const rect = canvas.getBoundingClientRect();
+                let rawX = (e.clientX - rect.left) * (600 / rect.width);
+                let rawY = (e.clientY - rect.top) * (600 / rect.height);
+
+                let cx = 300; let cy = 300;
+                let dx = rawX - cx; let dy = rawY - cy;
+                let rad = -(rotationAngle * Math.PI / 180);
+
+                let clickX = dx * Math.cos(rad) - dy * Math.sin(rad) + cx;
+                let clickY = dx * Math.sin(rad) + dy * Math.cos(rad) + cy;
+
+                let myTokens = ludoState[`tokens_${myLudoTeam}`];
+                for(let i=0; i<myTokens.length; i++) {
+                    let rt = renderTokens.find(t => t.team === myLudoTeam && t.id === i);
+                    let t = myTokens[i];
+
+                    const dist = Math.sqrt(Math.pow(rt.displayX - clickX, 2) + Math.pow(rt.displayY - clickY, 2));
+                    if (dist < ludoGrid * 0.8) {
+                        if (t.state === 'base' && ludoState.diceRoll === 6) {
+                            processMove(t, 'unlock'); return;
+                        } else if (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56) {
+                            processMove(t, 'walk'); return;
+                        }
+                    }
+                }
+            };
+
+            gameRef.on('value', snap => {
+                ludoState = snap.val();
+                if(!ludoState) return;
+
+                if(ludoState.winner) {
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('ludoTurnIndicator').style.display = 'none';
+                    document.getElementById('ludoDiceContainer').style.display = 'none';
+                    document.getElementById('ludoStatus').innerText = ludoState.winner === '0' ? `${ludoState.p1Name || 'Red'} Wins!` : `${ludoState.p2Name || 'Pink'} Wins!`;
+                } else {
+                    document.getElementById('rematchLudoBtn').style.display = 'none';
+                    document.getElementById('ludoTurnIndicator').style.display = 'block';
+                    document.getElementById('ludoDiceContainer').style.display = 'block';
+
+                    // Update turn UI
+                    const ti = document.getElementById('ludoTurnIndicator');
+                    ti.innerText = ludoState.turn === 0 ? (ludoState.p1Name || 'RED') : (ludoState.p2Name || 'PINK');
+                    ti.style.color = ludoColors[ludoState.turn];
+
+                    if (ludoState.turn === myLudoTeam) {
+                        if (ludoState.diceRoll === 0) document.getElementById('ludoStatus').innerText = "Your Turn! Tap the dice to roll.";
+                        else document.getElementById('ludoStatus').innerText = "Select a piece to move.";
+                    } else {
+                        document.getElementById('ludoStatus').innerText = "Opponent's Turn...";
+                    }
+
+                    renderLudoDice(ludoState.diceRoll || 1, ludoColors[ludoState.turn]);
+                }
+
+                // Sync exact state to renderTokens
+                activeLudoTeams.forEach(team => {
+                    let serverTeam = ludoState[`tokens_${team}`];
+                    for(let i=0; i<4; i++) {
+                        let rt = renderTokens.find(t => t.team === team && t.id === i);
+                        let st = serverTeam[i];
+
+                        // Push to queue if moving
+                        if(st.stepsTaken > rt.stepsTaken && st.state !== 'base') {
+                            if(rt.state === 'base') rt.state = 'active';
+                            for(let s = rt.stepsTaken+1; s <= st.stepsTaken; s++) {
+                                rt.moveQueue.push(s);
+                            }
+                        } else if (st.state === 'base' && rt.state === 'active') {
+                            // Captured! Instant teleport for simplicity
+                            rt.state = 'base';
+                            rt.stepsTaken = -1;
+                            rt.moveQueue = [];
+                            rt.displayX = rt.baseX;
+                            rt.displayY = rt.baseY;
+                        } else if (st.state === 'home' && rt.state !== 'home') {
+                            rt.state = 'home';
+                        }
+                    }
+                });
+            });
+
+            function ludoLoop() {
+                if(!ludoState) { ludoRaf = requestAnimationFrame(ludoLoop); return; }
+
+                let someoneMoving = false;
+                renderTokens.forEach(t => {
+                    if (t.moveQueue.length > 0) {
+                        someoneMoving = true;
+                        let targetCoord = getLudoPathCoord(t.team, t.moveQueue[0]);
+                        let targetX = targetCoord.x * ludoGrid + ludoGrid/2; let targetY = targetCoord.y * ludoGrid + ludoGrid/2;
+
+                        let dx = targetX - t.displayX; let dy = targetY - t.displayY;
+                        let dist = Math.sqrt(dx*dx + dy*dy); let speed = 6.0;
+
+                        if (dist <= speed) {
+                            t.displayX = targetX; t.displayY = targetY; t.stepsTaken = t.moveQueue.shift();
+                            playDiceSound(); // using as step sound
+                        } else {
+                            t.displayX += (dx / dist) * speed; t.displayY += (dy / dist) * speed;
+                        }
+                    }
+                });
+                isLudoAnimating = someoneMoving;
+
+                drawLudoBoard(ctx);
+                ludoRaf = requestAnimationFrame(ludoLoop);
+            }
+            ludoRaf = requestAnimationFrame(ludoLoop);
+        }
+
+        window.rollLudoDice = function() {
+            if(!gameRef || !ludoState || ludoState.turn !== myLudoTeam || ludoState.diceRoll !== 0 || isLudoAnimating || ludoState.winner) return;
+
+            const diceEl = document.getElementById('ludoDice');
+            diceEl.classList.add('rolling');
+            playDiceSound();
+
+            setTimeout(() => {
+                diceEl.classList.remove('rolling');
+                const roll = Math.floor(Math.random() * 6) + 1;
+                let nextIsSix = roll === 6;
+
+                gameRef.update({ diceRoll: roll, lastRollWasSix: nextIsSix });
+
+                // Auto check for forced turns
+                setTimeout(() => {
+                    gameRef.once('value', s => {
+                        let ls = s.val();
+                        let myTokens = ls[`tokens_${myLudoTeam}`];
+                        let legalMoves = [];
+                        myTokens.forEach(t => {
+                            if (t.state === 'base' && roll === 6) legalMoves.push({token: t, type: 'unlock'});
+                            if (t.state === 'active' && t.stepsTaken + roll <= 56) legalMoves.push({token: t, type: 'walk'});
+                        });
+
+                        if(legalMoves.length === 0) {
+                            setTimeout(() => { nextLudoTurn(ls); }, 600);
+                        } else if(legalMoves.length === 1 && myTokens.filter(t => t.state === 'active').length < 2) {
+                            // Auto move if only 1 choice
+                            setTimeout(() => { processMove(legalMoves[0].token, legalMoves[0].type); }, 300);
+                        }
+                    });
+                }, 100);
+            }, 500); // Wait 0.5s for rolling animation
+        }
+
+        function processMove(st, type) {
+            gameRef.once('value', s => {
+                let ls = s.val();
+                let updates = {};
+                let teamStr = `tokens_${myLudoTeam}`;
+                let myTs = ls[teamStr];
+
+                let targetToken = myTs[st.id];
+                if(type === 'unlock') {
+                    targetToken.state = 'active';
+                    targetToken.stepsTaken = 0;
+                } else {
+                    targetToken.stepsTaken += ls.diceRoll;
+                    if(targetToken.stepsTaken === 56) targetToken.state = 'home';
+                }
+
+                updates[teamStr] = myTs;
+
+                // Process captures immediately on server to sync
+                let capturedSomeone = false;
+                if(targetToken.stepsTaken < 51) {
+                    let actualPos = (startPos[myLudoTeam] + targetToken.stepsTaken) % 52;
+                    if(!safeZones.includes(actualPos)) {
+                        let enemyTeam = myLudoTeam === 0 ? 2 : 0;
+                        let enemyStr = `tokens_${enemyTeam}`;
+                        let eTs = ls[enemyStr];
+                        eTs.forEach(e => {
+                            if(e.state === 'active' && e.stepsTaken < 51) {
+                                let ePos = (startPos[enemyTeam] + e.stepsTaken) % 52;
+                                if(ePos === actualPos) {
+                                    e.state = 'base'; e.stepsTaken = -1;
+                                    capturedSomeone = true;
+                                    playWinSound(); // proxy capture sound
+                                }
+                            }
+                        });
+                        updates[enemyStr] = eTs;
+                    }
+                }
+
+                // Check if I won
+                let allHome = myTs.filter(t => t.state === 'home').length === 4;
+                if(allHome) updates.winner = myLudoTeam.toString();
+                else {
+                    updates.diceRoll = 0;
+                    if(!capturedSomeone && !ls.lastRollWasSix && targetToken.state !== 'home') {
+                        updates.turn = myLudoTeam === 0 ? 2 : 0;
+                    }
+                }
+
+                gameRef.update(updates);
+            });
+        }
+
+        function nextLudoTurn(ls) {
+            gameRef.update({ turn: myLudoTeam === 0 ? 2 : 0, diceRoll: 0, lastRollWasSix: false });
+        }
+
+        window.resetLudo = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({
+                    turn: 0,
+                    diceRoll: 0,
+                    lastRollWasSix: false,
+                    winner: null,
+                    state: 'playing',
+                    tokens_0: [ {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1}, {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1} ],
+                    tokens_2: [ {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1}, {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1} ]
+                });
+            }
+        }
+
+        function renderLudoDice(number, colorHex) {
+            const diceEl = document.getElementById('ludoDice');
+            diceEl.innerHTML = '';
+            const activeDots = diceFaces[number] || [4];
+            for (let i = 0; i < 9; i++) {
+                const dot = document.createElement('div'); dot.classList.add('ludo-dot');
+                if (activeDots.includes(i)) dot.style.backgroundColor = colorHex;
+                diceEl.appendChild(dot);
+            }
+        }
+
+        function getLudoPathCoord(team, stepsTaken) {
+            if (stepsTaken === -1) return null;
+            if (stepsTaken < 51) return mainPath[(startPos[team] + stepsTaken) % 52];
+            else if (stepsTaken < 56) return homePaths[team][stepsTaken - 51];
+            else return centerHome[team];
+        }
+
+        function drawLudoBoard(ctx) {
+            ctx.fillStyle = ludoColors.bg; ctx.fillRect(0, 0, 600, 600);
+
+            ctx.lineWidth = 1; ctx.setLineDash([]);
+            for(let i=0; i<52; i++) {
+                let px = mainPath[i].x * ludoGrid; let py = mainPath[i].y * ludoGrid;
+                ctx.fillStyle = safeZones.includes(i) ? ludoColors.safe : ludoColors.bg;
+                ctx.fillRect(px, py, ludoGrid, ludoGrid);
+                ctx.strokeStyle = ludoColors.lines; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+
+                if (safeZones.includes(i)) {
+                    let starColor = '#ccc';
+                    if (i===1) starColor = ludoColors[0]; if (i===27) starColor = ludoColors[2];
+                    drawLudoStar(ctx, px + ludoGrid/2, py + ludoGrid/2, 5, ludoGrid*0.3, ludoGrid*0.15, starColor);
+                }
+            }
+
+            activeLudoTeams.forEach(team => {
+                homePaths[team].forEach(coord => {
+                    let px = coord.x * ludoGrid; let py = coord.y * ludoGrid;
+                    ctx.fillStyle = ludoColors[team];
+                    ctx.fillRect(px, py, ludoGrid, ludoGrid);
+                    ctx.strokeStyle = '#fff'; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+                });
+
+                let startCoord = mainPath[startPos[team]];
+                ctx.fillStyle = ludoColors[team]; ctx.fillRect(startCoord.x*ludoGrid, startCoord.y*ludoGrid, ludoGrid, ludoGrid);
+                ctx.beginPath(); ctx.arc(startCoord.x*ludoGrid + ludoGrid/2, startCoord.y*ludoGrid + ludoGrid/2, ludoGrid*0.2, 0, Math.PI*2);
+                ctx.fillStyle = '#fff'; ctx.fill();
+            });
+
+            activeLudoTeams.forEach(team => {
+                let isActive = ludoState && ludoState.turn === team;
+                let col = isActive ? ludoColors[team] : ludoColors.inactive;
+                drawLudoBase(ctx, baseOffsets[team].x*ludoGrid, baseOffsets[team].y*ludoGrid, col, isActive, team);
+            });
+
+            // Center
+            ctx.fillStyle = '#ddd'; ctx.fillRect(6*ludoGrid, 6*ludoGrid, 3*ludoGrid, 3*ludoGrid);
+            ctx.fillStyle = ludoColors[0]; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.fill();
+            ctx.fillStyle = ludoColors[2]; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.fill();
+
+            // Tokens
+            let sortedTokens = [...renderTokens].sort((a,b) => a.moveQueue.length - b.moveQueue.length);
+            sortedTokens.forEach(t => {
+                if (t.state === 'home') return;
+                let radius = ludoGrid * 0.35;
+                ctx.beginPath(); ctx.arc(t.displayX + 2, t.displayY + 3, radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+
+                ctx.beginPath(); ctx.arc(t.displayX, t.displayY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = ludoColors[t.team]; ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(t.displayX - 2, t.displayY - 2, radius * 0.4, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
+
+                if (!isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0) {
+                    if ((t.state === 'base' && ludoState.diceRoll === 6) || (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56)) {
+                        ctx.beginPath(); ctx.arc(t.displayX, t.displayY, radius + 4, 0, Math.PI * 2);
+                        ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
+            });
+
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.strokeRect(3, 3, 594, 594);
+        }
+
+        function drawLudoStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3; let x = cx; let y = cy; let step = Math.PI / spikes;
+            ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius); ctx.closePath();
+            ctx.fillStyle = color; ctx.fill();
+        }
+
+        function drawLudoBase(ctx, x, y, color, isActive, teamId) {
+            ctx.fillStyle = color; ctx.fillRect(x, y, ludoGrid * 6, ludoGrid * 6);
+            ctx.fillStyle = isActive ? '#FFFFFF' : '#f5f5f5';
+            ctx.fillRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, ludoGrid * 6, ludoGrid * 6);
+            ctx.strokeRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
+
+            if (isActive) {
+                baseSlots.forEach(slot => {
+                    ctx.beginPath(); ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.5, 0, Math.PI*2);
+                    ctx.fillStyle = color; ctx.fill();
+                    ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.beginPath(); ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.25, 0, Math.PI*2);
+                    ctx.fillStyle = '#fff'; ctx.fill();
+                });
+            }
+        }
+
         // --- DOTS & BOXES LOGIC ---
         let localDotsState = null;
         let dotsClickBound = false;
@@ -5897,6 +6355,17 @@ function sendNotification(title, body, icon) {
         }
 
         // LEAVE HANDLERS
+
+        window.leaveLudo = function() {
+            if(ludoRaf) cancelAnimationFrame(ludoRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('ludoOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Ludo/' + user.uid).off(); db.ref('gameQueue/Ludo/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+
         window.leaveStopTimer = function() {
             if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
@@ -7154,6 +7623,58 @@ window.burnImage = function(element, url, key) {
     </div>
 
     <!-- GAME CHAT -->
+
+
+    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveLudo()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 100;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #4CAF50; margin-bottom: 5px;" id="ludoTitle">Classic Ludo</h2>
+        <p id="ludoStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+
+        <div id="ludoGameContainer" style="width: 100vw; max-width: min(100vw, 55vh); aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-top: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5;">
+            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+        </div>
+
+        <div class="controls" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%;">
+            <div class="dice-container" style="margin-top: -4px; z-index: 10;" id="ludoDiceContainer">
+                <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 25px 25px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
+            </div>
+            <div id="ludoTurnIndicator" style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin-top: 15px; transition: all 0.3s ease; display: none;">RED</div>
+        </div>
+
+        <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <style>
+            #ludoDice:active { transform: translateY(6px) !important; }
+            .rolling { animation: diceShake 0.3s ease-in-out infinite; }
+            @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
+            .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
+        </style>
+    </div>
+
+
+    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveLudo()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 100;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #4CAF50; margin-bottom: 5px;" id="ludoTitle">Classic Ludo</h2>
+        <p id="ludoStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+
+        <div id="ludoGameContainer" style="width: 100vw; max-width: min(100vw, 55vh); aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-top: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5;">
+            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+        </div>
+
+        <div class="controls" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%;">
+            <div class="dice-container" style="margin-top: -4px; z-index: 10;" id="ludoDiceContainer">
+                <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 25px 25px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
+            </div>
+            <div id="ludoTurnIndicator" style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin-top: 15px; transition: all 0.3s ease; display: none;">RED</div>
+        </div>
+
+        <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <style>
+            #ludoDice:active { transform: translateY(6px) !important; }
+            .rolling { animation: diceShake 0.3s ease-in-out infinite; }
+            @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
+            .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
+        </style>
+    </div>
 
     <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 30vh; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column;">
         <div id="gameChatMessages" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px;"></div>
