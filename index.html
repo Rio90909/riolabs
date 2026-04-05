@@ -1483,9 +1483,17 @@
                     <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
                     <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
                 </div>
-                                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo')">
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo2')">
                     <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice"></i></div>
-                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (1v1)</h3></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (2P)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo3')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-three"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (3P)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo4')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-d20"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (4P)</h3></div>
                 </div>
                 <div class="hub-card ripple-target" onclick="findStrangerGame('StopTimer')">
                     <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-stopwatch"></i></div>
@@ -4464,7 +4472,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4483,9 +4491,9 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'Dots') {
                 document.getElementById('dotsOverlay').style.display = 'flex';
                 document.getElementById('dotsStatus').innerText = "Searching for opponent...";
-            } else if (gameType === 'Ludo') {
+            } else if (gameType.startsWith('Ludo')) {
                 document.getElementById('ludoOverlay').style.display = 'flex';
-                document.getElementById('ludoStatus').innerText = "Searching for opponent...";
+                document.getElementById('ludoStatus').innerText = "Searching for opponents...";
             } else if (gameType === 'StopTimer') {
                 document.getElementById('stopTimerOverlay').style.display = 'flex';
                 document.getElementById('stStatus').innerText = "Searching for opponent...";
@@ -4512,43 +4520,131 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hlStatus').innerText = "Searching for opponent...";
             }
 
-            queueRef.once('value', snap => {
-                let found = false;
-                if (snap.exists()) {
-                    snap.forEach(child => {
-                        if (child.key !== user.uid && child.val() && child.val().active === true) {
-                            found = true;
-                            const matchedUid = child.key;
-                            gameRoom = "game_" + user.uid + "_" + matchedUid;
-                            mySymbol = 'O';
-                            window.opponentName = child.val().name || 'Opponent';
+            if (gameType.startsWith('Ludo')) {
+                const targetPlayers = parseInt(gameType.replace('Ludo', ''));
+                queueRef.once('value', snap => {
+                    let queue = [];
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            if (child.val() && child.val().active === true) {
+                                queue.push({ uid: child.key, name: child.val().name || 'Player', joinTime: child.val().joinTime || 0 });
+                            }
+                        });
+                    }
 
-                            db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
-                            setTimeout(() => { startGameSession(); }, 500);
-                            return true;
+                    queue.sort((a,b) => a.joinTime - b.joinTime);
+
+                    const myIndex = queue.findIndex(q => q.uid === user.uid);
+                    if (myIndex === -1) {
+                        // Join queue
+                        db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: myProfile.name, joinTime: Date.now() });
+                        db.ref('gameQueue/'+gameType+'/'+user.uid).onDisconnect().remove();
+
+                        // Listen for match
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
+                            const val = matchSnap.val();
+                            if (val && typeof val === 'string') {
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).off();
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).remove(); // Cleanup queue entry
+                                gameRoom = val;
+
+                                // To correctly identify who I am in the 4 teams, I'll need to check the room's tokens
+                                // But for now, we'll assign mySymbol to queue index if possible, or X for creator
+                                // The Ludo logic relies on mySymbol === 'X' for host actions like 'Play Again'.
+                                // For Ludo, host is creator.
+                                if (queue.length >= targetPlayers && queue[queue.length - 1].uid === user.uid) {
+                                    mySymbol = 'X';
+                                } else if (queue.length > 0 && queue[0].uid === user.uid) {
+                                    mySymbol = 'O'; // If not creator, doesn't really matter as long as it's not 'X' for rematch restrictions
+                                } else {
+                                    mySymbol = 'O';
+                                }
+
+                                // Wait a bit for host to init, then start session
+                                setTimeout(() => { startGameSession(); }, 1000);
+                            }
+                        });
+
+                        // If I'm joining and the queue now has enough players, the first person (host) handles it
+                        queue.push({ uid: user.uid, name: myProfile.name, joinTime: Date.now() });
+                    }
+
+                    if (queue.length >= targetPlayers) {
+                        // The LAST person to join triggers the room creation and becomes host for initialization logic
+                        // but P1 (queue[0]) will still be treated as 'X'/Red for turn purposes.
+                        if (queue[queue.length - 1].uid === user.uid) {
+                            gameRoom = "game_ludo_" + Date.now();
+                            // For simplicity, let the creator still initialize things
+
+                            let updates = {
+                                turn: 0,
+                                diceRoll: 0,
+                                lastRollWasSix: false,
+                                winner: null,
+                                state: 'playing',
+                                targetPlayers: targetPlayers
+                            };
+
+                            // Initialize all teams dynamically based on mode
+                            const ludoTeams = targetPlayers === 2 ? [0, 2] : (targetPlayers === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+
+                            ludoTeams.forEach((teamId, index) => {
+                                let pNum = index + 1;
+                                updates[`p${pNum}Name`] = queue[index].name;
+                                updates[`tokens_${teamId}`] = [
+                                    {id:0, state: 'base', stepsTaken: -1},
+                                    {id:1, state: 'base', stepsTaken: -1},
+                                    {id:2, state: 'base', stepsTaken: -1},
+                                    {id:3, state: 'base', stepsTaken: -1}
+                                ];
+
+                                // Notify everyone (including self, to trigger their match listener)
+                                db.ref('gameQueue/'+gameType+'/' + queue[index].uid).set(gameRoom);
+                            });
+
+                            db.ref('games/'+gameRoom).set(updates);
                         }
-                    });
-                }
+                    }
+                });
+            } else {
+                queueRef.once('value', snap => {
+                    let found = false;
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            if (child.key !== user.uid && child.val() && child.val().active === true) {
+                                found = true;
+                                const matchedUid = child.key;
+                                gameRoom = "game_" + user.uid + "_" + matchedUid;
+                                mySymbol = 'O';
+                                window.opponentName = child.val().name || 'Opponent';
 
-                if (!found) {
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
-                    mySymbol = 'X';
-                    db.ref('users/'+user.uid+'/name').once('value', snap => {
-                        db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: snap.val() || user.username });
-                    });
+                                db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
+                                setTimeout(() => { startGameSession(); }, 500);
+                                return true;
+                            }
+                        });
+                    }
 
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
-                        const val = matchSnap.val();
-                        if (val && typeof val === 'string') {
-                            db.ref('gameQueue/'+gameType+'/' + user.uid).off();
-                            gameRoom = val;
-                            db.ref('games/'+gameRoom).update({ p1Name: myProfile.username || myProfile.name });
-                            startGameSession();
-                        }
-                    });
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).onDisconnect().remove();
-                }
-            });
+                    if (!found) {
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
+                        mySymbol = 'X';
+                        db.ref('users/'+user.uid+'/name').once('value', snap => {
+                            db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: snap.val() || user.username });
+                        });
+
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
+                            const val = matchSnap.val();
+                            if (val && typeof val === 'string') {
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).off();
+                                gameRoom = val;
+                                db.ref('games/'+gameRoom).update({ p1Name: myProfile.username || myProfile.name });
+                                startGameSession();
+                            }
+                        });
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).onDisconnect().remove();
+                    }
+                });
+            }
         }
 
         let gameChatRef = null;
@@ -4597,37 +4693,33 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchBtn').style.display = 'none';
                     }
                 });
-            } else if (activeGameType === 'Ludo') {
-                document.getElementById('ludoStatus').innerText = "Opponent found! Game starting...";
+            } else if (activeGameType && activeGameType.startsWith('Ludo')) {
+                document.getElementById('ludoStatus').innerText = "All players found! Starting match...";
                 gameRef = db.ref('games/' + gameRoom);
-                if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.name || 'P1' });
-                } else {
-                    gameRef.update({ p2Name: myProfile.name || 'P2' });
-                }
-                if (mySymbol === 'X') {
-                    gameRef.update({
-                        turn: 0, // 0 = Red (Host), 2 = Pink (Client)
-                        diceRoll: 0,
-                        lastRollWasSix: false,
-                        winner: null,
-                        state: 'playing',
-                        // Board state: Array of tokens per team {state, stepsTaken, moveQueue}
-                        tokens_0: [
-                            {id:0, state: 'base', stepsTaken: -1},
-                            {id:1, state: 'base', stepsTaken: -1},
-                            {id:2, state: 'base', stepsTaken: -1},
-                            {id:3, state: 'base', stepsTaken: -1}
-                        ],
-                        tokens_2: [
-                            {id:0, state: 'base', stepsTaken: -1},
-                            {id:1, state: 'base', stepsTaken: -1},
-                            {id:2, state: 'base', stepsTaken: -1},
-                            {id:3, state: 'base', stepsTaken: -1}
-                        ]
-                    });
-                }
-                startLudoGameLoop();
+
+                // Set my local symbol correctly based on when I joined the queue
+                // The host set all names already, so I just need to find my team index
+                gameRef.once('value', snap => {
+                    const data = snap.val();
+                    if(data) {
+                        for(let i=1; i<=4; i++) {
+                            if(data[`p${i}Name`] === myProfile.name) {
+                                // Match index to team
+                                // If 2P: team 0, 2
+                                // If 3P: team 0, 1, 2
+                                // If 4P: team 0, 1, 2, 3
+                                const tp = data.targetPlayers || 2;
+                                if (tp === 2) {
+                                    myLudoTeam = i === 1 ? 0 : 2;
+                                } else {
+                                    myLudoTeam = i - 1;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    startLudoGameLoop();
+                });
             } else if (activeGameType === 'StopTimer') {
                 document.getElementById('stStatus').innerText = "Opponent found! Game starting...";
                 document.getElementById('stActionBtn').style.display = 'block';
@@ -5295,15 +5387,15 @@ function sendNotification(title, body, icon) {
 
 
                 // ==========================================
-        // CLASSIC LUDO (1v1) LOGIC
+        // LUDO (2P, 3P, 4P) LOGIC
         // ==========================================
         let ludoRaf = null;
         let ludoState = null;
-        let myLudoTeam = 0; // 0 = Red (Host), 2 = Pink (Joiner)
+        let myLudoTeam = 0; // 0 = Red, 1 = Green, 2 = Yellow, 3 = Blue
         let isLudoAnimating = false;
 
         const ludoGrid = 600 / 15;
-        const ludoColors = { bg: '#FFFFFF', lines: '#CCCCCC', 0: '#F44336', 2: '#FF1493', inactive: '#EEEEEE', safe: '#E3F2FD' };
+        const ludoColors = { bg: '#FFFFFF', lines: '#CCCCCC', 0: '#F44336', 1: '#4CAF50', 2: '#FFEB3B', 3: '#2196F3', inactive: '#EEEEEE', safe: '#E3F2FD' };
 
         const mainPath = [
             {x:0,y:6}, {x:1,y:6}, {x:2,y:6}, {x:3,y:6}, {x:4,y:6}, {x:5,y:6}, {x:6,y:5}, {x:6,y:4}, {x:6,y:3}, {x:6,y:2}, {x:6,y:1}, {x:6,y:0},
@@ -5312,42 +5404,35 @@ function sendNotification(title, body, icon) {
             {x:7,y:14}, {x:6,y:14}, {x:6,y:13}, {x:6,y:12}, {x:6,y:11}, {x:6,y:10}, {x:6,y:9}, {x:5,y:8}, {x:4,y:8}, {x:3,y:8}, {x:2,y:8}, {x:1,y:8}, {x:0,y:8},
             {x:0,y:7}
         ];
-        const startPos = { 0: 1, 2: 27 };
+        // Team start indices on mainPath
+        const startPos = { 0: 1, 1: 14, 2: 27, 3: 40 };
         const safeZones = [1, 9, 14, 22, 27, 35, 40, 48];
         const homePaths = {
             0: [{x:1,y:7}, {x:2,y:7}, {x:3,y:7}, {x:4,y:7}, {x:5,y:7}],
-            2: [{x:13,y:7},{x:12,y:7},{x:11,y:7},{x:10,y:7},{x:9,y:7}]
+            1: [{x:7,y:1}, {x:7,y:2}, {x:7,y:3}, {x:7,y:4}, {x:7,y:5}],
+            2: [{x:13,y:7},{x:12,y:7},{x:11,y:7},{x:10,y:7},{x:9,y:7}],
+            3: [{x:7,y:13},{x:7,y:12},{x:7,y:11},{x:7,y:10},{x:7,y:9}]
         };
-        const centerHome = {0: {x:6,y:7}, 2: {x:8,y:7}};
+        const centerHome = {0: {x:6,y:7}, 1: {x:7,y:6}, 2: {x:8,y:7}, 3: {x:7,y:8}};
         const baseSlots = [ {x: 1.5, y: 1.5}, {x: 4.5, y: 1.5}, {x: 1.5, y: 4.5}, {x: 4.5, y: 4.5} ];
-        const baseOffsets = { 0: {x:0,y:0}, 2: {x:9,y:9} };
+        // Team base offsets
+        const baseOffsets = { 0: {x:0,y:0}, 1: {x:9,y:0}, 2: {x:9,y:9}, 3: {x:0,y:9} };
         const diceFaces = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
 
         // Local copy for smooth animations independent of Firebase ticks
         let renderTokens = [];
-        let activeLudoTeams = [0, 2];
+        let activeLudoTeams = [];
 
         window.startLudoGameLoop = function() {
             const canvas = document.getElementById('ludoCanvas');
             const ctx = canvas.getContext('2d');
-            myLudoTeam = mySymbol === 'X' ? 0 : 2;
 
-            // Set rotation
-            const rotationAngle = (3 - myLudoTeam) * 90;
+            // Set rotation so my base is always at bottom left visually
+            // Team 0 -> 0deg, Team 1 -> 270deg, Team 2 -> 180deg, Team 3 -> 90deg
+            const rotationAngle = (4 - myLudoTeam) * 90 % 360;
             canvas.style.transform = `rotate(${rotationAngle}deg)`;
 
-            // Build local token state once
             renderTokens = [];
-            activeLudoTeams.forEach(team => {
-                for(let i=0; i<4; i++) {
-                    let exactX = (baseOffsets[team].x + baseSlots[i].x) * ludoGrid;
-                    let exactY = (baseOffsets[team].y + baseSlots[i].y) * ludoGrid;
-                    renderTokens.push({
-                        team: team, id: i, state: 'base', stepsTaken: -1,
-                        baseX: exactX, baseY: exactY, displayX: exactX, displayY: exactY, moveQueue: []
-                    });
-                }
-            });
 
             // Click Handler
             canvas.onclick = (e) => {
@@ -5384,12 +5469,29 @@ function sendNotification(title, body, icon) {
                 ludoState = snap.val();
                 if(!ludoState) return;
 
+                const tp = ludoState.targetPlayers || 2;
+                activeLudoTeams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+
+                if(renderTokens.length === 0) {
+                    activeLudoTeams.forEach(team => {
+                        for(let i=0; i<4; i++) {
+                            let exactX = (baseOffsets[team].x + baseSlots[i].x) * ludoGrid;
+                            let exactY = (baseOffsets[team].y + baseSlots[i].y) * ludoGrid;
+                            renderTokens.push({
+                                team: team, id: i, state: 'base', stepsTaken: -1,
+                                baseX: exactX, baseY: exactY, displayX: exactX, displayY: exactY, moveQueue: []
+                            });
+                        }
+                    });
+                }
+
                 if(ludoState.winner) {
                     playWinSound();
                     if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('ludoTurnIndicator').style.display = 'none';
                     document.getElementById('ludoDiceContainer').style.display = 'none';
-                    document.getElementById('ludoStatus').innerText = ludoState.winner === '0' ? `${ludoState.p1Name || 'Red'} Wins!` : `${ludoState.p2Name || 'Pink'} Wins!`;
+                    let wName = ludoState[`p${parseInt(ludoState.winner)+1}Name`] || 'Someone';
+                    document.getElementById('ludoStatus').innerText = `${wName} Wins!`;
                 } else {
                     document.getElementById('rematchLudoBtn').style.display = 'none';
                     document.getElementById('ludoTurnIndicator').style.display = 'block';
@@ -5397,7 +5499,8 @@ function sendNotification(title, body, icon) {
 
                     // Update turn UI
                     const ti = document.getElementById('ludoTurnIndicator');
-                    ti.innerText = ludoState.turn === 0 ? (ludoState.p1Name || 'RED') : (ludoState.p2Name || 'PINK');
+                    let activeIndex = activeLudoTeams.indexOf(ludoState.turn);
+                    ti.innerText = ludoState[`p${activeIndex+1}Name`] || `Player ${activeIndex+1}`;
                     ti.style.color = ludoColors[ludoState.turn];
 
                     if (ludoState.turn === myLudoTeam) {
@@ -5525,20 +5628,25 @@ function sendNotification(title, body, icon) {
                 if(targetToken.stepsTaken < 51) {
                     let actualPos = (startPos[myLudoTeam] + targetToken.stepsTaken) % 52;
                     if(!safeZones.includes(actualPos)) {
-                        let enemyTeam = myLudoTeam === 0 ? 2 : 0;
-                        let enemyStr = `tokens_${enemyTeam}`;
-                        let eTs = ls[enemyStr];
-                        eTs.forEach(e => {
-                            if(e.state === 'active' && e.stepsTaken < 51) {
-                                let ePos = (startPos[enemyTeam] + e.stepsTaken) % 52;
-                                if(ePos === actualPos) {
-                                    e.state = 'base'; e.stepsTaken = -1;
-                                    capturedSomeone = true;
-                                    playWinSound(); // proxy capture sound
-                                }
+                        activeLudoTeams.forEach(enemyTeam => {
+                            if (enemyTeam !== myLudoTeam) {
+                                let enemyStr = `tokens_${enemyTeam}`;
+                                let eTs = ls[enemyStr] || [];
+                                let modified = false;
+                                eTs.forEach(e => {
+                                    if(e.state === 'active' && e.stepsTaken < 51) {
+                                        let ePos = (startPos[enemyTeam] + e.stepsTaken) % 52;
+                                        if(ePos === actualPos) {
+                                            e.state = 'base'; e.stepsTaken = -1;
+                                            capturedSomeone = true;
+                                            modified = true;
+                                            playWinSound(); // proxy capture sound
+                                        }
+                                    }
+                                });
+                                if (modified) updates[enemyStr] = eTs;
                             }
                         });
-                        updates[enemyStr] = eTs;
                     }
                 }
 
@@ -5548,7 +5656,8 @@ function sendNotification(title, body, icon) {
                 else {
                     updates.diceRoll = 0;
                     if(!capturedSomeone && !ls.lastRollWasSix && targetToken.state !== 'home') {
-                        updates.turn = myLudoTeam === 0 ? 2 : 0;
+                        let activeIndex = activeLudoTeams.indexOf(myLudoTeam);
+                        updates.turn = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
                     }
                 }
 
@@ -5557,19 +5666,32 @@ function sendNotification(title, body, icon) {
         }
 
         function nextLudoTurn(ls) {
-            gameRef.update({ turn: myLudoTeam === 0 ? 2 : 0, diceRoll: 0, lastRollWasSix: false });
+            let activeIndex = activeLudoTeams.indexOf(myLudoTeam);
+            let nextTeam = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
+            gameRef.update({ turn: nextTeam, diceRoll: 0, lastRollWasSix: false });
         }
 
         window.resetLudo = function() {
             if(gameRef && mySymbol === 'X') {
-                gameRef.update({
-                    turn: 0,
-                    diceRoll: 0,
-                    lastRollWasSix: false,
-                    winner: null,
-                    state: 'playing',
-                    tokens_0: [ {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1}, {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1} ],
-                    tokens_2: [ {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1}, {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1} ]
+                gameRef.once('value', snap => {
+                    let ls = snap.val();
+                    if (!ls) return;
+                    let updates = {
+                        turn: 0,
+                        diceRoll: 0,
+                        lastRollWasSix: false,
+                        winner: null,
+                        state: 'playing'
+                    };
+                    const tp = ls.targetPlayers || 2;
+                    let teams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+                    teams.forEach(t => {
+                        updates[`tokens_${t}`] = [
+                            {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1},
+                            {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1}
+                        ];
+                    });
+                    gameRef.update(updates);
                 });
             }
         }
@@ -7623,32 +7745,6 @@ window.burnImage = function(element, url, key) {
     </div>
 
     <!-- GAME CHAT -->
-
-
-    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
-        <button onclick="leaveLudo()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 100;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #4CAF50; margin-bottom: 5px;" id="ludoTitle">Classic Ludo</h2>
-        <p id="ludoStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
-
-        <div id="ludoGameContainer" style="width: 100vw; max-width: min(100vw, 55vh); aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-top: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5;">
-            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
-        </div>
-
-        <div class="controls" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%;">
-            <div class="dice-container" style="margin-top: -4px; z-index: 10;" id="ludoDiceContainer">
-                <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 25px 25px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
-            </div>
-            <div id="ludoTurnIndicator" style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin-top: 15px; transition: all 0.3s ease; display: none;">RED</div>
-        </div>
-
-        <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-        <style>
-            #ludoDice:active { transform: translateY(6px) !important; }
-            .rolling { animation: diceShake 0.3s ease-in-out infinite; }
-            @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
-            .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
-        </style>
-    </div>
 
 
     <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
