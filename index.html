@@ -4650,8 +4650,12 @@ function sendNotification(title, body, icon) {
         let gameChatRef = null;
 
         function startGameSession() {
-            document.getElementById('gameChatContainer').style.display = 'flex';
-            document.getElementById('gameChatMessages').innerHTML = '';
+            // Ludo handles its own chat; we don't want this global container overlapping it.
+            // Only show for other games.
+            if(document.getElementById('ludoOverlay').style.display !== 'flex') {
+                document.getElementById('gameChatContainer').style.display = 'flex';
+                document.getElementById('gameChatMessages').innerHTML = '';
+            }
 
             gameChatRef = db.ref('gameChats/' + gameRoom);
             gameChatRef.on('child_added', snap => {
@@ -5395,7 +5399,7 @@ function sendNotification(title, body, icon) {
         let isLudoAnimating = false;
 
         const ludoGrid = 600 / 15;
-        const ludoColors = { bg: '#FFFFFF', lines: '#CCCCCC', 0: '#F44336', 1: '#4CAF50', 2: '#FFEB3B', 3: '#2196F3', inactive: '#EEEEEE', safe: '#E3F2FD' };
+        const ludoColors = { bg: '#FFFFFF', lines: '#333333', 0: '#e53935', 1: '#43a047', 2: '#ffeb3b', 3: '#1e88e5', inactive: '#EEEEEE', safe: '#e0e0e0', boardBg: '#1a1f35' };
 
         const mainPath = [
             {x:0,y:6}, {x:1,y:6}, {x:2,y:6}, {x:3,y:6}, {x:4,y:6}, {x:5,y:6}, {x:6,y:5}, {x:6,y:4}, {x:6,y:3}, {x:6,y:2}, {x:6,y:1}, {x:6,y:0},
@@ -5425,8 +5429,19 @@ function sendNotification(title, body, icon) {
         const ludoEmojis = ["🦁", "🦊", "🐯", "🐼"];
 
         // --- UI CHAT CONTROLLERS ---
-        window.toggleLudoChat = function() { document.getElementById('ludo-chat-drawer').classList.toggle('open'); }
-        window.sendLudoCustomChat = function() { let msg = document.getElementById('ludo-custom-msg').value; if(msg.trim() === "") return; document.getElementById('ludo-custom-msg').value = ""; ui_triggerLudoChat(msg); }
+        window.toggleLudoChat = function() {
+            let drawer = document.getElementById('ludo-chat-drawer');
+            if(drawer) drawer.classList.toggle('open');
+        }
+        window.sendLudoCustomChat = function() {
+            let input = document.getElementById('ludo-custom-msg');
+            if(input) {
+                let msg = input.value;
+                if(msg.trim() === "") return;
+                input.value = "";
+                ui_triggerLudoChat(msg);
+            }
+        }
         window.ui_triggerLudoChat = function(msg) {
             toggleLudoChat();
             if (gameRef) gameRef.child('ludoChat').push({ msg: msg, team: myLudoTeam, ts: Date.now() });
@@ -5773,7 +5788,7 @@ function sendNotification(title, body, icon) {
         }
 
         function drawLudoBoard(ctx) {
-            ctx.fillStyle = ludoColors.bg; ctx.fillRect(0, 0, 600, 600);
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 600, 600); // Overall background
 
             ctx.lineWidth = 1; ctx.setLineDash([]);
             for(let i=0; i<52; i++) {
@@ -5803,11 +5818,14 @@ function sendNotification(title, body, icon) {
                 ctx.fillStyle = '#fff'; ctx.fill();
             });
 
-            activeLudoTeams.forEach(team => {
-                let isActive = ludoState && ludoState.turn === team;
-                let col = isActive ? ludoColors[team] : ludoColors.inactive;
+            // Draw all bases
+            for(let team = 0; team < 4; team++) {
+                let isActive = ludoState ? (ludoState.turn === team) : activeLudoTeams.includes(team);
+                let isPlaying = activeLudoTeams.includes(team);
+                let col = isPlaying ? ludoColors[team] : ludoColors.inactive;
+
                 drawLudoBase(ctx, baseOffsets[team].x*ludoGrid, baseOffsets[team].y*ludoGrid, col, isActive, team);
-            });
+            }
 
             // Center
             ctx.fillStyle = '#ddd'; ctx.fillRect(6*ludoGrid, 6*ludoGrid, 3*ludoGrid, 3*ludoGrid);
@@ -5884,22 +5902,43 @@ function sendNotification(title, body, icon) {
         }
 
         function drawLudoBase(ctx, x, y, color, isActive, teamId) {
+            // Draw large colored base
             ctx.fillStyle = color; ctx.fillRect(x, y, ludoGrid * 6, ludoGrid * 6);
+            ctx.strokeStyle = ludoColors.lines; ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, ludoGrid * 6, ludoGrid * 6);
+
+            // Inner white area
             ctx.fillStyle = isActive ? '#FFFFFF' : '#f5f5f5';
             ctx.fillRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
-            ctx.strokeRect(x, y, ludoGrid * 6, ludoGrid * 6);
             ctx.strokeRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
 
-            if (isActive) {
-                baseSlots.forEach(slot => {
-                    ctx.beginPath(); ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.5, 0, Math.PI*2);
-                    ctx.fillStyle = color; ctx.fill();
-                    ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.stroke();
-                    ctx.beginPath(); ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.25, 0, Math.PI*2);
-                    ctx.fillStyle = '#fff'; ctx.fill();
-                });
-            }
+            // Draw beautiful design
+            // Diagonal overlay square
+            ctx.save();
+            ctx.translate(x + ludoGrid*3, y + ludoGrid*3);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = color;
+            ctx.globalAlpha = isActive ? 0.2 : 0.1;
+            ctx.fillRect(-ludoGrid*1.5, -ludoGrid*1.5, ludoGrid*3, ludoGrid*3);
+            ctx.globalAlpha = 1.0;
+            ctx.restore();
+
+            // Slot circles
+            baseSlots.forEach(slot => {
+                ctx.beginPath();
+                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.6, 0, Math.PI*2);
+                ctx.fillStyle = isActive ? '#ffffff' : '#f0f0f0';
+                ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // inner dot
+                ctx.beginPath();
+                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.25, 0, Math.PI*2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            });
         }
 
         // --- DOTS & BOXES LOGIC ---
@@ -6573,7 +6612,11 @@ function sendNotification(title, body, icon) {
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ludoOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Ludo/' + user.uid).off(); db.ref('gameQueue/Ludo/' + user.uid).remove(); }
+            if(typeof user !== 'undefined' && user) {
+                db.ref('gameQueue/Ludo2/' + user.uid).off(); db.ref('gameQueue/Ludo2/' + user.uid).remove();
+                db.ref('gameQueue/Ludo3/' + user.uid).off(); db.ref('gameQueue/Ludo3/' + user.uid).remove();
+                db.ref('gameQueue/Ludo4/' + user.uid).off(); db.ref('gameQueue/Ludo4/' + user.uid).remove();
+            }
             gameRoom = null;
         }
 
@@ -7845,8 +7888,8 @@ window.burnImage = function(element, url, key) {
             <p id="ludoStatus" style="color: #fff; font-weight: bold; background: rgba(0,0,0,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2); margin:0;">Waiting for opponents...</p>
         </div>
 
-        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 68dvh; aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-radius: 0 0 10px 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5; margin-top: 50px;">
-            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; border-radius: 0 0 10px 10px; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 55dvh; aspect-ratio: 1 / 1; background: #222; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-radius: 0 0 10px 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5; margin-top: 20px;">
+            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; max-height: 55dvh; cursor: pointer; display: block; border-radius: 0 0 10px 10px; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
             <div id="hologram-msg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff; padding: 15px 30px; border-radius: 30px; font-size: 1.5rem; font-weight: bold; font-style: italic; z-index: 200; pointer-events: none; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;">Hello!</div>
         </div>
 
@@ -7864,7 +7907,24 @@ window.burnImage = function(element, url, key) {
             <div class="profile-col" id="profiles-right" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
         </div>
 
+        <button class="chat-btn-float" onclick="toggleLudoChat()" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #ff4757; color: white; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 24px; cursor: pointer; z-index: 500; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"><i class="fa-solid fa-comment-dots"></i></button>
+
+        <div id="ludo-chat-drawer" style="position: absolute; bottom: 90px; right: 20px; width: 280px; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #2f3542; display: flex; flex-direction: column; gap: 10px; z-index: 499; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
+            <div style="font-weight: 900; color: #2f3542; border-bottom: 2px solid #dfe4ea; padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem;">Quick Chat</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Hello!</button>
+                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Good Luck!</button>
+                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Oops!</button>
+                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Gotcha!</button>
+            </div>
+            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
+                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 8px; border: none; background: #2ed573; color: white; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
         <style>
+            #ludo-chat-drawer.open { transform: scale(1) !important; pointer-events: auto !important; }
             #ludoDice:active { transform: translateY(6px) !important; }
             .rolling { animation: diceShake 0.3s ease-in-out infinite; }
             @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
@@ -7872,9 +7932,9 @@ window.burnImage = function(element, url, key) {
 
             .player-profile { width: 100%; height: 75px; background: rgba(0,0,0,0.6); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
             .profile-active { border-color: #fff !important; box-shadow: 0 0 20px rgba(255,255,255,0.8); transform: scale(1.1); background: rgba(0,0,0,0.85); z-index: 10; }
-            .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #fff; border: 2px solid #ccc; margin-bottom: 2px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; overflow:hidden;}
+            .profile-avatar { width: 45px; height: 45px; border-radius: 50%; background: #fff; border: 2px solid #ccc; margin-bottom: 4px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; overflow:hidden;}
             .profile-avatar img { width:100%; height:100%; object-fit:cover; }
-            .profile-name { font-size: 0.65rem; font-weight: bold; color: #fff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .profile-name { font-size: 0.85rem; font-weight: bold; color: #fff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;}
 
             #hologram-msg.show { animation: hologramPop 3s ease-out forwards; }
             @keyframes hologramPop { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(0.9); } }
