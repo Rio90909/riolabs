@@ -2848,6 +2848,9 @@ function sendNotification(title, body, icon) {
                 myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 myProfile.profanityFilterEnabled = d.profanityFilterEnabled !== undefined ? d.profanityFilterEnabled : true;
                 myProfile.blockedUsers = d.blockedUsers || [];
+                myProfile.customBubbleColor = d.customBubbleColor || null;
+                myProfile.customThemeAcc = d.customThemeAcc || null;
+                myProfile.customNameColor = d.customNameColor || null;
 
                 const adminBtn = document.getElementById('adminBtn');
                 if (adminBtn) {
@@ -2926,7 +2929,10 @@ function sendNotification(title, body, icon) {
                 appSoundEnabled: myProfile.appSoundEnabled,
                 profanityFilterEnabled: myProfile.profanityFilterEnabled,
                 blockedUsers: myProfile.blockedUsers,
-                unlocked: myProfile.unlocked 
+                unlocked: myProfile.unlocked,
+                customBubbleColor: myProfile.customBubbleColor || null,
+                customThemeAcc: myProfile.customThemeAcc || null,
+                customNameColor: myProfile.customNameColor || null
             }); 
         }
 
