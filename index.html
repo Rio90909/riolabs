@@ -1296,9 +1296,26 @@
 
     <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
     
+    <div class="bottom-sheet" id="adminUserListSheet" style="z-index: 10000; height: 85vh; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closeAdminUserListSheet()"></div>
+        <div class="sheet-title" style="color:var(--error-red); display: flex; align-items: center; justify-content: center; position: relative;">
+            <button onclick="closeAdminUserListSheet()" style="position: absolute; left: 20px; background: none; border: none; color: var(--text-secondary); font-size: 20px; padding: 10px; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+            <span><i class="fa-solid fa-users-gear"></i> Manage Users</span>
+        </div>
+        <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
+            <p style="font-size:12px; color:var(--text-secondary); margin:0;">List of all registered users. You can delete accounts from here.</p>
+            <div id="adminFullUserList" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- User list populated here -->
+            </div>
+        </div>
+    </div>
+
     <div class="bottom-sheet" id="adminEditUserSheet" style="z-index: 10000; height: 85vh; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminEditUserSheet()"></div>
-        <div class="sheet-title" style="color:var(--error-red);"><i class="fa-solid fa-user-pen"></i> Edit User Profile</div>
+        <div class="sheet-title" style="color:var(--error-red); display: flex; align-items: center; justify-content: center; position: relative;">
+            <button onclick="closeAdminEditUserSheet()" style="position: absolute; left: 20px; background: none; border: none; color: var(--text-secondary); font-size: 20px; padding: 10px; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+            <span><i class="fa-solid fa-user-pen"></i> Edit User Profile</span>
+        </div>
         <div style="flex: 1; overflow-y: auto; padding: 10px 20px 100px 20px; display: flex; flex-direction: column; gap: 15px;">
             <input type="hidden" id="adminEditUid">
             <div style="display:flex; flex-direction:column; gap:5px;">
@@ -1348,7 +1365,10 @@
 
     <div class="bottom-sheet" id="adminSettingsSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminSettingsSheet()"></div>
-        <div class="sheet-title" style="color:var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</div>
+        <div class="sheet-title" style="color:var(--success-green); display: flex; align-items: center; justify-content: center; position: relative;">
+            <button onclick="closeAdminSettingsSheet()" style="position: absolute; left: 20px; background: none; border: none; color: var(--text-secondary); font-size: 20px; padding: 10px; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+            <span><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</span>
+        </div>
         <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
 
             <h3 style="margin: 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Dynamic Rooms</h3>
@@ -1374,7 +1394,10 @@
 
     <div class="bottom-sheet" id="adminShopSheet" style="z-index: 10000; max-height: 90%; padding-bottom: 20px;">
         <div class="sheet-drag-handle" onclick="closeAdminShopSheet()"></div>
-        <div class="sheet-title" style="color:var(--accent-purple);"><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</div>
+        <div class="sheet-title" style="color:var(--accent-purple); display: flex; align-items: center; justify-content: center; position: relative;">
+            <button onclick="closeAdminShopSheet()" style="position: absolute; left: 20px; background: none; border: none; color: var(--text-secondary); font-size: 20px; padding: 10px; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+            <span><i class="fa-solid fa-wand-magic-sparkles"></i> Ultimate Shop Creator</span>
+        </div>
         <div style="flex: 1; overflow-y: auto; padding: 10px 20px 250px 20px; display: flex; flex-direction: column; gap: 15px;">
             <p style="font-size:12px; color:var(--text-secondary); margin:0;">Create or Edit items in the global shop database.</p>
 
@@ -1456,13 +1479,49 @@
                     <div class="card-icon" style="color: #00e5ff;"><i class="fa-solid fa-hand-back-fist"></i></div>
                     <div class="card-text"><h3 style="color: #00e5ff;">Rock-Paper-Scissors</h3></div>
                 </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
-                    <div class="card-icon" style="color: #ff007f;"><i class="fa-solid fa-table-cells-large"></i></div>
-                    <div class="card-text"><h3 style="color: #ff007f;">Connect 4</h3></div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Dots')">
+                    <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
+                    <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
                 </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
-                    <div class="card-icon" style="color: #03A9F4;"><i class="fa-solid fa-brain"></i></div>
-                    <div class="card-text"><h3 style="color: #03A9F4;">Memory Match</h3></div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo2')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (2P)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo3')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-three"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (3P)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo4')">
+                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-d20"></i></div>
+                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (4P)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('StopTimer')">
+                    <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-stopwatch"></i></div>
+                    <div class="card-text"><h3 style="color: #FFD700;">Stop the Timer</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Reaction')">
+                    <div class="card-icon" style="color: #32CD32;"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="card-text"><h3 style="color: #32CD32;">Reaction Tap</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Matchsticks')">
+                    <div class="card-icon" style="color: #ff6b6b;"><i class="fa-solid fa-fire-flame-simple"></i></div>
+                    <div class="card-text"><h3 style="color: #ff6b6b;">Matchsticks (21)</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('HighCard')">
+                    <div class="card-icon" style="color: #9b59b6;"><i class="fa-solid fa-diamond"></i></div>
+                    <div class="card-text"><h3 style="color: #9b59b6;">High Card War</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('GuessNumber')">
+                    <div class="card-icon" style="color: #f1c40f;"><i class="fa-solid fa-question"></i></div>
+                    <div class="card-text"><h3 style="color: #f1c40f;">Guess the Number</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('CoinFlip')">
+                    <div class="card-icon" style="color: #bdc3c7;"><i class="fa-solid fa-coins"></i></div>
+                    <div class="card-text"><h3 style="color: #bdc3c7;">Coin Flip</h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('HigherLower')">
+                    <div class="card-icon" style="color: #e74c3c;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
+                    <div class="card-text"><h3 style="color: #e74c3c;">Higher or Lower</h3></div>
                 </div>
              </div>
         </div>
@@ -1778,18 +1837,41 @@
             <i class="fa-solid fa-shield-halved" style="color:var(--error-red); font-size:14px;"></i>
         </div>
 
-        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
-            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+        <div style="flex: 1; width: 100%; overflow-y: auto; padding: 20px; padding-bottom: 250px; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-chart-pie"></i> Analytics Dashboard</h3>
+                <div style="display: flex; gap: 10px; justify-content: space-between;">
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--accent-purple);" id="analyticsTotalUsers">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Registered Users</div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #03A9F4;" id="analyticsTotalMessages">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Global Msgs</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button class="btn-primary ripple-target" style="flex: 1; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="refreshAnalytics()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                    <button class="btn-primary ripple-target" style="flex: 1; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="openAdminUserListSheet()">
+                        <i class="fa-solid fa-users-gear"></i> Manage Users
+                    </button>
+                </div>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-bolt"></i> Global Moderation</h3>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4); box-shadow: none;" onclick="adminClearGlobal()">
                     <i class="fa-solid fa-broom"></i> Clear Global Lounge
                 </button>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(255, 204, 0, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 204, 0, 0.4); box-shadow: none;" onclick="adminSystemMessage()">
                     <i class="fa-solid fa-bullhorn"></i> System Broadcast
                 </button>
             </div>
 
-            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--text-primary);"><i class="fa-solid fa-users"></i> User Management</h3>
                 <div class="search-glass" style="min-height: 44px; padding: 10px; border-radius: 12px;">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -1800,15 +1882,15 @@
                 </div>
             </div>
 
-            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
                 <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Manage Shop Items
                 </button>
             </div>
 
-            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 10px; cursor: default;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3 style="margin: 0; font-size: 15px; color: var(--accent-blue);"><i class="fa-solid fa-eye"></i> Live Chat Viewer</h3>
                     <label class="switch">
@@ -1821,10 +1903,10 @@
                 </div>
             </div>
 
-            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 15px; flex-direction: column; align-items: stretch; gap: 15px; cursor: default;">
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--success-green);"><i class="fa-solid fa-earth-americas"></i> Room & Feature Settings</h3>
                 <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Create new public lounges or toggle features globally.</p>
-                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 10px; font-size: 13px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="openAdminSettingsManager()">
                     <i class="fa-solid fa-sliders"></i> Manage Rooms & Settings
                 </button>
             </div>
@@ -1949,12 +2031,34 @@
             return t; 
         }
 
+
+        // --- ANALYTICS LOGIC ---
+        window.refreshAnalytics = function() {
+            document.getElementById('analyticsTotalUsers').innerText = "...";
+            document.getElementById('analyticsTotalMessages').innerText = "...";
+
+            db.ref('users').once('value').then(snap => {
+                document.getElementById('analyticsTotalUsers').innerText = snap.numChildren();
+            }).catch(() => {
+                document.getElementById('analyticsTotalUsers').innerText = "Err";
+            });
+
+            db.ref('rooms/GlobalLobby').once('value').then(snap => {
+                document.getElementById('analyticsTotalMessages').innerText = snap.numChildren();
+            }).catch(() => {
+                document.getElementById('analyticsTotalMessages').innerText = "Err";
+            });
+        };
+
         window.switchScreen = function(id) {
             document.querySelectorAll('.screen:not(#matchmakingOverlay)').forEach(s => { 
                 if(s) s.style.opacity = '0'; 
                 setTimeout(() => { if(s) s.classList.remove('active'); }, 300); 
             });
             const target = document.getElementById(id);
+            if (id === 'admin-screen') {
+                if(typeof refreshAnalytics === 'function') refreshAnalytics();
+            }
             if(target) {
                 setTimeout(() => { 
                     target.classList.add('active'); 
@@ -2071,6 +2175,42 @@ const messageReceiveSound = new Audio('https://assets.mixkit.co/active_storage/s
 messageReceiveSound.volume = 0.2;
 const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 notificationSound.volume = 0.2;
+const gameWinSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+gameWinSound.volume = 0.3;
+
+let winSoundPlayed = false;
+function playWinSound() {
+    if(winSoundPlayed) return;
+    winSoundPlayed = true;
+    setTimeout(() => winSoundPlayed = false, 5000);
+    if (myProfile && myProfile.appSoundEnabled) {
+        gameWinSound.currentTime = 0;
+        gameWinSound.play().catch(e => console.log('Audio play blocked:', e));
+    }
+}
+
+
+let audioCtx;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+function playDiceImpact(timeOffset) {
+    if (!audioCtx) return;
+    const bufferSize = audioCtx.sampleRate * 0.05;
+    const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = audioCtx.createBufferSource(); noise.buffer = buffer;
+    const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1200 + Math.random() * 500;
+    const gain = audioCtx.createGain(); gain.gain.setValueAtTime(1.5, audioCtx.currentTime + timeOffset); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + timeOffset + 0.04);
+    noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination); noise.start(audioCtx.currentTime + timeOffset);
+}
+
+function playDiceSound() {
+    if (myProfile && myProfile.appSoundEnabled) {
+        if (!audioCtx) initAudio();
+        playDiceImpact(0); playDiceImpact(0.08 + Math.random() * 0.03); playDiceImpact(0.16 + Math.random() * 0.03); playDiceImpact(0.26 + Math.random() * 0.04);
+    }
+}
 
 function playSendSound() {
     if (myProfile.appSoundEnabled) {
@@ -2197,11 +2337,14 @@ function sendNotification(title, body, icon) {
                 { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 2000 },
                 { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
             ],
-            badges: [
+                        badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
                 { id: 'badge_check', name: 'Verified', icon: '<i class="fa-solid fa-circle-check" style="color:#1d9bf0;"></i>', color: '#1d9bf0', price: 400 },
                 { id: 'badge_crown', name: 'VIP Crown', icon: '👑', color: '#ffd700', price: 800 },
-                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 }
+                { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 },
+                { id: 'badge_mod', name: 'Moderator', icon: '<i class="fa-solid fa-shield-halved" style="color:var(--success-green);"></i>', color: 'var(--success-green)', price: 0 },
+                { id: 'badge_early', name: 'Early Supporter', icon: '<i class="fa-solid fa-star" style="color:#ff9900;"></i>', color: '#ff9900', price: 0 },
+                { id: 'badge_pro', name: 'Pro Gamer', icon: '<i class="fa-solid fa-gamepad" style="color:#ff007f;"></i>', color: '#ff007f', price: 1500 }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
@@ -3572,7 +3715,7 @@ function sendNotification(title, body, icon) {
                 let found = false;
                 if (snap.exists()) {
                     snap.forEach(child => {
-                        if (child.key !== user.uid && child.val() === true) {
+                        if (child.key !== user.uid && child.val() && child.val().active === true) {
                             found = true;
                             const matchedUid = child.key;
                             const rouletteRoomId = "roulette_" + user.uid + "_" + matchedUid;
@@ -3792,6 +3935,80 @@ function sendNotification(title, body, icon) {
                     if(!found) resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">No users found</div>';
                 });
             }, 500);
+        }
+
+        window.openAdminUserListSheet = function() {
+            if(!myProfile.isAdmin) return;
+            const overlay = document.getElementById('sheetOverlay');
+            const sheet = document.getElementById('adminUserListSheet');
+            if(overlay && sheet) {
+                overlay.classList.add('show');
+                sheet.classList.add('show');
+                loadAdminFullUserList();
+            }
+        };
+
+        window.closeAdminUserListSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            const sheet = document.getElementById('adminUserListSheet');
+            if(overlay && sheet) {
+                overlay.classList.remove('show');
+                sheet.classList.remove('show');
+            }
+        };
+
+        function loadAdminFullUserList() {
+            if(!myProfile.isAdmin) return;
+            db.ref('users').once('value', snap => {
+                const list = document.getElementById('adminFullUserList');
+                list.innerHTML = '';
+                if(!snap.exists()) {
+                    list.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No users found.</div>';
+                    return;
+                }
+                snap.forEach(child => {
+                    const u = child.val();
+                    const uid = child.key;
+
+                    const div = document.createElement('div');
+                    div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--island); padding:10px; border-radius:12px; border:1px solid var(--glass-border);";
+
+                    const info = document.createElement('div');
+                    info.innerHTML = `
+                        <div style="font-weight:bold; color:var(--text-primary);">${escapeAdminHTML(u.name || 'Unknown')}</div>
+                        <div style="font-size:10px; color:var(--text-secondary);">UID: ${uid}</div>
+                        <div style="font-size:10px; color:var(--accent-yellow);"><i class="fa-solid fa-gem"></i> ${u.orbs || 0}</div>
+                    `;
+
+                    const actions = document.createElement('div');
+                    actions.style.cssText = "display:flex; gap:5px;";
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = "btn-primary ripple-target";
+                    delBtn.style.cssText = "height:30px; font-size:11px; padding:0 10px; background:rgba(255, 59, 48, 0.2); color:var(--error-red); border:1px solid rgba(255, 59, 48, 0.4);";
+                    delBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
+                    delBtn.onclick = () => adminDeleteUser(uid, u.name);
+
+                    actions.appendChild(delBtn);
+
+                    div.appendChild(info);
+                    div.appendChild(actions);
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        window.adminDeleteUser = function(targetUid, targetUsername) {
+            if(!myProfile.isAdmin) return;
+            if(targetUid === user.uid) return showToast("You cannot delete your own account here.", "error");
+
+            if(confirm(`Are you absolutely sure you want to PERMANENTLY DELETE user '${targetUsername}' (UID: ${targetUid})? This cannot be undone.`)) {
+                db.ref(`users/${targetUid}`).remove().then(() => {
+                    showToast(`User ${targetUsername} deleted permanently.`, "success");
+                    loadAdminFullUserList(); // Refresh list
+                    refreshAnalytics(); // Update counts
+                }).catch(err => showToast(err.message, "error"));
+            }
         }
 
         window.adminToggleBan = function(targetUid, currentState) {
@@ -4255,7 +4472,7 @@ function sendNotification(title, body, icon) {
 
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
-            if (gameType !== 'TicTacToe' && gameType !== 'RPS' && gameType !== 'Connect4' && gameType !== 'MemoryMatch') {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4271,57 +4488,174 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'RPS') {
                 document.getElementById('rpsOverlay').style.display = 'flex';
                 document.getElementById('rpsStatus').innerText = "Searching for opponent...";
-            } else if (gameType === 'Connect4') {
-                document.getElementById('connect4Overlay').style.display = 'flex';
-                document.getElementById('c4Status').innerText = "Searching for opponent...";
-                renderC4Board();
-            } else if (gameType === 'MemoryMatch') {
-                document.getElementById('mmOverlay').style.display = 'flex';
-                document.getElementById('mmStatus').innerText = "Searching for opponent...";
-                document.getElementById('mmScoreX').innerText = "0";
-                document.getElementById('mmScoreO').innerText = "0";
-                document.getElementById('mmBoard').innerHTML = '';
+            } else if (gameType === 'Dots') {
+                document.getElementById('dotsOverlay').style.display = 'flex';
+                document.getElementById('dotsStatus').innerText = "Searching for opponent...";
+            } else if (gameType.startsWith('Ludo')) {
+                document.getElementById('ludoOverlay').style.display = 'flex';
+                document.getElementById('ludoStatus').innerText = "Searching for opponents...";
+            } else if (gameType === 'StopTimer') {
+                document.getElementById('stopTimerOverlay').style.display = 'flex';
+                document.getElementById('stStatus').innerText = "Searching for opponent...";
+                document.getElementById('stDisplay').innerText = "0.00";
+            } else if (gameType === 'Reaction') {
+                document.getElementById('reactionOverlay').style.display = 'flex';
+                document.getElementById('rtStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Matchsticks') {
+                document.getElementById('matchsticksOverlay').style.display = 'flex';
+                document.getElementById('msStatus').innerText = "Searching for opponent...";
+                document.getElementById('msContainer').innerHTML = '';
+            } else if (gameType === 'HighCard') {
+                document.getElementById('highCardOverlay').style.display = 'flex';
+                document.getElementById('hcStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'GuessNumber') {
+                document.getElementById('guessNumberOverlay').style.display = 'flex';
+                document.getElementById('gnStatus').innerText = "Searching for opponent...";
+                document.getElementById('gnHistory').innerHTML = '';
+            } else if (gameType === 'CoinFlip') {
+                document.getElementById('coinFlipOverlay').style.display = 'flex';
+                document.getElementById('cfStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'HigherLower') {
+                document.getElementById('higherLowerOverlay').style.display = 'flex';
+                document.getElementById('hlStatus').innerText = "Searching for opponent...";
             }
 
-            queueRef.once('value', snap => {
-                let found = false;
-                if (snap.exists()) {
-                    snap.forEach(child => {
-                        if (child.key !== user.uid && child.val() === true) {
-                            found = true;
-                            const matchedUid = child.key;
-                            gameRoom = "game_" + user.uid + "_" + matchedUid;
-                            mySymbol = 'O'; // Joiner is O
+            if (gameType.startsWith('Ludo')) {
+                const targetPlayers = parseInt(gameType.replace('Ludo', ''));
+                queueRef.once('value', snap => {
+                    let queue = [];
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            if (child.val() && child.val().active === true) {
+                                queue.push({ uid: child.key, name: child.val().name || 'Player', joinTime: child.val().joinTime || 0 });
+                            }
+                        });
+                    }
 
-                            db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
-                            setTimeout(() => { startGameSession(); }, 500);
-                            return true;
+                    queue.sort((a,b) => a.joinTime - b.joinTime);
+
+                    const myIndex = queue.findIndex(q => q.uid === user.uid);
+                    if (myIndex === -1) {
+                        // Join queue
+                        db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: myProfile.name, joinTime: Date.now() });
+                        db.ref('gameQueue/'+gameType+'/'+user.uid).onDisconnect().remove();
+
+                        // Listen for match
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
+                            const val = matchSnap.val();
+                            if (val && typeof val === 'string') {
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).off();
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).remove(); // Cleanup queue entry
+                                gameRoom = val;
+
+                                // To correctly identify who I am in the 4 teams, I'll need to check the room's tokens
+                                // But for now, we'll assign mySymbol to queue index if possible, or X for creator
+                                // The Ludo logic relies on mySymbol === 'X' for host actions like 'Play Again'.
+                                // For Ludo, host is creator.
+                                if (queue.length >= targetPlayers && queue[queue.length - 1].uid === user.uid) {
+                                    mySymbol = 'X';
+                                } else if (queue.length > 0 && queue[0].uid === user.uid) {
+                                    mySymbol = 'O'; // If not creator, doesn't really matter as long as it's not 'X' for rematch restrictions
+                                } else {
+                                    mySymbol = 'O';
+                                }
+
+                                // Wait a bit for host to init, then start session
+                                setTimeout(() => { startGameSession(); }, 1000);
+                            }
+                        });
+
+                        // If I'm joining and the queue now has enough players, the first person (host) handles it
+                        queue.push({ uid: user.uid, name: myProfile.name, joinTime: Date.now() });
+                    }
+
+                    if (queue.length >= targetPlayers) {
+                        // The LAST person to join triggers the room creation and becomes host for initialization logic
+                        // but P1 (queue[0]) will still be treated as 'X'/Red for turn purposes.
+                        if (queue[queue.length - 1].uid === user.uid) {
+                            gameRoom = "game_ludo_" + Date.now();
+                            // For simplicity, let the creator still initialize things
+
+                            let updates = {
+                                turn: 0,
+                                diceRoll: 0,
+                                lastRollWasSix: false,
+                                winner: null,
+                                state: 'playing',
+                                targetPlayers: targetPlayers
+                            };
+
+                            // Initialize all teams dynamically based on mode
+                            const ludoTeams = targetPlayers === 2 ? [0, 2] : (targetPlayers === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+
+                            ludoTeams.forEach((teamId, index) => {
+                                let pNum = index + 1;
+                                updates[`p${pNum}Name`] = queue[index].name;
+                                updates[`tokens_${teamId}`] = [
+                                    {id:0, state: 'base', stepsTaken: -1},
+                                    {id:1, state: 'base', stepsTaken: -1},
+                                    {id:2, state: 'base', stepsTaken: -1},
+                                    {id:3, state: 'base', stepsTaken: -1}
+                                ];
+
+                                // Notify everyone (including self, to trigger their match listener)
+                                db.ref('gameQueue/'+gameType+'/' + queue[index].uid).set(gameRoom);
+                            });
+
+                            db.ref('games/'+gameRoom).set(updates);
                         }
-                    });
-                }
+                    }
+                });
+            } else {
+                queueRef.once('value', snap => {
+                    let found = false;
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            if (child.key !== user.uid && child.val() && child.val().active === true) {
+                                found = true;
+                                const matchedUid = child.key;
+                                gameRoom = "game_" + user.uid + "_" + matchedUid;
+                                mySymbol = 'O';
+                                window.opponentName = child.val().name || 'Opponent';
 
-                if (!found) {
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
-                    mySymbol = 'X'; // Creator is X
+                                db.ref('gameQueue/'+gameType+'/' + matchedUid).set(gameRoom);
+                                setTimeout(() => { startGameSession(); }, 500);
+                                return true;
+                            }
+                        });
+                    }
 
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
-                        const val = matchSnap.val();
-                        if (val && typeof val === 'string') {
-                            db.ref('gameQueue/'+gameType+'/' + user.uid).off();
-                            gameRoom = val;
-                            startGameSession();
-                        }
-                    });
-                    db.ref('gameQueue/'+gameType+'/' + user.uid).onDisconnect().remove();
-                }
-            });
+                    if (!found) {
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).set(true);
+                        mySymbol = 'X';
+                        db.ref('users/'+user.uid+'/name').once('value', snap => {
+                            db.ref('gameQueue/'+gameType+'/'+user.uid).set({ active: true, name: snap.val() || user.username });
+                        });
+
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).on('value', matchSnap => {
+                            const val = matchSnap.val();
+                            if (val && typeof val === 'string') {
+                                db.ref('gameQueue/'+gameType+'/' + user.uid).off();
+                                gameRoom = val;
+                                db.ref('games/'+gameRoom).update({ p1Name: myProfile.username || myProfile.name });
+                                startGameSession();
+                            }
+                        });
+                        db.ref('gameQueue/'+gameType+'/' + user.uid).onDisconnect().remove();
+                    }
+                });
+            }
         }
 
         let gameChatRef = null;
 
         function startGameSession() {
-            document.getElementById('gameChatContainer').style.display = 'flex';
-            document.getElementById('gameChatMessages').innerHTML = '';
+            // Ludo handles its own chat; we don't want this global container overlapping it.
+            // Only show for other games.
+            if(document.getElementById('ludoOverlay').style.display !== 'flex') {
+                document.getElementById('gameChatContainer').style.display = 'flex';
+                document.getElementById('gameChatMessages').innerHTML = '';
+            }
 
             gameChatRef = db.ref('gameChats/' + gameRoom);
             gameChatRef.on('child_added', snap => {
@@ -4341,7 +4675,12 @@ function sendNotification(title, body, icon) {
 
                 // Initialize board if X
                 if (mySymbol === 'X') {
-                    gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
                 }
 
                 gameRef.on('value', snap => {
@@ -4351,19 +4690,164 @@ function sendNotification(title, body, icon) {
                     updateBoardUI(data.board);
 
                     if (data.winner) {
-                        document.getElementById('gameStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : `${data.winner} Wins!`;
-                        document.getElementById('rematchBtn').style.display = 'block';
+                        document.getElementById('gameStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'X' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        if(mySymbol === 'X') document.getElementById('rematchBtn').style.display = 'block'; else document.getElementById('gameStatus').innerText += ' (Waiting for Host to restart)';
                     } else {
                         document.getElementById('gameStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                         document.getElementById('rematchBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType && activeGameType.startsWith('Ludo')) {
+                document.getElementById('ludoStatus').innerText = "All players found! Starting match...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                // Set my local symbol correctly based on when I joined the queue
+                // The host set all names already, so I just need to find my team index
+                gameRef.once('value', snap => {
+                    const data = snap.val();
+                    if(data) {
+                        for(let i=1; i<=4; i++) {
+                            if(data[`p${i}Name`] === myProfile.name) {
+                                // Match index to team
+                                // If 2P: team 0, 2
+                                // If 3P: team 0, 1, 2
+                                // If 4P: team 0, 1, 2, 3
+                                const tp = data.targetPlayers || 2;
+                                if (tp === 2) {
+                                    myLudoTeam = i === 1 ? 0 : 2;
+                                } else {
+                                    myLudoTeam = i - 1;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    startLudoGameLoop();
+                });
+            } else if (activeGameType === 'StopTimer') {
+                document.getElementById('stStatus').innerText = "Opponent found! Game starting...";
+                document.getElementById('stActionBtn').style.display = 'block';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ start: Date.now() + 1500, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+                }
+                startStopTimerLoop();
+            } else if (activeGameType === 'Reaction') {
+                document.getElementById('rtStatus').innerText = "Opponent found! Get ready...";
+                document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ greenTime: Date.now() + 1500 + Math.random()*2000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+                }
+                startReactionLoop();
+            } else if (activeGameType === 'Matchsticks') {
+                document.getElementById('msStatus').innerText = "Opponent found!";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ sticks: 21, turn: 'X', winner: null });
+                }
+                startMatchsticksLoop();
+            } else if (activeGameType === 'HighCard') {
+                document.getElementById('hcStatus').innerText = "Opponent found!";
+                document.getElementById('hcDrawBtn').style.display = 'block';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Card: 0, p2Card: 0, winner: null });
+                }
+                startHighCardLoop();
+            } else if (activeGameType === 'GuessNumber') {
+                document.getElementById('gnStatus').innerText = "Opponent found!";
+                document.getElementById('gnControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null });
+                }
+                startGuessNumberLoop();
+            } else if (activeGameType === 'CoinFlip') {
+                document.getElementById('cfStatus').innerText = "Opponent found!";
+                document.getElementById('cfControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Choice: '', p2Choice: '', result: '', winner: null });
+                }
+                startCoinFlipLoop();
+            } else if (activeGameType === 'HigherLower') {
+                document.getElementById('hlStatus').innerText = "Opponent found!";
+                document.getElementById('hlControls').style.display = 'flex';
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+                }
+                startHigherLowerLoop();
+            } else if (activeGameType === 'Dots') {
+                document.getElementById('dotsStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({
+                        hLines: Array(20).fill(false), // 4x5
+                        vLines: Array(20).fill(false), // 5x4
+                        boxes: Array(16).fill(''), // 4x4
+                        turn: 'X',
+                        scoreX: 0,
+                        scoreO: 0,
+                        winner: null
+                    });
+                }
+
+                startDotsGameLoop();
+
             } else if (activeGameType === 'RPS') {
                 document.getElementById('rpsStatus').innerText = "Opponent found! Make your move...";
                 gameRef = db.ref('games/' + gameRoom);
 
                 if (mySymbol === 'X') {
-                    gameRef.set({ playerX: '', playerO: '', winner: null });
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ playerX: '', playerO: '', winner: null });
                 }
 
                 gameRef.on('value', snap => {
@@ -4383,12 +4867,12 @@ function sendNotification(title, body, icon) {
 
                         if (data.winner === 'Draw') {
                             document.getElementById('rpsStatus').innerText = "It's a Draw!";
-                        } else if (data.winner === mySymbol) {
-                            document.getElementById('rpsStatus').innerText = "You Win!";
+                        } else if (data.winner === 'X') {
+                            document.getElementById('rpsStatus').innerText = `${data.p1Name || 'P1'} Wins!`;
                         } else {
-                            document.getElementById('rpsStatus').innerText = "You Lose!";
+                            document.getElementById('rpsStatus').innerText = `${data.p2Name || 'P2'} Wins!`;
                         }
-                        document.getElementById('rematchRpsBtn').style.display = 'block';
+                        playWinSound(); if(mySymbol === 'X') document.getElementById('rematchRpsBtn').style.display = 'block'; else document.getElementById('rpsStatus').innerText += ' (Waiting for Host to restart)';
                     } else {
                         document.getElementById('rematchRpsBtn').style.display = 'none';
                     }
@@ -4397,6 +4881,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('c4Status').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
 
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
                 if (mySymbol === 'X') {
                     gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
                 }
@@ -4408,8 +4897,8 @@ function sendNotification(title, body, icon) {
                     updateC4BoardUI(data.board);
 
                     if (data.winner) {
-                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : `${data.winner} Wins!`;
-                        document.getElementById('rematchC4Btn').style.display = 'block';
+                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound(); document.getElementById('rematchC4Btn').style.display = 'block';
                     } else {
                         let colorStr = mySymbol === 'X' ? 'Red' : 'Yellow';
                         let oppColorStr = mySymbol === 'X' ? 'Yellow' : 'Red';
@@ -4421,6 +4910,11 @@ function sendNotification(title, body, icon) {
                 document.getElementById('mmStatus').innerText = "Opponent found! Game starting...";
                 gameRef = db.ref('games/' + gameRoom);
 
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
                 if (mySymbol === 'X') {
                     // Initialize deck
                     const emojis = ['🍎', '🍎', '🍌', '🍌', '🍇', '🍇', '🍉', '🍉', '🍓', '🍓', '🍒', '🍒', '🍍', '🍍', '🥝', '🥝'];
@@ -4453,7 +4947,7 @@ function sendNotification(title, body, icon) {
 
                     if (data.winner) {
                         document.getElementById('mmStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === mySymbol ? "You Win!" : "You Lose!");
-                        document.getElementById('rematchMmBtn').style.display = 'block';
+                        playWinSound(); document.getElementById('rematchMmBtn').style.display = 'block';
                     } else {
                         document.getElementById('mmStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                         document.getElementById('rematchMmBtn').style.display = 'none';
@@ -4496,7 +4990,7 @@ function sendNotification(title, body, icon) {
 
         window.resetGame = function() {
             if(gameRef) {
-                gameRef.set({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+                gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
                 document.getElementById('rematchBtn').style.display = 'none';
             }
         }
@@ -4525,7 +5019,7 @@ function sendNotification(title, body, icon) {
 
         window.resetRPS = function() {
             if(gameRef) {
-                gameRef.set({ playerX: '', playerO: '', winner: null });
+                gameRef.update({ playerX: '', playerO: '', winner: null });
                 document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
                 document.getElementById('rpsOpponentBox').style.borderColor = "rgba(255,255,255,0.2)";
                 document.getElementById('rpsStatus').innerText = "Make your move...";
@@ -4746,6 +5240,100 @@ function sendNotification(title, body, icon) {
             document.getElementById('rematchMmBtn').style.display = 'none';
         }
 
+
+        // --- TIC TAC TOE & RPS MOVE LOGIC ---
+        window.makeMove = function(idx) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || data.turn !== mySymbol || data.board[idx] !== '') return;
+
+                let newBoard = [...data.board];
+                newBoard[idx] = mySymbol;
+
+                let newTurn = mySymbol === 'X' ? 'O' : 'X';
+                let winner = checkWinner(newBoard);
+
+                gameRef.update({ board: newBoard, turn: newTurn, winner: winner });
+            });
+        };
+
+        function checkWinner(board) {
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (let i = 0; i < lines.length; i++) {
+                const [a, b, c] = lines[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            if (!board.includes('')) return 'Draw';
+            return null;
+        }
+
+        window.updateBoardUI = function(board) {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.getElementById('ttt-' + i);
+                if (cell) cell.innerText = board[i];
+            }
+        };
+
+        window.resetGame = function() {
+            if (!gameRef) return;
+            gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
+        };
+
+        window.makeRPSMove = function(move) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner) return;
+
+                let updates = {};
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    updates.playerX = move;
+                } else {
+                    updates.playerO = move;
+                }
+
+                if ((mySymbol === 'X' && data.playerO !== '') || (mySymbol === 'O' && data.playerX !== '')) {
+                    let moveX = updates.playerX || data.playerX;
+                    let moveO = updates.playerO || data.playerO;
+                    updates.winner = determineRPSWinner(moveX, moveO);
+                }
+
+                gameRef.update(updates);
+            });
+        };
+
+        function determineRPSWinner(x, o) {
+            if (x === o) return 'Draw';
+            if ((x === 'rock' && o === 'scissors') ||
+                (x === 'paper' && o === 'rock') ||
+                (x === 'scissors' && o === 'paper')) {
+                return 'X';
+            }
+            return 'O';
+        }
+
+        window.resetRPS = function() {
+            if (!gameRef) return;
+            gameRef.update({ playerX: '', playerO: '', winner: null });
+            document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
+            document.getElementById('rpsOpponentBox').style.borderColor = "var(--glass-border)";
+            document.getElementById('rpsStatus').innerText = "Make your move...";
+            document.getElementById('rematchRpsBtn').style.display = 'none';
+        };
+
+
         window.sendGameChat = function() {
             const input = document.getElementById('gameChatInput');
             const text = input.value.trim();
@@ -4766,7 +5354,9 @@ function sendNotification(title, body, icon) {
             });
         }
 
-        window.leaveGame = function() {
+        ;
+
+                window.leaveGame = function() {
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ticTacToeOverlay').style.display = 'none';
@@ -4788,25 +5378,1307 @@ function sendNotification(title, body, icon) {
             gameRoom = null;
         }
 
-        window.leaveConnect4 = function() {
+                window.leaveDots = function() {
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('connect4Overlay').style.display = 'none';
+            document.getElementById('dotsOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            db.ref('gameQueue/Connect4/' + user.uid).off();
-            db.ref('gameQueue/Connect4/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Dots/' + user.uid).off();
+            if(typeof user !== 'undefined' && user) db.ref('gameQueue/Dots/' + user.uid).remove();
             gameRoom = null;
         }
 
-        window.leaveMemoryMatch = function() {
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+
+
+                // ==========================================
+        // LUDO (2P, 3P, 4P) LOGIC
+        // ==========================================
+        let ludoRaf = null;
+        let ludoState = null;
+        let myLudoTeam = 0; // 0 = Red, 1 = Green, 2 = Yellow, 3 = Blue
+        let isLudoAnimating = false;
+
+        const ludoGrid = 600 / 15;
+        const ludoColors = { bg: '#FFFFFF', lines: '#333333', 0: '#e53935', 1: '#43a047', 2: '#ffeb3b', 3: '#1e88e5', inactive: '#EEEEEE', safe: '#e0e0e0', boardBg: '#1a1f35' };
+
+        const mainPath = [
+            {x:0,y:6}, {x:1,y:6}, {x:2,y:6}, {x:3,y:6}, {x:4,y:6}, {x:5,y:6}, {x:6,y:5}, {x:6,y:4}, {x:6,y:3}, {x:6,y:2}, {x:6,y:1}, {x:6,y:0},
+            {x:7,y:0}, {x:8,y:0}, {x:8,y:1}, {x:8,y:2}, {x:8,y:3}, {x:8,y:4}, {x:8,y:5}, {x:9,y:6}, {x:10,y:6}, {x:11,y:6}, {x:12,y:6}, {x:13,y:6}, {x:14,y:6},
+            {x:14,y:7}, {x:14,y:8}, {x:13,y:8}, {x:12,y:8}, {x:11,y:8}, {x:10,y:8}, {x:9,y:8}, {x:8,y:9}, {x:8,y:10}, {x:8,y:11}, {x:8,y:12}, {x:8,y:13}, {x:8,y:14},
+            {x:7,y:14}, {x:6,y:14}, {x:6,y:13}, {x:6,y:12}, {x:6,y:11}, {x:6,y:10}, {x:6,y:9}, {x:5,y:8}, {x:4,y:8}, {x:3,y:8}, {x:2,y:8}, {x:1,y:8}, {x:0,y:8},
+            {x:0,y:7}
+        ];
+        // Team start indices on mainPath
+        const startPos = { 0: 1, 1: 14, 2: 27, 3: 40 };
+        const safeZones = [1, 9, 14, 22, 27, 35, 40, 48];
+        const homePaths = {
+            0: [{x:1,y:7}, {x:2,y:7}, {x:3,y:7}, {x:4,y:7}, {x:5,y:7}],
+            1: [{x:7,y:1}, {x:7,y:2}, {x:7,y:3}, {x:7,y:4}, {x:7,y:5}],
+            2: [{x:13,y:7},{x:12,y:7},{x:11,y:7},{x:10,y:7},{x:9,y:7}],
+            3: [{x:7,y:13},{x:7,y:12},{x:7,y:11},{x:7,y:10},{x:7,y:9}]
+        };
+        const centerHome = {0: {x:6,y:7}, 1: {x:7,y:6}, 2: {x:8,y:7}, 3: {x:7,y:8}};
+        const baseSlots = [ {x: 1.5, y: 1.5}, {x: 4.5, y: 1.5}, {x: 1.5, y: 4.5}, {x: 4.5, y: 4.5} ];
+        // Team base offsets
+        const baseOffsets = { 0: {x:0,y:0}, 1: {x:9,y:0}, 2: {x:9,y:9}, 3: {x:0,y:9} };
+        const diceFaces = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+
+        // Local copy for smooth animations independent of Firebase ticks
+        let renderTokens = [];
+        let activeLudoTeams = [];
+        const ludoEmojis = ["🦁", "🦊", "🐯", "🐼"];
+
+        // --- UI CHAT CONTROLLERS ---
+        window.toggleLudoChat = function() {
+            let drawer = document.getElementById('ludo-chat-drawer');
+            if(drawer) drawer.classList.toggle('open');
+        }
+        window.sendLudoCustomChat = function() {
+            let input = document.getElementById('ludo-custom-msg');
+            if(input) {
+                let msg = input.value;
+                if(msg.trim() === "") return;
+                input.value = "";
+                ui_triggerLudoChat(msg);
+            }
+        }
+        window.ui_triggerLudoChat = function(msg) {
+            toggleLudoChat();
+            if (gameRef) gameRef.child('ludoChat').push({ msg: msg, team: myLudoTeam, ts: Date.now() });
+        }
+
+        window.displayLudoHologram = function(msg, teamIndex) {
+            const holo = document.getElementById('hologram-msg');
+            if(!holo) return;
+            holo.classList.remove('show'); void holo.offsetWidth;
+            holo.innerText = msg;
+            holo.style.borderColor = ludoColors[teamIndex];
+            holo.style.boxShadow = `0 10px 30px rgba(0,0,0,0.8), 0 0 20px ${ludoColors[teamIndex]}88`;
+            holo.classList.add('show');
+        }
+
+        window.startLudoGameLoop = function() {
+            const canvas = document.getElementById('ludoCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set rotation so my base is always at bottom left visually
+            // Team 0 -> 0deg, Team 1 -> 270deg, Team 2 -> 180deg, Team 3 -> 90deg
+            const rotationAngle = (4 - myLudoTeam) * 90 % 360;
+            canvas.style.transform = `rotate(${rotationAngle}deg)`;
+
+            renderTokens = [];
+
+            // Click Handler
+            canvas.onclick = (e) => {
+                if(!ludoState || ludoState.winner || ludoState.turn !== myLudoTeam || ludoState.diceRoll === 0 || isLudoAnimating) return;
+
+                const rect = canvas.getBoundingClientRect();
+                let rawX = (e.clientX - rect.left) * (600 / rect.width);
+                let rawY = (e.clientY - rect.top) * (600 / rect.height);
+
+                let cx = 300; let cy = 300;
+                let dx = rawX - cx; let dy = rawY - cy;
+                let rad = -(rotationAngle * Math.PI / 180);
+
+                let clickX = dx * Math.cos(rad) - dy * Math.sin(rad) + cx;
+                let clickY = dx * Math.sin(rad) + dy * Math.cos(rad) + cy;
+
+                let myTokens = ludoState[`tokens_${myLudoTeam}`];
+                for(let i=0; i<myTokens.length; i++) {
+                    let rt = renderTokens.find(t => t.team === myLudoTeam && t.id === i);
+                    let t = myTokens[i];
+
+                    const dist = Math.sqrt(Math.pow(rt.displayX - clickX, 2) + Math.pow(rt.displayY - clickY, 2));
+                    if (dist < ludoGrid * 0.8) {
+                        if (t.state === 'base' && ludoState.diceRoll === 6) {
+                            processMove(t, 'unlock'); return;
+                        } else if (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56) {
+                            processMove(t, 'walk'); return;
+                        }
+                    }
+                }
+            };
+
+            gameRef.child('ludoChat').on('child_added', snap => {
+                let m = snap.val();
+                if(m && m.ts > Date.now() - 60000) {
+                    displayLudoHologram(m.msg, m.team);
+                }
+            });
+
+            gameRef.on('value', snap => {
+                ludoState = snap.val();
+                if(!ludoState) return;
+
+                const tp = ludoState.targetPlayers || 2;
+                activeLudoTeams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+
+                if(renderTokens.length === 0) {
+                    let leftCol = document.getElementById('profiles-left');
+                    let rightCol = document.getElementById('profiles-right');
+                    if(leftCol) leftCol.innerHTML = '';
+                    if(rightCol) rightCol.innerHTML = '';
+
+                    activeLudoTeams.forEach(team => {
+                        for(let i=0; i<4; i++) {
+                            let exactX = (baseOffsets[team].x + baseSlots[i].x) * ludoGrid;
+                            let exactY = (baseOffsets[team].y + baseSlots[i].y) * ludoGrid;
+                            renderTokens.push({
+                                team: team, id: i, state: 'base', stepsTaken: -1,
+                                baseX: exactX, baseY: exactY, displayX: exactX, displayY: exactY, moveQueue: []
+                            });
+                        }
+
+                        // Generate UI Profile
+                        let activeIndex = activeLudoTeams.indexOf(team);
+                        let isUser = (team === myLudoTeam);
+                        let name = isUser ? "You" : (ludoState[`p${activeIndex+1}Name`] || "Opponent");
+                        let av = isUser ? "😎" : ludoEmojis[team];
+                        let html = `<div id="profile-${team}" class="player-profile" style="border-color: ${ludoColors[team]}">
+                                        <div class="profile-avatar">${av}</div>
+                                        <div class="profile-name">${name}</div>
+                                    </div>`;
+
+                        let relativeTurnOrder = (team - myLudoTeam + 4) % 4;
+                        if (relativeTurnOrder === 0 || relativeTurnOrder === 1) {
+                            if(leftCol) leftCol.innerHTML += html;
+                        } else {
+                            if(rightCol) rightCol.innerHTML += html;
+                        }
+                    });
+                }
+
+                if(ludoState.winner) {
+                    if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('ludoTurnIndicator').style.display = 'none';
+                    document.getElementById('ludoDiceContainer').style.display = 'none';
+                    let wName = ludoState[`p${parseInt(ludoState.winner)+1}Name`] || 'Someone';
+                    document.getElementById('ludoStatus').innerText = `${wName} Wins!`;
+                } else {
+                    document.getElementById('rematchLudoBtn').style.display = 'none';
+                    document.getElementById('ludoTurnIndicator').style.display = 'block';
+                    document.getElementById('ludoDiceContainer').style.display = 'block';
+
+                    // Update turn UI
+                    const ti = document.getElementById('ludoTurnIndicator');
+                    let activeIndex = activeLudoTeams.indexOf(ludoState.turn);
+                    let turnName = ludoState[`p${activeIndex+1}Name`] || `Player ${activeIndex+1}`;
+                    ti.innerText = turnName;
+                    ti.style.color = ludoColors[ludoState.turn];
+
+                    if (ludoState.turn === myLudoTeam) {
+                        if (ludoState.diceRoll === 0) document.getElementById('ludoStatus').innerText = "Your Turn! Tap the dice to roll.";
+                        else document.getElementById('ludoStatus').innerText = "Select a piece to move.";
+                    } else {
+                        document.getElementById('ludoStatus').innerText = turnName + "'s Turn...";
+                    }
+
+                    renderLudoDice(ludoState.diceRoll || 1, ludoColors[ludoState.turn]);
+
+                    // CEO: Handle dynamic active profiles in UI
+                    document.querySelectorAll('.player-profile').forEach(p => p.classList.remove('profile-active'));
+                    const activeProfile = document.getElementById(`profile-${ludoState.turn}`);
+                    if(activeProfile) activeProfile.classList.add('profile-active');
+
+                    const diceEl = document.getElementById('ludoDice');
+                    diceEl.style.border = `4px solid ${ludoColors[ludoState.turn]}`;
+                    diceEl.style.borderTop = `none`;
+                    diceEl.style.boxShadow = `0 15px 25px rgba(0,0,0,0.6), 0 10px 40px ${ludoColors[ludoState.turn]}66`;
+                }
+
+                // Sync exact state to renderTokens
+                activeLudoTeams.forEach(team => {
+                    let serverTeam = ludoState[`tokens_${team}`];
+                    for(let i=0; i<4; i++) {
+                        let rt = renderTokens.find(t => t.team === team && t.id === i);
+                        let st = serverTeam[i];
+
+                        // Push to queue if moving
+                        if(st.stepsTaken > rt.stepsTaken && st.state !== 'base') {
+                            if(rt.state === 'base') rt.state = 'active';
+                            for(let s = rt.stepsTaken+1; s <= st.stepsTaken; s++) {
+                                rt.moveQueue.push(s);
+                            }
+                        } else if (st.state === 'base' && rt.state === 'active') {
+                            // Captured! Instant teleport for simplicity
+                            rt.state = 'base';
+                            rt.stepsTaken = -1;
+                            rt.moveQueue = [];
+                            rt.displayX = rt.baseX;
+                            rt.displayY = rt.baseY;
+                        } else if (st.state === 'home' && rt.state !== 'home') {
+                            rt.state = 'home';
+                        }
+                    }
+                });
+            });
+
+            function ludoLoop() {
+                if(!ludoState) { ludoRaf = requestAnimationFrame(ludoLoop); return; }
+
+                let someoneMoving = false;
+                renderTokens.forEach(t => {
+                    if (t.moveQueue.length > 0) {
+                        someoneMoving = true;
+                        let targetCoord = getLudoPathCoord(t.team, t.moveQueue[0]);
+                        let targetX = targetCoord.x * ludoGrid + ludoGrid/2; let targetY = targetCoord.y * ludoGrid + ludoGrid/2;
+
+                        let dx = targetX - t.displayX; let dy = targetY - t.displayY;
+                        let dist = Math.sqrt(dx*dx + dy*dy); let speed = 6.0;
+
+                        if (dist <= speed) {
+                            t.displayX = targetX; t.displayY = targetY; t.stepsTaken = t.moveQueue.shift();
+                            playDiceSound(); // using as step sound
+                        } else {
+                            t.displayX += (dx / dist) * speed; t.displayY += (dy / dist) * speed;
+                        }
+                    }
+                });
+                isLudoAnimating = someoneMoving;
+
+                drawLudoBoard(ctx);
+                ludoRaf = requestAnimationFrame(ludoLoop);
+            }
+            ludoRaf = requestAnimationFrame(ludoLoop);
+        }
+
+        window.rollLudoDice = function() {
+            if(!gameRef || !ludoState || ludoState.turn !== myLudoTeam || ludoState.diceRoll !== 0 || isLudoAnimating || ludoState.winner) return;
+
+            const diceEl = document.getElementById('ludoDice');
+            diceEl.classList.add('rolling');
+            playDiceSound();
+
+            setTimeout(() => {
+                diceEl.classList.remove('rolling');
+                const roll = Math.floor(Math.random() * 6) + 1;
+                let nextIsSix = roll === 6;
+
+                gameRef.update({ diceRoll: roll, lastRollWasSix: nextIsSix });
+
+                // Auto check for forced turns
+                setTimeout(() => {
+                    gameRef.once('value', s => {
+                        let ls = s.val();
+                        let myTokens = ls[`tokens_${myLudoTeam}`];
+                        let legalMoves = [];
+                        myTokens.forEach(t => {
+                            if (t.state === 'base' && roll === 6) legalMoves.push({token: t, type: 'unlock'});
+                            if (t.state === 'active' && t.stepsTaken + roll <= 56) legalMoves.push({token: t, type: 'walk'});
+                        });
+
+                        if(legalMoves.length === 0) {
+                            setTimeout(() => { nextLudoTurn(ls); }, 600);
+                        } else if(legalMoves.length === 1 && myTokens.filter(t => t.state === 'active').length < 2) {
+                            // Auto move if only 1 choice
+                            setTimeout(() => { processMove(legalMoves[0].token, legalMoves[0].type); }, 300);
+                        }
+                    });
+                }, 100);
+            }, 500); // Wait 0.5s for rolling animation
+        }
+
+        function processMove(st, type) {
+            gameRef.once('value', s => {
+                let ls = s.val();
+                let updates = {};
+                let teamStr = `tokens_${myLudoTeam}`;
+                let myTs = ls[teamStr];
+
+                let targetToken = myTs[st.id];
+                if(type === 'unlock') {
+                    targetToken.state = 'active';
+                    targetToken.stepsTaken = 0;
+                } else {
+                    targetToken.stepsTaken += ls.diceRoll;
+                    if(targetToken.stepsTaken === 56) targetToken.state = 'home';
+                }
+
+                updates[teamStr] = myTs;
+
+                // Process captures immediately on server to sync
+                let capturedSomeone = false;
+                if(targetToken.stepsTaken < 51) {
+                    let actualPos = (startPos[myLudoTeam] + targetToken.stepsTaken) % 52;
+                    if(!safeZones.includes(actualPos)) {
+                        activeLudoTeams.forEach(enemyTeam => {
+                            if (enemyTeam !== myLudoTeam) {
+                                let enemyStr = `tokens_${enemyTeam}`;
+                                let eTs = ls[enemyStr] || [];
+                                let modified = false;
+                                eTs.forEach(e => {
+                                    if(e.state === 'active' && e.stepsTaken < 51) {
+                                        let ePos = (startPos[enemyTeam] + e.stepsTaken) % 52;
+                                        if(ePos === actualPos) {
+                                            e.state = 'base'; e.stepsTaken = -1;
+                                            capturedSomeone = true;
+                                            modified = true;
+                                            playWinSound(); // proxy capture sound
+                                        }
+                                    }
+                                });
+                                if (modified) updates[enemyStr] = eTs;
+                            }
+                        });
+                    }
+                }
+
+                // Check if I won
+                let allHome = myTs.filter(t => t.state === 'home').length === 4;
+                if(allHome) updates.winner = myLudoTeam.toString();
+                else {
+                    updates.diceRoll = 0;
+                    if(!capturedSomeone && !ls.lastRollWasSix && targetToken.state !== 'home') {
+                        let activeIndex = activeLudoTeams.indexOf(myLudoTeam);
+                        updates.turn = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
+                    }
+                }
+
+                gameRef.update(updates);
+            });
+        }
+
+        function nextLudoTurn(ls) {
+            let activeIndex = activeLudoTeams.indexOf(myLudoTeam);
+            let nextTeam = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
+            gameRef.update({ turn: nextTeam, diceRoll: 0, lastRollWasSix: false });
+        }
+
+        window.resetLudo = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.once('value', snap => {
+                    let ls = snap.val();
+                    if (!ls) return;
+                    let updates = {
+                        turn: 0,
+                        diceRoll: 0,
+                        lastRollWasSix: false,
+                        winner: null,
+                        state: 'playing'
+                    };
+                    const tp = ls.targetPlayers || 2;
+                    let teams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+                    teams.forEach(t => {
+                        updates[`tokens_${t}`] = [
+                            {id:0, state: 'base', stepsTaken: -1}, {id:1, state: 'base', stepsTaken: -1},
+                            {id:2, state: 'base', stepsTaken: -1}, {id:3, state: 'base', stepsTaken: -1}
+                        ];
+                    });
+                    gameRef.update(updates);
+                });
+            }
+        }
+
+        function renderLudoDice(number, colorHex) {
+            const diceEl = document.getElementById('ludoDice');
+            diceEl.innerHTML = '';
+            const activeDots = diceFaces[number] || [4];
+            for (let i = 0; i < 9; i++) {
+                const dot = document.createElement('div'); dot.classList.add('ludo-dot');
+                if (activeDots.includes(i)) dot.style.backgroundColor = colorHex;
+                diceEl.appendChild(dot);
+            }
+        }
+
+        function getLudoPathCoord(team, stepsTaken) {
+            if (stepsTaken === -1) return null;
+            if (stepsTaken < 51) return mainPath[(startPos[team] + stepsTaken) % 52];
+            else if (stepsTaken < 56) return homePaths[team][stepsTaken - 51];
+            else return centerHome[team];
+        }
+
+        function drawLudoBoard(ctx) {
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 600, 600); // Overall background
+
+            ctx.lineWidth = 1; ctx.setLineDash([]);
+            for(let i=0; i<52; i++) {
+                let px = mainPath[i].x * ludoGrid; let py = mainPath[i].y * ludoGrid;
+                ctx.fillStyle = safeZones.includes(i) ? ludoColors.safe : ludoColors.bg;
+                ctx.fillRect(px, py, ludoGrid, ludoGrid);
+                ctx.strokeStyle = ludoColors.lines; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+
+                if (safeZones.includes(i)) {
+                    let starColor = '#ccc';
+                    if (i===1) starColor = ludoColors[0]; if (i===27) starColor = ludoColors[2];
+                    drawLudoStar(ctx, px + ludoGrid/2, py + ludoGrid/2, 5, ludoGrid*0.3, ludoGrid*0.15, starColor);
+                }
+            }
+
+            activeLudoTeams.forEach(team => {
+                homePaths[team].forEach(coord => {
+                    let px = coord.x * ludoGrid; let py = coord.y * ludoGrid;
+                    ctx.fillStyle = ludoColors[team];
+                    ctx.fillRect(px, py, ludoGrid, ludoGrid);
+                    ctx.strokeStyle = '#fff'; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+                });
+
+                let startCoord = mainPath[startPos[team]];
+                ctx.fillStyle = ludoColors[team]; ctx.fillRect(startCoord.x*ludoGrid, startCoord.y*ludoGrid, ludoGrid, ludoGrid);
+                ctx.beginPath(); ctx.arc(startCoord.x*ludoGrid + ludoGrid/2, startCoord.y*ludoGrid + ludoGrid/2, ludoGrid*0.2, 0, Math.PI*2);
+                ctx.fillStyle = '#fff'; ctx.fill();
+            });
+
+            // Draw all bases
+            for(let team = 0; team < 4; team++) {
+                let isActive = ludoState ? (ludoState.turn === team) : activeLudoTeams.includes(team);
+                let isPlaying = activeLudoTeams.includes(team);
+                let col = isPlaying ? ludoColors[team] : ludoColors.inactive;
+
+                drawLudoBase(ctx, baseOffsets[team].x*ludoGrid, baseOffsets[team].y*ludoGrid, col, isActive, team);
+            }
+
+            // Center
+            ctx.fillStyle = '#ddd'; ctx.fillRect(6*ludoGrid, 6*ludoGrid, 3*ludoGrid, 3*ludoGrid);
+            ctx.fillStyle = activeLudoTeams.includes(0) ? ludoColors[0] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.strokeStyle = '#000'; ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(1) ? ludoColors[1] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(2) ? ludoColors[2] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(3) ? ludoColors[3] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.stroke();
+
+            // CEO: ADVANCED CLUSTERING TO FIX OVERLAPS AND RENDER FINISHED TOKENS
+            let rendered = new Set();
+            renderTokens.forEach(t => {
+                if (rendered.has(t)) return;
+
+                // Find all tokens on this exact same square (ignoring those safely separated in their bases)
+                let cluster = renderTokens.filter(other =>
+                    Math.abs(other.displayX - t.displayX) < 5 &&
+                    Math.abs(other.displayY - t.displayY) < 5
+                );
+
+                cluster.forEach(c => rendered.add(c));
+
+                let len = cluster.length;
+                cluster.sort((a,b) => a.team - b.team); // Group same colors together in the cluster
+
+                cluster.forEach((ct, idx) => {
+                    let ox = 0, oy = 0, scale = 1;
+                    // Cluster visually if more than 1 token is sharing a grid tile (unless they are physically in their distinct base slots)
+                    if (len > 1 && ct.state !== 'base') {
+                        scale = 0.7; // Shrink them down so they fit
+                        let angle = (Math.PI * 2 * idx) / len + (Math.PI/4);
+                        let spread = ludoGrid * 0.2; // Push them slightly outwards from the center of the tile
+                        ox = Math.cos(angle) * spread;
+                        oy = Math.sin(angle) * spread;
+                    }
+                    drawLudoSingleToken(ctx, ct, ct.displayX + ox, ct.displayY + oy, scale);
+                });
+            });
+
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.strokeRect(3, 3, 594, 594);
+        }
+
+        function drawLudoSingleToken(ctx, t, x, y, scale) {
+            if (t.state === 'home') return;
+            let radius = ludoGrid * 0.35 * scale;
+            ctx.beginPath(); ctx.arc(x + 2*scale, y + 3*scale, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+
+            ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = ludoColors[t.team]; ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
+
+            ctx.beginPath(); ctx.arc(x - 2*scale, y - 2*scale, radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
+
+            // Highlight playable tokens
+            if (!isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0 && t.team === myLudoTeam) {
+                if ((t.state === 'base' && ludoState.diceRoll === 6) || (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56)) {
+                    ctx.beginPath(); ctx.arc(x, y, radius + 4*scale, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#000'; ctx.lineWidth = 2*scale; ctx.setLineDash([4*scale, 4*scale]); ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+        }
+
+        function drawLudoStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3; let x = cx; let y = cy; let step = Math.PI / spikes;
+            ctx.beginPath(); ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius; y = cy + Math.sin(rot) * outerRadius; ctx.lineTo(x, y); rot += step;
+                x = cx + Math.cos(rot) * innerRadius; y = cy + Math.sin(rot) * innerRadius; ctx.lineTo(x, y); rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius); ctx.closePath();
+            ctx.fillStyle = color; ctx.fill();
+        }
+
+        function drawLudoBase(ctx, x, y, color, isActive, teamId) {
+            // Draw large colored base
+            ctx.fillStyle = color; ctx.fillRect(x, y, ludoGrid * 6, ludoGrid * 6);
+            ctx.strokeStyle = ludoColors.lines; ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, ludoGrid * 6, ludoGrid * 6);
+
+            // Inner white area
+            ctx.fillStyle = isActive ? '#FFFFFF' : '#f5f5f5';
+            ctx.fillRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
+            ctx.strokeRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
+
+            // Draw beautiful design
+            // Diagonal overlay square
+            ctx.save();
+            ctx.translate(x + ludoGrid*3, y + ludoGrid*3);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillStyle = color;
+            ctx.globalAlpha = isActive ? 0.2 : 0.1;
+            ctx.fillRect(-ludoGrid*1.5, -ludoGrid*1.5, ludoGrid*3, ludoGrid*3);
+            ctx.globalAlpha = 1.0;
+            ctx.restore();
+
+            // Slot circles
+            baseSlots.forEach(slot => {
+                ctx.beginPath();
+                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.6, 0, Math.PI*2);
+                ctx.fillStyle = isActive ? '#ffffff' : '#f0f0f0';
+                ctx.fill();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // inner dot
+                ctx.beginPath();
+                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.25, 0, Math.PI*2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            });
+        }
+
+        // --- DOTS & BOXES LOGIC ---
+        let localDotsState = null;
+        let dotsClickBound = false;
+
+        window.startDotsGameLoop = function() {
+            const canvas = document.getElementById('dotsCanvas');
+            const ctx = canvas.getContext('2d');
+
+            if(!dotsClickBound) {
+                dotsClickBound = true;
+                canvas.addEventListener('click', function(e) {
+                if(!localDotsState || localDotsState.winner || localDotsState.turn !== mySymbol) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // grid is 5x5 dots (4x4 boxes)
+                // canvas is 300x300, dots at 30, 90, 150, 210, 270
+                const gridSpacing = 60;
+                const offset = 30;
+
+                // Determine closest line
+                let minH = 999, hRow = -1, hCol = -1;
+                for(let r=0; r<5; r++) {
+                    for(let c=0; c<4; c++) {
+                        let lineY = offset + r*gridSpacing;
+                        let lineXCenter = offset + c*gridSpacing + gridSpacing/2;
+                        let dist = Math.abs(x - lineXCenter) + Math.abs(y - lineY);
+                        if(dist < minH && !localDotsState.hLines[r*4 + c]) { minH = dist; hRow = r; hCol = c; }
+                    }
+                }
+
+                let minV = 999, vRow = -1, vCol = -1;
+                for(let r=0; r<4; r++) {
+                    for(let c=0; c<5; c++) {
+                        let lineX = offset + c*gridSpacing;
+                        let lineYCenter = offset + r*gridSpacing + gridSpacing/2;
+                        let dist = Math.abs(x - lineX) + Math.abs(y - lineYCenter);
+                        if(dist < minV && !localDotsState.vLines[r*5 + c]) { minV = dist; vRow = r; vCol = c; }
+                    }
+                }
+
+                if(minH < 25 && minH < minV) {
+                    // Clicked horizontal line
+                    makeDotsMove('h', hRow*4 + hCol);
+                } else if (minV < 25) {
+                    // Clicked vertical line
+                    makeDotsMove('v', vRow*5 + vCol);
+                }
+                });
+            }
+
+            gameRef.on('value', snap => {
+                localDotsState = snap.val();
+                if(!localDotsState) return;
+
+                if(localDotsState.winner) {
+                    document.getElementById('dotsStatus').innerText = localDotsState.winner === 'Draw' ? "It's a Draw!" : localDotsState.winner === 'P1' ? `${localDotsState.p1Name || 'P1'} Wins!` : `${localDotsState.p2Name || 'P2'} Wins!`;
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchDotsBtn').style.display = 'block'; else document.getElementById('dotsStatus').innerText += ' (Waiting for Host to restart)';
+                } else {
+                    document.getElementById('dotsStatus').innerText = localDotsState.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
+                    document.getElementById('rematchDotsBtn').style.display = 'none';
+                }
+
+                document.getElementById('dotsScoreP1').innerText = `${localDotsState.p1Name || 'P1'} (Pink): ${localDotsState.scoreX}`;
+                document.getElementById('dotsScoreP2').innerText = `${localDotsState.p2Name || 'P2'} (Cyan): ${localDotsState.scoreO}`;
+
+                drawDotsBoard(ctx);
+            });
+        }
+
+        function makeDotsMove(type, idx) {
+            let ns = JSON.parse(JSON.stringify(localDotsState));
+            if(type === 'h') ns.hLines[idx] = true;
+            if(type === 'v') ns.vLines[idx] = true;
+
+            // Check for completed boxes
+            let boxesCompleted = 0;
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<4; c++) {
+                    let bIdx = r*4 + c;
+                    if(ns.boxes[bIdx] === '') {
+                        let top = ns.hLines[r*4 + c];
+                        let bottom = ns.hLines[(r+1)*4 + c];
+                        let left = ns.vLines[r*5 + c];
+                        let right = ns.vLines[r*5 + c + 1];
+                        if(top && bottom && left && right) {
+                            ns.boxes[bIdx] = mySymbol;
+                            boxesCompleted++;
+                            if(mySymbol === 'X') ns.scoreX++;
+                            else ns.scoreO++;
+                        }
+                    }
+                }
+            }
+
+            if(boxesCompleted === 0) {
+                ns.turn = ns.turn === 'X' ? 'O' : 'X';
+            }
+
+            // Check win
+            let allFilled = !ns.boxes.includes('');
+            if(allFilled) {
+                if(ns.scoreX > ns.scoreO) ns.winner = 'P1';
+                else if(ns.scoreO > ns.scoreX) ns.winner = 'P2';
+                else ns.winner = 'Draw';
+            }
+
+            gameRef.update(ns);
+        }
+
+        function drawDotsBoard(ctx) {
+            ctx.clearRect(0,0,300,300);
+            const gridSpacing = 60;
+            const offset = 30;
+
+            // Draw boxes
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<4; c++) {
+                    let bIdx = r*4 + c;
+                    if(localDotsState.boxes[bIdx] === 'X') {
+                        ctx.fillStyle = 'rgba(255, 20, 147, 0.3)';
+                        ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
+                    } else if (localDotsState.boxes[bIdx] === 'O') {
+                        ctx.fillStyle = 'rgba(0, 229, 255, 0.3)';
+                        ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
+                    }
+                }
+            }
+
+            // Draw lines
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+
+            // H lines
+            for(let r=0; r<5; r++) {
+                for(let c=0; c<4; c++) {
+                    if(localDotsState.hLines[r*4 + c]) {
+                        ctx.beginPath();
+                        ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
+                        ctx.lineTo(offset + (c+1)*gridSpacing, offset + r*gridSpacing);
+                        ctx.strokeStyle = '#fff';
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // V lines
+            for(let r=0; r<4; r++) {
+                for(let c=0; c<5; c++) {
+                    if(localDotsState.vLines[r*5 + c]) {
+                        ctx.beginPath();
+                        ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
+                        ctx.lineTo(offset + c*gridSpacing, offset + (r+1)*gridSpacing);
+                        ctx.strokeStyle = '#fff';
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw dots
+            ctx.fillStyle = '#aaa';
+            for(let r=0; r<5; r++) {
+                for(let c=0; c<5; c++) {
+                    ctx.beginPath();
+                    ctx.arc(offset + c*gridSpacing, offset + r*gridSpacing, 6, 0, Math.PI*2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        window.resetDots = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.set({
+                    hLines: Array(20).fill(false),
+                    vLines: Array(20).fill(false),
+                    boxes: Array(16).fill(''),
+                    turn: 'X',
+                    scoreX: 0,
+                    scoreO: 0,
+                    winner: null
+                });
+            }
+        }
+                // ==========================================
+        // NEW LIGHTWEIGHT GAMES LOGIC
+        // ==========================================
+
+        let stopTimerRaf = null;
+        let reactionRaf = null;
+        let checkStartInterval = null;
+        let checkTimeInterval = null;
+
+        // --- STOP THE TIMER ---
+        window.startStopTimerLoop = function() {
+            if(mySymbol === 'X') {
+                if(checkStartInterval) clearInterval(checkStartInterval);
+                checkStartInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.start) {
+                            gameRef.update({ status: 'playing', start: Date.now() });
+                            clearInterval(checkStartInterval);
+                        }
+                    });
+                }, 50);
+            }
+
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    cancelAnimationFrame(stopTimerRaf);
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchStBtn').style.display = 'block'; else document.getElementById('stStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                    document.getElementById('stDisplay').innerText = data.p1Stop > 0 ? (mySymbol === 'X' ? (data.p1Stop/1000).toFixed(2) : (data.p2Stop/1000).toFixed(2)) : "10.00";
+                    return;
+                }
+
+                if(data.status === 'waiting') {
+                    document.getElementById('stDisplay').innerText = "0.00";
+                    document.getElementById('stStatus').innerText = "Get ready...";
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    document.getElementById('rematchStBtn').style.display = 'none';
+                }
+
+                if(data.status === 'playing') {
+                    document.getElementById('stStatus').innerText = "Tap STOP at exactly 10.00s!";
+                    document.getElementById('stActionBtn').style.display = 'block';
+                    if(!stopTimerRaf) {
+                        function updateDisplay() {
+                            if(!gameRef || data.winner) return;
+                            const myStop = mySymbol === 'X' ? data.p1Stop : data.p2Stop;
+                            if(myStop === 0) {
+                                const elapsed = (Date.now() - data.start) / 1000;
+                                document.getElementById('stDisplay').innerText = elapsed.toFixed(2);
+                                stopTimerRaf = requestAnimationFrame(updateDisplay);
+                            }
+                        }
+                        stopTimerRaf = requestAnimationFrame(updateDisplay);
+                    }
+                }
+
+                // Both stopped
+                if(data.p1Stop > 0 && data.p2Stop > 0 && mySymbol === 'X') {
+                    let diff1 = Math.abs(10000 - data.p1Stop);
+                    let diff2 = Math.abs(10000 - data.p2Stop);
+                    let win = diff1 < diff2 ? 'P1' : (diff2 < diff1 ? 'P2' : "Draw");
+                    gameRef.update({ winner: win });
+                }
+            });
+        }
+        window.stopTimerAction = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && d.status === 'playing') {
+                    const stoppedAt = Date.now() - d.start;
+                    if(mySymbol === 'X' && d.p1Stop === 0) gameRef.update({ p1Stop: stoppedAt });
+                    if(mySymbol === 'O' && d.p2Stop === 0) gameRef.update({ p2Stop: stoppedAt });
+                    document.getElementById('stDisplay').innerText = (stoppedAt/1000).toFixed(2);
+                    document.getElementById('stActionBtn').style.display = 'none';
+                    document.getElementById('stStatus').innerText = "Waiting for opponent to stop...";
+                    cancelAnimationFrame(stopTimerRaf);
+                }
+            });
+        }
+        window.resetStopTimer = function() {
+            if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
+            stopTimerRaf = null;
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ start: Date.now() + 1500, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' });
+
+                if(checkStartInterval) clearInterval(checkStartInterval);
+                checkStartInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.start) {
+                            gameRef.update({ status: 'playing', start: Date.now() });
+                            clearInterval(checkStartInterval);
+                        }
+                    });
+                }, 50);
+            }
+        }
+
+        // --- REACTION TAP ---
+        window.startReactionLoop = function() {
+            document.getElementById('rtTapZone').style.display = 'block';
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    cancelAnimationFrame(reactionRaf);
+                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchRtBtn').style.display = 'block'; else document.getElementById('rtStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('rtTapZone').style.display = 'none';
+                    if(data.winner === 'Early') {
+                        document.getElementById('rtInstruction').innerText = "Someone false started!";
+                        document.getElementById('rtStatus').innerText = "Match Voided.";
+                    } else {
+                        document.getElementById('rtInstruction').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        document.getElementById('rtStatus').innerText = `Tap Time: ${Math.min(data.p1Tap || 9999, data.p2Tap || 9999)}ms`;
+                    }
+                    return;
+                }
+
+                if(data.status === 'waiting') {
+                    document.getElementById('rematchRtBtn').style.display = 'none';
+                    document.getElementById('reactionOverlay').style.background = 'var(--bg-dark)';
+                    document.getElementById('rtInstruction').innerText = "Wait for Green...";
+                    document.getElementById('rtTapZone').style.display = 'block';
+                    // Let the host's interval handle switching to go
+                } else if (data.status === 'go') {
+                    document.getElementById('reactionOverlay').style.background = '#32CD32';
+                    document.getElementById('rtInstruction').innerText = "TAP NOW!";
+                }
+
+                if(data.p1Tap > 0 && data.p2Tap > 0 && mySymbol === 'X') {
+                    let win = data.p1Tap < data.p2Tap ? 'P1' : 'P2';
+                    gameRef.update({ winner: win });
+                } else if ((data.p1Tap > 0 || data.p2Tap > 0) && mySymbol === 'X') {
+                    // Give other player 1 second to also tap before declaring winner by default
+                    setTimeout(() => {
+                        gameRef.once('value', s => {
+                            let d2 = s.val();
+                            if(!d2.winner) {
+                                let w = d2.p1Tap > 0 ? 'P1' : 'P2';
+                                gameRef.update({ winner: w });
+                            }
+                        });
+                    }, 1000);
+                }
+            });
+
+            let checkTimeInterval = null;
+            if(mySymbol === 'X') {
+                checkTimeInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
+                            gameRef.update({ status: 'go', greenTime: Date.now() });
+                            clearInterval(checkTimeInterval);
+                        }
+                    });
+                }, 50);
+            }
+        }
+        window.reactionTapAction = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(d.status === 'waiting') {
+                        // False start
+                        gameRef.update({ winner: 'Early' });
+                    } else if(d.status === 'go') {
+                        const tapTime = Date.now() - d.greenTime;
+                        if(mySymbol === 'X' && d.p1Tap === 0) gameRef.update({ p1Tap: tapTime });
+                        if(mySymbol === 'O' && d.p2Tap === 0) gameRef.update({ p2Tap: tapTime });
+                        document.getElementById('rtInstruction').innerText = `You tapped in ${tapTime}ms!`;
+                        document.getElementById('rtTapZone').style.display = 'none';
+                    }
+                }
+            });
+        }
+        window.resetReaction = function() {
+            if(reactionRaf) cancelAnimationFrame(reactionRaf);
+            reactionRaf = null;
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ greenTime: Date.now() + 1500 + Math.random()*2000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' });
+
+                if(checkTimeInterval) clearInterval(checkTimeInterval);
+                checkTimeInterval = setInterval(() => {
+                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    gameRef.once('value', s => {
+                        const d = s.val();
+                        if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
+                            gameRef.update({ status: 'go', greenTime: Date.now() });
+                            clearInterval(checkTimeInterval);
+                        }
+                    });
+                }, 50);
+            }
+        }
+
+        // --- MATCHSTICKS ---
+        window.startMatchsticksLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                document.getElementById('msContainer').innerHTML = '';
+                for(let i=0; i<data.sticks; i++) {
+                    const s = document.createElement('div');
+                    s.style.cssText = "width: 10px; height: 50px; background: #eccc68; border-radius: 5px; position: relative;";
+                    const tip = document.createElement('div');
+                    tip.style.cssText = "width: 14px; height: 14px; background: #ff4757; border-radius: 50%; position: absolute; top: -5px; left: -2px;";
+                    s.appendChild(tip);
+                    document.getElementById('msContainer').appendChild(s);
+                }
+
+                if(data.winner) {
+                    document.getElementById('msControls').style.display = 'none';
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchMsBtn').style.display = 'block'; else document.getElementById('msStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('msStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                    return;
+                } else {
+                    document.getElementById('rematchMsBtn').style.display = 'none';
+                }
+
+                if(data.turn === mySymbol) {
+                    document.getElementById('msStatus').innerText = "Your Turn! Pick 1, 2, or 3.";
+                    document.getElementById('msControls').style.display = 'flex';
+                } else {
+                    document.getElementById('msStatus').innerText = "Opponent's Turn...";
+                    document.getElementById('msControls').style.display = 'none';
+                }
+
+                if(data.sticks <= 0 && mySymbol === 'X') { // The person who took the last one loses.
+                    let w = data.turn === 'X' ? "P1" : "P2"; // If it's X's turn, O took the last one.
+                    gameRef.update({ winner: w });
+                }
+            });
+        }
+        window.takeMatchsticks = function(amt) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner && d.turn === mySymbol) {
+                    let rem = d.sticks - amt;
+                    if(rem < 0) rem = 0;
+                    if(rem === 0) {
+                        gameRef.update({ sticks: 0, winner: mySymbol === 'X' ? 'P2' : 'P1' });
+                    } else {
+                        gameRef.update({ sticks: rem, turn: mySymbol === 'X' ? 'O' : 'X' });
+                    }
+                }
+            });
+        }
+        window.resetMatchsticks = function() {
+            if(gameRef && mySymbol === 'X') gameRef.update({ sticks: 21, turn: 'X', winner: null });
+        }
+
+        // --- HIGH CARD WAR ---
+        const cardsArr = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+        window.startHighCardLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchHcBtn').style.display = 'block'; else document.getElementById('hcStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('hcDrawBtn').style.display = 'none';
+                    document.getElementById('hcStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                } else {
+                    document.getElementById('rematchHcBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
+                    if(myC === 0) {
+                        document.getElementById('hcDrawBtn').style.display = 'block';
+                        document.getElementById('hcStatus').innerText = "Draw your card!";
+                    } else {
+                        document.getElementById('hcDrawBtn').style.display = 'none';
+                        document.getElementById('hcStatus').innerText = "Waiting for opponent to draw...";
+                    }
+                }
+
+                let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
+                let opC = mySymbol === 'X' ? data.p2Card : data.p1Card;
+
+                document.getElementById('hcMyCard').innerHTML = myC ? cardsArr[myC-2] : '<i class="fa-solid fa-question"></i>';
+                document.getElementById('hcOppCard').innerHTML = opC ? cardsArr[opC-2] : '<i class="fa-solid fa-question"></i>';
+
+                if(data.p1Card > 0 && data.p2Card > 0 && mySymbol === 'X' && !data.winner) {
+                    let win = data.p1Card > data.p2Card ? 'P1' : (data.p2Card > data.p1Card ? 'P2' : "Draw");
+                    gameRef.update({ winner: win });
+                }
+            });
+        }
+        window.drawHighCard = function() {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    let c = Math.floor(Math.random()*13) + 2; // 2 through 14 (Ace)
+                    if(mySymbol === 'X' && d.p1Card === 0) gameRef.update({ p1Card: c });
+                    if(mySymbol === 'O' && d.p2Card === 0) gameRef.update({ p2Card: c });
+                    document.getElementById('hcDrawBtn').style.display = 'none';
+                    document.getElementById('hcStatus').innerText = "Waiting for opponent to draw...";
+                }
+            });
+        }
+        window.resetHighCard = function() {
+            if(gameRef && mySymbol === 'X') {
+
+                gameRef.update({ p1Card: 0, p2Card: 0, winner: null });
+            }
+        }
+
+        // --- GUESS THE NUMBER ---
+        window.startGuessNumberLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.lastHint) {
+                    const p = document.createElement('div');
+                    p.innerText = data.lastHint;
+                    const hist = document.getElementById('gnHistory');
+                    hist.appendChild(p);
+                    hist.scrollTop = hist.scrollHeight;
+                    // reset hint so we don't spam it (host resets it)
+                    if(mySymbol === 'X') gameRef.update({ lastHint: '' });
+                }
+
+                if(data.winner) {
+                    document.getElementById('gnControls').style.display = 'none';
+                    if(mySymbol === 'X') document.getElementById('rematchGnBtn').style.display = 'block'; else document.getElementById('gnStatus').innerText += ' (Waiting for Host to restart)';
+                    playWinSound();
+                    document.getElementById('gnStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Guessed It!` : `${data.p2Name || 'P2'} Guessed It!`;
+                } else {
+                    document.getElementById('gnControls').style.display = 'flex';
+                    document.getElementById('rematchGnBtn').style.display = 'none';
+                    document.getElementById('gnStatus').innerText = "Game in progress!";
+                }
+            });
+        }
+        window.submitGuessNumber = function() {
+            const v = parseInt(document.getElementById('gnInput').value);
+            if(isNaN(v)) return;
+            document.getElementById('gnInput').value = '';
+
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    let playerStr = mySymbol === 'X' ? (d.p1Name || 'P1') : (d.p2Name || 'P2');
+                    if(v === d.secret) {
+                        gameRef.update({ winner: mySymbol === 'X' ? 'P1' : 'P2', lastHint: `${playerStr} guessed ${v} and WON!` });
+                    } else if (v > d.secret) {
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too High)` });
+                    } else {
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too Low)` });
+                    }
+                }
+            });
+        }
+        window.resetGuessNumber = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', winner: null });
+            }
+        }
+
+        // --- COIN FLIP ---
+        window.startCoinFlipLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                if(data.winner) {
+                    playWinSound();
+                    if(mySymbol === 'X') document.getElementById('rematchCfBtn').style.display = 'block'; else document.getElementById('cfStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('cfControls').style.display = 'none';
+                    document.getElementById('cfCoin').innerText = data.result === 'Heads' ? 'H' : 'T';
+                    document.getElementById('cfStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                } else {
+                    document.getElementById('rematchCfBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
+                    if(myC === '') {
+                        document.getElementById('cfControls').style.display = 'flex';
+                        document.getElementById('cfStatus').innerText = "Make your choice!";
+                        document.getElementById('cfCoin').innerText = "?";
+                    }
+                }
+
+                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
+                    // Server resolve
+                    let res = Math.random() > 0.5 ? 'Heads' : 'Tails';
+                    let p1Win = data.p1Choice === res;
+                    let p2Win = data.p2Choice === res;
+                    let win = (p1Win && !p2Win) ? "P1" : ((p2Win && !p1Win) ? "P2" : "Draw");
+
+                    // Add delay for effect
+                    document.getElementById('cfCoin').style.transform = "rotateY(" + (Math.random() > 0.5 ? 720 : 1080) + "deg)";
+                    setTimeout(() => {
+                        gameRef.update({ result: res, winner: win });
+                    }, 400);
+                }
+            });
+        }
+        window.makeCoinChoice = function(choice) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(mySymbol === 'X' && d.p1Choice === '') gameRef.update({ p1Choice: choice });
+                    if(mySymbol === 'O' && d.p2Choice === '') gameRef.update({ p2Choice: choice });
+                    document.getElementById('cfControls').style.display = 'none';
+                    document.getElementById('cfStatus').innerText = "Flipping coin...";
+                }
+            });
+        }
+        window.resetCoinFlip = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ p1Choice: '', p2Choice: '', result: '', winner: null });
+            }
+        }
+
+        // --- HIGHER OR LOWER ---
+        window.startHigherLowerLoop = function() {
+            gameRef.on('value', snap => {
+                const data = snap.val();
+                if(!data) return;
+
+                document.getElementById('hlCard').innerText = data.currentCard;
+
+                if(data.winner) {
+                    if(mySymbol === 'X') document.getElementById('rematchHlBtn').style.display = 'block'; else document.getElementById('hlStatus').innerText += ' (Waiting for Host to restart)';
+                    document.getElementById('hlControls').style.display = 'none';
+                    playWinSound();
+                    document.getElementById('hlStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins! Next was ${data.nextCard}` : `${data.p2Name || 'P2'} Wins! Next was ${data.nextCard}`);
+                } else {
+                    document.getElementById('rematchHlBtn').style.display = 'none';
+                    let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
+                    if(myC === '') {
+                        document.getElementById('hlControls').style.display = 'flex';
+                        document.getElementById('hlStatus').innerText = "Higher or Lower?";
+                    }
+                }
+
+                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
+                    let nxt = Math.floor(Math.random()*13) + 2; // Generate next card
+                    while(nxt === data.currentCard) nxt = Math.floor(Math.random()*13) + 2; // prevent ties for simplicity
+
+                    let isHigher = nxt > data.currentCard;
+                    let p1Correct = (data.p1Choice === 'Higher' && isHigher) || (data.p1Choice === 'Lower' && !isHigher);
+                    let p2Correct = (data.p2Choice === 'Higher' && isHigher) || (data.p2Choice === 'Lower' && !isHigher);
+
+                    let win = (p1Correct && !p2Correct) ? "P1" : ((p2Correct && !p1Correct) ? "P2" : "Draw");
+                    gameRef.update({ nextCard: nxt, winner: win });
+                }
+            });
+        }
+        window.makeHlChoice = function(choice) {
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if(d && !d.winner) {
+                    if(mySymbol === 'X' && d.p1Choice === '') gameRef.update({ p1Choice: choice });
+                    if(mySymbol === 'O' && d.p2Choice === '') gameRef.update({ p2Choice: choice });
+                    document.getElementById('hlControls').style.display = 'none';
+                    document.getElementById('hlStatus').innerText = "Waiting for opponent...";
+                }
+            });
+        }
+        window.resetHigherLower = function() {
+            if(gameRef && mySymbol === 'X') {
+                gameRef.update({ currentCard: Math.floor(Math.random()*10)+3, nextCard: 0, p1Choice: '', p2Choice: '', winner: null });
+            }
+        }
+
+        // LEAVE HANDLERS
+
+        window.leaveLudo = function() {
+            if(ludoRaf) cancelAnimationFrame(ludoRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.child('ludoChat').off(); gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
-            document.getElementById('mmOverlay').style.display = 'none';
+            document.getElementById('ludoOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).off();
-            if(typeof user !== 'undefined' && user) db.ref('gameQueue/MemoryMatch/' + user.uid).remove();
+            if(typeof user !== 'undefined' && user) {
+                db.ref('gameQueue/Ludo2/' + user.uid).off(); db.ref('gameQueue/Ludo2/' + user.uid).remove();
+                db.ref('gameQueue/Ludo3/' + user.uid).off(); db.ref('gameQueue/Ludo3/' + user.uid).remove();
+                db.ref('gameQueue/Ludo4/' + user.uid).off(); db.ref('gameQueue/Ludo4/' + user.uid).remove();
+            }
             gameRoom = null;
         }
+
+        window.leaveStopTimer = function() {
+            if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('stopTimerOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/StopTimer/' + user.uid).off(); db.ref('gameQueue/StopTimer/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveReaction = function() {
+            if(reactionRaf) cancelAnimationFrame(reactionRaf);
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('reactionOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Reaction/' + user.uid).off(); db.ref('gameQueue/Reaction/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveMatchsticks = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('matchsticksOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Matchsticks/' + user.uid).off(); db.ref('gameQueue/Matchsticks/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveHighCard = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('highCardOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/HighCard/' + user.uid).off(); db.ref('gameQueue/HighCard/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveGuessNumber = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('guessNumberOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/GuessNumber/' + user.uid).off(); db.ref('gameQueue/GuessNumber/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveCoinFlip = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('coinFlipOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/CoinFlip/' + user.uid).off(); db.ref('gameQueue/CoinFlip/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveHigherLower = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('higherLowerOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/HigherLower/' + user.uid).off(); db.ref('gameQueue/HigherLower/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
             if(room !== 'GlobalLobby' && currentChatFriend) {
@@ -5846,7 +7718,24 @@ window.burnImage = function(element, url, key) {
         }
     </script>
 
-    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
+    <div id="dotsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveDots()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FF1493; margin-bottom: 5px;" id="dotsTitle">Dots & Boxes</h2>
+        <p id="dotsStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 20px; margin-bottom: 15px; font-weight: bold;" id="dotsScoresContainer">
+            <div style="color: #FF1493;" id="dotsScoreP1">P1 (Pink): 0</div>
+            <div style="color: #00e5ff;" id="dotsScoreP2">P2 (Cyan): 0</div>
+        </div>
+
+        <div id="dotsGameContainer" style="position: relative; width: 300px; height: 300px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+            <canvas id="dotsCanvas" width="300" height="300" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
+        </div>
+
+        <button id="rematchDotsBtn" onclick="resetDots()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #FF1493; color: white; font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
+    </div>
+
+    <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveRPS()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: #00e5ff; margin-bottom: 5px;">Rock Paper Scissors</h2>
         <p id="rpsStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -5866,7 +7755,7 @@ window.burnImage = function(element, url, key) {
         <button id="rematchRpsBtn" onclick="resetRPS()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #00e5ff; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
+    <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveGame()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
         <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Tic-Tac-Toe</h2>
         <p id="gameStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
@@ -5886,18 +7775,170 @@ window.burnImage = function(element, url, key) {
         <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
-    <div id="connect4Overlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px;">
-        <button onclick="leaveConnect4()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Connect 4</h2>
-        <p id="c4Status" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
 
-        <div style="background: #1e88e5; padding: 10px; border-radius: 16px;">
-            <div id="c4Board" style="display: grid; grid-template-columns: repeat(7, 40px); grid-template-rows: repeat(6, 40px); gap: 5px; width: 310px; height: 265px;">
-                <!-- Generated by JS -->
+    <!-- NEW GAMES OVERLAYS -->
+    <div id="stopTimerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveStopTimer()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FFD700; margin-bottom: 5px;">Stop the Timer</h2>
+        <p id="stStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
+        <div style="font-size: 80px; font-weight: 900; margin-bottom: 20px; font-family: monospace;" id="stDisplay">0.00</div>
+        <div style="margin-bottom: 40px; font-size: 16px; text-align: center;">Stop it as close to <strong style="color: #FFD700;">10.00</strong> as possible!</div>
+        <button id="stActionBtn" onclick="stopTimerAction()" style="display:none; padding: 25px 50px; border-radius: 40px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 28px; border: none; box-shadow: 0 4px 15px rgba(255,215,0,0.3);">STOP</button>
+        <button id="rematchStBtn" onclick="resetStopTimer()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="reactionOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto; transition: background 0.1s;">
+        <button onclick="leaveReaction()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: white; font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: white; margin-bottom: 5px;">Reaction Tap</h2>
+        <p id="rtStatus" style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Waiting for opponent...</p>
+        <div id="rtInstruction" style="font-size: 32px; font-weight: bold; color: white; text-align: center; padding: 40px;">Wait for Green...</div>
+        <div id="rtTapZone" onclick="reactionTapAction()" style="display: none; position: absolute; inset: 0; z-index: 1; cursor: pointer;"></div>
+        <button id="rematchRtBtn" onclick="resetReaction()" style="display:none; z-index: 3; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: white; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="matchsticksOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMatchsticks()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #ff6b6b; margin-bottom: 5px;">Matchsticks (21)</h2>
+        <p id="msStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
+        <div style="font-size: 16px; margin-bottom: 30px; color: white;">Don't take the last one!</div>
+
+        <div id="msContainer" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 320px; margin-bottom: 40px; min-height: 120px;"></div>
+
+        <div id="msControls" style="display: none; gap: 15px;">
+            <button onclick="takeMatchsticks(1)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">1</button>
+            <button onclick="takeMatchsticks(2)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">2</button>
+            <button onclick="takeMatchsticks(3)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">3</button>
+        </div>
+        <button id="rematchMsBtn" onclick="resetMatchsticks()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #ff6b6b; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="highCardOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveHighCard()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #9b59b6; margin-bottom: 5px;">High Card War</h2>
+        <p id="hcStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 30px; margin-bottom: 40px; align-items: center;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="font-size: 16px; color: white;">You</div>
+                <div id="hcMyCard" style="width: 100px; height: 150px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; color: black; font-weight: bold; border: 2px solid var(--glass-border);"><i class="fa-solid fa-question"></i></div>
+            </div>
+            <div style="font-size: 30px; font-weight: bold; color: var(--text-secondary);">VS</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="font-size: 16px; color: white;">Opponent</div>
+                <div id="hcOppCard" style="width: 100px; height: 150px; background: var(--island); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; color: white; font-weight: bold; border: 2px solid var(--glass-border);"><i class="fa-solid fa-question"></i></div>
             </div>
         </div>
 
-        <button id="rematchC4Btn" onclick="resetConnect4()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="hcDrawBtn" onclick="drawHighCard()" style="display:none; padding: 20px 50px; border-radius: 40px; background: #9b59b6; color: white; font-weight: 900; font-size: 24px; border: none; box-shadow: 0 4px 15px rgba(155,89,182,0.3);">DRAW</button>
+        <button id="rematchHcBtn" onclick="resetHighCard()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #9b59b6; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="guessNumberOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveGuessNumber()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #f1c40f; margin-bottom: 5px;">Guess the Number</h2>
+        <p id="gnStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+        <div style="font-size: 16px; margin-bottom: 30px; color: white;">Guess the secret number between 1 and 100</div>
+
+        <div id="gnHistory" style="width: 280px; height: 180px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 12px; overflow-y: auto; padding: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: white;"></div>
+
+        <div id="gnControls" style="display: none; gap: 10px; width: 280px;">
+            <input type="number" id="gnInput" min="1" max="100" placeholder="1-100" style="flex: 1; padding: 20px; border-radius: 16px; border: 2px solid var(--glass-border); background: var(--bg-dark); color: white; font-size: 24px; outline: none; text-align: center;">
+            <button onclick="submitGuessNumber()" style="padding: 0 25px; border-radius: 16px; background: #f1c40f; color: var(--bg-dark); font-weight: bold; border: none; font-size: 24px;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+        <button id="rematchGnBtn" onclick="resetGuessNumber()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #f1c40f; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="coinFlipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveCoinFlip()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #bdc3c7; margin-bottom: 5px;">Coin Flip</h2>
+        <p id="cfStatus" style="color: var(--text-secondary); margin-bottom: 40px;">Waiting for opponent...</p>
+
+        <div id="cfCoin" style="width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #ecf0f1 0%, #95a5a6 100%); display: flex; align-items: center; justify-content: center; font-size: 60px; color: #2c3e50; font-weight: 900; margin-bottom: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: transform 0.4s ease-in-out;">?</div>
+
+        <div id="cfControls" style="display: none; gap: 20px;">
+            <button onclick="makeCoinChoice('Heads')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Heads</button>
+            <button onclick="makeCoinChoice('Tails')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Tails</button>
+        </div>
+        <button id="rematchCfBtn" onclick="resetCoinFlip()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #bdc3c7; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="higherLowerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveHigherLower()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #e74c3c; margin-bottom: 5px;">Higher or Lower</h2>
+        <p id="hlStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
+
+        <div id="hlCard" style="width: 120px; height: 180px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 70px; color: black; font-weight: bold; border: 2px solid var(--glass-border); margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">?</div>
+
+        <div id="hlControls" style="display: none; gap: 20px;">
+            <button onclick="makeHlChoice('Higher')" style="padding: 20px 30px; border-radius: 16px; background: #2ecc71; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-up"></i> Higher</button>
+            <button onclick="makeHlChoice('Lower')" style="padding: 20px 30px; border-radius: 16px; background: #e74c3c; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-down"></i> Lower</button>
+        </div>
+        <button id="rematchHlBtn" onclick="resetHigherLower()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #e74c3c; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <!-- GAME CHAT -->
+
+
+    <!-- PREMIUM LUDO OVERLAY -->
+    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background-color: #0b3b60; background-image: radial-gradient(#155b94 15%, transparent 16%), radial-gradient(#155b94 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; width: 100vw; height: 100dvh;">
+
+        <button onclick="leaveLudo()" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; color: #fff; font-size: 20px; z-index: 10000; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-left"></i></button>
+
+        <div id="ludoStatusWrapper" style="position: absolute; top: 15px; left: 0; width: 100%; text-align: center; z-index: 1000;">
+            <p id="ludoStatus" style="color: #fff; font-weight: bold; background: rgba(0,0,0,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2); margin:0;">Waiting for opponents...</p>
+        </div>
+
+        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 55dvh; aspect-ratio: 1 / 1; background: #222; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-radius: 0 0 10px 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5; margin-top: 20px;">
+            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; max-height: 55dvh; cursor: pointer; display: block; border-radius: 0 0 10px 10px; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+            <div id="hologram-msg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff; padding: 15px 30px; border-radius: 30px; font-size: 1.5rem; font-weight: bold; font-style: italic; z-index: 200; pointer-events: none; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;">Hello!</div>
+        </div>
+
+        <div class="controls-area" style="flex: 1; display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%; padding: 0 15px; box-sizing: border-box; position: relative; z-index: 10;">
+            <div class="profile-col" id="profiles-left" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
+
+            <div class="center-col" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; flex: 1;">
+                <div class="dice-container" style="margin-top: -4px; z-index: 100;" id="ludoDiceContainer">
+                    <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 15px 15px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
+                </div>
+                <div id="ludoTurnIndicator" style="font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; margin-top: auto; margin-bottom: auto; transition: all 0.3s ease; text-shadow: 0 5px 15px rgba(0,0,0,0.6); display: none;">RED</div>
+                <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: auto; margin-bottom: auto; padding: 12px 24px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.6);">Play Again</button>
+            </div>
+
+            <div class="profile-col" id="profiles-right" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
+        </div>
+
+        <button class="chat-btn-float" onclick="toggleLudoChat()" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #ff4757; color: white; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 24px; cursor: pointer; z-index: 500; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"><i class="fa-solid fa-comment-dots"></i></button>
+
+        <div id="ludo-chat-drawer" style="position: absolute; bottom: 90px; right: 20px; width: 280px; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #2f3542; display: flex; flex-direction: column; gap: 10px; z-index: 499; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
+            <div style="font-weight: 900; color: #2f3542; border-bottom: 2px solid #dfe4ea; padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem;">Quick Chat</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Hello!</button>
+                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Good Luck!</button>
+                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Oops!</button>
+                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Gotcha!</button>
+            </div>
+            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
+                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 8px; border: none; background: #2ed573; color: white; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+
+        <style>
+            #ludo-chat-drawer.open { transform: scale(1) !important; pointer-events: auto !important; }
+            #ludoDice:active { transform: translateY(6px) !important; }
+            .rolling { animation: diceShake 0.3s ease-in-out infinite; }
+            @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
+            .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
+
+            .player-profile { width: 100%; height: 75px; background: rgba(0,0,0,0.6); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+            .profile-active { border-color: #fff !important; box-shadow: 0 0 20px rgba(255,255,255,0.8); transform: scale(1.1); background: rgba(0,0,0,0.85); z-index: 10; }
+            .profile-avatar { width: 45px; height: 45px; border-radius: 50%; background: #fff; border: 2px solid #ccc; margin-bottom: 4px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; overflow:hidden;}
+            .profile-avatar img { width:100%; height:100%; object-fit:cover; }
+            .profile-name { font-size: 0.85rem; font-weight: bold; color: #fff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;}
+
+            #hologram-msg.show { animation: hologramPop 3s ease-out forwards; }
+            @keyframes hologramPop { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(0.9); } }
+        </style>
     </div>
 
     <div id="gameChatContainer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 30vh; background: var(--island); border-top: 1px solid var(--glass-border); z-index: 100001; flex-direction: column;">
@@ -5908,19 +7949,5 @@ window.burnImage = function(element, url, key) {
         </div>
     </div>
 
-    <div id="mmOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 50px;">
-        <button onclick="leaveMemoryMatch()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #03A9F4; margin-bottom: 5px;">Memory Match</h2>
-        <div style="display: none; gap: 40px; font-size: 24px; font-weight: bold; color: white; margin-bottom: 10px;">
-            <span id="mmScoreX" style="color: #ff003c;">0</span> - <span id="mmScoreO" style="color: #ffcc00;">0</span>
-        </div>
-        <p id="mmStatus" style="color: var(--text-secondary); margin-bottom: 20px;">Waiting for opponent...</p>
-
-        <div id="mmBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 300px; max-width: 100%;">
-            <!-- Generated by JS -->
-        </div>
-
-        <button id="rematchMmBtn" onclick="resetMemoryMatch()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: #03A9F4; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
-    </div>
 </body>
 </html>
