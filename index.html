@@ -5422,7 +5422,7 @@ function sendNotification(title, body, icon) {
         // Local copy for smooth animations independent of Firebase ticks
         let renderTokens = [];
         let activeLudoTeams = [];
-        const emojis = ["🦁", "🦊", "🐯", "🐼"];
+        const ludoEmojis = ["🦁", "🦊", "🐯", "🐼"];
 
         // --- UI CHAT CONTROLLERS ---
         window.toggleLudoChat = function() { document.getElementById('ludo-chat-drawer').classList.toggle('open'); }
@@ -5518,7 +5518,7 @@ function sendNotification(title, body, icon) {
                         let activeIndex = activeLudoTeams.indexOf(team);
                         let isUser = (team === myLudoTeam);
                         let name = isUser ? "You" : (ludoState[`p${activeIndex+1}Name`] || "Opponent");
-                        let av = isUser ? "😎" : emojis[team];
+                        let av = isUser ? "😎" : ludoEmojis[team];
                         let html = `<div id="profile-${team}" class="player-profile" style="border-color: ${ludoColors[team]}">
                                         <div class="profile-avatar">${av}</div>
                                         <div class="profile-name">${name}</div>
