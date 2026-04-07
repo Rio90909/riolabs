@@ -5422,6 +5422,25 @@ function sendNotification(title, body, icon) {
         // Local copy for smooth animations independent of Firebase ticks
         let renderTokens = [];
         let activeLudoTeams = [];
+        const emojis = ["🦁", "🦊", "🐯", "🐼"];
+
+        // --- UI CHAT CONTROLLERS ---
+        window.toggleLudoChat = function() { document.getElementById('ludo-chat-drawer').classList.toggle('open'); }
+        window.sendLudoCustomChat = function() { let msg = document.getElementById('ludo-custom-msg').value; if(msg.trim() === "") return; document.getElementById('ludo-custom-msg').value = ""; ui_triggerLudoChat(msg); }
+        window.ui_triggerLudoChat = function(msg) {
+            toggleLudoChat();
+            if (gameRef) gameRef.child('ludoChat').push({ msg: msg, team: myLudoTeam, ts: Date.now() });
+        }
+
+        window.displayLudoHologram = function(msg, teamIndex) {
+            const holo = document.getElementById('hologram-msg');
+            if(!holo) return;
+            holo.classList.remove('show'); void holo.offsetWidth;
+            holo.innerText = msg;
+            holo.style.borderColor = ludoColors[teamIndex];
+            holo.style.boxShadow = `0 10px 30px rgba(0,0,0,0.8), 0 0 20px ${ludoColors[teamIndex]}88`;
+            holo.classList.add('show');
+        }
 
         window.startLudoGameLoop = function() {
             const canvas = document.getElementById('ludoCanvas');
@@ -5465,6 +5484,13 @@ function sendNotification(title, body, icon) {
                 }
             };
 
+            gameRef.child('ludoChat').on('child_added', snap => {
+                let m = snap.val();
+                if(m && m.ts > Date.now() - 60000) {
+                    displayLudoHologram(m.msg, m.team);
+                }
+            });
+
             gameRef.on('value', snap => {
                 ludoState = snap.val();
                 if(!ludoState) return;
@@ -5473,6 +5499,11 @@ function sendNotification(title, body, icon) {
                 activeLudoTeams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
 
                 if(renderTokens.length === 0) {
+                    let leftCol = document.getElementById('profiles-left');
+                    let rightCol = document.getElementById('profiles-right');
+                    if(leftCol) leftCol.innerHTML = '';
+                    if(rightCol) rightCol.innerHTML = '';
+
                     activeLudoTeams.forEach(team => {
                         for(let i=0; i<4; i++) {
                             let exactX = (baseOffsets[team].x + baseSlots[i].x) * ludoGrid;
@@ -5482,11 +5513,27 @@ function sendNotification(title, body, icon) {
                                 baseX: exactX, baseY: exactY, displayX: exactX, displayY: exactY, moveQueue: []
                             });
                         }
+
+                        // Generate UI Profile
+                        let activeIndex = activeLudoTeams.indexOf(team);
+                        let isUser = (team === myLudoTeam);
+                        let name = isUser ? "You" : (ludoState[`p${activeIndex+1}Name`] || "Opponent");
+                        let av = isUser ? "😎" : emojis[team];
+                        let html = `<div id="profile-${team}" class="player-profile" style="border-color: ${ludoColors[team]}">
+                                        <div class="profile-avatar">${av}</div>
+                                        <div class="profile-name">${name}</div>
+                                    </div>`;
+
+                        let relativeTurnOrder = (team - myLudoTeam + 4) % 4;
+                        if (relativeTurnOrder === 0 || relativeTurnOrder === 1) {
+                            if(leftCol) leftCol.innerHTML += html;
+                        } else {
+                            if(rightCol) rightCol.innerHTML += html;
+                        }
                     });
                 }
 
                 if(ludoState.winner) {
-                    playWinSound();
                     if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('ludoTurnIndicator').style.display = 'none';
                     document.getElementById('ludoDiceContainer').style.display = 'none';
@@ -5500,17 +5547,28 @@ function sendNotification(title, body, icon) {
                     // Update turn UI
                     const ti = document.getElementById('ludoTurnIndicator');
                     let activeIndex = activeLudoTeams.indexOf(ludoState.turn);
-                    ti.innerText = ludoState[`p${activeIndex+1}Name`] || `Player ${activeIndex+1}`;
+                    let turnName = ludoState[`p${activeIndex+1}Name`] || `Player ${activeIndex+1}`;
+                    ti.innerText = turnName;
                     ti.style.color = ludoColors[ludoState.turn];
 
                     if (ludoState.turn === myLudoTeam) {
                         if (ludoState.diceRoll === 0) document.getElementById('ludoStatus').innerText = "Your Turn! Tap the dice to roll.";
                         else document.getElementById('ludoStatus').innerText = "Select a piece to move.";
                     } else {
-                        document.getElementById('ludoStatus').innerText = "Opponent's Turn...";
+                        document.getElementById('ludoStatus').innerText = turnName + "'s Turn...";
                     }
 
                     renderLudoDice(ludoState.diceRoll || 1, ludoColors[ludoState.turn]);
+
+                    // CEO: Handle dynamic active profiles in UI
+                    document.querySelectorAll('.player-profile').forEach(p => p.classList.remove('profile-active'));
+                    const activeProfile = document.getElementById(`profile-${ludoState.turn}`);
+                    if(activeProfile) activeProfile.classList.add('profile-active');
+
+                    const diceEl = document.getElementById('ludoDice');
+                    diceEl.style.border = `4px solid ${ludoColors[ludoState.turn]}`;
+                    diceEl.style.borderTop = `none`;
+                    diceEl.style.boxShadow = `0 15px 25px rgba(0,0,0,0.6), 0 10px 40px ${ludoColors[ludoState.turn]}66`;
                 }
 
                 // Sync exact state to renderTokens
@@ -5753,34 +5811,65 @@ function sendNotification(title, body, icon) {
 
             // Center
             ctx.fillStyle = '#ddd'; ctx.fillRect(6*ludoGrid, 6*ludoGrid, 3*ludoGrid, 3*ludoGrid);
-            ctx.fillStyle = ludoColors[0]; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.fill();
-            ctx.fillStyle = ludoColors[2]; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.fill();
+            ctx.fillStyle = activeLudoTeams.includes(0) ? ludoColors[0] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.strokeStyle = '#000'; ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(1) ? ludoColors[1] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(2) ? ludoColors[2] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(3) ? ludoColors[3] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.stroke();
 
-            // Tokens
-            let sortedTokens = [...renderTokens].sort((a,b) => a.moveQueue.length - b.moveQueue.length);
-            sortedTokens.forEach(t => {
-                if (t.state === 'home') return;
-                let radius = ludoGrid * 0.35;
-                ctx.beginPath(); ctx.arc(t.displayX + 2, t.displayY + 3, radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+            // CEO: ADVANCED CLUSTERING TO FIX OVERLAPS AND RENDER FINISHED TOKENS
+            let rendered = new Set();
+            renderTokens.forEach(t => {
+                if (rendered.has(t)) return;
 
-                ctx.beginPath(); ctx.arc(t.displayX, t.displayY, radius, 0, Math.PI * 2);
-                ctx.fillStyle = ludoColors[t.team]; ctx.fill();
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+                // Find all tokens on this exact same square (ignoring those safely separated in their bases)
+                let cluster = renderTokens.filter(other =>
+                    Math.abs(other.displayX - t.displayX) < 5 &&
+                    Math.abs(other.displayY - t.displayY) < 5
+                );
 
-                ctx.beginPath(); ctx.arc(t.displayX - 2, t.displayY - 2, radius * 0.4, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
+                cluster.forEach(c => rendered.add(c));
 
-                if (!isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0) {
-                    if ((t.state === 'base' && ludoState.diceRoll === 6) || (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56)) {
-                        ctx.beginPath(); ctx.arc(t.displayX, t.displayY, radius + 4, 0, Math.PI * 2);
-                        ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke();
-                        ctx.setLineDash([]);
+                let len = cluster.length;
+                cluster.sort((a,b) => a.team - b.team); // Group same colors together in the cluster
+
+                cluster.forEach((ct, idx) => {
+                    let ox = 0, oy = 0, scale = 1;
+                    // Cluster visually if more than 1 token is sharing a grid tile (unless they are physically in their distinct base slots)
+                    if (len > 1 && ct.state !== 'base') {
+                        scale = 0.7; // Shrink them down so they fit
+                        let angle = (Math.PI * 2 * idx) / len + (Math.PI/4);
+                        let spread = ludoGrid * 0.2; // Push them slightly outwards from the center of the tile
+                        ox = Math.cos(angle) * spread;
+                        oy = Math.sin(angle) * spread;
                     }
-                }
+                    drawLudoSingleToken(ctx, ct, ct.displayX + ox, ct.displayY + oy, scale);
+                });
             });
 
             ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.strokeRect(3, 3, 594, 594);
+        }
+
+        function drawLudoSingleToken(ctx, t, x, y, scale) {
+            if (t.state === 'home') return;
+            let radius = ludoGrid * 0.35 * scale;
+            ctx.beginPath(); ctx.arc(x + 2*scale, y + 3*scale, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+
+            ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = ludoColors[t.team]; ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
+
+            ctx.beginPath(); ctx.arc(x - 2*scale, y - 2*scale, radius * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
+
+            // Highlight playable tokens
+            if (!isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0 && t.team === myLudoTeam) {
+                if ((t.state === 'base' && ludoState.diceRoll === 6) || (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56)) {
+                    ctx.beginPath(); ctx.arc(x, y, radius + 4*scale, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#000'; ctx.lineWidth = 2*scale; ctx.setLineDash([4*scale, 4*scale]); ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
         }
 
         function drawLudoStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
@@ -6480,7 +6569,7 @@ function sendNotification(title, body, icon) {
 
         window.leaveLudo = function() {
             if(ludoRaf) cancelAnimationFrame(ludoRaf);
-            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.child('ludoChat').off(); gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ludoOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
@@ -7747,28 +7836,48 @@ window.burnImage = function(element, url, key) {
     <!-- GAME CHAT -->
 
 
-    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
-        <button onclick="leaveLudo()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 100;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #4CAF50; margin-bottom: 5px;" id="ludoTitle">Classic Ludo</h2>
-        <p id="ludoStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
+    <!-- PREMIUM LUDO OVERLAY -->
+    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background-color: #0b3b60; background-image: radial-gradient(#155b94 15%, transparent 16%), radial-gradient(#155b94 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; width: 100vw; height: 100dvh;">
 
-        <div id="ludoGameContainer" style="width: 100vw; max-width: min(100vw, 55vh); aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-top: 4px solid #fff; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5;">
-            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+        <button onclick="leaveLudo()" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; color: #fff; font-size: 20px; z-index: 10000; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-left"></i></button>
+
+        <div id="ludoStatusWrapper" style="position: absolute; top: 15px; left: 0; width: 100%; text-align: center; z-index: 1000;">
+            <p id="ludoStatus" style="color: #fff; font-weight: bold; background: rgba(0,0,0,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2); margin:0;">Waiting for opponents...</p>
         </div>
 
-        <div class="controls" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; width: 100%;">
-            <div class="dice-container" style="margin-top: -4px; z-index: 10;" id="ludoDiceContainer">
-                <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 25px 25px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
+        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 68dvh; aspect-ratio: 1 / 1; background: #fff; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-radius: 0 0 10px 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5; margin-top: 50px;">
+            <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; cursor: pointer; display: block; border-radius: 0 0 10px 10px; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
+            <div id="hologram-msg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff; padding: 15px 30px; border-radius: 30px; font-size: 1.5rem; font-weight: bold; font-style: italic; z-index: 200; pointer-events: none; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;">Hello!</div>
+        </div>
+
+        <div class="controls-area" style="flex: 1; display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%; padding: 0 15px; box-sizing: border-box; position: relative; z-index: 10;">
+            <div class="profile-col" id="profiles-left" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
+
+            <div class="center-col" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%; flex: 1;">
+                <div class="dice-container" style="margin-top: -4px; z-index: 100;" id="ludoDiceContainer">
+                    <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 15px 15px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
+                </div>
+                <div id="ludoTurnIndicator" style="font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; margin-top: auto; margin-bottom: auto; transition: all 0.3s ease; text-shadow: 0 5px 15px rgba(0,0,0,0.6); display: none;">RED</div>
+                <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: auto; margin-bottom: auto; padding: 12px 24px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.6);">Play Again</button>
             </div>
-            <div id="ludoTurnIndicator" style="font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: 4px; margin-top: 15px; transition: all 0.3s ease; display: none;">RED</div>
+
+            <div class="profile-col" id="profiles-right" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
         </div>
 
-        <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
         <style>
             #ludoDice:active { transform: translateY(6px) !important; }
             .rolling { animation: diceShake 0.3s ease-in-out infinite; }
             @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
             .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
+
+            .player-profile { width: 100%; height: 75px; background: rgba(0,0,0,0.6); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+            .profile-active { border-color: #fff !important; box-shadow: 0 0 20px rgba(255,255,255,0.8); transform: scale(1.1); background: rgba(0,0,0,0.85); z-index: 10; }
+            .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #fff; border: 2px solid #ccc; margin-bottom: 2px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; overflow:hidden;}
+            .profile-avatar img { width:100%; height:100%; object-fit:cover; }
+            .profile-name { font-size: 0.65rem; font-weight: bold; color: #fff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+            #hologram-msg.show { animation: hologramPop 3s ease-out forwards; }
+            @keyframes hologramPop { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(0.9); } }
         </style>
     </div>
 
