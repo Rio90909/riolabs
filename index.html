@@ -1411,6 +1411,48 @@
         .sheet-btn.gold-ghost { color: #FFD34D; border-color: rgba(255,201,38,0.4); background: rgba(255,201,38,0.06); }
         .sheet-btn.fire-soft { color: #FF8A3D; border-color: rgba(255,106,0,0.35); background: rgba(255,106,0,0.08); }
         .sheet-btn.danger-soft { color: #FF7A72; border-color: rgba(237,66,69,0.35); background: rgba(237,66,69,0.08); }
+        /* ================= STAGE 11 GAMES ================= */
+        .ch-piece { font-size: 29px; line-height: 1; pointer-events: none; }
+        .ch-piece.w { color: #F8FAFC; text-shadow: 0 1px 2px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.7); }
+        .ch-piece.b { color: #15171d; text-shadow: 0 1px 1px rgba(255,255,255,0.4); }
+        .ch-dot { position: absolute; width: 26%; height: 26%; border-radius: 50%; background: rgba(20,22,28,0.35); pointer-events: none; }
+        .ch-capring { position: absolute; inset: 0; border-radius: 4px; box-shadow: inset 0 0 0 3px rgba(229,72,77,0.8); pointer-events: none; }
+        .ch-capline { min-height: 22px; font-size: 17px; letter-spacing: 1px; width: 320px; max-width: 94vw; }
+        .ch-capline .ch-piece { font-size: 17px; }
+        .si-pad { border-radius: 18px; aspect-ratio: 1; cursor: pointer; opacity: 0.4; transition: opacity 0.12s ease, transform 0.12s ease; }
+        .si-pad.lit { opacity: 1; transform: scale(1.05); }
+        .dm-tile { background: #F1F5F9; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25); }
+        .dm-half { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); width: 15px; height: 15px; padding: 2px; box-sizing: border-box; }
+        .dm-pip { width: 3.5px; height: 3.5px; border-radius: 50%; background: transparent; justify-self: center; align-self: center; }
+        .dm-pip.on { background: #1F2430; }
+        .dm-sep { width: 1px; align-self: stretch; background: rgba(0,0,0,0.3); margin: 2px 1px; }
+        .hg-letter { width: 30px; height: 38px; border-radius: 8px; background: var(--panel); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 900; color: var(--text-primary); }
+        .hg-key { padding: 9px 0; border-radius: 9px; border: 1px solid var(--glass-border); background: var(--panel); color: var(--text-primary); font-weight: 800; font-size: 14px; cursor: pointer; }
+        .hg-key.used-ok { background: rgba(255,201,38,0.16); color: #FFD34D; border-color: rgba(255,201,38,0.4); }
+        .hg-key.used-bad { background: rgba(237,66,69,0.12); color: #FF7A72; border-color: rgba(237,66,69,0.3); opacity: 0.6; }
+        .hg-key:disabled { cursor: default; }
+        .tv-opt, .mt-opt { padding: 14px 12px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--panel); color: var(--text-primary); font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; transition: transform 0.12s ease, background 0.12s ease; }
+        .tv-opt:active, .mt-opt:active { transform: scale(0.97); }
+        .tv-opt.picked { border-color: #FFC926; background: rgba(255,201,38,0.12); }
+        .tv-opt.right { border-color: #46A758; background: rgba(70,167,88,0.18); }
+        .tv-opt.wrong { border-color: #ED4245; background: rgba(237,66,69,0.15); }
+        .mt-opt.locked { opacity: 0.45; }
+        .tv-timerwrap { width: 320px; max-width: 92vw; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 14px; }
+        .tv-timerfill { height: 100%; background: var(--gold-grad); transform-origin: left center; }
+        .wc-chip { padding: 7px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 800; font-size: 14px; letter-spacing: 1.5px; }
+        .wc-chip.latest { border-color: #FFC926; color: #FFD34D; background: rgba(255,201,38,0.08); }
+        .wc-heart { color: #ED4245; font-size: 15px; margin-right: 2px; }
+        .wc-heart.lost { color: rgba(255,255,255,0.15); }
+        .ch-cell { position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: #64748B; border-radius: 4px; cursor: pointer; }
+        .ch-cell.light { background: #CBD5E1; }
+        .ch-cell.sel { box-shadow: inset 0 0 0 3px #FFC926; }
+        .ch-cell.lastm { box-shadow: inset 0 0 0 100px rgba(255,201,38,0.22); }
+        .dm-tile.mini { transform: scale(0.85); }
+        .dm-tile.playable { box-shadow: inset 0 0 0 2px #FFC926; cursor: pointer; }
+        .dm-tile.sel { box-shadow: inset 0 0 0 2px #FFC926, 0 0 0 2px rgba(255,201,38,0.35); transform: translateY(-4px); }
+        .dm-end { padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,201,38,0.5); background: rgba(255,201,38,0.12); color: #FFD34D; font-weight: 800; font-size: 12px; cursor: pointer; white-space: nowrap; align-self: center; }
+        .hg-letter.blank { background: rgba(255,255,255,0.03); border-bottom: 2px solid rgba(255,201,38,0.45); }
+        .tv-opt:disabled, .mt-opt:disabled { opacity: 0.55; cursor: default; }
     </style>
 </head>
 <body>
@@ -1638,7 +1680,7 @@
                     </div>
                     <span class="v3-cta">Play</span>
                 </div>
-                <p class="v3-lbl">All Games &middot; 23</p>
+                <p class="v3-lbl">All Games &middot; 30</p>
                 <div class="v3-games-grid">
                     <div class="v3-gcard ripple-target" onclick="findStrangerGame('TicTacToe')">
                         <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
@@ -1765,6 +1807,41 @@
                         <div class="v3-gcard-name">Colour Flood <span class="v3-chip-new">NEW</span></div>
                         <div class="v3-gcard-sub">20 picks each</div>
                     </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Chess')">
+                        <div class="v3-gcard-tile" style="color: #E2E8F0;"><i class="fa-solid fa-chess"></i></div>
+                        <div class="v3-gcard-name">Chess <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Full rules · 2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Dominoes')">
+                        <div class="v3-gcard-tile" style="color: #FDE68A;"><i class="fa-solid fa-grip-vertical"></i></div>
+                        <div class="v3-gcard-name">Dominoes <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Double-six duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Hangman')">
+                        <div class="v3-gcard-tile" style="color: #FDA4AF;"><i class="fa-solid fa-spell-check"></i></div>
+                        <div class="v3-gcard-name">Hangman Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Race the word</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Trivia')">
+                        <div class="v3-gcard-tile" style="color: #67E8F9;"><i class="fa-solid fa-brain"></i></div>
+                        <div class="v3-gcard-name">Trivia Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">10 questions</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('MathDuel')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-plus-minus"></i></div>
+                        <div class="v3-gcard-name">Math Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Fastest brain wins</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Simon')">
+                        <div class="v3-gcard-tile" style="color: #F87171;"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="v3-gcard-name">Simon Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Memory race</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('WordChain')">
+                        <div class="v3-gcard-tile" style="color: #A5B4FC;"><i class="fa-solid fa-link"></i></div>
+                        <div class="v3-gcard-name">Word Chain <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Last letter wins</div>
+                    </div>
                 </div>
             </div>
 
@@ -1888,6 +1965,41 @@
                         <div class="v3-gcard-tile" style="color: #4ADE80;"><i class="fa-solid fa-palette"></i></div>
                         <div class="v3-gcard-name">Colour Flood</div>
                         <div class="v3-gcard-sub">20 picks each</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Chess')">
+                        <div class="v3-gcard-tile" style="color: #E2E8F0;"><i class="fa-solid fa-chess"></i></div>
+                        <div class="v3-gcard-name">Chess</div>
+                        <div class="v3-gcard-sub">Full rules · 2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Dominoes')">
+                        <div class="v3-gcard-tile" style="color: #FDE68A;"><i class="fa-solid fa-grip-vertical"></i></div>
+                        <div class="v3-gcard-name">Dominoes</div>
+                        <div class="v3-gcard-sub">Double-six duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Hangman')">
+                        <div class="v3-gcard-tile" style="color: #FDA4AF;"><i class="fa-solid fa-spell-check"></i></div>
+                        <div class="v3-gcard-name">Hangman Duel</div>
+                        <div class="v3-gcard-sub">Race the word</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Trivia')">
+                        <div class="v3-gcard-tile" style="color: #67E8F9;"><i class="fa-solid fa-brain"></i></div>
+                        <div class="v3-gcard-name">Trivia Duel</div>
+                        <div class="v3-gcard-sub">10 questions</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('MathDuel')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-plus-minus"></i></div>
+                        <div class="v3-gcard-name">Math Duel</div>
+                        <div class="v3-gcard-sub">Fastest brain wins</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Simon')">
+                        <div class="v3-gcard-tile" style="color: #F87171;"><i class="fa-solid fa-bullseye"></i></div>
+                        <div class="v3-gcard-name">Simon Duel</div>
+                        <div class="v3-gcard-sub">Memory race</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('WordChain')">
+                        <div class="v3-gcard-tile" style="color: #A5B4FC;"><i class="fa-solid fa-link"></i></div>
+                        <div class="v3-gcard-name">Word Chain</div>
+                        <div class="v3-gcard-sub">Last letter wins</div>
                     </div>
                 </div>
             </div>
@@ -2070,7 +2182,7 @@
                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
                     <div class="v3-row-mid">
                         <div class="v3-row-name">Mini-Games</div>
-                        <div class="v3-row-sub">Live play &middot; 23 games with strangers</div>
+                        <div class="v3-row-sub">Live play &middot; 30 games with strangers</div>
                     </div>
                     <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
@@ -5923,11 +6035,11 @@ function sendNotification(title, body, icon) {
         // Fixed display names for every game key. Invite cards and the
         // profile record are built ONLY from this map (never from raw
         // message data), so a crafted message can't inject markup.
-        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice', Checkers: 'Checkers', Mancala: 'Mancala', Mastermind: 'Mastermind', Bingo: 'Bingo Duel', Flood: 'Colour Flood' };
+        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice', Checkers: 'Checkers', Mancala: 'Mancala', Mastermind: 'Mastermind', Bingo: 'Bingo Duel', Flood: 'Colour Flood', Chess: 'Chess', Dominoes: 'Dominoes', Hangman: 'Hangman Duel', Trivia: 'Trivia Duel', MathDuel: 'Math Duel', Simon: 'Simon Duel', WordChain: 'Word Chain' };
         // Games a friend can be challenged to (every 2P game + Ludo 2P only;
         // Ludo 3P/4P stay matchmaking-only).
-        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood'];
-        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice', Checkers: 'leaveCheckers', Mancala: 'leaveMancala', Mastermind: 'leaveMastermind', Bingo: 'leaveBingo', Flood: 'leaveFlood' };
+        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain'];
+        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice', Checkers: 'leaveCheckers', Mancala: 'leaveMancala', Mastermind: 'leaveMastermind', Bingo: 'leaveBingo', Flood: 'leaveFlood', Chess: 'leaveChess', Dominoes: 'leaveDominoes', Hangman: 'leaveHangman', Trivia: 'leaveTrivia', MathDuel: 'leaveMathDuel', Simon: 'leaveSimon', WordChain: 'leaveWordChain' };
 
         function gameStatsTotals(stats) {
             let w = 0, l = 0, d = 0;
@@ -6124,6 +6236,32 @@ function sendNotification(title, body, icon) {
                 document.getElementById('flStatus').innerText = statusText;
                 renderFlBoard();
                 renderFlPalette();
+            } else if (gameType === 'Chess') {
+                document.getElementById('chessOverlay').style.display = 'flex';
+                document.getElementById('chStatus').innerText = statusText;
+                chSelected = null;
+                renderChBoard();
+            } else if (gameType === 'Dominoes') {
+                document.getElementById('dominoesOverlay').style.display = 'flex';
+                document.getElementById('doStatus').innerText = statusText;
+            } else if (gameType === 'Hangman') {
+                document.getElementById('hangmanOverlay').style.display = 'flex';
+                document.getElementById('hgStatus').innerText = statusText;
+                renderHgKeys();
+            } else if (gameType === 'Trivia') {
+                document.getElementById('triviaOverlay').style.display = 'flex';
+                document.getElementById('tvStatus').innerText = statusText;
+            } else if (gameType === 'MathDuel') {
+                document.getElementById('mathDuelOverlay').style.display = 'flex';
+                document.getElementById('mtStatus').innerText = statusText;
+            } else if (gameType === 'Simon') {
+                document.getElementById('simonOverlay').style.display = 'flex';
+                document.getElementById('siStatus').innerText = statusText;
+                siResetLocal();
+            } else if (gameType === 'WordChain') {
+                document.getElementById('wordChainOverlay').style.display = 'flex';
+                document.getElementById('wcStatus').innerText = statusText;
+                document.getElementById('wcChain').innerHTML = '';
             }
         }
 
@@ -6182,6 +6320,13 @@ function sendNotification(title, body, icon) {
                 case 'Mastermind': return { code: mdNewCode(), g1: null, g2: null, winner: null };
                 case 'Bingo': return { card1: bgNewCard(), card2: bgNewCard(), drawOrder: bgNewDrawOrder(), startStamp: 0, marks1: bgEmptyMarks(), marks2: bgEmptyMarks(), winner: null, claimLock1: 0, claimLock2: 0 };
                 case 'Flood': { const fg = flGenGrid(Math.floor(Math.random() * 1000000000)); return { grid: fg, c1: fg[132], c2: fg[11], turn: 'P1', moves1: 0, moves2: 0, winner: null }; }
+                case 'Chess': { const cs = chInitialState(); return { board: cs.board, castling: cs.castling, ep: -1, turn: 'P1', winner: null, lastMove: null }; }
+                case 'Dominoes': { const dd = dmDeal(); return { hand1: dd.hand1, hand2: dd.hand2, bone: dd.bone, chain: dd.chain, turn: dd.turn, passes: 0, winner: null }; }
+                case 'Hangman': return { word: hmNewWord(), w1: { guessed: [], wrong: 0, done: false }, w2: { guessed: [], wrong: 0, done: false }, winner: null };
+                case 'Trivia': { const seed = Math.floor(Math.random() * 1000000000); return { seed: seed, order: tvPickOrder(seed), startStamp: 0, ans1: {}, ans2: {}, winner: null }; }
+                case 'MathDuel': return { seed: Math.floor(Math.random() * 1000000000), round: 1, wins1: 0, wins2: 0, lock1: false, lock2: false, roundWinner: null, winner: null };
+                case 'Simon': return { seed: Math.floor(Math.random() * 1000000000), round: 1, roundStamp: 0, att1: '', att2: '', winner: null };
+                case 'WordChain': return { chain: [], turn: 'P1', lives1: 3, lives2: 3, turnStamp: 0, lastEvent: '', winner: null };
                 case 'Ludo2': {
                     const baseTokens = () => [{ id: 0, state: 'base', stepsTaken: -1 }, { id: 1, state: 'base', stepsTaken: -1 }, { id: 2, state: 'base', stepsTaken: -1 }, { id: 3, state: 'base', stepsTaken: -1 }];
                     return { turn: 0, diceRoll: 0, lastRollWasSix: false, winner: null, state: 'playing', targetPlayers: 2, turnStamp: Date.now(), tokens_0: baseTokens(), tokens_2: baseTokens() };
@@ -6425,7 +6570,7 @@ function sendNotification(title, body, icon) {
 
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -6525,6 +6670,33 @@ function sendNotification(title, body, icon) {
                 document.getElementById('flStatus').innerText = "Searching for opponent...";
                 renderFlBoard();
                 renderFlPalette();
+            }
+            else if (gameType === 'Chess') {
+                document.getElementById('chessOverlay').style.display = 'flex';
+                document.getElementById('chStatus').innerText = "Searching for opponent...";
+                chSelected = null;
+                renderChBoard();
+            } else if (gameType === 'Dominoes') {
+                document.getElementById('dominoesOverlay').style.display = 'flex';
+                document.getElementById('doStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Hangman') {
+                document.getElementById('hangmanOverlay').style.display = 'flex';
+                document.getElementById('hgStatus').innerText = "Searching for opponent...";
+                renderHgKeys();
+            } else if (gameType === 'Trivia') {
+                document.getElementById('triviaOverlay').style.display = 'flex';
+                document.getElementById('tvStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'MathDuel') {
+                document.getElementById('mathDuelOverlay').style.display = 'flex';
+                document.getElementById('mtStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Simon') {
+                document.getElementById('simonOverlay').style.display = 'flex';
+                document.getElementById('siStatus').innerText = "Searching for opponent...";
+                siResetLocal();
+            } else if (gameType === 'WordChain') {
+                document.getElementById('wordChainOverlay').style.display = 'flex';
+                document.getElementById('wcStatus').innerText = "Searching for opponent...";
+                document.getElementById('wcChain').innerHTML = '';
             }
 
             if (gameType.startsWith('Ludo')) {
@@ -7321,6 +7493,118 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchFlBtn').style.display = 'none';
                     }
                 });
+            } else if (currentGameType === 'Chess') {
+                const chBoardEl = document.getElementById('chBoard');
+                if (chBoardEl) chBoardEl.innerHTML = '';
+                chSelected = null;
+                if (isHost && !isChallengeRoom) {
+                    const init = chInitialState();
+                    gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O, board: init.board, castling: init.castling, ep: -1, turn: 'P1', winner: null, lastMove: null });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    chData = data;
+                    renderChess();
+                });
+            } else if (currentGameType === 'Dominoes') {
+                doSelected = null;
+                if (isHost && !isChallengeRoom) {
+                    const d = dmDeal();
+                    gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O, hand1: d.hand1, hand2: d.hand2, bone: d.bone, chain: d.chain, turn: d.turn, passes: 0, winner: null });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    data.hand1 = dmNormTiles(data.hand1);
+                    data.hand2 = dmNormTiles(data.hand2);
+                    data.bone = dmNormTiles(data.bone);
+                    data.chain = dmNormTiles(data.chain);
+                    doData = data;
+                    renderDominoes();
+                });
+            } else if (currentGameType === 'Hangman') {
+                if (isHost && !isChallengeRoom) {
+                    gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O, word: hmNewWord(), w1: { guessed: [], wrong: 0, done: false }, w2: { guessed: [], wrong: 0, done: false }, winner: null });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    data.w1 = data.w1 || { guessed: [], wrong: 0, done: false };
+                    data.w2 = data.w2 || { guessed: [], wrong: 0, done: false };
+                    data.w1.guessed = data.w1.guessed || [];
+                    data.w2.guessed = data.w2.guessed || [];
+                    hgData = data;
+                    renderHangman();
+                });
+            } else if (currentGameType === 'Trivia') {
+                tvShownQ = -2;
+                if (isHost) {
+                    gameRef.once('value', (snap) => {
+                        const d = snap.val() || {};
+                        if (!d.startStamp) {
+                            if (!isChallengeRoom) gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O });
+                            gameRef.update({ startStamp: Date.now() + 3000 });
+                        }
+                    });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    data.ans1 = data.ans1 || {};
+                    data.ans2 = data.ans2 || {};
+                    tvData = data;
+                    tvTick();
+                    tvMaybeFinish();
+                });
+                tvTimer = setInterval(() => { tvTick(); tvMaybeFinish(); }, 500);
+            } else if (currentGameType === 'MathDuel') {
+                if (isHost && !isChallengeRoom) {
+                    gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O, seed: Math.floor(Math.random() * 900000) + 100000, round: 1, wins1: 0, wins2: 0, lock1: false, lock2: false, roundWinner: null, winner: null });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    mtData = data;
+                    renderMathDuel();
+                    mtMaybeAdvance();
+                });
+            } else if (currentGameType === 'Simon') {
+                siResetLocal();
+                if (isHost) {
+                    gameRef.once('value', (snap) => {
+                        const d = snap.val() || {};
+                        if (!d.roundStamp) {
+                            if (!isChallengeRoom) gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O });
+                            gameRef.update({ roundStamp: Date.now() + 3000 });
+                        }
+                    });
+                }
+                let siSeenStamp = 0;
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    siData = data;
+                    renderSimon();
+                    siMaybeResolve();
+                    if (!data.winner && data.roundStamp && data.roundStamp !== siSeenStamp) {
+                        siSeenStamp = data.roundStamp;
+                        siStartPlayback();
+                    }
+                });
+            } else if (currentGameType === 'WordChain') {
+                if (isHost) {
+                    gameRef.once('value', (snap) => {
+                        const d = snap.val() || {};
+                        if (!d.turnStamp) {
+                            if (!isChallengeRoom) gameRef.update({ p1Name: playerNames.X, p2Name: playerNames.O });
+                            gameRef.update({ turnStamp: Date.now() });
+                        }
+                    });
+                }
+                gameRef.on('value', (snap) => {
+                    const data = snap.val(); if (!data) return;
+                    data.chain = data.chain || [];
+                    data.lives1 = data.lives1 === undefined ? WC_LIVES : data.lives1;
+                    data.lives2 = data.lives2 === undefined ? WC_LIVES : data.lives2;
+                    wcData = data;
+                    renderWordChain();
+                });
+                wcTimer = setInterval(wcTick, 500);
             }
 
             // Stage 7A: stamp my uid into 2P rooms (Ludo rooms already carry
@@ -7992,6 +8276,516 @@ function sendNotification(title, body, icon) {
             if (moves1 < FL_MAX_MOVES || moves2 < FL_MAX_MOVES) return null;
             const sz = flSizes(grid);
             return sz.s1 > sz.s2 ? 'P1' : (sz.s2 > sz.s1 ? 'P2' : 'Draw');
+        }
+
+        // ---------- CHESS (pure logic) ----------
+        // Board: Array(64), index = rank*8 + file, rank 0 = White's home
+        // rank (a1 = 0, h8 = 63). Pieces 'wP'..'wK' / 'bP'..'bK', '' empty.
+        // P1 plays White. A move: { f, t, promo, castle, ep, dbl } —
+        // promo promotes to a queen (auto-queen; no underpromotion),
+        // castle is 'K'|'Q'|null, ep marks an en-passant capture, dbl a
+        // two-square pawn push. FULL legal move generation: pins, check
+        // evasion, castling rights + through-check, en passant (incl.
+        // the rank-pin case, which falls out of the apply-then-test
+        // filter). Draws: stalemate + insufficient material only
+        // (fifty-move and threefold repetition are not tracked).
+        const CH_GLYPH = { K: '\u2654', Q: '\u2655', R: '\u2656', B: '\u2657', N: '\u2658', P: '\u2659', k: '\u265A', q: '\u265B', r: '\u265C', b: '\u265D', n: '\u265E', p: '\u265F' };
+        function chInitialState() {
+            const back = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+            const board = Array(64).fill('');
+            for (let f = 0; f < 8; f++) {
+                board[f] = 'w' + back[f];
+                board[8 + f] = 'wP';
+                board[48 + f] = 'bP';
+                board[56 + f] = 'b' + back[f];
+            }
+            return { board: board, castling: 'KQkq', ep: -1 };
+        }
+        function chOpp(color) { return color === 'w' ? 'b' : 'w'; }
+        function chAttacked(board, sq, by) {
+            const r = Math.floor(sq / 8), f = sq % 8;
+            const pr = by === 'w' ? r - 1 : r + 1;
+            if (pr >= 0 && pr < 8) {
+                for (const df of [-1, 1]) {
+                    const pf = f + df;
+                    if (pf >= 0 && pf < 8 && board[pr * 8 + pf] === by + 'P') return true;
+                }
+            }
+            for (const o of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) {
+                const nr = r + o[0], nf = f + o[1];
+                if (nr >= 0 && nr < 8 && nf >= 0 && nf < 8 && board[nr * 8 + nf] === by + 'N') return true;
+            }
+            for (let dr = -1; dr <= 1; dr++) for (let df = -1; df <= 1; df++) {
+                if (!dr && !df) continue;
+                const nr = r + dr, nf = f + df;
+                if (nr >= 0 && nr < 8 && nf >= 0 && nf < 8 && board[nr * 8 + nf] === by + 'K') return true;
+            }
+            const rays = [
+                { d: [-1, 0], p: 'RQ' }, { d: [1, 0], p: 'RQ' }, { d: [0, -1], p: 'RQ' }, { d: [0, 1], p: 'RQ' },
+                { d: [-1, -1], p: 'BQ' }, { d: [-1, 1], p: 'BQ' }, { d: [1, -1], p: 'BQ' }, { d: [1, 1], p: 'BQ' }
+            ];
+            for (const ray of rays) {
+                let nr = r + ray.d[0], nf = f + ray.d[1];
+                while (nr >= 0 && nr < 8 && nf >= 0 && nf < 8) {
+                    const p = board[nr * 8 + nf];
+                    if (p) { if (p[0] === by && ray.p.includes(p[1])) return true; break; }
+                    nr += ray.d[0]; nf += ray.d[1];
+                }
+            }
+            return false;
+        }
+        function chKingSq(board, color) {
+            for (let i = 0; i < 64; i++) if (board[i] === color + 'K') return i;
+            return -1;
+        }
+        function chInCheck(board, color) {
+            const k = chKingSq(board, color);
+            return k >= 0 && chAttacked(board, k, chOpp(color));
+        }
+        function chPseudo(board, color, ep) {
+            const moves = [];
+            const dir = color === 'w' ? 1 : -1;
+            const startRank = color === 'w' ? 1 : 6;
+            const promoRank = color === 'w' ? 7 : 0;
+            for (let i = 0; i < 64; i++) {
+                const p = board[i];
+                if (!p || p[0] !== color) continue;
+                const r = Math.floor(i / 8), f = i % 8, kind = p[1];
+                const push = (t, extra) => moves.push(Object.assign({ f: i, t: t, promo: false, castle: null, ep: false, dbl: false }, extra || {}));
+                if (kind === 'P') {
+                    const oneR = r + dir;
+                    if (oneR >= 0 && oneR < 8 && !board[oneR * 8 + f]) {
+                        push(oneR * 8 + f, { promo: oneR === promoRank });
+                        const twoR = r + 2 * dir;
+                        if (r === startRank && !board[twoR * 8 + f]) push(twoR * 8 + f, { dbl: true });
+                    }
+                    for (const df of [-1, 1]) {
+                        const nf = f + df, nr = r + dir;
+                        if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
+                        const t = nr * 8 + nf;
+                        if (board[t] && board[t][0] !== color) push(t, { promo: nr === promoRank });
+                        else if (t === ep) push(t, { ep: true });
+                    }
+                } else if (kind === 'N' || kind === 'K') {
+                    const offs = kind === 'N' ? [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]] : [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                    for (const o of offs) {
+                        const nr = r + o[0], nf = f + o[1];
+                        if (nr < 0 || nr > 7 || nf < 0 || nf > 7) continue;
+                        const t = nr * 8 + nf;
+                        if (!board[t] || board[t][0] !== color) push(t);
+                    }
+                } else {
+                    const dirs = kind === 'B' ? [[-1,-1],[-1,1],[1,-1],[1,1]] : kind === 'R' ? [[-1,0],[1,0],[0,-1],[0,1]] : [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                    for (const d of dirs) {
+                        let nr = r + d[0], nf = f + d[1];
+                        while (nr >= 0 && nr < 8 && nf >= 0 && nf < 8) {
+                            const t = nr * 8 + nf;
+                            if (!board[t]) push(t);
+                            else { if (board[t][0] !== color) push(t); break; }
+                            nr += d[0]; nf += d[1];
+                        }
+                    }
+                }
+            }
+            return moves;
+        }
+        function chApply(board, move) {
+            const nb = [...board];
+            const piece = nb[move.f];
+            nb[move.f] = '';
+            if (move.ep) nb[move.t + (piece[0] === 'w' ? -8 : 8)] = '';
+            nb[move.t] = move.promo ? piece[0] + 'Q' : piece;
+            if (move.castle === 'K') { const base = piece[0] === 'w' ? 0 : 56; nb[base + 5] = nb[base + 7]; nb[base + 7] = ''; }
+            if (move.castle === 'Q') { const base = piece[0] === 'w' ? 0 : 56; nb[base + 3] = nb[base + 0]; nb[base + 0] = ''; }
+            return nb;
+        }
+        function chNewCastling(castling, board, move) {
+            let c = castling || '';
+            const piece = board[move.f];
+            if (piece === 'wK') c = c.replace('K', '').replace('Q', '');
+            if (piece === 'bK') c = c.replace('k', '').replace('q', '');
+            if (move.f === 7 || move.t === 7) c = c.replace('K', '');
+            if (move.f === 0 || move.t === 0) c = c.replace('Q', '');
+            if (move.f === 63 || move.t === 63) c = c.replace('k', '');
+            if (move.f === 56 || move.t === 56) c = c.replace('q', '');
+            return c;
+        }
+        function chLegal(board, color, castling, ep) {
+            const out = [];
+            for (const m of chPseudo(board, color, ep)) {
+                if (!chInCheck(chApply(board, m), color)) out.push(m);
+            }
+            const base = color === 'w' ? 0 : 56;
+            const enemy = chOpp(color);
+            const rights = castling || '';
+            if (board[base + 4] === color + 'K' && !chInCheck(board, color)) {
+                if (rights.includes(color === 'w' ? 'K' : 'k') && board[base + 7] === color + 'R' && !board[base + 5] && !board[base + 6]
+                    && !chAttacked(board, base + 5, enemy) && !chAttacked(board, base + 6, enemy)) {
+                    out.push({ f: base + 4, t: base + 6, promo: false, castle: 'K', ep: false, dbl: false });
+                }
+                if (rights.includes(color === 'w' ? 'Q' : 'q') && board[base + 0] === color + 'R' && !board[base + 1] && !board[base + 2] && !board[base + 3]
+                    && !chAttacked(board, base + 3, enemy) && !chAttacked(board, base + 2, enemy)) {
+                    out.push({ f: base + 4, t: base + 2, promo: false, castle: 'Q', ep: false, dbl: false });
+                }
+            }
+            return out;
+        }
+        function chStep(state, move) {
+            return {
+                board: chApply(state.board, move),
+                castling: chNewCastling(state.castling, state.board, move),
+                ep: move.dbl ? (move.f + move.t) / 2 : -1
+            };
+        }
+        function chInsufficientMaterial(board) {
+            const rest = [];
+            for (const p of board) if (p && p[1] !== 'K') rest.push(p[1]);
+            if (rest.length === 0) return true;
+            if (rest.length === 1 && (rest[0] === 'B' || rest[0] === 'N')) return true;
+            return false;
+        }
+        function chResult(board, turnColor, castling, ep) {
+            if (chInsufficientMaterial(board)) return 'Draw';
+            if (chLegal(board, turnColor, castling, ep).length) return null;
+            if (chInCheck(board, turnColor)) return turnColor === 'w' ? 'P2' : 'P1';
+            return 'Draw';
+        }
+        function chCaptured(board) {
+            // Pieces missing from the board vs the starting set, for trays.
+            const start = { P: 8, N: 2, B: 2, R: 2, Q: 1 };
+            const now = { w: { P: 0, N: 0, B: 0, R: 0, Q: 0 }, b: { P: 0, N: 0, B: 0, R: 0, Q: 0 } };
+            for (const p of board) if (p && p[1] !== 'K') now[p[0]][p[1]]++;
+            const lost = { w: [], b: [] };
+            for (const c of ['w', 'b']) for (const k of ['Q', 'R', 'B', 'N', 'P']) {
+                for (let i = now[c][k]; i < (start[k] || 0); i++) lost[c].push(k);
+            }
+            return lost;
+        }
+
+        // ---------- DOMINOES (pure logic) ----------
+        // Double-six set (28 tiles). Tiles are [a, b]; chain entries are
+        // oriented so chain[i][1] === chain[i+1][0]. Opening rule: the
+        // higher double is auto-played by its holder and the OTHER player
+        // moves first; if neither hand holds a double, a random player
+        // starts and their highest-pip tile opens automatically.
+        function dmAllTiles() {
+            const out = [];
+            for (let a = 0; a <= 6; a++) for (let b = a; b <= 6; b++) out.push([a, b]);
+            return out;
+        }
+        function dmPips(hand) { return (hand || []).reduce((s, t) => s + t[0] + t[1], 0); }
+        function dmHighestDouble(hand) {
+            let best = -1, idx = -1;
+            (hand || []).forEach((t, i) => { if (t[0] === t[1] && t[0] > best) { best = t[0]; idx = i; } });
+            return idx;
+        }
+        function dmDeal(rng) {
+            rng = rng || Math.random;
+            const tiles = dmAllTiles();
+            for (let i = tiles.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [tiles[i], tiles[j]] = [tiles[j], tiles[i]]; }
+            const hand1 = tiles.slice(0, 7), hand2 = tiles.slice(7, 14);
+            const bone = tiles.slice(14);
+            let chain = [], turn;
+            const d1 = dmHighestDouble(hand1), d2 = dmHighestDouble(hand2);
+            if (d1 >= 0 || d2 >= 0) {
+                const v1 = d1 >= 0 ? hand1[d1][0] : -1, v2 = d2 >= 0 ? hand2[d2][0] : -1;
+                if (v1 >= v2) { chain = [hand1[d1]]; hand1.splice(d1, 1); turn = 'P2'; }
+                else { chain = [hand2[d2]]; hand2.splice(d2, 1); turn = 'P1'; }
+            } else {
+                const first = rng() < 0.5 ? 1 : 2;
+                const hand = first === 1 ? hand1 : hand2;
+                let bi = 0;
+                hand.forEach((t, i) => { if (t[0] + t[1] > hand[bi][0] + hand[bi][1]) bi = i; });
+                chain = [hand[bi]]; hand.splice(bi, 1);
+                turn = first === 1 ? 'P2' : 'P1';
+            }
+            return { hand1: hand1, hand2: hand2, bone: bone, chain: chain, turn: turn };
+        }
+        function dmEnds(chain) {
+            if (!chain || !chain.length) return null;
+            return { l: chain[0][0], r: chain[chain.length - 1][1] };
+        }
+        function dmPlayable(hand, chain) {
+            const e = dmEnds(chain);
+            if (!e) return (hand || []).map((_, i) => i);
+            const out = [];
+            (hand || []).forEach((t, i) => { if (t[0] === e.l || t[1] === e.l || t[0] === e.r || t[1] === e.r) out.push(i); });
+            return out;
+        }
+        function dmPlay(chain, tile, side) {
+            const e = dmEnds(chain);
+            if (!e) return [[tile[0], tile[1]]];
+            if (side === 'L') {
+                if (tile[1] === e.l) return [[tile[0], tile[1]], ...chain];
+                if (tile[0] === e.l) return [[tile[1], tile[0]], ...chain];
+                return null;
+            }
+            if (tile[0] === e.r) return [...chain, [tile[0], tile[1]]];
+            if (tile[1] === e.r) return [...chain, [tile[1], tile[0]]];
+            return null;
+        }
+        function dmWinner(hand1, hand2, passes) {
+            if ((hand1 || []).length === 0) return 'P1';
+            if ((hand2 || []).length === 0) return 'P2';
+            if (passes >= 2) {
+                const p1 = dmPips(hand1), p2 = dmPips(hand2);
+                return p1 < p2 ? 'P1' : (p2 < p1 ? 'P2' : 'Draw');
+            }
+            return null;
+        }
+        function dmNormTiles(list) {
+            // RTDB can hand nested arrays back as objects — normalise.
+            const arr = !list ? [] : (Array.isArray(list) ? list : Object.keys(list).sort((a, b) => a - b).map(k => list[k]));
+            return arr.map(t => Array.isArray(t) ? [t[0], t[1]] : [t[0], t[1]]);
+        }
+
+        // ---------- HANGMAN DUEL (pure logic) ----------
+        // Both players race the SAME word in parallel (the Mastermind
+        // model): guesses are private, the opponent sees only your
+        // wrong-guess count and whether you have finished. 6 wrong
+        // guesses and you are out. First to complete wins; if both
+        // complete, fewer wrong guesses wins.
+        const HM_MAX_WRONG = 6;
+        const HM_WORDS = ['APPLE','BANANA','ORANGE','PLANET','ROCKET','GARDEN','WINDOW','MIRROR','BRIDGE','CASTLE','DRAGON','FOREST','RIVER','OCEAN','DESERT','JUNGLE','PENCIL','PAPER','SCHOOL','FRIEND','FAMILY','SUMMER','WINTER','SPRING','AUTUMN','WEATHER','THUNDER','RAINBOW','CLOUD','BEACH','BREAD','CHAIR','DANCE','EAGLE','FLAME','GRAPE','HEART','HOUSE','JUICE','LEMON','LIGHT','MAGIC','MANGO','MUSIC','NIGHT','PIANO','QUEEN','SMILE','SNAKE','TIGER','TRAIN','WATER','WHALE','WORLD','ZEBRA','GUITAR','HAMMER','ISLAND','JACKET','KITTEN','LADDER','MARKET','MONKEY','RABBIT','SADDLE','SPIDER','SUNSET','TEMPLE','PURPLE','SILVER','GOLDEN','COPPER','BRONZE','MARBLE','VELVET','COTTON','BUTTON','POCKET','WALLET','BASKET','PICNIC','CAMERA','CANDLE','CIRCLE','SQUARE','TRIANGLE','DIAMOND','CRYSTAL','FEATHER','LEATHER','HARVEST','POPCORN','PANCAKE','MUFFIN','WAFFLE','PRETZEL','NOODLES','BURGER','FALCON','TURTLE','DOLPHIN','PENGUIN','OCTOPUS','BUFFALO','GIRAFFE','LEOPARD','CHEETAH','PANTHER','SPARROW','VOLCANO','TORNADO','CYCLONE','GLACIER','LAGOON','MEADOW','VALLEY','CANYON','HARBOUR','COMPASS','LANTERN'];
+        function hmNewWord(rng) {
+            rng = rng || Math.random;
+            return HM_WORDS[Math.floor(rng() * HM_WORDS.length)];
+        }
+        function hmPattern(word, guessed) {
+            const set = new Set(guessed || []);
+            return word.split('').map(ch => set.has(ch) ? ch : '_');
+        }
+        function hmApplyGuess(word, st, letter) {
+            const guessed = [...(st.guessed || [])];
+            if (guessed.includes(letter)) return null;
+            guessed.push(letter);
+            const wrong = (st.wrong || 0) + (word.includes(letter) ? 0 : 1);
+            const done = word.split('').every(ch => guessed.includes(ch));
+            return { guessed: guessed, wrong: wrong, done: done };
+        }
+        function hmWinner(w1, w2) {
+            const out1 = !w1.done && w1.wrong >= HM_MAX_WRONG;
+            const out2 = !w2.done && w2.wrong >= HM_MAX_WRONG;
+            if (w1.done && w2.done) return w1.wrong < w2.wrong ? 'P1' : (w2.wrong < w1.wrong ? 'P2' : 'Draw');
+            if (w1.done) return (out2 || w2.wrong > w1.wrong) ? 'P1' : null;
+            if (w2.done) return (out1 || w1.wrong > w2.wrong) ? 'P2' : null;
+            if (out1 && out2) return 'Draw';
+            return null;
+        }
+
+        // ---------- TRIVIA DUEL (pure logic) ----------
+        // 60-question bank. A match draws 10 (room seed), both players
+        // answer every question privately inside a 15 s window derived
+        // from startStamp (the Bingo caller model — no per-question
+        // writes, no desync). Correct = 100 + up to 50 speed bonus.
+        // Answers are stored as BANK option indices; the on-screen
+        // option order is a seeded shuffle of the bank order.
+        const TV_COUNT = 10, TV_WINDOW = 15000;
+        const TV_QUESTIONS = [
+            { q: 'What is the capital of France?', a: ['London', 'Paris', 'Berlin', 'Rome'], c: 1 },
+            { q: 'Which planet is known as the Red Planet?', a: ['Venus', 'Jupiter', 'Mars', 'Saturn'], c: 2 },
+            { q: 'How many continents are there on Earth?', a: ['5', '6', '7', '8'], c: 2 },
+            { q: 'What is the largest ocean on Earth?', a: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], c: 3 },
+            { q: 'Who painted the Mona Lisa?', a: ['Van Gogh', 'Leonardo da Vinci', 'Picasso', 'Monet'], c: 1 },
+            { q: 'What is the chemical symbol for gold?', a: ['Ag', 'Gd', 'Au', 'Go'], c: 2 },
+            { q: 'How many sides does a hexagon have?', a: ['5', '6', '7', '8'], c: 1 },
+            { q: 'Which animal is known as man\'s best friend?', a: ['Cat', 'Horse', 'Parrot', 'Dog'], c: 3 },
+            { q: 'What is the fastest land animal?', a: ['Lion', 'Cheetah', 'Horse', 'Gazelle'], c: 1 },
+            { q: 'In which year did humans first land on the Moon?', a: ['1959', '1969', '1975', '1981'], c: 1 },
+            { q: 'What is the capital of Japan?', a: ['Kyoto', 'Osaka', 'Tokyo', 'Seoul'], c: 2 },
+            { q: 'Which gas do plants absorb for photosynthesis?', a: ['Oxygen', 'Nitrogen', 'Hydrogen', 'Carbon dioxide'], c: 3 },
+            { q: 'How many minutes are there in a full day?', a: ['720', '1200', '1440', '1600'], c: 2 },
+            { q: 'What is the largest mammal in the world?', a: ['Elephant', 'Blue whale', 'Giraffe', 'Hippo'], c: 1 },
+            { q: 'Which instrument measures temperature?', a: ['Barometer', 'Altimeter', 'Thermometer', 'Speedometer'], c: 2 },
+            { q: 'What is the main ingredient in guacamole?', a: ['Tomato', 'Onion', 'Pepper', 'Avocado'], c: 3 },
+            { q: 'Which country is home to the kangaroo?', a: ['Australia', 'Brazil', 'India', 'Kenya'], c: 0 },
+            { q: 'How many colours are in a rainbow?', a: ['6', '7', '8', '5'], c: 1 },
+            { q: 'What is the smallest prime number?', a: ['1', '3', '2', '5'], c: 2 },
+            { q: 'Who wrote Romeo and Juliet?', a: ['Charles Dickens', 'Jane Austen', 'Mark Twain', 'William Shakespeare'], c: 3 },
+            { q: 'What is the capital of Canada?', a: ['Toronto', 'Ottawa', 'Vancouver', 'Montreal'], c: 1 },
+            { q: 'Which metal is liquid at room temperature?', a: ['Iron', 'Copper', 'Mercury', 'Aluminium'], c: 2 },
+            { q: 'How many players does a football (soccer) team field at once?', a: ['9', '10', '12', '11'], c: 3 },
+            { q: 'What do bees produce?', a: ['Honey', 'Jam', 'Butter', 'Cheese'], c: 0 },
+            { q: 'Which is the longest river in the world?', a: ['Amazon', 'Nile', 'Yangtze', 'Mississippi'], c: 1 },
+            { q: 'What is the square root of 144?', a: ['14', '16', '12', '24'], c: 2 },
+            { q: 'Which organ pumps blood around the body?', a: ['Liver', 'Lung', 'Brain', 'Heart'], c: 3 },
+            { q: 'In computing, what does CPU stand for?', a: ['Central Processing Unit', 'Computer Personal Unit', 'Central Program Unit', 'Core Processing Utility'], c: 0 },
+            { q: 'What is the largest planet in our solar system?', a: ['Saturn', 'Jupiter', 'Neptune', 'Earth'], c: 1 },
+            { q: 'Which language is primarily spoken in Brazil?', a: ['Spanish', 'French', 'Portuguese', 'Italian'], c: 2 },
+            { q: 'How many legs does a spider have?', a: ['6', '10', '12', '8'], c: 3 },
+            { q: 'What is the boiling point of water at sea level?', a: ['100\u00B0C', '90\u00B0C', '120\u00B0C', '80\u00B0C'], c: 0 },
+            { q: 'Which famous tower leans in Italy?', a: ['Eiffel Tower', 'Big Ben', 'Leaning Tower of Pisa', 'Colosseum'], c: 2 },
+            { q: 'What is a baby frog called?', a: ['Cub', 'Tadpole', 'Calf', 'Fry'], c: 1 },
+            { q: 'Which country has the largest population in the world?', a: ['China', 'United States', 'Indonesia', 'India'], c: 3 },
+            { q: 'What is the main language spoken in Egypt?', a: ['Arabic', 'Farsi', 'Turkish', 'Hebrew'], c: 0 },
+            { q: 'How many strings does a standard guitar have?', a: ['4', '5', '6', '7'], c: 2 },
+            { q: 'Which vitamin does sunlight help the human body produce?', a: ['Vitamin A', 'Vitamin D', 'Vitamin B', 'Vitamin C'], c: 1 },
+            { q: 'What is the hardest naturally occurring substance?', a: ['Quartz', 'Steel', 'Obsidian', 'Diamond'], c: 3 },
+            { q: 'Which planet is closest to the Sun?', a: ['Mercury', 'Venus', 'Earth', 'Mars'], c: 0 },
+            { q: 'What do you call a group of wolves?', a: ['A herd', 'A flock', 'A pack', 'A swarm'], c: 2 },
+            { q: 'How many zeros are in one million?', a: ['5', '6', '7', '8'], c: 1 },
+            { q: 'Which ocean surrounds the North Pole?', a: ['Atlantic', 'Pacific', 'Indian', 'Arctic'], c: 3 },
+            { q: 'What is the currency of Japan?', a: ['Yen', 'Won', 'Yuan', 'Ringgit'], c: 0 },
+            { q: 'Who was the first President of the United States?', a: ['Abraham Lincoln', 'Thomas Jefferson', 'George Washington', 'John Adams'], c: 2 },
+            { q: 'Which fruit is said to keep the doctor away?', a: ['Banana', 'Apple', 'Orange', 'Grape'], c: 1 },
+            { q: 'What is the largest hot desert in the world?', a: ['Gobi', 'Arabian', 'Kalahari', 'Sahara'], c: 3 },
+            { q: 'How many bones are in the adult human body?', a: ['206', '186', '226', '250'], c: 0 },
+            { q: 'Which gas makes up most of Earth\'s atmosphere?', a: ['Oxygen', 'Nitrogen', 'Carbon dioxide', 'Argon'], c: 1 },
+            { q: 'What is the capital of Australia?', a: ['Sydney', 'Melbourne', 'Canberra', 'Perth'], c: 2 },
+            { q: 'Which chess piece moves only in an L shape?', a: ['Bishop', 'Rook', 'Knight', 'Pawn'], c: 2 },
+            { q: 'How many days are there in a leap year?', a: ['365', '366', '364', '367'], c: 1 },
+            { q: 'Which animal has the longest neck?', a: ['Horse', 'Camel', 'Llama', 'Giraffe'], c: 3 },
+            { q: 'What is H2O more commonly known as?', a: ['Water', 'Salt', 'Oxygen', 'Hydrogen'], c: 0 },
+            { q: 'Which continent is Egypt part of?', a: ['Asia', 'Africa', 'Europe', 'Oceania'], c: 1 },
+            { q: 'How many faces does a cube have?', a: ['4', '8', '6', '12'], c: 2 },
+            { q: 'Which bird cannot fly but is a strong swimmer?', a: ['Eagle', 'Owl', 'Sparrow', 'Penguin'], c: 3 },
+            { q: 'What is the fastest bird in the world?', a: ['Peregrine falcon', 'Golden eagle', 'Swift', 'Albatross'], c: 0 },
+            { q: 'Which number does the Roman numeral X stand for?', a: ['5', '50', '10', '100'], c: 2 },
+            { q: 'What colour do you get by mixing blue and yellow paint?', a: ['Purple', 'Orange', 'Brown', 'Green'], c: 3 }
+        ];
+        function tvMulberry(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a |= 0; a = a + 0x6D2B79F5 | 0;
+                let t = Math.imul(a ^ a >>> 15, 1 | a);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+        function tvPickOrder(seed) {
+            const rng = tvMulberry(seed);
+            const idx = TV_QUESTIONS.map((_, i) => i);
+            for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+            return idx.slice(0, TV_COUNT);
+        }
+        function tvOptionPerm(seed, qi) {
+            const rng = tvMulberry((seed ^ 0x9E3779B9) + qi * 101 + 7);
+            const perm = [0, 1, 2, 3];
+            for (let i = 3; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
+            return perm;
+        }
+        function tvQuestionIndex(startStamp, now) {
+            if (!startStamp) return -1;
+            const el = now - startStamp;
+            if (el < 0) return -1;
+            return Math.min(TV_COUNT, Math.floor(el / TV_WINDOW));
+        }
+        function tvScoreFor(bankIdx, choice, msInWindow) {
+            const q = TV_QUESTIONS[bankIdx];
+            if (choice === null || choice === undefined || choice !== q.c) return 0;
+            const frac = Math.max(0, Math.min(1, 1 - msInWindow / TV_WINDOW));
+            return 100 + Math.round(50 * frac);
+        }
+        function tvTotalScore(order, answers) {
+            let total = 0;
+            (order || []).forEach((bankIdx, qi) => {
+                const a = answers ? answers[qi] : null;
+                if (a) total += tvScoreFor(bankIdx, a.c, a.t);
+            });
+            return total;
+        }
+        function tvWinner(order, ans1, ans2) {
+            const s1 = tvTotalScore(order, ans1), s2 = tvTotalScore(order, ans2);
+            return s1 > s2 ? 'P1' : (s2 > s1 ? 'P2' : 'Draw');
+        }
+
+        // ---------- MATH DUEL (pure logic) ----------
+        // Same problem on both phones: generation is deterministic
+        // from the room seed + round index. Difficulty ramps by round.
+        // First correct tap takes the round; a wrong tap locks that
+        // player out of the round. First to 4 round wins takes the
+        // match (rounds past 7 are tiebreakers if fizzles intervene).
+        const MT_TARGET = 4;
+        function mtMulberry(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a |= 0; a = a + 0x6D2B79F5 | 0;
+                let t = Math.imul(a ^ a >>> 15, 1 | a);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+        function mtProblem(seed, round) {
+            const rng = mtMulberry((seed ^ 0x85EBCA6B) + round * 104729 + 13);
+            const ri = (lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
+            const tier = round <= 2 ? 0 : (round <= 4 ? 1 : 2);
+            const kinds = tier === 0 ? ['+', '-'] : tier === 1 ? ['+', '-', 'x'] : ['+', '-', 'x', '/'];
+            const op = kinds[Math.floor(rng() * kinds.length)];
+            let a, b, ans;
+            if (op === '+') { const hi = tier === 0 ? 50 : 200; a = ri(3, hi); b = ri(3, hi); ans = a + b; }
+            else if (op === '-') { a = ri(5, tier === 0 ? 60 : 240); b = ri(2, a - 1); ans = a - b; }
+            else if (op === 'x') { a = ri(2, tier === 1 ? 9 : 12); b = ri(2, 9); ans = a * b; }
+            else { b = ri(2, 12); ans = ri(2, 12); a = b * ans; }
+            const opts = new Set([ans]);
+            for (const c of [ans + 1, ans - 1, ans + 10, ans - 10, ans + 2, ans - 2, ans + 5, ans * 2, ans + 11, ans - 11]) {
+                if (opts.size >= 4) break;
+                if (c >= 0 && c !== ans) opts.add(c);
+            }
+            let pad = 3;
+            while (opts.size < 4) { opts.add(ans + pad); pad += 3; }
+            const options = [...opts];
+            for (let i = 3; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
+            const sym = op === 'x' ? '\u00D7' : (op === '/' ? '\u00F7' : op);
+            return { a: a, b: b, op: op, text: a + ' ' + sym + ' ' + b + ' = ?', answer: ans, options: options };
+        }
+
+        // ---------- SIMON DUEL (pure logic) ----------
+        // The sequence is deterministic from the room seed, so both
+        // clients play back and judge the identical sequence locally.
+        // Round r uses the first r+2 entries. Failing a sequence your
+        // opponent completed in the same round loses the match; both
+        // failing replays the round; both completing advances. Round
+        // 12 completed by both is a Draw.
+        const SI_MAX_ROUND = 12;
+        function siMulberry(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a |= 0; a = a + 0x6D2B79F5 | 0;
+                let t = Math.imul(a ^ a >>> 15, 1 | a);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+        function siSequence(seed, len) {
+            const rng = siMulberry(seed ^ 0x27D4EB2F);
+            const out = [];
+            for (let i = 0; i < len; i++) out.push(Math.floor(rng() * 4));
+            return out;
+        }
+        function siRoundLen(round) { return round + 2; }
+        function siResolve(att1, att2, round) {
+            const d1 = att1 === 'done', d2 = att2 === 'done';
+            const f1 = att1 === 'failed', f2 = att2 === 'failed';
+            if (d1 && f2) return { type: 'win', winner: 'P1' };
+            if (d2 && f1) return { type: 'win', winner: 'P2' };
+            if (f1 && f2) return { type: 'replay' };
+            if (d1 && d2) return round >= SI_MAX_ROUND ? { type: 'win', winner: 'Draw' } : { type: 'next' };
+            return null;
+        }
+
+        // ---------- WORD CHAIN (pure logic) ----------
+        // No dictionary (the Guess Number honour model): a word is
+        // legal when it is 4+ letters, letters only, not already used,
+        // and starts with the last letter of the previous word. Words
+        // are user input — the render path uses textContent only.
+        const WC_TURN_MS = 20000, WC_LIVES = 3;
+        function wcValidate(word, chain) {
+            const w = (word || '').trim().toUpperCase();
+            if (w.length < 4) return { ok: false, reason: 'Words need at least 4 letters' };
+            if (!/^[A-Z]+$/.test(w)) return { ok: false, reason: 'Letters only, please' };
+            const used = new Set((chain || []).map(x => String(x).toUpperCase()));
+            if (used.has(w)) return { ok: false, reason: 'That word was already used' };
+            if (chain && chain.length) {
+                const last = String(chain[chain.length - 1]).toUpperCase();
+                const need = last[last.length - 1];
+                if (w[0] !== need) return { ok: false, reason: 'Must start with the letter ' + need };
+            }
+            return { ok: true, word: w };
+        }
+        function wcLoseLife(lives1, lives2, loser) {
+            let l1 = lives1, l2 = lives2;
+            if (loser === 'P1') l1--; else l2--;
+            return { lives1: l1, lives2: l2, winner: l1 <= 0 ? 'P2' : (l2 <= 0 ? 'P1' : null) };
         }
 
         // ---------- BATTLESHIP ----------
@@ -8806,6 +9600,624 @@ function sendNotification(title, body, icon) {
             document.getElementById('rematchFlBtn').style.display = 'none';
         };
 
+
+        // ---------- CHESS (session) ----------
+        let chData = null, chSelected = null, chLegalCache = [];
+        function chMyColor() { return mySymbol === 'X' ? 'w' : 'b'; }
+        function renderChess() {
+            if (!chData) return;
+            const st = document.getElementById('chStatus');
+            const turnP = chData.turn === 'P1' ? 'X' : 'O';
+            const myTurn = !chData.winner && turnP === mySymbol;
+            const me = chMyColor();
+            chLegalCache = chData.winner ? [] : chLegal(chData.board, me, chData.castling, chData.ep);
+            if (chData.winner) {
+                document.getElementById('rematchChBtn').style.display = isHost ? 'block' : 'none';
+                if (chData.winner === 'Draw') {
+                    st.innerText = "It's a Draw!" + (isHost ? '' : ' (Waiting for Host to restart)');
+                } else {
+                    st.innerText = (chData.winner === (mySymbol === 'X' ? 'P1' : 'P2') ? 'Checkmate — You Win!' : (playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent') + ' wins — checkmate') + (isHost ? '' : ' (Waiting for Host to restart)');
+                }
+            } else {
+                const inChk = chInCheck(chData.board, chData.turn === 'P1' ? 'w' : 'b');
+                st.innerText = (myTurn ? 'Your move' : (playerNames[turnP] || 'Opponent') + ' is thinking') + (inChk ? ' — check!' : '') + (me === 'w' ? ' · You are White' : ' · You are Black');
+                document.getElementById('rematchChBtn').style.display = 'none';
+            }
+            const lost = chCaptured(chData.board);
+            const flip = me === 'b';
+            const tray = (el, color) => {
+                el.innerHTML = '';
+                lost[color].forEach(k => {
+                    const sp = document.createElement('span');
+                    sp.className = 'ch-piece ' + color;
+                    sp.style.fontSize = '17px';
+                    sp.textContent = CH_GLYPH[color === 'w' ? k : k.toLowerCase()];
+                    el.appendChild(sp);
+                });
+            };
+            tray(document.getElementById('chCapTop'), flip ? 'w' : 'b');
+            tray(document.getElementById('chCapBottom'), flip ? 'b' : 'w');
+            const boardEl = document.getElementById('chBoard');
+            if (!boardEl.children.length) {
+                for (let d = 0; d < 64; d++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'ch-cell';
+                    const sp = document.createElement('span');
+                    sp.className = 'ch-piece';
+                    cell.appendChild(sp);
+                    const dot = document.createElement('span');
+                    dot.className = 'ch-dot';
+                    cell.appendChild(dot);
+                    const ring = document.createElement('span');
+                    ring.className = 'ch-capring';
+                    cell.appendChild(ring);
+                    boardEl.appendChild(cell);
+                }
+            }
+            const lm = chData.lastMove;
+            const targetSquares = {};
+            if (chSelected !== null) for (const m of chLegalCache) if (m.f === chSelected) targetSquares[m.t] = m;
+            for (let d = 0; d < 64; d++) {
+                const rank = flip ? d >> 3 : 7 - (d >> 3);
+                const file = flip ? 7 - (d & 7) : d & 7;
+                const sq = rank * 8 + file;
+                const cell = boardEl.children[d];
+                cell.classList.toggle('light', (rank + file) % 2 === 1);
+                cell.classList.toggle('sel', chSelected === sq);
+                cell.classList.toggle('lastm', !!lm && (lm.f === sq || lm.t === sq));
+                const p = chData.board[sq];
+                const sp = cell.children[0];
+                sp.textContent = p ? CH_GLYPH[p[0] === 'w' ? p[1] : p[1].toLowerCase()] : '';
+                sp.className = 'ch-piece' + (p ? ' ' + p[0] : '');
+                cell.children[1].style.display = (targetSquares[sq] && !p) ? 'block' : 'none';
+                cell.children[2].style.display = (targetSquares[sq] && p) ? 'block' : 'none';
+                cell.onclick = () => chTapSquare(sq);
+            }
+        }
+        function chTapSquare(sq) {
+            if (!chData || chData.winner) return;
+            const turnP = chData.turn === 'P1' ? 'X' : 'O';
+            if (turnP !== mySymbol) return;
+            const me = chMyColor();
+            if (chSelected !== null) {
+                const mv = chLegalCache.find(m => m.f === chSelected && m.t === sq);
+                if (mv) { chMakeMove(mv); return; }
+            }
+            chSelected = (chData.board[sq] && chData.board[sq][0] === me) ? sq : null;
+            renderChess();
+        }
+        function chMakeMove(mv) {
+            const next = chStep({ board: chData.board, castling: chData.castling, ep: chData.ep }, mv);
+            const nextTurn = chData.turn === 'P1' ? 'P2' : 'P1';
+            const res = chResult(next.board, nextTurn === 'P1' ? 'w' : 'b', next.castling, next.ep);
+            chSelected = null;
+            const upd = { board: next.board, castling: next.castling, ep: next.ep, turn: nextTurn, lastMove: { f: mv.f, t: mv.t } };
+            if (res) upd.winner = res;
+            gameRef.update(upd);
+        }
+        function resetChess() {
+            if (!isHost) return;
+            const init = chInitialState();
+            gameRef.update({ board: init.board, castling: init.castling, ep: -1, turn: 'P1', winner: null, lastMove: null });
+        }
+
+        // ---------- DOMINOES (session) ----------
+        let doData = null, doSelected = null;
+        function doMyHand() { return doData ? (mySymbol === 'X' ? doData.hand1 : doData.hand2) : []; }
+        function doRenderPips(el, n) {
+            const on = { 0: [], 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] }[n];
+            for (let i = 0; i < 9; i++) {
+                const d = document.createElement('span');
+                d.className = 'dm-pip' + (on.includes(i) ? ' on' : '');
+                el.appendChild(d);
+            }
+        }
+        function doMakeTile(tile, mini) {
+            const t = document.createElement('div');
+            t.className = 'dm-tile' + (mini ? ' mini' : '');
+            const h1 = document.createElement('div'); h1.className = 'dm-half'; doRenderPips(h1, tile[0]);
+            const sep = document.createElement('div'); sep.className = 'dm-sep';
+            const h2 = document.createElement('div'); h2.className = 'dm-half'; doRenderPips(h2, tile[1]);
+            t.appendChild(h1); t.appendChild(sep); t.appendChild(h2);
+            return t;
+        }
+        function renderDominoes() {
+            if (!doData) return;
+            const st = document.getElementById('doStatus');
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const myTurn = !doData.winner && doData.turn === me;
+            const myHand = doMyHand();
+            const oppCount = (mySymbol === 'X' ? doData.hand2 : doData.hand1).length;
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            if (doData.winner) {
+                st.innerText = doData.winner === 'Draw' ? "It's a Draw!" : (doData.winner === me ? 'You Win!' : oppName + ' Wins!');
+                document.getElementById('rematchDoBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+            } else {
+                st.innerText = myTurn ? 'Your turn' : oppName + "'s turn";
+                document.getElementById('rematchDoBtn').style.display = 'none';
+            }
+            document.getElementById('doOppInfo').innerText = 'Opponent holds ' + oppCount + ' tile' + (oppCount === 1 ? '' : 's') + ' · Boneyard: ' + doData.bone.length + ' · Your pips: ' + dmPips(myHand);
+            const chainEl = document.getElementById('doChain');
+            chainEl.innerHTML = '';
+            const ends = dmEnds(doData.chain);
+            const mkEnd = (label, side) => {
+                const b = document.createElement('button');
+                b.className = 'dm-end';
+                b.innerText = label;
+                b.onclick = () => doPlaySelected(side);
+                return b;
+            };
+            if (ends && myTurn && doSelected !== null) chainEl.appendChild(mkEnd('Left end', 'L'));
+            doData.chain.forEach(tile => chainEl.appendChild(doMakeTile(tile, true)));
+            if (ends && myTurn && doSelected !== null) chainEl.appendChild(mkEnd('Right end', 'R'));
+            const handEl = document.getElementById('doHand');
+            handEl.innerHTML = '';
+            const playable = myTurn ? dmPlayable(myHand, doData.chain) : [];
+            myHand.forEach((tile, i) => {
+                const t = doMakeTile(tile, false);
+                if (playable.includes(i)) t.classList.add('playable');
+                if (doSelected === i) t.classList.add('sel');
+                t.onclick = () => {
+                    if (!myTurn) return;
+                    doSelected = doSelected === i ? null : i;
+                    renderDominoes();
+                };
+                handEl.appendChild(t);
+            });
+            const canPlay = playable.length > 0;
+            document.getElementById('doDrawBtn').style.display = (myTurn && !canPlay && doData.bone.length > 0) ? 'block' : 'none';
+            document.getElementById('doPassBtn').style.display = (myTurn && !canPlay && doData.bone.length === 0) ? 'block' : 'none';
+        }
+        function doPlaySelected(side) {
+            if (doSelected === null || !doData) return;
+            const myHand = [...doMyHand()];
+            const tile = myHand[doSelected];
+            const newChain = dmPlay(doData.chain, tile, side);
+            if (!newChain) { showToast('That tile does not match the ' + (side === 'L' ? 'left' : 'right') + ' end.', 'error'); return; }
+            myHand.splice(doSelected, 1);
+            doSelected = null;
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const h1 = me === 'P1' ? myHand : doData.hand1;
+            const h2 = me === 'P2' ? myHand : doData.hand2;
+            const win = dmWinner(h1, h2, 0);
+            const upd = { chain: newChain, turn: me === 'P1' ? 'P2' : 'P1', passes: 0 };
+            upd[me === 'P1' ? 'hand1' : 'hand2'] = myHand;
+            if (win) upd.winner = win;
+            gameRef.update(upd);
+        }
+        function doDrawTile() {
+            if (!doData || !doData.bone.length) return;
+            const bone = [...doData.bone];
+            const tile = bone.pop();
+            const myHand = [...doMyHand(), tile];
+            const upd = { bone: bone };
+            upd[mySymbol === 'X' ? 'hand1' : 'hand2'] = myHand;
+            gameRef.update(upd);
+        }
+        function doPassTurn() {
+            if (!doData) return;
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const passes = (doData.passes || 0) + 1;
+            const win = dmWinner(doData.hand1, doData.hand2, passes);
+            const upd = { passes: passes, turn: me === 'P1' ? 'P2' : 'P1' };
+            if (win) upd.winner = win;
+            gameRef.update(upd);
+        }
+        function resetDominoes() {
+            if (!isHost) return;
+            const d = dmDeal();
+            gameRef.update({ hand1: d.hand1, hand2: d.hand2, bone: d.bone, chain: d.chain, turn: d.turn, passes: 0, winner: null });
+        }
+
+        // ---------- HANGMAN DUEL (session) ----------
+        let hgData = null;
+        function renderHangman() {
+            if (!hgData) return;
+            const st = document.getElementById('hgStatus');
+            const me = mySymbol === 'X' ? hgData.w1 : hgData.w2;
+            const opp = mySymbol === 'X' ? hgData.w2 : hgData.w1;
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            if (hgData.winner) {
+                st.innerText = hgData.winner === 'Draw' ? "It's a Draw! The word was " + hgData.word : (hgData.winner === (mySymbol === 'X' ? 'P1' : 'P2') ? 'You Win! The word was ' + hgData.word : oppName + ' Wins! The word was ' + hgData.word);
+                document.getElementById('rematchHgBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+            } else {
+                st.innerText = me.done ? 'You finished — waiting for ' + oppName + '…' : 'Race to reveal the word';
+                document.getElementById('rematchHgBtn').style.display = 'none';
+            }
+            const wrong = me.wrong || 0;
+            const partAt = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 4, 6: 5, 7: 6 };
+            for (let i = 1; i <= 7; i++) {
+                const part = document.getElementById('hgPart' + i);
+                if (part) part.style.display = wrong >= partAt[i] ? 'block' : 'none';
+            }
+            const pat = document.getElementById('hgPattern');
+            pat.innerHTML = '';
+            hmPattern(hgData.word, me.guessed).forEach(ch => {
+                const sp = document.createElement('span');
+                sp.className = 'hg-letter' + (ch === '_' ? ' blank' : '');
+                sp.textContent = ch === '_' ? '' : ch;
+                pat.appendChild(sp);
+            });
+            document.getElementById('hgOppInfo').innerText = oppName + ': ' + (opp.wrong || 0) + ' wrong' + (opp.done ? ' · finished!' : '') + ' · You: ' + wrong + ' wrong';
+            renderHgKeys();
+        }
+        function renderHgKeys() {
+            const keysEl = document.getElementById('hgKeys');
+            if (!keysEl || !hgData) return;
+            const me = mySymbol === 'X' ? hgData.w1 : hgData.w2;
+            const guessed = me.guessed || [];
+            const canGuess = !hgData.winner && !me.done && (me.wrong || 0) < HM_MAX_WRONG;
+            keysEl.innerHTML = '';
+            'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
+                const b = document.createElement('button');
+                b.className = 'hg-key';
+                b.innerText = letter;
+                if (guessed.includes(letter)) {
+                    b.classList.add(hgData.word.includes(letter) ? 'used-ok' : 'used-bad');
+                    b.disabled = true;
+                } else if (!canGuess) b.disabled = true;
+                b.onclick = () => hgGuess(letter);
+                keysEl.appendChild(b);
+            });
+        }
+        function hgGuess(letter) {
+            if (!hgData || hgData.winner) return;
+            const me = mySymbol === 'X' ? hgData.w1 : hgData.w2;
+            if (me.done || (me.wrong || 0) >= HM_MAX_WRONG) return;
+            const next = hmApplyGuess(hgData.word, me, letter);
+            if (!next) return;
+            const key = mySymbol === 'X' ? 'w1' : 'w2';
+            const other = mySymbol === 'X' ? hgData.w2 : hgData.w1;
+            const win = hmWinner(key === 'w1' ? next : other, key === 'w2' ? next : other);
+            const upd = {};
+            upd[key] = next;
+            if (win) upd.winner = win;
+            gameRef.update(upd);
+        }
+        function resetHangman() {
+            if (!isHost) return;
+            gameRef.update({ word: hmNewWord(), w1: { guessed: [], wrong: 0, done: false }, w2: { guessed: [], wrong: 0, done: false }, winner: null });
+        }
+
+        // ---------- TRIVIA DUEL (session) ----------
+        let tvData = null, tvTimer = null, tvShownQ = -2;
+        function tvRenderQuestion(qi) {
+            const bankIdx = tvData.order[qi];
+            const q = TV_QUESTIONS[bankIdx];
+            document.getElementById('tvProg').innerText = 'Question ' + (qi + 1) + ' of ' + TV_COUNT;
+            document.getElementById('tvQuestion').innerText = q.q;
+            const optEl = document.getElementById('tvOptions');
+            optEl.innerHTML = '';
+            document.getElementById('tvFeedback').innerText = '';
+            tvOptionPerm(tvData.seed, qi).forEach(bankOpt => {
+                const b = document.createElement('button');
+                b.className = 'tv-opt';
+                b.innerText = q.a[bankOpt];
+                b.onclick = () => tvAnswer(qi, bankOpt, b);
+                optEl.appendChild(b);
+            });
+        }
+        function tvAnswer(qi, bankOpt, btn) {
+            if (!tvData || tvData.winner) return;
+            const key = mySymbol === 'X' ? 'ans1' : 'ans2';
+            const mine = tvData[key] || {};
+            if (mine[qi]) return;
+            const ms = Date.now() - (tvData.startStamp + qi * TV_WINDOW);
+            if (ms < 0 || ms >= TV_WINDOW) return;
+            [...document.getElementById('tvOptions').children].forEach(c => { c.disabled = true; });
+            btn.classList.add('picked');
+            document.getElementById('tvFeedback').innerText = 'Answer locked in.';
+            const upd = {};
+            upd[key + '/' + qi] = { c: bankOpt, t: Math.round(ms) };
+            gameRef.update(upd);
+        }
+        function tvTick() {
+            if (!tvData) return;
+            const st = document.getElementById('tvStatus');
+            const now = Date.now();
+            const qi = tvQuestionIndex(tvData.startStamp, now);
+            const s1 = tvTotalScore(tvData.order, tvData.ans1);
+            const s2 = tvTotalScore(tvData.order, tvData.ans2);
+            const myScore = mySymbol === 'X' ? s1 : s2;
+            const oppScore = mySymbol === 'X' ? s2 : s1;
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            if (tvData.winner) {
+                st.innerText = tvData.winner === 'Draw' ? "It's a Draw! " + myScore + ' – ' + oppScore : (tvData.winner === (mySymbol === 'X' ? 'P1' : 'P2') ? 'You Win! ' + myScore + ' – ' + oppScore : oppName + ' Wins! ' + myScore + ' – ' + oppScore);
+                document.getElementById('rematchTvBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+                document.getElementById('tvTimerFill').style.transform = 'scaleX(0)';
+                return;
+            }
+            document.getElementById('rematchTvBtn').style.display = 'none';
+            if (qi < 0) {
+                st.innerText = 'Get ready…';
+                document.getElementById('tvTimerFill').style.transform = 'scaleX(1)';
+                return;
+            }
+            if (qi >= TV_COUNT) {
+                st.innerText = 'Time! Final score — You ' + myScore + ' · ' + oppName + ' ' + oppScore;
+                document.getElementById('tvTimerFill').style.transform = 'scaleX(0)';
+                return;
+            }
+            st.innerText = 'You ' + myScore + ' · ' + oppName + ' ' + oppScore;
+            const frac = Math.max(0, Math.min(1, 1 - (now - (tvData.startStamp + qi * TV_WINDOW)) / TV_WINDOW));
+            document.getElementById('tvTimerFill').style.transform = 'scaleX(' + frac + ')';
+            if (qi !== tvShownQ) {
+                tvShownQ = qi;
+                tvRenderQuestion(qi);
+                if (qi > 0) {
+                    const pq = TV_QUESTIONS[tvData.order[qi - 1]];
+                    document.getElementById('tvFeedback').innerText = 'Correct answer: ' + pq.a[pq.c];
+                }
+                const key = mySymbol === 'X' ? 'ans1' : 'ans2';
+                const mine = tvData[key] || {};
+                if (mine[qi]) {
+                    [...document.getElementById('tvOptions').children].forEach(c => { c.disabled = true; });
+                    document.getElementById('tvFeedback').innerText = 'Answer locked in.';
+                }
+            }
+        }
+        function tvMaybeFinish() {
+            if (!tvData || tvData.winner || !tvData.startStamp) return;
+            if (Date.now() - tvData.startStamp >= TV_COUNT * TV_WINDOW + 250) {
+                gameRef.update({ winner: tvWinner(tvData.order, tvData.ans1, tvData.ans2) });
+            }
+        }
+        function resetTrivia() {
+            if (!isHost) return;
+            const seed = Math.floor(Math.random() * 900000) + 100000;
+            tvShownQ = -2;
+            gameRef.update({ seed: seed, order: tvPickOrder(seed), startStamp: Date.now() + 3000, ans1: {}, ans2: {}, winner: null });
+        }
+
+        // ---------- MATH DUEL (session) ----------
+        let mtData = null, mtAdvancePending = false;
+        function renderMathDuel() {
+            if (!mtData) return;
+            const st = document.getElementById('mtStatus');
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            document.getElementById('mtScore').innerText = 'You ' + (me === 'P1' ? mtData.wins1 : mtData.wins2) + ' · ' + oppName + ' ' + (me === 'P1' ? mtData.wins2 : mtData.wins1) + ' · First to ' + MT_TARGET;
+            if (mtData.winner) {
+                st.innerText = mtData.winner === me ? 'You Win the match!' : oppName + ' Wins the match!';
+                document.getElementById('rematchMtBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+                document.getElementById('mtProblem').innerText = '';
+                document.getElementById('mtOptions').innerHTML = '';
+                return;
+            }
+            document.getElementById('rematchMtBtn').style.display = 'none';
+            const prob = mtProblem(mtData.seed, mtData.round);
+            const rw = mtData.roundWinner;
+            const myLock = me === 'P1' ? mtData.lock1 : mtData.lock2;
+            if (rw) st.innerText = rw === 'none' ? 'Nobody got that one.' : (rw === me ? 'You took the round!' : oppName + ' took that round.');
+            else st.innerText = myLock ? 'Locked out — wait for the next problem' : 'Round ' + mtData.round + ' · First correct answer wins the round';
+            document.getElementById('mtProblem').innerText = prob.text;
+            const optEl = document.getElementById('mtOptions');
+            optEl.innerHTML = '';
+            prob.options.forEach(val => {
+                const b = document.createElement('button');
+                b.className = 'mt-opt';
+                b.innerText = val;
+                if (rw || myLock) b.disabled = true;
+                b.onclick = () => mtAnswer(val);
+                optEl.appendChild(b);
+            });
+        }
+        function mtAnswer(val) {
+            if (!mtData || mtData.winner || mtData.roundWinner) return;
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            if (me === 'P1' ? mtData.lock1 : mtData.lock2) return;
+            const prob = mtProblem(mtData.seed, mtData.round);
+            if (val === prob.answer) {
+                gameRef.child('roundWinner').transaction(cur => cur === null ? me : undefined, (err, committed) => {
+                    if (committed) {
+                        const wins = (me === 'P1' ? mtData.wins1 : mtData.wins2) + 1;
+                        const upd = {};
+                        upd[me === 'P1' ? 'wins1' : 'wins2'] = wins;
+                        if (wins >= MT_TARGET) upd.winner = me;
+                        gameRef.update(upd);
+                    }
+                });
+            } else {
+                const upd = {};
+                upd[me === 'P1' ? 'lock1' : 'lock2'] = true;
+                const otherLocked = me === 'P1' ? mtData.lock2 : mtData.lock1;
+                if (otherLocked) upd.roundWinner = 'none';
+                gameRef.update(upd);
+            }
+        }
+        function mtMaybeAdvance() {
+            if (!mtData || !mtData.roundWinner || mtData.winner || mtAdvancePending || !isHost) return;
+            mtAdvancePending = true;
+            const roundAtClaim = mtData.round;
+            setTimeout(() => {
+                mtAdvancePending = false;
+                if (!mtData || !gameRef) return;
+                gameRef.once('value', snap => {
+                    const d = snap.val();
+                    if (d && d.roundWinner && !d.winner && d.round === roundAtClaim) {
+                        gameRef.update({ round: d.round + 1, lock1: false, lock2: false, roundWinner: null });
+                    }
+                });
+            }, 1600);
+        }
+        function resetMathDuel() {
+            if (!isHost) return;
+            gameRef.update({ seed: Math.floor(Math.random() * 900000) + 100000, round: 1, wins1: 0, wins2: 0, lock1: false, lock2: false, roundWinner: null, winner: null });
+        }
+
+        // ---------- SIMON DUEL (session) ----------
+        let siData = null, siTimers = [], siInputOpen = false, siProgress = 0, siPlaying = false, siHostActedStamp = 0;
+        function siClearTimers() { siTimers.forEach(t => clearTimeout(t)); siTimers = []; }
+        function siLightPad(i, on) {
+            const pad = document.getElementById('siPad' + i);
+            if (pad) pad.classList.toggle('lit', on);
+        }
+        function siStartPlayback() {
+            if (!siData || siData.winner) return;
+            siClearTimers();
+            siPlaying = true;
+            siInputOpen = false;
+            siProgress = 0;
+            const seq = siSequence(siData.seed, siRoundLen(siData.round));
+            const startAt = Math.max(Date.now(), siData.roundStamp || 0);
+            const delay0 = Math.max(0, startAt - Date.now());
+            document.getElementById('siInfo').innerText = 'Watch the sequence…';
+            seq.forEach((pad, i) => {
+                siTimers.push(setTimeout(() => siLightPad(pad, true), delay0 + i * 560));
+                siTimers.push(setTimeout(() => siLightPad(pad, false), delay0 + i * 560 + 420));
+            });
+            siTimers.push(setTimeout(() => {
+                siPlaying = false;
+                const myAtt = mySymbol === 'X' ? siData.att1 : siData.att2;
+                if (!myAtt) {
+                    siInputOpen = true;
+                    document.getElementById('siInfo').innerText = 'Your turn — repeat it!';
+                } else {
+                    document.getElementById('siInfo').innerText = myAtt === 'done' ? 'You completed it — waiting for your opponent.' : 'Your attempt ended — waiting for your opponent.';
+                }
+            }, delay0 + seq.length * 560 + 60));
+        }
+        function siPadTap(i) {
+            if (!siData || siData.winner || !siInputOpen || siPlaying) return;
+            const myAtt = mySymbol === 'X' ? siData.att1 : siData.att2;
+            if (myAtt) return;
+            siLightPad(i, true);
+            siTimers.push(setTimeout(() => siLightPad(i, false), 220));
+            const seq = siSequence(siData.seed, siRoundLen(siData.round));
+            const key = mySymbol === 'X' ? 'att1' : 'att2';
+            if (i !== seq[siProgress]) {
+                siInputOpen = false;
+                const upd = {}; upd[key] = 'failed';
+                gameRef.update(upd);
+                document.getElementById('siInfo').innerText = 'Wrong pad — attempt over.';
+                return;
+            }
+            siProgress++;
+            if (siProgress >= seq.length) {
+                siInputOpen = false;
+                const upd = {}; upd[key] = 'done';
+                gameRef.update(upd);
+                document.getElementById('siInfo').innerText = 'Sequence complete!';
+            }
+        }
+        function renderSimon() {
+            if (!siData) return;
+            const st = document.getElementById('siStatus');
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            if (siData.winner) {
+                st.innerText = siData.winner === 'Draw' ? "It's a Draw — you both cleared every round!" : (siData.winner === me ? 'You Win!' : oppName + ' Wins!');
+                document.getElementById('rematchSiBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+                return;
+            }
+            document.getElementById('rematchSiBtn').style.display = 'none';
+            st.innerText = 'Round ' + siData.round + ' of ' + SI_MAX_ROUND + ' · Sequence of ' + siRoundLen(siData.round);
+        }
+        function siMaybeResolve() {
+            if (!siData || siData.winner || !isHost) return;
+            const res = siResolve(siData.att1, siData.att2, siData.round);
+            if (!res) return;
+            const stamp = siData.roundStamp || 0;
+            if (siHostActedStamp === stamp && res.type !== 'win') return;
+            siHostActedStamp = stamp;
+            if (res.type === 'win') { gameRef.update({ winner: res.winner }); return; }
+            if (res.type === 'next') gameRef.update({ round: siData.round + 1, att1: '', att2: '', roundStamp: Date.now() + 2500 });
+            else if (res.type === 'replay') gameRef.update({ att1: '', att2: '', roundStamp: Date.now() + 2500 });
+        }
+        function siResetLocal() { siClearTimers(); siInputOpen = false; siProgress = 0; siPlaying = false; siHostActedStamp = 0; }
+        function resetSimon() {
+            if (!isHost) return;
+            siHostActedStamp = 0;
+            gameRef.update({ seed: Math.floor(Math.random() * 900000) + 100000, round: 1, att1: '', att2: '', roundStamp: Date.now() + 3000, winner: null });
+        }
+
+        // ---------- WORD CHAIN (session) ----------
+        let wcData = null, wcTimer = null;
+        function wcHearts(el, lives) {
+            el.innerHTML = '';
+            for (let i = 0; i < WC_LIVES; i++) {
+                const sp = document.createElement('span');
+                sp.className = 'wc-heart' + (i < lives ? '' : ' lost');
+                const ic = document.createElement('i');
+                ic.className = 'fas fa-heart';
+                sp.appendChild(ic);
+                el.appendChild(sp);
+            }
+        }
+        function renderWordChain() {
+            if (!wcData) return;
+            const st = document.getElementById('wcStatus');
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const oppName = playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent';
+            const myTurn = !wcData.winner && wcData.turn === me;
+            if (wcData.winner) {
+                st.innerText = wcData.winner === me ? 'You Win!' : oppName + ' Wins!';
+                document.getElementById('rematchWcBtn').style.display = isHost ? 'block' : 'none';
+                if (!isHost) st.innerText += ' (Waiting for Host to restart)';
+            } else {
+                const need = wcData.chain.length ? ' starting with ' + String(wcData.chain[wcData.chain.length - 1]).slice(-1).toUpperCase() : '';
+                st.innerText = myTurn ? 'Your turn — a word' + need : oppName + ' is thinking' + need + '…';
+                document.getElementById('rematchWcBtn').style.display = 'none';
+            }
+            wcHearts(document.getElementById('wcLives'), me === 'P1' ? wcData.lives1 : wcData.lives2);
+            const chainEl = document.getElementById('wcChain');
+            chainEl.innerHTML = '';
+            wcData.chain.forEach((w, i) => {
+                const chip = document.createElement('span');
+                chip.className = 'wc-chip' + (i === wcData.chain.length - 1 ? ' latest' : '');
+                chip.textContent = w;
+                chainEl.appendChild(chip);
+            });
+            chainEl.scrollLeft = chainEl.scrollWidth;
+            document.getElementById('wcInput').disabled = !myTurn;
+            document.getElementById('wcSendBtn').disabled = !myTurn;
+            if (wcData.lastEvent) document.getElementById('wcTimer').innerText = wcData.lastEvent;
+        }
+        function wcSubmitWord() {
+            if (!wcData || wcData.winner) return;
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            if (wcData.turn !== me) return;
+            const input = document.getElementById('wcInput');
+            const res = wcValidate(input.value, wcData.chain);
+            if (!res.ok) {
+                wcApplyLifeLoss(me, res.reason);
+                input.value = '';
+                return;
+            }
+            const chain = [...wcData.chain, res.word];
+            input.value = '';
+            gameRef.update({ chain: chain, turn: me === 'P1' ? 'P2' : 'P1', turnStamp: Date.now(), lastEvent: '' });
+        }
+        function wcApplyLifeLoss(loser, reason) {
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const loserName = loser === me ? 'You lose' : (playerNames[mySymbol === 'X' ? 'O' : 'X'] || 'Opponent') + ' loses';
+            const r = wcLoseLife(wcData.lives1, wcData.lives2, loser);
+            const upd = { lives1: r.lives1, lives2: r.lives2, turn: loser === 'P1' ? 'P2' : 'P1', turnStamp: Date.now(), lastEvent: reason + ' — ' + loserName + ' a life.' };
+            if (r.winner) upd.winner = r.winner;
+            gameRef.update(upd);
+        }
+        function wcTick() {
+            if (!wcData || wcData.winner || !wcData.turnStamp) return;
+            const me = mySymbol === 'X' ? 'P1' : 'P2';
+            const remaining = WC_TURN_MS - (Date.now() - wcData.turnStamp);
+            const timerEl = document.getElementById('wcTimer');
+            if (!wcData.lastEvent) timerEl.innerText = (wcData.turn === me ? 'Your clock: ' : 'Turn clock: ') + Math.max(0, Math.ceil(remaining / 1000)) + 's';
+            if (remaining > 0 || wcData.turn === me) return;
+            const loser = wcData.turn;
+            const stampAtClaim = wcData.turnStamp;
+            gameRef.child('turnStamp').transaction(cur => (cur === stampAtClaim && Date.now() - cur >= WC_TURN_MS) ? Date.now() : undefined, (err, committed) => {
+                if (committed && wcData) wcApplyLifeLoss(loser, 'Time ran out');
+            });
+        }
+        function resetWordChain() {
+            if (!isHost) return;
+            gameRef.update({ chain: [], turn: 'P1', lives1: WC_LIVES, lives2: WC_LIVES, turnStamp: Date.now(), lastEvent: '', winner: null });
+        }
 
         // --- TIC TAC TOE & RPS MOVE LOGIC ---
         window.makeMove = function(idx) {
@@ -10501,6 +11913,73 @@ function sendNotification(title, body, icon) {
             gameRoom = null;
         }
 
+        function leaveChess() {
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('chessOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/Chess/' + currentUser.uid).off(); db.ref('gameQueue/Chess/' + currentUser.uid).remove(); }
+            chData = null; chSelected = null; chLegalCache = [];
+            gameRoom = null;
+        }
+        function leaveDominoes() {
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('dominoesOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/Dominoes/' + currentUser.uid).off(); db.ref('gameQueue/Dominoes/' + currentUser.uid).remove(); }
+            doData = null; doSelected = null;
+            gameRoom = null;
+        }
+        function leaveHangman() {
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('hangmanOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/Hangman/' + currentUser.uid).off(); db.ref('gameQueue/Hangman/' + currentUser.uid).remove(); }
+            hgData = null;
+            gameRoom = null;
+        }
+        function leaveTrivia() {
+            if (tvTimer) { clearInterval(tvTimer); tvTimer = null; }
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('triviaOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/Trivia/' + currentUser.uid).off(); db.ref('gameQueue/Trivia/' + currentUser.uid).remove(); }
+            tvData = null; tvShownQ = -2;
+            gameRoom = null;
+        }
+        function leaveMathDuel() {
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('mathDuelOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/MathDuel/' + currentUser.uid).off(); db.ref('gameQueue/MathDuel/' + currentUser.uid).remove(); }
+            mtData = null; mtAdvancePending = false;
+            gameRoom = null;
+        }
+        function leaveSimon() {
+            siClearTimers();
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('simonOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/Simon/' + currentUser.uid).off(); db.ref('gameQueue/Simon/' + currentUser.uid).remove(); }
+            siData = null; siResetLocal();
+            gameRoom = null;
+        }
+        function leaveWordChain() {
+            if (wcTimer) { clearInterval(wcTimer); wcTimer = null; }
+            if (gameRef) { gameRef.off(); gameRef.remove(); }
+            if (gameChatRef) gameChatRef.off();
+            document.getElementById('wordChainOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (currentUser) { db.ref('gameQueue/WordChain/' + currentUser.uid).off(); db.ref('gameQueue/WordChain/' + currentUser.uid).remove(); }
+            wcData = null;
+            gameRoom = null;
+        }
+
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
             if(room !== 'GlobalLobby' && currentChatFriend) {
@@ -12130,6 +13609,119 @@ window.burnImage = function(element, url, key) {
         <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Pick a colour to flood your corner and absorb matching neighbours. You cannot pick your own current colour or your opponent's. Most territory after 20 picks each wins.</p>
 
         <button id="rematchFlBtn" onclick="resetFlood()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="chessOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveChess()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #E2E8F0; margin-bottom: 5px;">Chess</h2>
+        <p id="chStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <div id="chCapTop" class="ch-capline"></div>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 6px; margin-bottom: 2px;">
+            <div id="chBoard" style="display: grid; grid-template-columns: repeat(8, 1fr); width: 320px; max-width: 94vw; border-radius: 6px; overflow: hidden;"></div>
+        </div>
+        <div id="chCapBottom" class="ch-capline"></div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Full chess rules — castling, en passant and promotion (auto-queen) included. Tap one of your pieces, then tap a highlighted square.</p>
+        <button id="rematchChBtn" onclick="resetChess()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="dominoesOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveDominoes()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FDE68A; margin-bottom: 5px;">Dominoes</h2>
+        <p id="doStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="doOppInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 12px;">Opponent: 7 tiles &middot; Boneyard: 14</p>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; margin-bottom: 14px; width: 330px; max-width: 94vw; box-sizing: border-box;">
+            <div id="doChain" style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 24px;"></div>
+        </div>
+        <div id="doHand" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; width: 330px; max-width: 94vw; margin-bottom: 14px;"></div>
+        <div style="display: flex; gap: 10px;">
+            <button id="doDrawBtn" onclick="doDrawTile()" style="padding: 12px 22px; border-radius: 30px; background: var(--panel-2); color: var(--text-primary); font-weight: 800; font-size: 14px; border: 1px solid var(--glass-border);">Draw Tile</button>
+            <button id="doPassBtn" onclick="doPassTurn()" style="padding: 12px 22px; border-radius: 30px; background: var(--panel-2); color: var(--text-primary); font-weight: 800; font-size: 14px; border: 1px solid var(--glass-border);">Pass</button>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Double-six dominoes. Match either open end of the chain. If you cannot play, draw until you can — pass only when the boneyard is empty. Empty your hand, or finish with the fewest pips.</p>
+        <button id="rematchDoBtn" onclick="resetDominoes()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="hangmanOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveHangman()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FDA4AF; margin-bottom: 5px;">Hangman Duel</h2>
+        <p id="hgStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <svg id="hgGallows" width="150" height="130" viewBox="0 0 150 130" style="margin-bottom: 6px;">
+            <line x1="15" y1="124" x2="95" y2="124" stroke="rgba(255,255,255,0.35)" stroke-width="4" stroke-linecap="round"/>
+            <line x1="35" y1="124" x2="35" y2="10" stroke="rgba(255,255,255,0.35)" stroke-width="4" stroke-linecap="round"/>
+            <line x1="35" y1="10" x2="105" y2="10" stroke="rgba(255,255,255,0.35)" stroke-width="4" stroke-linecap="round"/>
+            <line id="hgPart1" x1="105" y1="10" x2="105" y2="28" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+            <circle id="hgPart2" cx="105" cy="40" r="11" fill="none" stroke="#FFD34D" stroke-width="3" style="display:none;"/>
+            <line id="hgPart3" x1="105" y1="51" x2="105" y2="82" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+            <line id="hgPart4" x1="105" y1="60" x2="90" y2="72" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+            <line id="hgPart5" x1="105" y1="60" x2="120" y2="72" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+            <line id="hgPart6" x1="105" y1="82" x2="92" y2="102" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+            <line id="hgPart7" x1="105" y1="82" x2="118" y2="102" stroke="#FFD34D" stroke-width="3" stroke-linecap="round" style="display:none;"/>
+        </svg>
+        <div id="hgPattern" style="display: flex; gap: 5px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; padding: 0 10px;"></div>
+        <p id="hgOppInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 14px;">Opponent: 0 wrong</p>
+        <div id="hgKeys" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 330px; max-width: 94vw;"></div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">You are both racing the SAME word. Guess letters — 6 wrong guesses and you are out. Finish first, or finish with fewer mistakes.</p>
+        <button id="rematchHgBtn" onclick="resetHangman()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="triviaOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveTrivia()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #67E8F9; margin-bottom: 5px;">Trivia Duel</h2>
+        <p id="tvStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="tvProg" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 10px;">Question 1 of 10 &middot; You 0 &middot; Opponent 0</p>
+        <div class="tv-timerwrap"><div id="tvTimerFill" class="tv-timerfill" style="width: 100%; height: 100%;"></div></div>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 18px 14px; margin-bottom: 14px; width: 330px; max-width: 94vw; box-sizing: border-box;">
+            <p id="tvQuestion" style="color: var(--text-primary); font-size: 17px; font-weight: 800; text-align: center; margin: 0; line-height: 1.45;">Get ready…</p>
+        </div>
+        <div id="tvOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 330px; max-width: 94vw;"></div>
+        <p id="tvFeedback" style="color: var(--text-secondary); font-size: 13px; margin: 12px 0 0; min-height: 18px; text-align: center; padding: 0 16px;"></p>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">10 questions, 15 seconds each. A correct answer scores 100, plus up to 50 for speed. Both of you answer every question in private.</p>
+        <button id="rematchTvBtn" onclick="resetTrivia()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="mathDuelOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMathDuel()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FDBA74; margin-bottom: 5px;">Math Duel</h2>
+        <p id="mtStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="mtScore" style="color: var(--text-secondary); font-size: 14px; margin: 0 0 16px;">You 0 &mdash; 0 Opponent &middot; First to 4 rounds</p>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 22px 14px; margin-bottom: 16px; width: 330px; max-width: 94vw; box-sizing: border-box;">
+            <p id="mtProblem" style="color: var(--text-primary); font-size: 34px; font-weight: 900; text-align: center; margin: 0; letter-spacing: 1px;">? + ?</p>
+        </div>
+        <div id="mtOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 330px; max-width: 94vw;"></div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Same problem, both phones. First correct tap takes the round — a wrong tap locks you out of it. First to 4 rounds wins the match.</p>
+        <button id="rematchMtBtn" onclick="resetMathDuel()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="simonOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveSimon()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #F87171; margin-bottom: 5px;">Simon Duel</h2>
+        <p id="siStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="siInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 14px;">Round 1 &middot; Sequence of 3</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 240px; margin-bottom: 8px;">
+            <div id="siPad0" class="si-pad" style="background: #46A758;" onclick="siPadTap(0)"></div>
+            <div id="siPad1" class="si-pad" style="background: #E5484D;" onclick="siPadTap(1)"></div>
+            <div id="siPad2" class="si-pad" style="background: #FFC926;" onclick="siPadTap(2)"></div>
+            <div id="siPad3" class="si-pad" style="background: #3E63DD;" onclick="siPadTap(3)"></div>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Watch the sequence, then repeat it. It grows by one every round. Fail a sequence your opponent completed and the match is theirs.</p>
+        <button id="rematchSiBtn" onclick="resetSimon()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="wordChainOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveWordChain()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #A5B4FC; margin-bottom: 5px;">Word Chain</h2>
+        <p id="wcStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="wcLives" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 4px;"></p>
+        <p id="wcTimer" style="color: #FFD34D; font-size: 13px; font-weight: 800; margin: 0 0 12px; min-height: 18px;"></p>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; margin-bottom: 14px; width: 330px; max-width: 94vw; box-sizing: border-box;">
+            <div id="wcChain" style="display: flex; flex-direction: column; align-items: center; gap: 6px; max-height: 30vh; overflow-y: auto;"></div>
+        </div>
+        <div style="display: flex; gap: 8px; width: 330px; max-width: 94vw;">
+            <input type="text" id="wcInput" placeholder="Your word…" autocomplete="off" autocapitalize="characters" style="flex: 1; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--field); color: var(--text-primary); outline: none; font-family: inherit; font-size: 15px; font-weight: 700; letter-spacing: 1px;" onkeypress="if(event.key === 'Enter') wcSubmitWord()">
+            <button id="wcSendBtn" onclick="wcSubmitWord()" style="padding: 12px 18px; border-radius: 14px; border: none; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 14px;">Play</button>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Your word must start with the last letter of the previous word. 4+ letters, no repeats, 20 seconds per turn. A bad word or a timeout costs one of your 3 lives.</p>
+        <button id="rematchWcBtn" onclick="resetWordChain()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
 
