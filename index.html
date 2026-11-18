@@ -609,6 +609,55 @@
             letter-spacing: -0.3px;
         }
 
+        /* ================= V3 CONTENT SURFACES (Stage 5) ================= */
+        .v3-hd { width: 100%; max-width: 400px; box-sizing: border-box; display: flex; align-items: center; gap: 11px; padding: 14px 20px 4px; }
+        .v3-hd-logo { width: 34px; height: 34px; flex: none; }
+        .v3-hd-mid { flex: 1; min-width: 0; }
+        .v3-hd-title { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary); line-height: 1.15; }
+        .v3-hd-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 1px; }
+        .v3-hd-btn { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; background: var(--panel-2); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: #C9CDD4; font-size: 16px; flex: none; }
+        .v3-sec { width: 100%; max-width: 400px; box-sizing: border-box; padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+        .v3-lbl { margin: 16px 2px 1px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; }
+        .v3-hero { border-radius: 16px; padding: 16px; display: flex; gap: 13px; align-items: center; background: linear-gradient(120deg, rgba(255,201,38,0.14), rgba(255,201,38,0.04)); border: 1px solid rgba(255,201,38,0.28); cursor: pointer; transition: transform 0.15s ease; position: relative; overflow: hidden; }
+        .v3-hero:active { transform: scale(0.98); }
+        .v3-hero-tile { width: 44px; height: 44px; border-radius: 13px; background: rgba(255,201,38,0.15); display: flex; align-items: center; justify-content: center; color: #FFD34D; font-size: 20px; flex: none; }
+        .v3-hero-mid { flex: 1; min-width: 0; }
+        .v3-hero-name { font-size: 16.5px; font-weight: 700; color: var(--text-primary); }
+        .v3-hero-sub { font-size: 12.5px; color: #B9BDC6; margin-top: 2px; line-height: 1.4; }
+        .v3-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success-green); display: inline-block; vertical-align: middle; margin-right: 5px; }
+        .v3-cta { background: var(--gold-grad); color: #1A1402; font-weight: 700; border-radius: 11px; padding: 9px 17px; font-size: 13.5px; flex: none; }
+        .v3-row { display: flex; gap: 12px; align-items: center; padding: 13px 14px; border-radius: 16px; background: var(--panel); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: transform 0.15s ease, background 0.2s ease; position: relative; overflow: hidden; }
+        .v3-row:active { transform: scale(0.98); }
+        .v3-row-tile { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04); background: color-mix(in srgb, currentColor 13%, transparent); border: 1px solid rgba(255,255,255,0.07); border-color: color-mix(in srgb, currentColor 20%, transparent); display: flex; align-items: center; justify-content: center; font-size: 17px; flex: none; }
+        .v3-row-mid { flex: 1; min-width: 0; }
+        .v3-row-name { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+        .v3-row-sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .v3-chev { color: var(--text-muted); font-size: 13px; flex: none; }
+        .v3-price-pill { background: var(--gold-grad); color: #1A1402; font-weight: 800; font-size: 12.5px; border-radius: 999px; padding: 6px 12px; flex: none; }
+        .v3-orb-pill { margin-left: auto; display: flex; align-items: center; gap: 7px; background: rgba(255,201,38,0.08); border: 1px solid rgba(255,201,38,0.3); padding: 7px 12px; border-radius: 999px; font-weight: 700; font-size: 13px; color: #FFD34D; flex: none; }
+        .orb-dot { width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #FFF3B0, #FFB800 65%, #C47F00); display: inline-block; flex: none; }
+        .v3-games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .v3-gcard { border-radius: 16px; padding: 14px; background: var(--panel); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: transform 0.15s ease; position: relative; overflow: hidden; }
+        .v3-gcard:active { transform: scale(0.97); }
+        .v3-gcard-tile { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04); background: color-mix(in srgb, currentColor 13%, transparent); border: 1px solid rgba(255,255,255,0.07); border-color: color-mix(in srgb, currentColor 18%, transparent); display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 10px; }
+        .v3-gcard-name { font-size: 14.5px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .v3-gcard-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+        .v3-chip-new { background: var(--gold-grad); color: #1A1402; font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; }
+        .picker-tabs.v3-chips { background: transparent; border: none; padding: 0; gap: 8px; border-radius: 0; }
+        .shop-preview { height: 62px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 14.5px; font-weight: 600; margin-bottom: 2px; overflow: hidden; flex: none; }
+        .shop-preview-tile { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.05); font-size: 24px; }
+        .shop-preview .theme-dot { width: 22px; height: 22px; border-radius: 50%; flex: none; margin-right: 10px; }
+        .shop-preview .theme-lines { display: flex; flex-direction: column; gap: 5px; }
+        .shop-preview .theme-lines span { display: block; width: 44px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.25); }
+        .shop-preview .theme-lines span:first-child { width: 30px; }
+        .shop-preview .ring-demo { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; background: var(--panel); box-sizing: border-box; }
+        .shop-price-row { display: flex; align-items: center; gap: 6px; width: 100%; margin-top: auto; min-height: 28px; }
+        .shop-price { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD34D; }
+        .shop-state { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .shop-state.equipped { color: #FFD34D; }
+        .v3-empty-note { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-muted); text-align: center; font-size: 12.5px; padding: 16px 10px; }
+        .v3-empty-note i { font-size: 18px; opacity: 0.6; }
+
         /* ================= EMPTY STATES ================= */
         .content-wrapper { 
             width: 100%; 
@@ -626,9 +675,9 @@
             color: var(--text-secondary); 
             animation: fadeIn 0.4s ease;
         }
-        .empty-state i { font-size: 48px; opacity: 0.15; margin-bottom: 20px; }
-        .empty-state h4 { margin: 0 0 8px 0; color: var(--text-primary); font-size: 16px; font-weight: 600; }
-        .empty-state p { margin: 0; font-size: 13px; max-width: 250px; line-height: 1.5; }
+        .empty-state i { width: 68px; height: 68px; border-radius: 20px; background: var(--panel); border: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--text-muted); opacity: 1; margin-bottom: 18px; }
+        .empty-state h4 { margin: 0 0 8px 0; color: var(--text-primary); font-size: 16px; font-weight: 700; }
+        .empty-state p { margin: 0; font-size: 13px; color: var(--text-secondary); max-width: 250px; line-height: 1.5; }
         
         .skeleton-loader { 
             display: none; 
@@ -817,7 +866,7 @@
         /* ================= SHOP ITEMS ================= */
         .shop-grid { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             width: 100%; 
             max-width: 400px; 
@@ -829,21 +878,21 @@
         }
         .shop-item {
             background: var(--panel);
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 16px;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            align-items: stretch;
+            gap: 9px;
             min-width: 0;
             transition: 0.2s;
             cursor: pointer;
             box-sizing: border-box;
             width: 100%;
-            height: 100%;
-            min-height: 140px;
+            min-height: 150px;
         }
+        .shop-item.equipped { border-color: rgba(255,201,38,0.45); background: rgba(255,201,38,0.05); }
         .shop-item:active { transform: scale(0.95); }
         .color-preview { 
             width: 45px; 
@@ -859,21 +908,21 @@
             flex-shrink: 0;
         }
         .shop-item-name { 
-            font-size: 11px;
+            font-size: 13.5px;
             font-weight: 700; 
             color: var(--text-primary); 
-            text-align: center;
-            line-height: 1.2;
+            text-align: left;
+            line-height: 1.25;
             word-wrap: break-word;
             width: 100%;
-            margin-bottom: auto;
         }
         .shop-btn {
-            width: 100%;
+            width: auto;
+            margin-left: auto;
             box-shadow: none;
-            border-radius: 10px;
-            padding: 6px 4px;
-            font-size: 11px;
+            border-radius: 8px;
+            padding: 6px 13px;
+            font-size: 12px;
             height: auto;
             min-height: 28px;
             line-height: 1.2;
@@ -1251,8 +1300,8 @@
 
         .picker-tabs { display: flex; gap: 5px; width: 100%; background: var(--field); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; margin-bottom: 12px; padding: 4px; box-sizing: border-box; }
         .picker-tabs::-webkit-scrollbar { display: none; }
-        .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-radius: 9px; transition: 0.2s; box-sizing: border-box; width: 50%; }
-        .p-tab.active { background: var(--gold-grad); color: #1A1402; font-weight: 700; }
+        .p-tab { flex: 1; text-align: center; padding: 8px 14px; font-size: 13px; font-weight: 600; color: #B9BDC6; background: var(--panel-2); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; border-radius: 999px; transition: 0.2s; box-sizing: border-box; white-space: nowrap; }
+        .p-tab.active { background: #FFC926; color: #1A1402; font-weight: 700; border-color: #FFC926; }
         
         .chat-list-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 14px; width: 100%; max-width: 380px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .chat-list-card:active { transform: scale(0.98); background: var(--panel-2); }
@@ -1489,69 +1538,96 @@
         </div>
 
         <div id="sheetContentGames" style="width: 100%; display:none; flex-direction: column; align-items: center; max-height: 70vh; overflow-y: auto;">
-             <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 15px;">Challenge strangers to live minigames!</p>
-             <div class="hub-grid" style="padding:0;">
-                <div class="hub-card ripple-target" onclick="findStrangerGame('TicTacToe')">
-                    <div class="card-icon" style="color: #FFC926;"><i class="fa-solid fa-hashtag"></i></div>
-                    <div class="card-text"><h3 style="color: #FFC926;">Tic-Tac-Toe</h3></div>
+            <div style="width: 100%; max-width: 400px; padding: 0 20px; box-sizing: border-box; display: flex; flex-direction: column;">
+                <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 0 0 14px;">Live multiplayer &mdash; no downloads, no waiting</p>
+                <div class="v3-hero ripple-target" onclick="findStrangerGame('Ludo4')">
+                    <div class="v3-hero-tile"><i class="fa-solid fa-dice"></i></div>
+                    <div class="v3-hero-mid">
+                        <div class="v3-hero-name">Ludo Arena</div>
+                        <div class="v3-hero-sub">2&ndash;4 players &middot; Live matches</div>
+                    </div>
+                    <span class="v3-cta">Play</span>
                 </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('RPS')">
-                    <div class="card-icon" style="color: #00e5ff;"><i class="fa-solid fa-hand-back-fist"></i></div>
-                    <div class="card-text"><h3 style="color: #00e5ff;">Rock-Paper-Scissors</h3></div>
+                <p class="v3-lbl">All Games &middot; 13</p>
+                <div class="v3-games-grid">
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('TicTacToe')">
+                        <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
+                        <div class="v3-gcard-name">Tic-Tac-Toe</div>
+                        <div class="v3-gcard-sub">2 players · Quick match</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('RPS')">
+                        <div class="v3-gcard-tile" style="color: #F9A8D4;"><i class="fa-solid fa-hand-back-fist"></i></div>
+                        <div class="v3-gcard-name">Rock-Paper-Scissors</div>
+                        <div class="v3-gcard-sub">Best of 3</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Dots')">
+                        <div class="v3-gcard-tile" style="color: #6EE7B7;"><i class="fa-solid fa-braille"></i></div>
+                        <div class="v3-gcard-name">Dots &amp; Boxes</div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Ludo2')">
+                        <div class="v3-gcard-tile" style="color: #6FD598;"><i class="fa-solid fa-dice"></i></div>
+                        <div class="v3-gcard-name">Ludo (2P)</div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Ludo3')">
+                        <div class="v3-gcard-tile" style="color: #6FD598;"><i class="fa-solid fa-dice-three"></i></div>
+                        <div class="v3-gcard-name">Ludo (3P)</div>
+                        <div class="v3-gcard-sub">3 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Ludo4')">
+                        <div class="v3-gcard-tile" style="color: #6FD598;"><i class="fa-solid fa-dice-d20"></i></div>
+                        <div class="v3-gcard-name">Ludo (4P)</div>
+                        <div class="v3-gcard-sub">4 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('StopTimer')">
+                        <div class="v3-gcard-tile" style="color: #FFD34D;"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="v3-gcard-name">Stop the Timer</div>
+                        <div class="v3-gcard-sub">Reflex duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Reaction')">
+                        <div class="v3-gcard-tile" style="color: #FFB86B;"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="v3-gcard-name">Reaction Tap</div>
+                        <div class="v3-gcard-sub">Fastest tap wins</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Matchsticks')">
+                        <div class="v3-gcard-tile" style="color: #7DD3FC;"><i class="fa-solid fa-fire-flame-simple"></i></div>
+                        <div class="v3-gcard-name">Matchsticks</div>
+                        <div class="v3-gcard-sub">Strategy · 21 sticks</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('HighCard')">
+                        <div class="v3-gcard-tile" style="color: #5EEAD4;"><i class="fa-solid fa-diamond"></i></div>
+                        <div class="v3-gcard-name">High Card War</div>
+                        <div class="v3-gcard-sub">Luck of the draw</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('GuessNumber')">
+                        <div class="v3-gcard-tile" style="color: #C4B5FD;"><i class="fa-solid fa-question"></i></div>
+                        <div class="v3-gcard-name">Guess the Number</div>
+                        <div class="v3-gcard-sub">1 to 100</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('CoinFlip')">
+                        <div class="v3-gcard-tile" style="color: #FDE047;"><i class="fa-solid fa-coins"></i></div>
+                        <div class="v3-gcard-name">Coin Flip</div>
+                        <div class="v3-gcard-sub">Settle anything</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('HigherLower')">
+                        <div class="v3-gcard-tile" style="color: #93C5FD;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
+                        <div class="v3-gcard-name">Higher or Lower</div>
+                        <div class="v3-gcard-sub">Streak game</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Connect4')">
+                        <div class="v3-gcard-tile" style="color: #8AABFF;"><i class="fa-solid fa-circle-dot"></i></div>
+                        <div class="v3-gcard-name">Connect 4 <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('MemoryMatch')">
+                        <div class="v3-gcard-tile" style="color: #C4B5FD;"><i class="fa-solid fa-clone"></i></div>
+                        <div class="v3-gcard-name">Memory Match <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Duel</div>
+                    </div>
                 </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Dots')">
-                    <div class="card-icon" style="color: #FF1493;"><i class="fa-solid fa-braille"></i></div>
-                    <div class="card-text"><h3 style="color: #FF1493;">Dots & Boxes</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo2')">
-                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice"></i></div>
-                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (2P)</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo3')">
-                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-three"></i></div>
-                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (3P)</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Ludo4')">
-                    <div class="card-icon" style="color: #4CAF50;"><i class="fa-solid fa-dice-d20"></i></div>
-                    <div class="card-text"><h3 style="color: #4CAF50;">Ludo (4P)</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('StopTimer')">
-                    <div class="card-icon" style="color: #FFD700;"><i class="fa-solid fa-stopwatch"></i></div>
-                    <div class="card-text"><h3 style="color: #FFD700;">Stop the Timer</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Reaction')">
-                    <div class="card-icon" style="color: #32CD32;"><i class="fa-solid fa-bolt"></i></div>
-                    <div class="card-text"><h3 style="color: #32CD32;">Reaction Tap</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Matchsticks')">
-                    <div class="card-icon" style="color: #ff6b6b;"><i class="fa-solid fa-fire-flame-simple"></i></div>
-                    <div class="card-text"><h3 style="color: #ff6b6b;">Matchsticks (21)</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('HighCard')">
-                    <div class="card-icon" style="color: #9b59b6;"><i class="fa-solid fa-diamond"></i></div>
-                    <div class="card-text"><h3 style="color: #9b59b6;">High Card War</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('GuessNumber')">
-                    <div class="card-icon" style="color: #f1c40f;"><i class="fa-solid fa-question"></i></div>
-                    <div class="card-text"><h3 style="color: #f1c40f;">Guess the Number</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('CoinFlip')">
-                    <div class="card-icon" style="color: #bdc3c7;"><i class="fa-solid fa-coins"></i></div>
-                    <div class="card-text"><h3 style="color: #bdc3c7;">Coin Flip</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('HigherLower')">
-                    <div class="card-icon" style="color: #e74c3c;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
-                    <div class="card-text"><h3 style="color: #e74c3c;">Higher or Lower</h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
-                    <div class="card-icon" style="color: #E5484D;"><i class="fa-solid fa-circle-dot"></i></div>
-                    <div class="card-text"><h3 style="color: #E5484D;">Connect 4 <span style="background: var(--gold-grad); color: #1A1402; font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; vertical-align: 2px; margin-left: 4px;">NEW</span></h3></div>
-                </div>
-                <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
-                    <div class="card-icon" style="color: #A78BFA;"><i class="fa-solid fa-clone"></i></div>
-                    <div class="card-text"><h3 style="color: #A78BFA;">Memory Match <span style="background: var(--gold-grad); color: #1A1402; font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; vertical-align: 2px; margin-left: 4px;">NEW</span></h3></div>
-                </div>
-             </div>
+            </div>
+
         </div>
 
     </div>
@@ -1663,67 +1739,69 @@
     <div id="hub-screen" class="screen active">
         
         <div id="tab-dashboard" class="hub-tab active-tab">
+            <div class="v3-hd">
+                <svg class="v3-hd-logo" viewBox="0 0 48 48" role="img" aria-label="Direct Chat logo"><use href="#logoMark"></use></svg>
+                <div class="v3-hd-mid">
+                    <div class="v3-hd-title">Direct Chat</div>
+                    <div class="v3-hd-sub">Welcome back</div>
+                </div>
+                <div class="v3-hd-btn"><i class="fa-regular fa-bell"></i></div>
+            </div>
+
             <div class="top-search-header">
                 <div class="search-glass">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="friendSearch" placeholder="Search usernames..." autocomplete="off">
+                    <input type="text" id="friendSearch" placeholder="Search rooms and people" autocomplete="off">
                 </div>
                 <div id="searchResults" class="search-results-dropdown"></div>
             </div>
-            
-            <div class="hub-grid" id="mainDashboardGrid">
+
+            <div class="v3-sec">
+                <p class="v3-lbl">Jump Back In</p>
                 <!-- Dynamic Global Rooms Container -->
                 <div id="dynamicRoomsContainer" style="display:contents;">
-                    <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global')">
-                        <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
-                        <div class="card-text">
-                            <h3>Global Lounge</h3>
-                            <div class="pill-row" style="justify-content: flex-start;">
-                                <span class="status-pill"><div class="dot green"></div> Live</span>
-                                <span class="status-pill">Public</span>
-                            </div>
+                    <div class="v3-hero ripple-target" onclick="openSheet('Global Lounge', 'global')">
+                        <div class="v3-hero-tile"><i class="fa-solid fa-earth-americas"></i></div>
+                        <div class="v3-hero-mid">
+                            <div class="v3-hero-name">Global Lounge</div>
+                            <div class="v3-hero-sub"><span class="v3-live-dot"></span> Live &middot; Public &mdash; the whole community, one room</div>
                         </div>
+                        <span class="v3-cta">Join</span>
                     </div>
                 </div>
+            </div>
 
-                <div class="hub-card ripple-target" onclick="openSheet('Private Room', 'private')">
-                    <div class="card-icon" style="color: #ff9900;">
-                        <i class="fa-solid fa-user-shield"></i>
+            <div class="v3-sec">
+                <p class="v3-lbl">Rooms</p>
+                <div class="v3-row ripple-target" onclick="openSheet('Private Room', 'private')">
+                    <div class="v3-row-tile" style="color: #6FD598;"><i class="fa-solid fa-lock"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Private Room</div>
+                        <div class="v3-row-sub">Encrypted &middot; Enter a secret key</div>
                     </div>
-                    <div class="card-text">
-                        <h3 style="color: #ff9900;">Private Room</h3>
-                        <div class="pill-row" style="justify-content: flex-start;">
-                            <span class="status-pill" style="color: #ff9900; border-color: rgba(255,153,0,0.2);"><div class="dot orange"></div> Encrypted</span>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
 
-                <div class="hub-card ripple-target" id="cardStrangerMatch" onclick="findStranger()">
-                    <div class="card-icon" style="color: var(--roulette-pink);">
-                        <i class="fa-solid fa-masks-theater"></i>
+                <div class="v3-row ripple-target" id="cardStrangerMatch" onclick="findStranger()">
+                    <div class="v3-row-tile" style="color: #8AABFF;"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Stranger Roulette</div>
+                        <div class="v3-row-sub">Matchmaking &middot; Meet someone new</div>
                     </div>
-                    <div class="card-text">
-                        <h3 style="color: var(--roulette-pink);">Stranger Roulette</h3>
-                        <div class="pill-row" style="justify-content: flex-start;">
-                            <span class="status-pill" style="color: var(--roulette-pink); border-color: rgba(255, 0, 106, 0.2);">
-                                <div class="dot" style="background: var(--roulette-pink); box-shadow: 0 0 8px var(--roulette-pink);"></div> Matchmaking
-                            </span>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
+            </div>
 
-                <div class="hub-card ripple-target" id="cardMiniGames" onclick="openSheet('Mini-Games Hub', 'games')">
-                    <div class="card-icon" style="color: #00ff66;">
-                        <i class="fa-solid fa-gamepad"></i>
+            <div class="v3-sec">
+                <p class="v3-lbl">Quick Play</p>
+                <div class="v3-row ripple-target" id="cardMiniGames" onclick="openSheet('Mini-Games Hub', 'games')">
+                    <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Mini-Games</div>
+                        <div class="v3-row-sub">Live play &middot; 13 games with strangers</div>
                     </div>
-                    <div class="card-text">
-                        <h3 style="color: #00ff66;">Mini-Games</h3>
-                        <div class="pill-row" style="justify-content: flex-start;">
-                            <span class="status-pill" style="color: #00ff66; border-color: rgba(0,255,102,0.2);"><div class="dot" style="background: #00ff66; box-shadow: 0 0 8px #00ff66;"></div> Live Play</span>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
-
             </div>
         </div>
 
@@ -1823,12 +1901,15 @@
         </div>
 
         <div id="tab-shop" class="hub-tab">
-             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; max-width:400px; padding: 15px 20px 10px;">
-                 <h2 style="margin:0; color:var(--text-primary);">The VIP Shop</h2>
-                 <div class="orb-badge" style="margin:0;"><i class="fa-solid fa-gem"></i> <span id="shopOrbCount">0</span></div>
+             <div class="v3-hd" style="padding-bottom: 10px;">
+                 <div class="v3-hd-mid">
+                     <div class="v3-hd-title" style="font-size: 22px;">Orb Shop</div>
+                     <div class="v3-hd-sub">Bubbles, themes, banners and more</div>
+                 </div>
+                 <div class="v3-orb-pill"><span class="orb-dot"></span> <span id="shopOrbCount">0</span></div>
              </div>
 
-             <div class="picker-tabs" style="max-width: 400px; width: 100%; padding: 0 10px; margin-bottom: 10px; flex-wrap: nowrap; overflow-x: auto;">
+             <div class="picker-tabs v3-chips" style="max-width: 400px; width: 100%; padding: 0 20px; margin-bottom: 12px; flex-wrap: nowrap; overflow-x: auto; box-sizing: border-box;">
                  <div id="tabShopBubbles" class="p-tab active" onclick="switchShopTab('bubbles')">Bubbles</div>
                  <div id="tabShopThemes" class="p-tab" onclick="switchShopTab('themes')">Themes</div>
                  <div id="tabShopBadges" class="p-tab" onclick="switchShopTab('badges')">Badges</div>
@@ -1838,12 +1919,27 @@
                  <div id="tabShopSounds" class="p-tab" onclick="switchShopTab('sounds')">Sounds</div>
              </div>
 
-             <div style="width: 100%; max-width: 400px; display: flex; gap: 10px; margin-bottom: 15px; padding: 0 10px;">
-                 <button class="sheet-btn ripple-target" onclick="buyMegaphone()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,204,0,0.1); border-color: var(--accent-yellow); color: var(--accent-yellow);"><i class="fa-solid fa-bullhorn"></i> Buy Megaphone</button>
-                 <button class="sheet-btn ripple-target" onclick="buyGiftBox()" style="flex: 1; padding: 10px; justify-content: center; font-size: 12px; background: rgba(255,0,127,0.1); border-color: #ff007f; color: #ff007f;"><i class="fa-solid fa-gift"></i> Buy Gift Box</button>
+             <div class="v3-sec" style="margin-bottom: 14px;">
+                 <p class="v3-lbl" style="margin-top: 2px;">Power-Ups</p>
+                 <div class="v3-row ripple-target" onclick="buyMegaphone()">
+                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-bullhorn"></i></div>
+                     <div class="v3-row-mid">
+                         <div class="v3-row-name">Megaphone</div>
+                         <div class="v3-row-sub">Broadcast one message to everyone</div>
+                     </div>
+                     <span class="v3-price-pill">1,000</span>
+                 </div>
+                 <div class="v3-row ripple-target" onclick="buyGiftBox()">
+                     <div class="v3-row-tile" style="color: #F9A8D4;"><i class="fa-solid fa-gift"></i></div>
+                     <div class="v3-row-mid">
+                         <div class="v3-row-name">Gift Box</div>
+                         <div class="v3-row-sub">Send Orbs hidden inside a gift</div>
+                     </div>
+                     <span class="v3-price-pill">300</span>
+                 </div>
              </div>
 
-             <div id="shopGridContent" class="shop-grid" style="padding: 0 10px 250px 10px;"></div>
+             <div id="shopGridContent" class="shop-grid" style="padding: 0 20px 250px 20px;"></div>
         </div>
 
         <div class="fab ripple-target" id="composeFab" onclick="document.querySelector('.dock-btn[data-tab=\'tab-dashboard\']').click();">
@@ -2952,31 +3048,40 @@ function sendNotification(title, body, icon) {
                     roomsArr.forEach(r => {
                         const safeRoomName = escapeHTML(r.name || '');
                         const safeRoomDesc = r.desc ? escapeHTML(r.desc) : '';
-                        container.innerHTML += `
-                            <div class="hub-card ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
-                                <div class="card-icon">${r.icon || '<i class="fa-solid fa-earth-americas"></i>'}</div>
-                                <div class="card-text">
-                                    <h3>${safeRoomName}</h3>
-                                    <div class="pill-row" style="justify-content: flex-start;">
-                                        <span class="status-pill"><div class="dot green"></div> Live</span>
-                                        ${r.desc ? `<span class="status-pill">${safeRoomDesc}</span>` : `<span class="status-pill">Public</span>`}
+                        if (r.key === 'GlobalLobby') {
+                            container.innerHTML += `
+                                <div class="v3-hero ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
+                                    <div class="v3-hero-tile"><i class="fa-solid fa-earth-americas"></i></div>
+                                    <div class="v3-hero-mid">
+                                        <div class="v3-hero-name">${safeRoomName}</div>
+                                        <div class="v3-hero-sub"><span class="v3-live-dot"></span> Live${r.desc ? ` &middot; ${safeRoomDesc}` : ' &middot; Public &mdash; the whole community, one room'}</div>
                                     </div>
+                                    <span class="v3-cta">Join</span>
                                 </div>
-                            </div>
-                        `;
+                            `;
+                        } else {
+                            container.innerHTML += `
+                                <div class="v3-row ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
+                                    <div class="v3-row-tile" style="color: #FFD34D;">${r.icon || '<i class="fa-solid fa-earth-americas"></i>'}</div>
+                                    <div class="v3-row-mid">
+                                        <div class="v3-row-name">${safeRoomName}</div>
+                                        <div class="v3-row-sub">${r.desc ? safeRoomDesc : 'Public room'}</div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                                </div>
+                            `;
+                        }
                     });
                 } else {
                     // Fallback default
                     container.innerHTML = `
-                        <div class="hub-card ripple-target" onclick="openSheet('Global Lounge', 'global', 'GlobalLobby')">
-                            <div class="card-icon"><i class="fa-solid fa-earth-americas"></i></div>
-                            <div class="card-text">
-                                <h3>Global Lounge</h3>
-                                <div class="pill-row" style="justify-content: flex-start;">
-                                    <span class="status-pill"><div class="dot green"></div> Live</span>
-                                    <span class="status-pill">Public</span>
-                                </div>
+                        <div class="v3-hero ripple-target" onclick="openSheet('Global Lounge', 'global', 'GlobalLobby')">
+                            <div class="v3-hero-tile"><i class="fa-solid fa-earth-americas"></i></div>
+                            <div class="v3-hero-mid">
+                                <div class="v3-hero-name">Global Lounge</div>
+                                <div class="v3-hero-sub"><span class="v3-live-dot"></span> Live &middot; Public &mdash; the whole community, one room</div>
                             </div>
+                            <span class="v3-cta">Join</span>
                         </div>
                     `;
                 }
@@ -3408,16 +3513,20 @@ function sendNotification(title, body, icon) {
             document.getElementById('tabShopNameColors').classList.toggle('active', tab === 'nameColors');
             document.getElementById('tabShopAvatarRings').classList.toggle('active', tab === 'avatarRings');
             document.getElementById('tabShopSounds').classList.toggle('active', tab === 'sounds');
+            // Clear first: a category switch must never leave the previous
+            // category painted underneath the new grid (ghosting fix).
+            const grid = document.getElementById('shopGridContent');
+            if (grid) { grid.innerHTML = ''; grid.scrollTop = 0; }
             renderShop(tab);
         }
 
         function renderShop(tab) {
             const grid = document.getElementById('shopGridContent');
             if(!grid) return;
-            
-            grid.innerHTML = '';
+
             const items = shopData[tab];
-            
+            let html = '';
+
             items.forEach(item => {
                 const isUnlocked = (myProfile.unlocked && myProfile.unlocked.includes(item.id)) || item.price === 0;
                 let isEquipped = false;
@@ -3428,10 +3537,10 @@ function sendNotification(title, body, icon) {
                 if(tab === 'nameColors') isEquipped = (myProfile.nameColor === item.id);
                 if(tab === 'avatarRings') isEquipped = (myProfile.avatarRing === item.id);
                 if(tab === 'sounds') isEquipped = (myProfile.chatSound === item.id);
-                
+
                 let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
                 let btnClass = isEquipped ? "btn-glass" : "btn-primary";
-                
+
                 let dynamicColor = item.acc || item.color || item.value;
                 if (item.isCustom) {
                     if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
@@ -3443,32 +3552,51 @@ function sendNotification(title, body, icon) {
 
                 if(tab === 'bubbles') {
                     const bg = dynamicColor || 'var(--island)';
-                    previewHtml = `<div class="color-preview" style="background: ${bg};"></div>`;
+                    const fg = item.text || '#ffffff';
+                    previewHtml = `<div class="shop-preview" style="background: ${bg}; color: ${fg};">Your message</div>`;
                 } else if(tab === 'themes') {
                     const acc = dynamicColor || 'var(--accent-yellow)';
-                    previewHtml = `<div class="color-preview" style="background: ${acc};"></div>`;
+                    const bgc = item.bg || 'var(--panel-2)';
+                    previewHtml = `<div class="shop-preview" style="background: ${bgc};"><span class="theme-dot" style="background: ${acc};"></span><span class="theme-lines"><span style="background: ${acc};"></span><span></span></span></div>`;
                 } else if(tab === 'badges') {
-                    previewHtml = `<div class="color-preview" style="background: transparent; font-size: 24px; border: none; box-shadow: none;">${item.icon || '❌'}</div>`;
+                    let badgeIcon = item.icon || '';
+                    if (badgeIcon && !badgeIcon.includes('<')) {
+                        // Stored icon is an emoji — render a Font Awesome glyph instead (shop grid only)
+                        if (item.id.includes('crown')) badgeIcon = '<i class="fa-solid fa-crown"></i>';
+                        else if (item.id.includes('diamond')) badgeIcon = '<i class="fa-solid fa-gem"></i>';
+                        else badgeIcon = '<i class="fa-solid fa-award"></i>';
+                    }
+                    if (!badgeIcon) badgeIcon = '<i class="fa-solid fa-ban"></i>';
+                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${item.color || 'var(--text-secondary)'};">${badgeIcon}</div>`;
                 } else if(tab === 'fonts') {
-                    previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; font-family: ${item.value}; border: none; box-shadow: none;">Aa</div>`;
+                    previewHtml = `<div class="shop-preview shop-preview-tile" style="font-family: ${item.value}; font-size: 30px; color: var(--text-primary);">Aa</div>`;
                 } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="color-preview" style="background: ${dynamicColor};"></div>`;
+                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${dynamicColor}; font-weight: 700; font-size: 15px;">Your Name</div>`;
                 } else if (tab === 'avatarRings') {
-                    previewHtml = `<div class="color-preview" style="background: transparent; border-radius: 50%; border: none; ${item.value.replace('4px', '2px')}"></div>`;
+                    previewHtml = `<div class="shop-preview shop-preview-tile"><span class="ring-demo" style="${item.value.replace('4px', '2px')}"><i class="fa-solid fa-user"></i></span></div>`;
                 } else if (tab === 'sounds') {
-                    previewHtml = `<div class="color-preview" style="background: transparent; font-size: 20px; border: none; box-shadow: none;"><i class="fa-solid fa-music"></i></div>`;
+                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: var(--accent-yellow);"><i class="fa-solid fa-music"></i></div>`;
                 }
-                
-                grid.innerHTML += `
-                <div class="shop-item ripple-target" style="border-color: ${isEquipped ? 'var(--accent-yellow)' : 'rgba(255,255,255,0.07)'}; ${isEquipped ? 'background: rgba(255,201,38,0.06);' : ''}" onclick="handleShopClick('${tab}', '${item.id}')">
+
+                const stateHtml = !isUnlocked
+                    ? `<span class="shop-price"><span class="orb-dot"></span>${item.price === 0 ? "Free" : item.price}</span>`
+                    : (isEquipped ? `<span class="shop-state equipped">Equipped</span>` : `<span class="shop-state">Owned</span>`);
+
+                html += `
+                <div class="shop-item ripple-target${isEquipped ? ' equipped' : ''}" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
                     <span class="shop-item-name">${item.name}</span>
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; flex-grow: 1; width: 100%; gap: 6px;">
-                        ${!isUnlocked ? `<span style="font-size:11px; color:var(--accent-yellow); font-weight:bold; margin-top: auto;">🪙 ${item.price === 0 ? "Free" : item.price}</span>` : `<span style="font-size:11px; color:#888; font-weight:bold; margin-top: auto;">Owned</span>`}
+                    <div class="shop-price-row">
+                        ${stateHtml}
                         <button class="${btnClass} shop-btn">${btnText}</button>
                     </div>
                 </div>`;
             });
+
+            // Single assignment: building with innerHTML += inside the loop
+            // re-parses and re-paints the grid per item, which showed up as
+            // doubled/ghosted cards when switching categories.
+            grid.innerHTML = html;
         }
 
         window.handleShopClick = function(tab, itemId) {
@@ -3705,7 +3833,7 @@ function sendNotification(title, body, icon) {
                         }
                     });
                     
-                    if(!found) resultsBox.innerHTML = '<div style="color:var(--text-secondary); text-align:center; font-size:12px; padding:10px;">No users found</div>';
+                    if(!found) resultsBox.innerHTML = '<div class="v3-empty-note"><i class="fa-solid fa-magnifying-glass"></i>No users found</div>';
                     resultsBox.classList.add('show');
                 });
             });
