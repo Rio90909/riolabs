@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL FIXES & THEME VARIABLES --- */
         *, *::before, *::after { 
@@ -655,6 +655,18 @@
         .shop-price { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #FFD34D; }
         .shop-state { font-size: 12px; font-weight: 600; color: var(--text-muted); }
         .shop-state.equipped { color: #FFD34D; }
+        /* ================= STAGE 8 SHOP ================= */
+        .v3-chip-free { background: rgba(111,213,152,0.14); color: #6FD598; border: 1px solid rgba(111,213,152,0.35); font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; }
+        .shop-item-name .v3-chip-new, .shop-item-name .v3-chip-free { vertical-align: 2px; margin-left: 4px; }
+        .shop-tier-lbl { grid-column: 1 / -1; margin: 8px 2px -2px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; }
+        .shop-tier-lbl:first-child { margin-top: 0; }
+        .shop-item.shop-item-wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; min-height: 88px; }
+        .shop-item.shop-item-wide .shop-preview { width: 92px; height: 52px; margin-bottom: 0; flex: none; font-size: 11.5px; padding: 0 6px; text-align: center; box-sizing: border-box; }
+        .shop-item.shop-item-wide .shop-wide-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+        .shop-item.shop-item-wide .shop-wide-cat { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+        .shop-item.shop-item-wide .shop-price-row { width: auto; margin-top: 0; flex: none; }
+        .profile-title-line { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #FFD34D; text-align: center; margin-top: 2px; }
+        .up-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #FFD34D; text-align: center; margin: -2px 0 6px; }
         .v3-empty-note { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-muted); text-align: center; font-size: 12.5px; padding: 16px 10px; }
         .v3-empty-note i { font-size: 18px; opacity: 0.6; }
 
@@ -1493,6 +1505,7 @@
                         <option value="fonts">Fonts</option>
                         <option value="nameColors">Name Colors</option>
                         <option value="avatarRings">Rings</option>
+                        <option value="titles">Titles</option>
                     </select>
                     <select id="adminEditInventoryItem" class="auth-input" style=" flex: 2;">
                         <!-- populated by JS -->
@@ -1561,6 +1574,7 @@
                     <option value="fonts" style="background:var(--bg-dark);">Chat Fonts</option>
                     <option value="nameColors" style="background:var(--bg-dark);">Name Colors</option>
                     <option value="avatarRings" style="background:var(--bg-dark);">Avatar Rings</option>
+                    <option value="titles" style="background:var(--bg-dark);">Profile Titles</option>
                 </select>
             </div>
 
@@ -1800,6 +1814,7 @@
             <h2 id="upName" style="margin: 0 0 5px 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
                 Name <span id="upOnlineDot" class="dot grey"></span>
             </h2>
+            <p class="up-title" id="upTitle" style="display: none;"></p>
             <p id="upBio" style="color: var(--text-secondary); font-size: 13px; text-align: center; max-width: 80%; margin: 5px 0 15px; line-height: 1.4;">Bio...</p>
 
             <div class="pill-row" style="margin-bottom: 20px;">
@@ -2011,6 +2026,7 @@
                         <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" style="width: 94px; height: 94px; border-radius: 50%; border: 4px solid var(--bg-dark); object-fit: cover; background: black;" alt="My Profile Avatar">
                     </div>
                     <div class="profile-name" id="displayUsername" onclick="editProfileName()">Guest User</div>
+                    <div class="profile-title-line" id="displayTitle" style="display: none;"></div>
                     <p id="displayBio" class="profile-bio" onclick="editBio()" title="Tap to edit">Tap to add "About Me" bio...</p>
                     <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined <span id="displayJoinDate">Today</span></div>
                 </div>
@@ -2201,6 +2217,7 @@
                  <div id="tabShopNameColors" class="p-tab" onclick="switchShopTab('nameColors')">Name Colors</div>
                  <div id="tabShopAvatarRings" class="p-tab" onclick="switchShopTab('avatarRings')">Rings</div>
                  <div id="tabShopSounds" class="p-tab" onclick="switchShopTab('sounds')">Sounds</div>
+                 <div id="tabShopTitles" class="p-tab" onclick="switchShopTab('titles')">Titles</div>
              </div>
 
              <div class="v3-sec" style="margin-bottom: 14px;">
@@ -2702,6 +2719,7 @@ function sendNotification(title, body, icon) {
             chatTextColor: '#000', 
             appTheme: 't_free', 
             badge: 'badge_none',
+            equippedTitle: 'title_none',
             chatFont: 'f_default',
             nameColor: 'nc_white',
             avatarRing: 'ar_none',
@@ -2755,14 +2773,24 @@ function sendNotification(title, body, icon) {
                 { id: 'b_mint', name: 'Mint Leaf', color: '#98ff98', text: '#000', price: 400 },
                 { id: 'b_neonpink', name: 'Neon Pink', color: '#ff1493', text: '#fff', price: 800 },
                 { id: 'b_ocean', name: 'Deep Ocean', color: '#00bfff', text: '#000', price: 1200 },
-                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 1000, isCustom: true }
+                { id: 'b_custom', name: 'Custom Color', color: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', text: '#fff', price: 1000, isCustom: true },
+                { id: 'b_grey', name: 'Soft Grey', color: '#9aa3ad', text: '#101216', price: 0, new: true },
+                { id: 'b_coral', name: 'Coral Pop', color: '#ff7f6b', text: '#20100c', price: 300, new: true },
+                { id: 'b_forest', name: 'Forest Deep', color: '#166534', text: '#dcfce7', price: 500, new: true },
+                { id: 'b_lavender', name: 'Lavender Mist', color: 'linear-gradient(135deg, #c4b5fd, #8b5cf6)', text: '#fff', price: 600, new: true },
+                { id: 'b_sunset', name: 'Sunset Glow', color: 'linear-gradient(135deg, #ffb347, #ff5e7a)', text: '#fff', price: 900, new: true },
+                { id: 'b_midnight', name: 'Midnight Ink', color: 'linear-gradient(135deg, #1e293b, #0f172a)', text: '#e2e8f0', price: 1500, new: true }
             ],
             themes: [
                 { id: 't_white', name: 'Dark Mode', bg: '#0B0C0F', acc: '#FFC926', isl: 'rgba(18, 19, 26, 0.98)', txt: '#F4F5F7', txtSec: '#9BA1AB', price: 0 },
                 { id: 't_cherry', name: 'Cherry Blossom', bg: '#1c0f13', acc: '#ffb7c5', isl: '#2d1b22', txt: '#fff0f5', txtSec: '#e0c0c8', price: 800 },
                 { id: 't_synth', name: 'Synthwave', bg: '#120424', acc: '#ff007f', isl: '#1f093d', txt: '#00ffff', txtSec: '#ff007f', price: 1200 },
                 { id: 't_royal', name: 'Royal Velvet', bg: '#100517', acc: '#9370db', isl: '#220b33', txt: '#f8f8ff', txtSec: '#d8bfd8', price: 2000 },
-                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true }
+                { id: 't_custom', name: 'Custom Accent', bg: '#141108', acc: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', isl: '#241f0f', txt: '#ffffff', txtSec: '#aaaaaa', price: 1000, isCustom: true },
+                { id: 't_porcelain', name: 'Porcelain Night', bg: '#101418', acc: '#7dd3fc', isl: '#1a2129', txt: '#f2f7fb', txtSec: '#a8bdd0', price: 800, new: true },
+                { id: 't_ember', name: 'Ember', bg: '#170b06', acc: '#ff8c42', isl: '#26120a', txt: '#fff3e8', txtSec: '#e8b48f', price: 1000, new: true },
+                { id: 't_aurora', name: 'Aurora', bg: '#07131c', acc: '#34d399', isl: '#0d2130', txt: '#e6fff5', txtSec: '#8fd8c0', price: 1500, new: true },
+                { id: 't_nebula', name: 'Nebula', bg: '#0d0716', acc: '#a78bfa', isl: '#1a1030', txt: '#f1eaff', txtSec: '#bda8e8', price: 2500, new: true }
             ],
                         badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
@@ -2771,26 +2799,48 @@ function sendNotification(title, body, icon) {
                 { id: 'badge_diamond', name: 'Diamond', icon: '💎', color: '#00e5ff', price: 1200 },
                 { id: 'badge_mod', name: 'Moderator', icon: '<i class="fa-solid fa-shield-halved" style="color:var(--success-green);"></i>', color: 'var(--success-green)', price: 0 },
                 { id: 'badge_early', name: 'Early Supporter', icon: '<i class="fa-solid fa-star" style="color:#ff9900;"></i>', color: '#ff9900', price: 0 },
-                { id: 'badge_pro', name: 'Pro Gamer', icon: '<i class="fa-solid fa-gamepad" style="color:#ff007f;"></i>', color: '#ff007f', price: 1500 }
+                { id: 'badge_pro', name: 'Pro Gamer', icon: '<i class="fa-solid fa-gamepad" style="color:#ff007f;"></i>', color: '#ff007f', price: 1500 },
+                { id: 'badge_new', name: 'Newcomer', icon: '<i class="fa-solid fa-seedling" style="color:#6FD598;"></i>', color: '#6FD598', price: 0, new: true },
+                { id: 'badge_fire', name: 'On Fire', icon: '<i class="fa-solid fa-fire" style="color:#ff7a45;"></i>', color: '#ff7a45', price: 150, new: true },
+                { id: 'badge_bolt', name: 'Speedster', icon: '<i class="fa-solid fa-bolt" style="color:#ffd60a;"></i>', color: '#ffd60a', price: 300, new: true },
+                { id: 'badge_moon', name: 'Lunar', icon: '<i class="fa-solid fa-moon" style="color:#a5b4fc;"></i>', color: '#a5b4fc', price: 450, new: true },
+                { id: 'badge_rocket', name: 'Rocket', icon: '<i class="fa-solid fa-rocket" style="color:#f472b6;"></i>', color: '#f472b6', price: 600, new: true },
+                { id: 'badge_trophy', name: 'Champion', icon: '<i class="fa-solid fa-trophy" style="color:#ffb703;"></i>', color: '#ffb703', price: 900, new: true },
+                { id: 'badge_dragon', name: 'Dragon', icon: '<i class="fa-solid fa-dragon" style="color:#ef4444;"></i>', color: '#ef4444', price: 1200, new: true },
+                { id: 'badge_infinity', name: 'Infinity', icon: '<i class="fa-solid fa-infinity" style="color:#22d3ee;"></i>', color: '#22d3ee', price: 1800, new: true }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
                 { id: 'f_cursive', name: 'Cursive Ink', value: '"Comic Sans MS", cursive', price: 400 },
                 { id: 'f_mono', name: 'Typewriter', value: '"Courier New", Courier, monospace', price: 800 },
-                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 1200 }
+                { id: 'f_arcade', name: 'Arcade 8-Bit', value: 'Impact, fantasy', price: 1200 },
+                { id: 'f_serif', name: 'Playfair Serif', value: '"Playfair Display", serif', price: 200, new: true },
+                { id: 'f_hand', name: 'Handwritten', value: '"Caveat", cursive', price: 450, new: true },
+                { id: 'f_tech', name: 'Space Mono', value: '"Space Mono", monospace', price: 700, new: true },
+                { id: 'f_futura', name: 'Orbitron', value: '"Orbitron", sans-serif', price: 1000, new: true }
             ],
             nameColors: [
                 { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
                 { id: 'nc_gold', name: 'Solid Gold', value: '#ffd700', price: 400 },
                 { id: 'nc_electric', name: 'Electric Blue', value: '#00e5ff', price: 800 },
                 { id: 'nc_rainbow', name: 'Rainbow Flow', value: 'linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff)', price: 1200 },
-                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 1000, isCustom: true }
+                { id: 'nc_custom', name: 'Custom Color', value: 'conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)', price: 1000, isCustom: true },
+                { id: 'nc_sky', name: 'Sky', value: '#38bdf8', price: 0, new: true },
+                { id: 'nc_rose', name: 'Rose', value: '#fb7185', price: 200, new: true },
+                { id: 'nc_lime', name: 'Lime Punch', value: '#a3e635', price: 350, new: true },
+                { id: 'nc_violet', name: 'Violet', value: '#8b5cf6', price: 500, new: true },
+                { id: 'nc_sunsetg', name: 'Sunset Gradient', value: 'linear-gradient(90deg, #ff9a56, #ff5e7a, #c86bff)', price: 800, new: true },
+                { id: 'nc_ice', name: 'Ice Gradient', value: 'linear-gradient(90deg, #a5f3fc, #38bdf8, #818cf8)', price: 1200, new: true }
             ],
             avatarRings: [
                 { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
                 { id: 'ar_neon', name: 'Neon Glow', value: '4px solid #00ffcc; box-shadow: 0 0 15px #00ffcc;', price: 400 },
                 { id: 'ar_fire', name: 'Blazing Aura', value: '4px solid #ff4500; box-shadow: 0 0 20px #ff4500;', price: 800 },
-                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1200 }
+                { id: 'ar_gold', name: 'Gold Crown', value: '4px solid #ffd700; box-shadow: 0 0 15px #ffd700;', price: 1200 },
+                { id: 'ar_rose', name: 'Rose Ring', value: '4px solid #fb7185; box-shadow: 0 0 12px rgba(251,113,133,0.8);', price: 500, new: true },
+                { id: 'ar_ice', name: 'Ice Ring', value: '4px solid #7dd3fc; box-shadow: 0 0 12px rgba(125,211,252,0.8);', price: 900, new: true },
+                { id: 'ar_prism', name: 'Prism Ring', value: '4px solid #c86bff; box-shadow: 0 0 14px rgba(200,107,255,0.85);', price: 1400, new: true },
+                { id: 'ar_eclipse', name: 'Eclipse Ring', value: '4px solid #f8fafc; box-shadow: 0 0 0 3px #0f172a, 0 0 16px rgba(248,250,252,0.7);', price: 2000, new: true }
             ],
             sounds: [
                 { id: 's_default', name: 'Soft Peep', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', price: 0 },
@@ -2800,6 +2850,17 @@ function sendNotification(title, body, icon) {
                 { id: 's_magic', name: 'Magic Chime', url: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', price: 800 },
                 { id: 's_bell', name: 'Desk Bell', url: 'https://assets.mixkit.co/active_storage/sfx/2855/2855-preview.mp3', price: 1200 },
                 { id: 's_sci', name: 'Sci-Fi Alert', url: 'https://assets.mixkit.co/active_storage/sfx/2311/2311-preview.mp3', price: 1200 }
+            ],
+            titles: [
+                { id: 'title_none', name: 'No Title', price: 0 },
+                { id: 'title_early', name: 'Early Bird', price: 0, new: true },
+                { id: 'title_owl', name: 'Night Owl', price: 300, new: true },
+                { id: 'title_chatter', name: 'Chatterbox', price: 450, new: true },
+                { id: 'title_strategist', name: 'Strategist', price: 600, new: true },
+                { id: 'title_gamemaster', name: 'Game Master', price: 900, new: true },
+                { id: 'title_unstoppable', name: 'Unstoppable', price: 1500, new: true },
+                { id: 'title_legend', name: 'Legend', price: 2000, new: true },
+                { id: 'title_original', name: 'The Original', price: 2500, new: true }
             ]
         };
 
@@ -2807,10 +2868,30 @@ function sendNotification(title, body, icon) {
         db.ref('globalSettings/shopData').on('value', snap => {
             const remoteData = snap.val();
             if (remoteData) {
-                // Merge remote data over local defaults
+                // Stage 8 UNION merge: local defaults are the floor, remote
+                // (admin) data wins per item id. Previously this REPLACED each
+                // category with the remote array, so built-in items added in
+                // code never appeared once a category existed in Firebase.
+                // Now: for every remote category, start from the local array,
+                // swap in the remote version of any item whose id exists
+                // remotely, then append remote-only items. Categories that
+                // exist only locally (e.g. titles) survive untouched, and
+                // categories that exist only remotely are adopted whole.
+                // Trade-off: an admin hard-DELETE of a built-in item (removing
+                // it from the remote array) no longer sticks — the item
+                // resurrects from local defaults on next load. Admin edits
+                // and reprices (same id) still win. Removing a built-in for
+                // good requires removing it from the defaults in code.
                 Object.keys(remoteData).forEach(cat => {
                     if(remoteData[cat] && Array.isArray(remoteData[cat])) {
-                        shopData[cat] = remoteData[cat];
+                        const localItems = Array.isArray(shopData[cat]) ? shopData[cat] : [];
+                        const remoteById = {};
+                        remoteData[cat].forEach(it => { if (it && it.id) remoteById[it.id] = it; });
+                        const merged = localItems.map(li => (li && li.id && remoteById[li.id]) ? remoteById[li.id] : li);
+                        remoteData[cat].forEach(it => {
+                            if (it && it.id && !localItems.some(li => li && li.id === it.id)) merged.push(it);
+                        });
+                        shopData[cat] = merged;
                     }
                 });
                 // Re-render current shop tab if open
@@ -2823,7 +2904,8 @@ function sendNotification(title, body, icon) {
                         'tabShopFonts': 'fonts',
                         'tabShopNameColors': 'nameColors',
                         'tabShopAvatarRings': 'avatarRings',
-                        'tabShopSounds': 'sounds'
+                        'tabShopSounds': 'sounds',
+                        'tabShopTitles': 'titles'
                     };
                     switchShopTab(tabMap[activeTabEl.id]);
                 }
@@ -3458,6 +3540,7 @@ function sendNotification(title, body, icon) {
                 myProfile.chatTextColor = d.chatTextColor || '#000';
                 myProfile.appTheme = d.appTheme || 't_free';
                 myProfile.badge = d.badge || 'badge_none';
+                myProfile.equippedTitle = d.equippedTitle || 'title_none';
                 myProfile.chatFont = d.chatFont || 'f_default';
                 myProfile.nameColor = d.nameColor || 'nc_white';
                 myProfile.avatarRing = d.avatarRing || 'ar_none';
@@ -3480,7 +3563,7 @@ function sendNotification(title, body, icon) {
                 
                 // Guarantee all free items are unlocked
                 let unlocked = d.unlocked || [];
-                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges, ...shopData.fonts, ...shopData.nameColors, ...shopData.avatarRings, ...shopData.sounds].filter(i => i.price === 0).map(i => i.id);
+                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges, ...shopData.fonts, ...shopData.nameColors, ...shopData.avatarRings, ...shopData.sounds, ...(shopData.titles || [])].filter(i => i.price === 0).map(i => i.id);
                 allFreeItems.forEach(freeId => {
                     if (!unlocked.includes(freeId)) unlocked.push(freeId);
                 });
@@ -3569,9 +3652,22 @@ function sendNotification(title, body, icon) {
                     }
                 });
                 lkSet('lookRingName', el => { el.textContent = rStyle ? rStyle.name : 'None'; });
-                document.getElementById('userAvatar').src = myProfile.pic; 
-                document.getElementById('orbCountDisplay').innerText = myProfile.orbs; 
+                document.getElementById('userAvatar').src = myProfile.pic;
+                document.getElementById('orbCountDisplay').innerText = myProfile.orbs;
                 document.getElementById('displayBio').innerText = myProfile.bio;
+
+                // Stage 8: equipped title line under the own name (hidden
+                // when no title / "No Title" is equipped).
+                const myTitleEl = document.getElementById('displayTitle');
+                if (myTitleEl) {
+                    const myTitle = (shopData.titles || []).find(t => t.id === myProfile.equippedTitle);
+                    if (myTitle && myTitle.id !== 'title_none') {
+                        myTitleEl.textContent = myTitle.name;
+                        myTitleEl.style.display = '';
+                    } else {
+                        myTitleEl.style.display = 'none';
+                    }
+                }
                 
                 const jd = new Date(myProfile.joinDate);
                 document.getElementById('displayJoinDate').innerText = jd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -3600,6 +3696,7 @@ function sendNotification(title, body, icon) {
                 chatTextColor: myProfile.chatTextColor, 
                 appTheme: myProfile.appTheme,
                 badge: myProfile.badge,
+                equippedTitle: myProfile.equippedTitle || 'title_none',
                 chatFont: myProfile.chatFont,
                 nameColor: myProfile.nameColor,
                 avatarRing: myProfile.avatarRing,
@@ -3834,6 +3931,18 @@ function sendNotification(title, body, icon) {
                 }
 
                 document.getElementById('upBio').innerText = uData.bio || 'Hey! I am using VIP Direct Chat.';
+
+                // Stage 8: equipped title line under the viewed user's name.
+                const upTitleEl = document.getElementById('upTitle');
+                if (upTitleEl) {
+                    const theirTitle = (shopData.titles || []).find(t => t.id === (uData.equippedTitle || 'title_none'));
+                    if (theirTitle && theirTitle.id !== 'title_none') {
+                        upTitleEl.textContent = theirTitle.name;
+                        upTitleEl.style.display = '';
+                    } else {
+                        upTitleEl.style.display = 'none';
+                    }
+                }
                 
                 const jd = new Date(uData.joinDate || Date.now()); 
                 document.getElementById('upJoin').innerText = jd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -3940,6 +4049,7 @@ function sendNotification(title, body, icon) {
             document.getElementById('tabShopNameColors').classList.toggle('active', tab === 'nameColors');
             document.getElementById('tabShopAvatarRings').classList.toggle('active', tab === 'avatarRings');
             document.getElementById('tabShopSounds').classList.toggle('active', tab === 'sounds');
+            document.getElementById('tabShopTitles').classList.toggle('active', tab === 'titles');
             // Clear first: a category switch must never leave the previous
             // category painted underneath the new grid (ghosting fix).
             const grid = document.getElementById('shopGridContent');
@@ -3947,77 +4057,155 @@ function sendNotification(title, body, icon) {
             renderShop(tab);
         }
 
-        function renderShop(tab) {
-            const grid = document.getElementById('shopGridContent');
-            if(!grid) return;
+        // --- Stage 8 shop rendering helpers. Extracted from the Stage 5
+        // renderShop loop so the item grid and the Featured strip share one
+        // implementation; the preview/state HTML strings are unchanged,
+        // with a 'titles' branch added for the new category. ---
+        function shopIsEquipped(tab, item) {
+            if(tab === 'bubbles') return (myProfile.chatColor === item.color || myProfile.chatColor === item.id);
+            if(tab === 'themes') return (myProfile.appTheme === item.id);
+            if(tab === 'badges') return (myProfile.badge === item.id);
+            if(tab === 'fonts') return (myProfile.chatFont === item.id);
+            if(tab === 'nameColors') return (myProfile.nameColor === item.id);
+            if(tab === 'avatarRings') return (myProfile.avatarRing === item.id);
+            if(tab === 'sounds') return (myProfile.chatSound === item.id);
+            if(tab === 'titles') return (myProfile.equippedTitle === item.id);
+            return false;
+        }
 
-            const items = shopData[tab];
-            let html = '';
+        function shopDynColor(tab, item) {
+            let dynamicColor = item.acc || item.color || item.value;
+            if (item.isCustom) {
+                if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
+                if (tab === 'themes' && myProfile.customThemeAcc) dynamicColor = myProfile.customThemeAcc;
+                if (tab === 'nameColors' && myProfile.customNameColor) dynamicColor = myProfile.customNameColor;
+            }
+            return dynamicColor;
+        }
 
-            items.forEach(item => {
-                const isUnlocked = (myProfile.unlocked && myProfile.unlocked.includes(item.id)) || item.price === 0;
-                let isEquipped = false;
-                if(tab === 'bubbles') isEquipped = (myProfile.chatColor === item.color || myProfile.chatColor === item.id);
-                if(tab === 'themes') isEquipped = (myProfile.appTheme === item.id);
-                if(tab === 'badges') isEquipped = (myProfile.badge === item.id);
-                if(tab === 'fonts') isEquipped = (myProfile.chatFont === item.id);
-                if(tab === 'nameColors') isEquipped = (myProfile.nameColor === item.id);
-                if(tab === 'avatarRings') isEquipped = (myProfile.avatarRing === item.id);
-                if(tab === 'sounds') isEquipped = (myProfile.chatSound === item.id);
+        function shopPreviewHtml(tab, item, dynamicColor) {
+            let previewHtml = '';
 
-                let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
-                let btnClass = isEquipped ? "btn-glass" : "btn-primary";
-
-                let dynamicColor = item.acc || item.color || item.value;
-                if (item.isCustom) {
-                    if (tab === 'bubbles' && myProfile.customBubbleColor) dynamicColor = myProfile.customBubbleColor;
-                    if (tab === 'themes' && myProfile.customThemeAcc) dynamicColor = myProfile.customThemeAcc;
-                    if (tab === 'nameColors' && myProfile.customNameColor) dynamicColor = myProfile.customNameColor;
+            if(tab === 'bubbles') {
+                const bg = dynamicColor || 'var(--island)';
+                const fg = item.text || '#ffffff';
+                previewHtml = `<div class="shop-preview" style="background: ${bg}; color: ${fg};">Your message</div>`;
+            } else if(tab === 'themes') {
+                const acc = dynamicColor || 'var(--accent-yellow)';
+                const bgc = item.bg || 'var(--panel-2)';
+                previewHtml = `<div class="shop-preview" style="background: ${bgc};"><span class="theme-dot" style="background: ${acc};"></span><span class="theme-lines"><span style="background: ${acc};"></span><span></span></span></div>`;
+            } else if(tab === 'badges') {
+                let badgeIcon = item.icon || '';
+                if (badgeIcon && !badgeIcon.includes('<')) {
+                    // Stored icon is an emoji — render a Font Awesome glyph instead (shop grid only)
+                    if (item.id.includes('crown')) badgeIcon = '<i class="fa-solid fa-crown"></i>';
+                    else if (item.id.includes('diamond')) badgeIcon = '<i class="fa-solid fa-gem"></i>';
+                    else badgeIcon = '<i class="fa-solid fa-award"></i>';
                 }
+                if (!badgeIcon) badgeIcon = '<i class="fa-solid fa-ban"></i>';
+                previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${item.color || 'var(--text-secondary)'};">${badgeIcon}</div>`;
+            } else if(tab === 'fonts') {
+                previewHtml = `<div class="shop-preview shop-preview-tile" style="font-family: ${item.value}; font-size: 30px; color: var(--text-primary);">Aa</div>`;
+            } else if (tab === 'nameColors') {
+                previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${dynamicColor}; font-weight: 700; font-size: 15px;">Your Name</div>`;
+            } else if (tab === 'avatarRings') {
+                previewHtml = `<div class="shop-preview shop-preview-tile"><span class="ring-demo" style="${item.value.replace('4px', '2px')}"><i class="fa-solid fa-user"></i></span></div>`;
+            } else if (tab === 'sounds') {
+                previewHtml = `<div class="shop-preview shop-preview-tile" style="color: var(--accent-yellow);"><i class="fa-solid fa-music"></i></div>`;
+            } else if (tab === 'titles') {
+                previewHtml = `<div class="shop-preview shop-preview-tile" style="flex-direction: column; gap: 2px;"><span style="font-size: 14px; font-weight: 700; color: var(--text-primary); line-height: 1.1;">Your Name</span><span style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #FFD34D;">${item.id === 'title_none' ? '&mdash;' : item.name}</span></div>`;
+            }
 
-                let previewHtml = '';
+            return previewHtml;
+        }
 
-                if(tab === 'bubbles') {
-                    const bg = dynamicColor || 'var(--island)';
-                    const fg = item.text || '#ffffff';
-                    previewHtml = `<div class="shop-preview" style="background: ${bg}; color: ${fg};">Your message</div>`;
-                } else if(tab === 'themes') {
-                    const acc = dynamicColor || 'var(--accent-yellow)';
-                    const bgc = item.bg || 'var(--panel-2)';
-                    previewHtml = `<div class="shop-preview" style="background: ${bgc};"><span class="theme-dot" style="background: ${acc};"></span><span class="theme-lines"><span style="background: ${acc};"></span><span></span></span></div>`;
-                } else if(tab === 'badges') {
-                    let badgeIcon = item.icon || '';
-                    if (badgeIcon && !badgeIcon.includes('<')) {
-                        // Stored icon is an emoji — render a Font Awesome glyph instead (shop grid only)
-                        if (item.id.includes('crown')) badgeIcon = '<i class="fa-solid fa-crown"></i>';
-                        else if (item.id.includes('diamond')) badgeIcon = '<i class="fa-solid fa-gem"></i>';
-                        else badgeIcon = '<i class="fa-solid fa-award"></i>';
-                    }
-                    if (!badgeIcon) badgeIcon = '<i class="fa-solid fa-ban"></i>';
-                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${item.color || 'var(--text-secondary)'};">${badgeIcon}</div>`;
-                } else if(tab === 'fonts') {
-                    previewHtml = `<div class="shop-preview shop-preview-tile" style="font-family: ${item.value}; font-size: 30px; color: var(--text-primary);">Aa</div>`;
-                } else if (tab === 'nameColors') {
-                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: ${dynamicColor}; font-weight: 700; font-size: 15px;">Your Name</div>`;
-                } else if (tab === 'avatarRings') {
-                    previewHtml = `<div class="shop-preview shop-preview-tile"><span class="ring-demo" style="${item.value.replace('4px', '2px')}"><i class="fa-solid fa-user"></i></span></div>`;
-                } else if (tab === 'sounds') {
-                    previewHtml = `<div class="shop-preview shop-preview-tile" style="color: var(--accent-yellow);"><i class="fa-solid fa-music"></i></div>`;
-                }
+        function shopChipsHtml(item) {
+            let chips = '';
+            if (item.new) chips += ' <span class="v3-chip-new">NEW</span>';
+            if (item.price === 0) chips += ' <span class="v3-chip-free">FREE</span>';
+            return chips;
+        }
 
-                const stateHtml = !isUnlocked
-                    ? `<span class="shop-price"><span class="orb-dot"></span>${item.price === 0 ? "Free" : item.price}</span>`
-                    : (isEquipped ? `<span class="shop-state equipped">Equipped</span>` : `<span class="shop-state">Owned</span>`);
+        const SHOP_CAT_LABELS = { bubbles: 'Chat Bubble', themes: 'App Theme', badges: 'Badge', fonts: 'Chat Font', nameColors: 'Name Colour', avatarRings: 'Avatar Ring', sounds: 'Sound', titles: 'Title' };
+        // Hand-picked Featured items: one free, one mid-price, one premium.
+        const SHOP_FEATURED = [
+            { cat: 'titles', id: 'title_early' },
+            { cat: 'bubbles', id: 'b_lavender' },
+            { cat: 'themes', id: 't_nebula' }
+        ];
 
-                html += `
-                <div class="shop-item ripple-target${isEquipped ? ' equipped' : ''}" onclick="handleShopClick('${tab}', '${item.id}')">
+        function shopCardHtml(tab, item, wide) {
+            const isUnlocked = (myProfile.unlocked && myProfile.unlocked.includes(item.id)) || item.price === 0;
+            const isEquipped = shopIsEquipped(tab, item);
+
+            let btnText = isEquipped ? "Equipped" : (isUnlocked ? "Equip" : "Buy");
+            let btnClass = isEquipped ? "btn-glass" : "btn-primary";
+
+            const previewHtml = shopPreviewHtml(tab, item, shopDynColor(tab, item));
+
+            const stateHtml = !isUnlocked
+                ? `<span class="shop-price"><span class="orb-dot"></span>${item.price === 0 ? "Free" : item.price}</span>`
+                : (isEquipped ? `<span class="shop-state equipped">Equipped</span>` : `<span class="shop-state">Owned</span>`);
+
+            if (wide) {
+                return `
+                <div class="shop-item shop-item-wide ripple-target${isEquipped ? ' equipped' : ''}" onclick="handleShopClick('${tab}', '${item.id}')">
                     ${previewHtml}
-                    <span class="shop-item-name">${item.name}</span>
+                    <div class="shop-wide-mid">
+                        <span class="shop-item-name">${item.name}${shopChipsHtml(item)}</span>
+                        <span class="shop-wide-cat">${SHOP_CAT_LABELS[tab] || 'Item'}</span>
+                    </div>
                     <div class="shop-price-row">
                         ${stateHtml}
                         <button class="${btnClass} shop-btn">${btnText}</button>
                     </div>
                 </div>`;
+            }
+
+            return `
+                <div class="shop-item ripple-target${isEquipped ? ' equipped' : ''}" onclick="handleShopClick('${tab}', '${item.id}')">
+                    ${previewHtml}
+                    <span class="shop-item-name">${item.name}${shopChipsHtml(item)}</span>
+                    <div class="shop-price-row">
+                        ${stateHtml}
+                        <button class="${btnClass} shop-btn">${btnText}</button>
+                    </div>
+                </div>`;
+        }
+
+        function renderShop(tab) {
+            const grid = document.getElementById('shopGridContent');
+            if(!grid) return;
+
+            const items = shopData[tab] || [];
+            let html = '';
+
+            // Stage 8: Featured strip — wide cards pinned above every
+            // category (rendered inside the scrollable grid so the shop
+            // tab's fixed layout is untouched).
+            const featuredCards = SHOP_FEATURED
+                .map(f => {
+                    const it = (shopData[f.cat] || []).find(i => i.id === f.id);
+                    return it ? shopCardHtml(f.cat, it, true) : '';
+                })
+                .join('');
+            if (featuredCards) {
+                html += `<div class="shop-tier-lbl">Featured</div>` + featuredCards;
+            }
+
+            // Stage 8: tier groups — Free / Classic (<=600) / Premium (>600).
+            // A label renders only when its group is non-empty; items keep
+            // their catalogue order within each group.
+            const tiers = [
+                { label: 'Free', test: i => i.price === 0 },
+                { label: 'Classic', test: i => i.price > 0 && i.price <= 600 },
+                { label: 'Premium', test: i => i.price > 600 }
+            ];
+            tiers.forEach(tier => {
+                const group = items.filter(tier.test);
+                if (!group.length) return;
+                html += `<div class="shop-tier-lbl">${tier.label}</div>`;
+                group.forEach(item => { html += shopCardHtml(tab, item, false); });
             });
 
             // Single assignment: building with innerHTML += inside the loop
@@ -4061,6 +4249,7 @@ function sendNotification(title, body, icon) {
                 else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
                 else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
                 else if (tab === 'sounds') { myProfile.chatSound = item.id; }
+                else if (tab === 'titles') { myProfile.equippedTitle = item.id; }
                 
                 if(!unlocked.includes(itemId)) unlocked.push(itemId);
                 
@@ -4091,6 +4280,7 @@ function sendNotification(title, body, icon) {
                         else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
                         else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
                         else if (tab === 'sounds') { myProfile.chatSound = item.id; }
+                        else if (tab === 'titles') { myProfile.equippedTitle = item.id; }
 
                         saveProfile();
                         renderShop(tab);
