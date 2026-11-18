@@ -23,7 +23,7 @@
         }
 
         :root {
-            /* Dynamic Theme Variables (Controlled by the Orb Shop) */
+            /* Dynamic Theme Variables (Controlled by the Spark Shop) */
             --bg-dark: #0B0C0F;
             --accent-yellow: #FFC926;
             --island: rgba(18, 19, 26, 0.98);
@@ -1269,7 +1269,7 @@
         .send-btn { width: 48px; height: 48px; background: var(--gold-grad); color: #1A1402; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; transition: 0.2s;}
         .send-btn:active { transform: scale(0.9); }
 
-        /* ================= ORBS, FRIENDS & CHAT LIST ================= */
+        /* ================= SPARKS, FRIENDS & CHAT LIST ================= */
         .orb-badge {
             background: rgba(255, 201, 38, 0.1);
             border: 1px solid rgba(255, 201, 38, 0.32);
@@ -1323,6 +1323,56 @@
         /* ================= PROFILE DANGER ROW (Stage 4) ================= */
         .profile-menu-item.logout { color: var(--error-red); }
         .profile-menu-item.logout .profile-menu-icon { color: var(--error-red); background: rgba(237, 66, 69, 0.1); }
+
+        /* ================= V3 PROFILE (Stage 6) ================= */
+        /* Own-profile header: banner + overlapping avatar */
+        .prof-banner { position: relative; height: 118px; border-radius: 18px; overflow: hidden; background: linear-gradient(120deg, rgba(255,201,38,0.20), rgba(255,201,38,0.04) 55%, rgba(255,158,0,0.12)), var(--panel); border: 1px solid rgba(255,201,38,0.22); cursor: pointer; }
+        .prof-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .prof-banner img[src=""] { display: none; }
+        .prof-banner-chip { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: #FFD34D; background: rgba(11,12,15,0.55); border: 1px solid rgba(255,201,38,0.35); padding: 5px 9px; border-radius: 999px; }
+        .prof-head { display: flex; flex-direction: column; align-items: center; margin-top: -52px; position: relative; z-index: 2; padding: 0 6px; }
+        #tab-profile .join-date { margin-bottom: 0; }
+        /* Sparks card */
+        .prof-orbs { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border-radius: 16px; background: linear-gradient(120deg, rgba(255,201,38,0.13), rgba(255,201,38,0.03)); border: 1px solid rgba(255,201,38,0.26); cursor: pointer; transition: transform 0.15s ease; }
+        .prof-orbs:active { transform: scale(0.98); }
+        .prof-orb-dot { width: 26px; height: 26px; }
+        .prof-orbs-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+        .prof-orbs-value { font-size: 19px; font-weight: 800; color: var(--text-primary); margin-top: 1px; }
+        .prof-orbs-value span { color: #FFD34D; }
+        .prof-note { margin: 2px 2px 0; font-size: 11.5px; color: var(--text-muted); line-height: 1.45; }
+        /* Status segmented control, full width in the profile composition */
+        .prof-status { margin-top: 0; width: 100%; box-sizing: border-box; }
+        .prof-status .status-btn { flex: 1; justify-content: center; }
+        /* My Look showcase */
+        .prof-look { background: var(--panel); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 10px; }
+        .prof-look-tile { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+        .prof-look-prev { width: 100%; height: 46px; border-radius: 11px; background: var(--panel-2); border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 19px; overflow: hidden; box-sizing: border-box; }
+        .prof-look-nameprev { font-size: 13.5px; font-weight: 700; }
+        .prof-look-bubble { padding: 6px 12px; border-radius: 12px 12px 12px 4px; font-size: 12.5px; font-weight: 600; max-width: 86%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .prof-look-fontprev { font-size: 24px; color: var(--text-primary); line-height: 1; }
+        .prof-ring-demo { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; background: var(--panel); box-sizing: border-box; }
+        /* The Ludo overlay ships an unscoped .profile-name rule (0.85rem, width:100%)
+           that would otherwise shrink and left-align the profile tab's name. */
+        #tab-profile .profile-name { width: auto; font-size: 22px; justify-content: center; }
+        .prof-look-name { font-size: 11px; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .prof-look-cap { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+        .prof-look-more { cursor: pointer; }
+        /* Profile rows */
+        .prof-cost { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #FFD34D; flex: none; }
+        .prof-state { font-size: 11px; font-weight: 700; flex: none; }
+        .prof-row-admin .v3-row-name { color: #FF7A72; }
+        .prof-logout .v3-row-name { color: var(--error-red); }
+        .prof-logout-tile { color: var(--error-red); background: rgba(237,66,69,0.08); background: color-mix(in srgb, currentColor 10%, transparent); border-color: rgba(237,66,69,0.25); }
+        /* Other-user profile sheet */
+        .prof-sheet-body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        #userProfileSheet .profile-banner-container { background: linear-gradient(120deg, rgba(255,201,38,0.20), rgba(255,201,38,0.04) 55%, rgba(255,158,0,0.12)), var(--panel); border-radius: 18px; }
+        #userProfileSheet .profile-banner-img[src=""] { display: none; }
+        #userProfileSheet #upName { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; }
+        #userProfileSheet .status-pill { background: var(--panel-2); padding: 6px 12px; font-size: 11.5px; }
+        .sheet-btn.center { justify-content: center; }
+        .sheet-btn.gold-ghost { color: #FFD34D; border-color: rgba(255,201,38,0.4); background: rgba(255,201,38,0.06); }
+        .sheet-btn.fire-soft { color: #FF8A3D; border-color: rgba(255,106,0,0.35); background: rgba(255,106,0,0.08); }
+        .sheet-btn.danger-soft { color: #FF7A72; border-color: rgba(237,66,69,0.35); background: rgba(237,66,69,0.08); }
     </style>
 </head>
 <body>
@@ -1396,7 +1446,7 @@
                 <input type="text" id="adminEditBio" class="auth-input">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:12px; color:var(--text-secondary);">Orbs Balance</label>
+                <label style="font-size:12px; color:var(--text-secondary);">Sparks Balance</label>
                 <input type="number" id="adminEditOrbs" class="auth-input" style=" color:var(--accent-yellow);">
             </div>
             <div style="display:flex; flex-direction:column; gap:5px;">
@@ -1506,7 +1556,7 @@
                     <input type="text" id="adminShopName" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:13px;  outline:none;">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
-                    <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
+                    <label style="font-size:12px; color:var(--text-secondary);">Price (Sparks)</label>
                     <input type="number" id="adminShopPrice" class="auth-input" style=" color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:13px;  outline:none;" value="1000">
                 </div>
             </div>
@@ -1633,32 +1683,34 @@
     </div>
 
     <div class="bottom-sheet" id="userProfileSheet" style="padding-top: 0; overflow: hidden;">
-        
+
         <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="uploadBannerToSupabase(event)">
-        
+
         <div class="profile-banner-container" id="upBannerContainer" onclick="handleBannerClick()">
             <img id="upBanner" src="" class="profile-banner-img" style="background: var(--glass-border);" alt="User Profile Banner">
             <i class="fa-solid fa-camera profile-banner-icon" id="upBannerCamera" style="display: none;"></i>
         </div>
 
         <div class="sheet-drag-handle" onclick="closeSheet()" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
-        
-        <div id="upAvatarRing" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; z-index: 2;">
-            <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5);" alt="User Avatar">
-        </div>
-        
-        <h2 id="upName" style="margin: 0 0 5px 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-            Name <span id="upOnlineDot" class="dot grey"></span>
-        </h2>
-        <p id="upBio" style="color: var(--text-secondary); font-size: 13px; text-align: center; max-width: 80%; margin: 5px 0 15px; line-height: 1.4;">Bio...</p>
-        
-        <div class="pill-row" style="margin-bottom: 20px;">
-            <span class="status-pill"><i class="fa-solid fa-calendar-days"></i> Joined <span id="upJoin">Date</span></span>
-            <span class="status-pill"><i class="fa-solid fa-gem" style="color: #FFC926;"></i> <span id="upOrbs">0</span> Orbs</span>
-        </div>
-        
-        <div id="upActions" style="width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center;">
+
+        <div class="prof-sheet-body">
+            <div id="upAvatarRing" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; z-index: 2;">
+                <img id="upAvatar" src="" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--island); object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5);" alt="User Avatar">
             </div>
+
+            <h2 id="upName" style="margin: 0 0 5px 0; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+                Name <span id="upOnlineDot" class="dot grey"></span>
+            </h2>
+            <p id="upBio" style="color: var(--text-secondary); font-size: 13px; text-align: center; max-width: 80%; margin: 5px 0 15px; line-height: 1.4;">Bio...</p>
+
+            <div class="pill-row" style="margin-bottom: 20px;">
+                <span class="status-pill"><i class="fa-solid fa-calendar-days"></i> Joined <span id="upJoin">Date</span></span>
+                <span class="status-pill"><i class="fa-solid fa-gem" style="color: #FFC926;"></i> <span id="upOrbs">0</span> Sparks</span>
+            </div>
+
+            <div id="upActions" style="width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center;">
+            </div>
+        </div>
     </div>
 
     <div id="authOverlay" class="auth-overlay" onclick="closeAuthSheet()"></div>
@@ -1840,62 +1892,168 @@
         </div>
 
         <div id="tab-profile" class="hub-tab">
-            <div class="profile-hero">
-                <input type="file" id="profileUploadInput" accept="image/*" style="display: none;" onchange="uploadProfileToSupabase(event)">
-                <input type="file" id="chatBgUploadInput" accept="image/*" style="display: none;" onchange="uploadChatBg(event)">
-                
-                <div id="myAvatarRing" style="width: 110px; height: 110px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; z-index: 2; cursor: pointer;" onclick="document.getElementById('profileUploadInput').click()" title="Tap to upload new avatar">
-                    <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--island); object-fit: cover; background: black; box-shadow: 0 0 20px rgba(0,0,0,0.5);" alt="My Profile Avatar">
+            <input type="file" id="profileUploadInput" accept="image/*" style="display: none;" onchange="uploadProfileToSupabase(event)">
+            <input type="file" id="chatBgUploadInput" accept="image/*" style="display: none;" onchange="uploadChatBg(event)">
+
+            <div class="v3-sec">
+                <div class="prof-banner ripple-target" onclick="handleBannerClick()" title="Tap to change banner">
+                    <img id="myBannerImg" src="" alt="">
+                    <span class="prof-banner-chip"><i class="fa-solid fa-camera"></i> Banner</span>
                 </div>
-                
-                <div class="profile-name" id="displayUsername" onclick="editProfileName()">Guest User</div>
-                <span class="secure-badge" style="margin-bottom: 8px;"><i class="fa-solid fa-lock" style="margin-right:3px;"></i>Tap Name/Pic to Edit</span>
-                
-                <p id="displayBio" class="profile-bio" onclick="editBio()" title="Tap to edit">Tap to add "About Me" bio...</p>
-                <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined: <span id="displayJoinDate">Today</span></div>
-                
-        <div class="orb-badge" onclick="document.querySelector('.dock-btn[data-tab=\'tab-shop\']').click();"><i class="fa-solid fa-gem"></i> <span id="orbCountDisplay">0</span> Orbs</div>
-                <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 10px;">Tap to open Shop</div>
-                
-                <div class="status-toggle-bg">
+                <div class="prof-head">
+                    <div id="myAvatarRing" style="width: 104px; height: 104px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; cursor: pointer;" onclick="document.getElementById('profileUploadInput').click()" title="Tap to upload new avatar">
+                        <img id="userAvatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Direct" style="width: 94px; height: 94px; border-radius: 50%; border: 4px solid var(--bg-dark); object-fit: cover; background: black;" alt="My Profile Avatar">
+                    </div>
+                    <div class="profile-name" id="displayUsername" onclick="editProfileName()">Guest User</div>
+                    <p id="displayBio" class="profile-bio" onclick="editBio()" title="Tap to edit">Tap to add "About Me" bio...</p>
+                    <div class="join-date"><i class="fa-solid fa-calendar-days"></i> Joined <span id="displayJoinDate">Today</span></div>
+                </div>
+            </div>
+
+            <div class="v3-sec">
+                <p class="v3-lbl">Sparks</p>
+                <div class="prof-orbs ripple-target" onclick="document.querySelector('.dock-btn[data-tab=\'tab-shop\']').click();">
+                    <span class="orb-dot prof-orb-dot"></span>
+                    <div class="v3-row-mid">
+                        <div class="prof-orbs-label">Balance</div>
+                        <div class="prof-orbs-value"><span id="orbCountDisplay">0</span> Sparks</div>
+                    </div>
+                    <span class="v3-cta">Shop</span>
+                </div>
+                <p class="prof-note">Daily bonus &middot; +50 Sparks are added automatically every day you open the app.</p>
+            </div>
+
+            <div class="v3-sec">
+                <p class="v3-lbl">Status</p>
+                <div class="status-toggle-bg prof-status">
                     <div class="status-btn active ripple-target" onclick="switchStatus(this)"><div class="dot green"></div>Online</div>
                     <div class="status-btn ripple-target" onclick="switchStatus(this)"><div class="dot orange"></div>Away</div>
                     <div class="status-btn ripple-target" onclick="switchStatus(this)"><div class="dot red"></div>DND</div>
                 </div>
             </div>
-            <div class="profile-menu-list">
-                <div id="adminBtn" class="profile-menu-item ripple-target" onclick="openAdminPanel()" style="display: none; background: rgba(255, 59, 48, 0.1); border-color: rgba(255, 59, 48, 0.3);">
-                    <div class="profile-menu-icon" style="color: var(--error-red);"><i class="fa-solid fa-shield-halved"></i></div>
-                    <span style="flex: 1; color: var(--error-red);">Admin Panel</span>
-                </div>
-                <div class="profile-menu-item ripple-target" onclick="activateGhostMode()">
-                    <div class="profile-menu-icon" style="color: var(--accent-yellow);"><i class="fa-solid fa-ghost"></i></div>
-                    <span style="flex: 1;">Ghost Mode</span>
-                    <div class="status-toggle-bg" style="margin-top: 0; background: transparent; border: none; padding: 0;">
-                        <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">-200 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i></span>
+
+            <div class="v3-sec">
+                <p class="v3-lbl">My Look</p>
+                <div class="prof-look">
+                    <div class="prof-look-tile">
+                        <div class="prof-look-prev" id="lookBadgePrev" style="color: var(--text-muted);"><i class="fa-solid fa-ban"></i></div>
+                        <div class="prof-look-name" id="lookBadgeName">No Badge</div>
+                        <div class="prof-look-cap">Badge</div>
+                    </div>
+                    <div class="prof-look-tile">
+                        <div class="prof-look-prev prof-look-nameprev" id="lookNamePrev" style="color: #ffffff;">Your Name</div>
+                        <div class="prof-look-name" id="lookNameName">Classic White</div>
+                        <div class="prof-look-cap">Name Colour</div>
+                    </div>
+                    <div class="prof-look-tile">
+                        <div class="prof-look-prev"><span class="prof-look-bubble" id="lookBubblePrev" style="background: #ffffff; color: #000;">Hi</span></div>
+                        <div class="prof-look-name" id="lookBubbleName">Classic White</div>
+                        <div class="prof-look-cap">Bubble</div>
+                    </div>
+                    <div class="prof-look-tile">
+                        <div class="prof-look-prev"><span class="prof-look-fontprev" id="lookFontPrev" style="font-family: Inter, sans-serif;">Aa</span></div>
+                        <div class="prof-look-name" id="lookFontName">Default</div>
+                        <div class="prof-look-cap">Font</div>
+                    </div>
+                    <div class="prof-look-tile">
+                        <div class="prof-look-prev"><span class="ring-demo prof-ring-demo" id="lookRingPrev"><i class="fa-solid fa-user"></i></span></div>
+                        <div class="prof-look-name" id="lookRingName">None</div>
+                        <div class="prof-look-cap">Ring</div>
+                    </div>
+                    <div class="prof-look-tile prof-look-more ripple-target" onclick="document.querySelector('.dock-btn[data-tab=\'tab-shop\']').click();">
+                        <div class="prof-look-prev" style="color: #FFD34D;"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <div class="prof-look-name">Spark Shop</div>
+                        <div class="prof-look-cap">Customise</div>
                     </div>
                 </div>
-                <div class="profile-menu-item ripple-target" onclick="document.getElementById('chatBgUploadInput').click()">
-                    <div class="profile-menu-icon"><i class="fa-solid fa-image"></i></div>
-                    <span style="flex: 1;">Custom Chat Wallpaper</span>
+            </div>
+
+            <div class="v3-sec">
+                <p class="v3-lbl">Account</p>
+                <div id="adminBtn" class="v3-row prof-row-admin ripple-target" onclick="openAdminPanel()" style="display: none;">
+                    <div class="v3-row-tile" style="color: #FF7A72;"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Admin Panel</div>
+                        <div class="v3-row-sub">Manage users and app settings</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>
+                <div class="v3-row ripple-target" onclick="editProfileName()">
+                    <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-pen"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Display Name</div>
+                        <div class="v3-row-sub">The name everyone sees</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>
+                <div class="v3-row ripple-target" onclick="editBio()">
+                    <div class="v3-row-tile" style="color: #8AABFF;"><i class="fa-solid fa-align-left"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Bio</div>
+                        <div class="v3-row-sub">Your About Me line</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>
+                <div class="v3-row ripple-target" onclick="document.getElementById('profileUploadInput').click()">
+                    <div class="v3-row-tile" style="color: #6FD598;"><i class="fa-solid fa-camera"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Profile Picture</div>
+                        <div class="v3-row-sub">Upload a new avatar</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>
+                <div class="v3-row ripple-target" onclick="handleBannerClick()">
+                    <div class="v3-row-tile" style="color: #F2A0C0;"><i class="fa-solid fa-image"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Banner</div>
+                        <div class="v3-row-sub">Upload a cover banner</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>
+            </div>
+
+            <div class="v3-sec">
+                <p class="v3-lbl">Preferences</p>
+                <div class="v3-row ripple-target" onclick="activateGhostMode()">
+                    <div class="v3-row-tile" style="color: var(--accent-yellow);"><i class="fa-solid fa-ghost"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Ghost Mode</div>
+                        <div class="v3-row-sub">Hidden from the online list &middot; 24 hours</div>
+                    </div>
+                    <span class="prof-cost">-200 <i class="fa-solid fa-gem"></i></span>
+                </div>
+                <div class="v3-row ripple-target" onclick="document.getElementById('chatBgUploadInput').click()">
+                    <div class="v3-row-tile" style="color: #A78BFA;"><i class="fa-solid fa-image"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Chat Wallpaper</div>
+                        <div class="v3-row-sub">Background for your chats</div>
+                    </div>
                     <button class="icon-btn" style="width:30px; height:30px; font-size:12px; background:var(--glass-surface);" onclick="event.stopPropagation(); resetWallpaper();" title="Reset Default Wallpaper"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
-                <div class="profile-menu-item ripple-target" onclick="toggleAppSound()">
-                    <div class="profile-menu-icon"><i class="fa-solid fa-volume-high" id="soundIcon"></i></div>
-                    <span style="flex: 1;">Message Sounds</span>
-                    <div class="status-toggle-bg" style="margin-top: 0; background: transparent; border: none; padding: 0;">
-                        <span id="soundStatusText" style="font-size: 11px; font-weight: 700; color: var(--accent-yellow);">ON</span>
+                <div class="v3-row ripple-target" onclick="toggleAppSound()">
+                    <div class="v3-row-tile" style="color: #7DD3FC;"><i class="fa-solid fa-volume-high" id="soundIcon"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Message Sounds</div>
+                        <div class="v3-row-sub">Sounds for new messages</div>
                     </div>
+                    <span id="soundStatusText" class="prof-state" style="color: var(--accent-yellow);">ON</span>
                 </div>
-                <div class="profile-menu-item ripple-target" onclick="toggleProfanityFilter()">
-                    <div class="profile-menu-icon"><i class="fa-solid fa-eye-slash" id="profIcon"></i></div>
-                    <span style="flex: 1;">Profanity Filter</span>
-                    <div class="status-toggle-bg" style="margin-top: 0; background: transparent; border: none; padding: 0;">
-                        <span id="profStatusText" style="font-size: 11px; font-weight: 700; color: var(--success-green);">ON</span>
+                <div class="v3-row ripple-target" onclick="toggleProfanityFilter()">
+                    <div class="v3-row-tile" style="color: #6FD598;"><i class="fa-solid fa-eye-slash" id="profIcon"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Profanity Filter</div>
+                        <div class="v3-row-sub">Hide bad words in chats</div>
                     </div>
+                    <span id="profStatusText" class="prof-state" style="color: var(--success-green);">ON</span>
                 </div>
-                <div class="profile-menu-item logout ripple-target" onclick="logoutApp()">
-                    <div class="profile-menu-icon"><i class="fa-solid fa-right-from-bracket"></i></div><span>Log Out</span>
+            </div>
+
+            <div class="v3-sec">
+                <div class="v3-row prof-logout ripple-target" onclick="logoutApp()">
+                    <div class="v3-row-tile prof-logout-tile"><i class="fa-solid fa-right-from-bracket"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Log Out</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1903,7 +2061,7 @@
         <div id="tab-shop" class="hub-tab">
              <div class="v3-hd" style="padding-bottom: 10px;">
                  <div class="v3-hd-mid">
-                     <div class="v3-hd-title" style="font-size: 22px;">Orb Shop</div>
+                     <div class="v3-hd-title" style="font-size: 22px;">Spark Shop</div>
                      <div class="v3-hd-sub">Bubbles, themes, banners and more</div>
                  </div>
                  <div class="v3-orb-pill"><span class="orb-dot"></span> <span id="shopOrbCount">0</span></div>
@@ -1933,7 +2091,7 @@
                      <div class="v3-row-tile" style="color: #F9A8D4;"><i class="fa-solid fa-gift"></i></div>
                      <div class="v3-row-mid">
                          <div class="v3-row-name">Gift Box</div>
-                         <div class="v3-row-sub">Send Orbs hidden inside a gift</div>
+                         <div class="v3-row-sub">Send Sparks hidden inside a gift</div>
                      </div>
                      <span class="v3-price-pill">300</span>
                  </div>
@@ -2790,8 +2948,8 @@ function sendNotification(title, body, icon) {
         // --- PROFILE LOGIC ---
 
         // --- SHOP CONSUMABLES ---
-        // Transactional Orbs debit: aborts if the LIVE balance is insufficient,
-        // so double-taps / multiple tabs can never spend the same Orbs twice.
+        // Transactional Sparks debit: aborts if the LIVE balance is insufficient,
+        // so double-taps / multiple tabs can never spend the same Sparks twice.
         // onDone(success, newBalance) runs when the transaction resolves.
         function debitOrbs(amount, onDone) {
             db.ref(`users/${user.uid}/orbs`).transaction(curr => {
@@ -2810,7 +2968,7 @@ function sendNotification(title, body, icon) {
                 if (msg && msg.trim().length > 0) {
                     const cleanMsg = msg.trim().substring(0, 100);
                     debitOrbs(1000, (ok, newBalance) => {
-                        if (!ok) { showToast("Not enough Orbs! (1000 required)", "error"); return; }
+                        if (!ok) { showToast("Not enough Sparks! (1000 required)", "error"); return; }
 
                         const newRef = db.ref('rooms/GlobalLobby').push();
                         newRef.set({
@@ -2838,7 +2996,7 @@ function sendNotification(title, body, icon) {
                     });
                 }
             } else {
-                showToast("Not enough Orbs! (1000 required)", "error");
+                showToast("Not enough Sparks! (1000 required)", "error");
             }
         }
 
@@ -2848,7 +3006,7 @@ function sendNotification(title, body, icon) {
 
             if (myProfile.orbs >= 300) {
                 debitOrbs(300, (ok, newBalance) => {
-                    if (!ok) { showToast("Not enough Orbs! (300 required)", "error"); return; }
+                    if (!ok) { showToast("Not enough Sparks! (300 required)", "error"); return; }
 
                     const boxValue = Math.floor(Math.random() * (500 - 50 + 1) + 50); // random between 50 and 500
                     const giftId = `gift_${Date.now()}`;
@@ -2881,7 +3039,7 @@ function sendNotification(title, body, icon) {
                     closeSheet();
                 });
             } else {
-                showToast("Not enough Orbs! (300 required)", "error");
+                showToast("Not enough Sparks! (300 required)", "error");
             }
         }
 
@@ -2898,7 +3056,7 @@ function sendNotification(title, body, icon) {
                 const gv = parseInt(curr.giftValue, 10) || 0;
                 curr.giftOpened = true;
                 curr.giftValue = gv;
-                curr.txt = `🎉 Opened Gift Box: +${gv} Orbs!`;
+                curr.txt = `🎉 Opened Gift Box: +${gv} Sparks!`;
                 return curr;
             }, (error, committed, snap) => {
                 if (error) {
@@ -2906,7 +3064,7 @@ function sendNotification(title, body, icon) {
                 } else if (committed && snap) {
                     const gv = parseInt(snap.val().giftValue, 10) || 0;
                     db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + gv);
-                    showToast(`You won ${gv} Orbs!`, "success");
+                    showToast(`You won ${gv} Sparks!`, "success");
                     playReactionAnimation();
                 } else {
                     showToast("Gift already opened!", "error");
@@ -2918,9 +3076,9 @@ function sendNotification(title, body, icon) {
         window.activateGhostMode = function() {
             if (!requireAuth()) return;
             if (myProfile.orbs >= 200) {
-                if (confirm("Spend 200 Orbs to activate Ghost Mode for 24 hours? You will be hidden from the online list and won't send read receipts.")) {
+                if (confirm("Spend 200 Sparks to activate Ghost Mode for 24 hours? You will be hidden from the online list and won't send read receipts.")) {
                     debitOrbs(200, (ok, newBalance) => {
-                        if (!ok) { showToast("Not enough Orbs!", "error"); return; }
+                        if (!ok) { showToast("Not enough Sparks!", "error"); return; }
                         myProfile.ghostModeUntil = Date.now() + (24 * 60 * 60 * 1000);
                         saveProfile();
 
@@ -2932,19 +3090,19 @@ function sendNotification(title, body, icon) {
                     });
                 }
             } else {
-                showToast("Not enough Orbs!", "error");
+                showToast("Not enough Sparks!", "error");
             }
         }
 
         window.nukeChat = function(targetUid) {
             if (!requireAuth()) return;
             if (myProfile.orbs >= 500) {
-                if (confirm("WARNING: Spend 500 Orbs to NUKE this chat history for both of you? This cannot be undone.")) {
+                if (confirm("WARNING: Spend 500 Sparks to NUKE this chat history for both of you? This cannot be undone.")) {
                     const roomId = user.uid < targetUid ? user.uid + '_' + targetUid : targetUid + '_' + user.uid;
 
                     // Charge orbs first (transactional); only nuke if the debit commits
                     debitOrbs(500, (ok) => {
-                        if (!ok) { showToast("Not enough Orbs!", "error"); return; }
+                        if (!ok) { showToast("Not enough Sparks!", "error"); return; }
 
                         // Nuke room history
                         db.ref('rooms/'+roomId).remove();
@@ -2960,7 +3118,7 @@ function sendNotification(title, body, icon) {
                     });
                 }
             } else {
-                showToast("Not enough Orbs!", "error");
+                showToast("Not enough Sparks!", "error");
             }
         }
 
@@ -3010,7 +3168,7 @@ function sendNotification(title, body, icon) {
                     // Give 50 orbs
                     db.ref('users/'+user.uid+'/lastRewardDate').set(todayStr);
                     db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + 50).then(() => {
-                        showToast("Daily Login: +50 Orbs!", "success");
+                        showToast("Daily Login: +50 Sparks!", "success");
                     });
                 }
             });
@@ -3162,6 +3320,63 @@ function sendNotification(title, body, icon) {
                     myRing.style.boxShadow = rStyle.value.split('box-shadow:')[1] || 'none';
                 }
 
+
+                // --- Stage 6 (display-only): own banner + "My Look" showcase.
+                // Reads the already-loaded myProfile fields and the same
+                // shopData lookups used above (bdg / nColor / rStyle); writes
+                // only to Stage 6 element ids. No data, handler or flow changes.
+                const myBannerImg = document.getElementById('myBannerImg');
+                if (myBannerImg) myBannerImg.src = myProfile.banner || '';
+                const lkFont = shopData.fonts.find(f => f.id === myProfile.chatFont);
+                const lkBub = shopData.bubbles.find(b => myProfile.chatColor === b.color || myProfile.chatColor === b.id);
+                const lkSet = (id, fn) => { const el = document.getElementById(id); if (el) fn(el); };
+                lkSet('lookBadgePrev', el => {
+                    let icon = '<i class="fa-solid fa-ban"></i>';
+                    if (bdg && bdg.icon) {
+                        icon = bdg.icon;
+                        if (!icon.includes('<')) {
+                            // Stored icon is an emoji — render an FA glyph instead (same treatment as the shop grid)
+                            if (bdg.id.includes('crown')) icon = '<i class="fa-solid fa-crown"></i>';
+                            else if (bdg.id.includes('diamond')) icon = '<i class="fa-solid fa-gem"></i>';
+                            else icon = '<i class="fa-solid fa-award"></i>';
+                        }
+                    }
+                    el.innerHTML = icon;
+                    el.style.color = (bdg && bdg.id !== 'badge_none' && bdg.color) ? bdg.color : 'var(--text-muted)';
+                });
+                lkSet('lookBadgeName', el => { el.textContent = bdg ? bdg.name : 'No Badge'; });
+                lkSet('lookNamePrev', el => {
+                    let v = nColor ? nColor.value : '#ffffff';
+                    if (nColor && nColor.isCustom && myProfile.customNameColor) v = myProfile.customNameColor;
+                    el.style.background = 'none';
+                    el.style.webkitTextFillColor = 'initial';
+                    el.style.color = 'var(--text-primary)';
+                    if (v.startsWith('linear') || v.startsWith('conic')) {
+                        el.style.background = v;
+                        el.style.webkitBackgroundClip = 'text';
+                        el.style.webkitTextFillColor = 'transparent';
+                    } else {
+                        el.style.color = v;
+                    }
+                });
+                lkSet('lookNameName', el => { el.textContent = nColor ? nColor.name : 'Classic White'; });
+                lkSet('lookBubblePrev', el => {
+                    let bg = lkBub ? lkBub.color : myProfile.chatColor;
+                    let fg = lkBub ? (lkBub.text || '#fff') : (myProfile.chatTextColor || '#fff');
+                    if (lkBub && lkBub.isCustom && myProfile.customBubbleColor) { bg = myProfile.customBubbleColor; fg = myProfile.chatTextColor || '#fff'; }
+                    el.style.background = bg;
+                    el.style.color = fg;
+                });
+                lkSet('lookBubbleName', el => { el.textContent = lkBub ? lkBub.name : 'Custom'; });
+                lkSet('lookFontPrev', el => { el.style.fontFamily = lkFont ? lkFont.value : 'Inter, sans-serif'; });
+                lkSet('lookFontName', el => { el.textContent = lkFont ? lkFont.name : 'Default'; });
+                lkSet('lookRingPrev', el => {
+                    if (rStyle) {
+                        el.style.border = rStyle.value.split(';')[0].split(':')[1] || 'none';
+                        el.style.boxShadow = rStyle.value.split('box-shadow:')[1] || 'none';
+                    }
+                });
+                lkSet('lookRingName', el => { el.textContent = rStyle ? rStyle.name : 'None'; });
                 document.getElementById('userAvatar').src = myProfile.pic; 
                 document.getElementById('orbCountDisplay').innerText = myProfile.orbs; 
                 document.getElementById('displayBio').innerText = myProfile.bio;
@@ -3442,22 +3657,22 @@ function sendNotification(title, body, icon) {
 
                 let actionHtml = '';
                 if(targetUid === myUid) {
-                    actionHtml = `<button class="sheet-btn primary ripple-target" onclick="closeSheet(); switchScreen('hub-screen'); document.querySelector('.dock-btn[data-tab=\\'tab-profile\\']').click();" style="justify-content:center;"><i class="fa-solid fa-pen"></i> Edit My Profile</button>`;
+                    actionHtml = `<button class="sheet-btn primary ripple-target" onclick="closeSheet(); switchScreen('hub-screen'); document.querySelector('.dock-btn[data-tab=\\'tab-profile\\']').click();"><i class="fa-solid fa-pen"></i> Edit My Profile</button>`;
                 } else if(myFriendsMap[targetUid]) {
                     const safeName = uData.name.replace(/'/g, "\\'");
                     actionHtml = `
-                        <button class="sheet-btn primary ripple-target" onclick="closeSheet(); openDM('${targetUid}', '${safeName}', '${uData.pic}')" style="justify-content:center;"><i class="fa-solid fa-message"></i> Message VIP</button>
-                        <button class="sheet-btn ripple-target" onclick="tipUser('${targetUid}', '${safeName}')" style="justify-content:center; color: var(--accent-yellow); border-color: var(--accent-yellow);"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Orbs</button>
-                        <button class="sheet-btn ripple-target" onclick="nukeChat('${targetUid}')" style="justify-content:center; color: var(--fire); border-color: rgba(255,106,0,0.3); background: rgba(255,106,0,0.1);"><i class="fa-solid fa-bomb"></i> Nuke Chat (-500 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i>)</button>
-                        <button class="sheet-btn ripple-target" onclick="removeFriend('${targetUid}', '${safeName}')" style="justify-content:center; color: var(--error-red); border-color: rgba(255,59,48,0.3); background: rgba(255,59,48,0.1);"><i class="fa-solid fa-user-minus"></i> Remove Friend</button>
-                        <button class="sheet-btn ripple-target" onclick="blockUser('${targetUid}')" style="justify-content:center; color: var(--error-red); border-color: rgba(255,59,48,0.3); background: rgba(255,59,48,0.1);"><i class="fa-solid fa-ban"></i> Block User</button>
+                        <button class="sheet-btn primary ripple-target" onclick="closeSheet(); openDM('${targetUid}', '${safeName}', '${uData.pic}')"><i class="fa-solid fa-message"></i> Message VIP</button>
+                        <button class="sheet-btn center gold-ghost ripple-target" onclick="tipUser('${targetUid}', '${safeName}')"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Sparks</button>
+                        <button class="sheet-btn center fire-soft ripple-target" onclick="nukeChat('${targetUid}')"><i class="fa-solid fa-bomb"></i> Nuke Chat (-500 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i>)</button>
+                        <button class="sheet-btn center danger-soft ripple-target" onclick="removeFriend('${targetUid}', '${safeName}')"><i class="fa-solid fa-user-minus"></i> Remove Friend</button>
+                        <button class="sheet-btn center danger-soft ripple-target" onclick="blockUser('${targetUid}')"><i class="fa-solid fa-ban"></i> Block User</button>
                     `;
                 } else {
                     const safeName = uData.name.replace(/'/g, "\\'");
                     actionHtml = `
-                        <button class="sheet-btn primary ripple-target" id="upAddFriendBtn" onclick="sendFriendRequest('${targetUid}', '${safeName}', '${uData.pic}'); closeSheet();" style="justify-content:center;"><i class="fa-solid fa-user-plus"></i> Add to VIP List</button>
-                        <button class="sheet-btn ripple-target" onclick="tipUser('${targetUid}', '${safeName}')" style="justify-content:center; color: var(--accent-yellow); border-color: var(--accent-yellow);"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Orbs</button>
-                        <button class="sheet-btn ripple-target" onclick="blockUser('${targetUid}')" style="justify-content:center; color: var(--error-red); border-color: rgba(255,59,48,0.3); background: rgba(255,59,48,0.1);"><i class="fa-solid fa-ban"></i> Block User</button>
+                        <button class="sheet-btn primary ripple-target" id="upAddFriendBtn" onclick="sendFriendRequest('${targetUid}', '${safeName}', '${uData.pic}'); closeSheet();"><i class="fa-solid fa-user-plus"></i> Add to VIP List</button>
+                        <button class="sheet-btn center gold-ghost ripple-target" onclick="tipUser('${targetUid}', '${safeName}')"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Sparks</button>
+                        <button class="sheet-btn center danger-soft ripple-target" onclick="blockUser('${targetUid}')"><i class="fa-solid fa-ban"></i> Block User</button>
                     `;
                 }
                 
@@ -3491,18 +3706,18 @@ function sendNotification(title, body, icon) {
 
         window.tipUser = function(targetUid, targetName) {
             if (!requireAuth()) return;
-            if (myProfile.orbs < 50) return showToast("Not enough Orbs to tip!", "error");
+            if (myProfile.orbs < 50) return showToast("Not enough Sparks to tip!", "error");
 
             debitOrbs(50, (ok) => {
-                if (!ok) { showToast("Not enough Orbs to tip!", "error"); return; }
+                if (!ok) { showToast("Not enough Sparks to tip!", "error"); return; }
                 db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + 50);
 
-                showToast(`Tipped 50 Orbs to ${targetName}!`, 'success');
+                showToast(`Tipped 50 Sparks to ${targetName}!`, 'success');
                 closeSheet();
             });
         }
 
-        // --- ORBS SHOP (WITH BADGES) ---
+        // --- SPARKS SHOP (WITH BADGES) ---
         // Shop initialization is now handled by tab switching
 
         window.switchShopTab = function(tab) {
@@ -3644,7 +3859,7 @@ function sendNotification(title, body, icon) {
             } else {
                 if (myProfile.orbs >= item.price) {
                     debitOrbs(item.price, (ok, newBalance) => {
-                        if (!ok) { showToast("Not enough Orbs! Earn more by chatting.", "error"); return; }
+                        if (!ok) { showToast("Not enough Sparks! Earn more by chatting.", "error"); return; }
                         unlocked.push(itemId);
                         myProfile.unlocked = unlocked;
 
@@ -3671,7 +3886,7 @@ function sendNotification(title, body, icon) {
                         showToast("Successfully purchased " + item.name + "!", "success");
                     });
                 } else { 
-                    showToast("Not enough Orbs! Earn more by chatting.", "error"); 
+                    showToast("Not enough Sparks! Earn more by chatting.", "error"); 
                 }
             }
         }
@@ -4313,12 +4528,12 @@ function sendNotification(title, body, icon) {
                                         <img src="${safePic}" class="friend-avatar">
                                         <div style="display:flex; flex-direction:column;">
                                             <span class="friend-name">${safeName}</span>
-                                            <span style="font-size:10px; color:var(--text-secondary);">${safeUid} | ${orbs} Orbs</span>
+                                            <span style="font-size:10px; color:var(--text-secondary);">${safeUid} | ${orbs} Sparks</span>
                                         </div>
                                     </div>
                                     <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:5px;">
                                         <button class="friend-action-btn" style="background:var(--accent-blue); color:#fff;" onclick="adminEditUser('${child.key}')"><i class="fa-solid fa-pen"></i> Edit</button>
-                                        <button class="friend-action-btn" style="background:var(--accent-yellow); color:var(--bg-dark);" onclick="adminGiveOrbs('${child.key}')">Orbs</button>
+                                        <button class="friend-action-btn" style="background:var(--accent-yellow); color:var(--bg-dark);" onclick="adminGiveOrbs('${child.key}')">Sparks</button>
                                         <button class="friend-action-btn ${isBanned ? 'reject' : ''}" style="${isBanned ? '' : 'background:rgba(255,59,48,0.1); color:var(--error-red); border:1px solid rgba(255,59,48,0.3);'}" onclick="adminToggleBan('${child.key}', ${isBanned})">${isBanned ? 'Unban' : 'Ban'}</button>
                                     </div>
                                 </div>`;
@@ -4419,10 +4634,10 @@ function sendNotification(title, body, icon) {
 
         window.adminGiveOrbs = function(targetUid) {
             if(!myProfile.isAdmin) return;
-            const amount = parseInt(prompt("Enter amount of Orbs to give (can be negative to remove):", "100"));
+            const amount = parseInt(prompt("Enter amount of Sparks to give (can be negative to remove):", "100"));
             if(!isNaN(amount)) {
                 db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + amount).then(() => {
-                    showToast(`Gave ${amount} Orbs to user.`, "success");
+                    showToast(`Gave ${amount} Sparks to user.`, "success");
                     adminSearchUsers(); // Refresh results
                 }).catch(err => showToast(err.message, "error"));
             }
