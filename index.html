@@ -1528,6 +1528,14 @@
                     <div class="card-icon" style="color: #e74c3c;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
                     <div class="card-text"><h3 style="color: #e74c3c;">Higher or Lower</h3></div>
                 </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('Connect4')">
+                    <div class="card-icon" style="color: #E5484D;"><i class="fa-solid fa-circle-dot"></i></div>
+                    <div class="card-text"><h3 style="color: #E5484D;">Connect 4 <span style="background: var(--gold-grad); color: #1A1402; font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; vertical-align: 2px; margin-left: 4px;">NEW</span></h3></div>
+                </div>
+                <div class="hub-card ripple-target" onclick="findStrangerGame('MemoryMatch')">
+                    <div class="card-icon" style="color: #A78BFA;"><i class="fa-solid fa-clone"></i></div>
+                    <div class="card-text"><h3 style="color: #A78BFA;">Memory Match <span style="background: var(--gold-grad); color: #1A1402; font-size: 9px; font-weight: 800; letter-spacing: 0.6px; padding: 2px 6px; border-radius: 6px; vertical-align: 2px; margin-left: 4px;">NEW</span></h3></div>
+                </div>
              </div>
         </div>
 
@@ -4718,7 +4726,7 @@ function sendNotification(title, body, icon) {
         let activeGameType = null;
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -4764,6 +4772,16 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'HigherLower') {
                 document.getElementById('higherLowerOverlay').style.display = 'flex';
                 document.getElementById('hlStatus').innerText = "Searching for opponent...";
+            } else if (gameType === 'Connect4') {
+                document.getElementById('connect4Overlay').style.display = 'flex';
+                document.getElementById('c4Status').innerText = "Searching for opponent...";
+                renderC4Board(); // build the 42 cells up front so the board is ready when the match lands
+            } else if (gameType === 'MemoryMatch') {
+                document.getElementById('memoryMatchOverlay').style.display = 'flex';
+                document.getElementById('mmStatus').innerText = "Searching for opponent...";
+                document.getElementById('mmBoard').innerHTML = ''; // force a fresh card grid on session start
+                document.getElementById('mmScoreX').innerText = '0';
+                document.getElementById('mmScoreO').innerText = '0';
             }
 
             if (gameType.startsWith('Ludo')) {
@@ -4819,7 +4837,11 @@ function sendNotification(title, body, icon) {
                         // The LAST person to join triggers the room creation and becomes host for initialization logic
                         // but P1 (queue[0]) will still be treated as 'X'/Red for turn purposes.
                         if (queue[queue.length - 1].uid === user.uid) {
-                            gameRoom = "game_ludo_" + Date.now();
+                            // Deterministic room id from the member set: if two clients
+                            // conclude they are the last joiner in the same window, both
+                            // compute the SAME room and write identical state to it,
+                            // instead of creating rival rooms that split the players.
+                            gameRoom = "game_ludo_" + gameType + "_" + queue.map(q => q.uid).sort().join('_');
                             // For simplicity, let the creator still initialize things
 
                             let updates = {
@@ -4828,7 +4850,8 @@ function sendNotification(title, body, icon) {
                                 lastRollWasSix: false,
                                 winner: null,
                                 state: 'playing',
-                                targetPlayers: targetPlayers
+                                targetPlayers: targetPlayers,
+                                hostUid: user.uid
                             };
 
                             // Initialize all teams dynamically based on mode
@@ -4837,6 +4860,7 @@ function sendNotification(title, body, icon) {
                             ludoTeams.forEach((teamId, index) => {
                                 let pNum = index + 1;
                                 updates[`p${pNum}Name`] = queue[index].name;
+                                updates[`p${pNum}Uid`] = queue[index].uid;
                                 updates[`tokens_${teamId}`] = [
                                     {id:0, state: 'base', stepsTaken: -1},
                                     {id:1, state: 'base', stepsTaken: -1},
@@ -4896,6 +4920,12 @@ function sendNotification(title, body, icon) {
         let gameChatRef = null;
 
         function startGameSession() {
+            // Re-entry guard: never stack a second set of listeners on a
+            // previous session's refs (leaked listeners keep writing into
+            // stale overlays and re-render old games).
+            if (typeof gameRef !== 'undefined' && gameRef) gameRef.off();
+            if (gameChatRef) gameChatRef.off();
+
             // Ludo handles its own chat; we don't want this global container overlapping it.
             // Only show for other games.
             if(document.getElementById('ludoOverlay').style.display !== 'flex') {
@@ -4947,24 +4977,31 @@ function sendNotification(title, body, icon) {
                 document.getElementById('ludoStatus').innerText = "All players found! Starting match...";
                 gameRef = db.ref('games/' + gameRoom);
 
-                // Set my local symbol correctly based on when I joined the queue
-                // The host set all names already, so I just need to find my team index
+                // Set my local team correctly: match by uid first (rooms store
+                // p{n}Uid at creation), falling back to the legacy display-name
+                // match for rooms created by older clients that lack uid fields.
                 gameRef.once('value', snap => {
                     const data = snap.val();
                     if(data) {
+                        const tp = data.targetPlayers || 2;
+                        let matched = -1;
                         for(let i=1; i<=4; i++) {
-                            if(data[`p${i}Name`] === myProfile.name) {
-                                // Match index to team
-                                // If 2P: team 0, 2
-                                // If 3P: team 0, 1, 2
-                                // If 4P: team 0, 1, 2, 3
-                                const tp = data.targetPlayers || 2;
-                                if (tp === 2) {
-                                    myLudoTeam = i === 1 ? 0 : 2;
-                                } else {
-                                    myLudoTeam = i - 1;
-                                }
-                                break;
+                            if(data[`p${i}Uid`] && data[`p${i}Uid`] === user.uid) { matched = i; break; }
+                        }
+                        if (matched === -1) {
+                            for(let i=1; i<=4; i++) {
+                                if(data[`p${i}Name`] === myProfile.name) { matched = i; break; }
+                            }
+                        }
+                        if (matched > 0) {
+                            // Match index to team
+                            // If 2P: team 0, 2
+                            // If 3P: team 0, 1, 2
+                            // If 4P: team 0, 1, 2, 3
+                            if (tp === 2) {
+                                myLudoTeam = matched === 1 ? 0 : 2;
+                            } else {
+                                myLudoTeam = matched - 1;
                             }
                         }
                     }
@@ -5100,10 +5137,18 @@ function sendNotification(title, body, icon) {
                     const data = snap.val();
                     if(!data) return;
 
-                    // Someone made a move
-                    if (data.playerX !== '' || data.playerO !== '') {
+                    // Only the OPPONENT's move lights the indicator (the old
+                    // check fired on either player's move — including your own).
+                    const oppMoveRaw = mySymbol === 'X' ? data.playerO : data.playerX;
+                    if (!data.winner && oppMoveRaw) {
                         document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-check"></i>';
                         document.getElementById('rpsOpponentBox').style.borderColor = "var(--success-green)";
+                    }
+                    // Fresh round (host reset): clear the revealed move/check
+                    // on BOTH clients, not just the host's.
+                    if (!data.winner && !data.playerX && !data.playerO) {
+                        document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
+                        document.getElementById('rpsOpponentBox').style.borderColor = "rgba(255,255,255,0.2)";
                     }
 
                     if (data.winner) {
@@ -5133,18 +5178,24 @@ function sendNotification(title, body, icon) {
                     gameRef.update({ p2Name: myProfile.name || 'P2' });
                 }
                 if (mySymbol === 'X') {
-                    gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
+                    // update(), not set(): set() would wipe the p1Name/p2Name
+                    // writes above whenever it landed after them.
+                    gameRef.update({ board: Array(42).fill(''), turn: 'X', winner: null });
                 }
+                if (!document.getElementById('c4-0')) renderC4Board();
 
                 gameRef.on('value', snap => {
                     const data = snap.val();
-                    if(!data) return;
+                    if(!data || !data.board) return;
 
                     updateC4BoardUI(data.board);
 
                     if (data.winner) {
-                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
-                        playWinSound(); document.getElementById('rematchC4Btn').style.display = 'block';
+                        // checkC4Win returns 'X'/'O'/'Draw' — the winner name
+                        // must be resolved from the symbol, not 'P1'/'P2'.
+                        document.getElementById('c4Status').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'X' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchC4Btn').style.display = 'block'; else document.getElementById('c4Status').innerText += ' (Waiting for Host to restart)';
                     } else {
                         let colorStr = mySymbol === 'X' ? 'Red' : 'Yellow';
                         let oppColorStr = mySymbol === 'X' ? 'Yellow' : 'Red';
@@ -5170,7 +5221,9 @@ function sendNotification(title, body, icon) {
                         [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
                     }
 
-                    gameRef.set({
+                    // update(), not set(): set() would wipe the p1Name/p2Name
+                    // writes above whenever it landed after them.
+                    gameRef.update({
                         board: emojis,
                         flipped: Array(16).fill(false), // true if matched or currently flipped
                         matched: Array(16).fill(false), // true if permanently matched
@@ -5193,7 +5246,8 @@ function sendNotification(title, body, icon) {
 
                     if (data.winner) {
                         document.getElementById('mmStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === mySymbol ? "You Win!" : "You Lose!");
-                        playWinSound(); document.getElementById('rematchMmBtn').style.display = 'block';
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchMmBtn').style.display = 'block'; else document.getElementById('mmStatus').innerText += ' (Waiting for Host to restart)';
                     } else {
                         document.getElementById('mmStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
                         document.getElementById('rematchMmBtn').style.display = 'none';
@@ -5202,76 +5256,11 @@ function sendNotification(title, body, icon) {
             }
         }
 
-        window.makeMove = function(index) {
-            if(!gameRef) return;
-            gameRef.once('value', snap => {
-                const data = snap.val();
-                if(data && data.turn === mySymbol && !data.winner && data.board[index] === '') {
-                    data.board[index] = mySymbol;
-                    data.winner = checkWin(data.board);
-                    data.turn = mySymbol === 'X' ? 'O' : 'X';
-                    gameRef.update(data);
-                }
-            });
-        }
-
-        function updateBoardUI(board) {
-            for(let i=0; i<9; i++) {
-                const cell = document.getElementById('ttt-'+i);
-                if(cell) {
-                    cell.innerText = board[i];
-                    cell.style.color = board[i] === 'X' ? 'var(--accent-yellow)' : '#00e5ff';
-                }
-            }
-        }
-
-        function checkWin(b) {
-            const lines = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
-            for(let line of lines) {
-                if(b[line[0]] && b[line[0]] === b[line[1]] && b[line[0]] === b[line[2]]) return b[line[0]];
-            }
-            if(!b.includes('')) return 'Draw';
-            return null;
-        }
-
-        window.resetGame = function() {
-            if(gameRef) {
-                gameRef.update({ board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null });
-                document.getElementById('rematchBtn').style.display = 'none';
-            }
-        }
-
-        window.makeRPSMove = function(move) {
-            if(!gameRef) return;
-            gameRef.once('value', snap => {
-                const data = snap.val();
-                if(data && !data.winner) {
-                    if (mySymbol === 'X' && data.playerX === '') data.playerX = move;
-                    if (mySymbol === 'O' && data.playerO === '') data.playerO = move;
-
-                    if (data.playerX !== '' && data.playerO !== '') {
-                        if (data.playerX === data.playerO) data.winner = 'Draw';
-                        else if (
-                            (data.playerX === 'rock' && data.playerO === 'scissors') ||
-                            (data.playerX === 'paper' && data.playerO === 'rock') ||
-                            (data.playerX === 'scissors' && data.playerO === 'paper')
-                        ) data.winner = 'X';
-                        else data.winner = 'O';
-                    }
-                    gameRef.update(data);
-                }
-            });
-        }
-
-        window.resetRPS = function() {
-            if(gameRef) {
-                gameRef.update({ playerX: '', playerO: '', winner: null });
-                document.getElementById('rpsOpponentBox').innerHTML = '<i class="fa-solid fa-question"></i>';
-                document.getElementById('rpsOpponentBox').style.borderColor = "rgba(255,255,255,0.2)";
-                document.getElementById('rpsStatus').innerText = "Make your move...";
-                document.getElementById('rematchRpsBtn').style.display = 'none';
-            }
-        }
+        // NOTE (Stage 3): the first-draft TicTacToe/RPS functions that used to
+        // sit here (makeMove / updateBoardUI / checkWin / resetGame /
+        // makeRPSMove / resetRPS) were dead code — the second definitions
+        // further down silently overrode them. Removed to end the duplication;
+        // the live copies below are the only ones now.
 
         window.renderC4Board = function() {
             const board = document.getElementById('c4Board');
@@ -5280,7 +5269,7 @@ function sendNotification(title, body, icon) {
                 const cell = document.createElement('div');
                 cell.className = 'c4-cell';
                 cell.id = 'c4-' + i;
-                cell.style.cssText = 'background: var(--bg-dark); border-radius: 50%; cursor: pointer;';
+                cell.style.cssText = 'background: var(--bg-dark); border-radius: 50%; cursor: pointer; aspect-ratio: 1; box-shadow: inset 0 3px 7px rgba(0,0,0,0.6);';
                 cell.onclick = () => makeC4Move(i % 7); // Click column
                 board.appendChild(cell);
             }
@@ -5290,8 +5279,8 @@ function sendNotification(title, body, icon) {
             for(let i=0; i<42; i++) {
                 const cell = document.getElementById('c4-' + i);
                 if(cell) {
-                    if(boardData[i] === 'X') cell.style.background = '#ff003c'; // Red
-                    else if(boardData[i] === 'O') cell.style.background = '#ffcc00'; // Yellow
+                    if(boardData[i] === 'X') cell.style.background = '#E5484D'; // Red (V3)
+                    else if(boardData[i] === 'O') cell.style.background = '#FFC926'; // Yellow (V3)
                     else cell.style.background = 'var(--bg-dark)';
                 }
             }
@@ -5308,9 +5297,10 @@ function sendNotification(title, body, icon) {
                         let idx = r * 7 + col;
                         if(board[idx] === '') {
                             board[idx] = mySymbol;
-                            data.winner = checkC4Win(board);
-                            data.turn = mySymbol === 'X' ? 'O' : 'X';
-                            gameRef.update(data);
+                            let win = checkC4Win(board);
+                            let nextTurn = mySymbol === 'X' ? 'O' : 'X';
+                            // Write only the fields that changed (not the whole node)
+                            gameRef.update({ board: board, turn: nextTurn, winner: win });
                             break;
                         }
                     }
@@ -5351,8 +5341,9 @@ function sendNotification(title, body, icon) {
         }
 
         window.resetConnect4 = function() {
-            if(gameRef) {
-                gameRef.set({ board: Array(42).fill(''), turn: 'X', winner: null });
+            if(gameRef && mySymbol === 'X') {
+                // update(), not set(): set() wiped p1Name/p2Name on rematch.
+                gameRef.update({ board: Array(42).fill(''), turn: 'X', winner: null });
                 document.getElementById('rematchC4Btn').style.display = 'none';
             }
         }
@@ -5401,18 +5392,25 @@ function sendNotification(title, body, icon) {
 
                             gameRef.update(updates);
                         } else {
-                            // No Match, change turn and schedule flip back
+                            // No Match, change turn and schedule flip back.
+                            // Capture the ref, room and the two card indices NOW:
+                            // the old code read the global gameRef when the timer
+                            // fired, so leaving and starting a new game inside the
+                            // 1.5s window made it flip cards in the NEW game.
                             updates.turn = mySymbol === 'X' ? 'O' : 'X';
+                            const flipRef = gameRef;
+                            const flipRoom = gameRoom;
+                            const flipA = card1, flipB = card2;
                             gameRef.update(updates).then(() => {
                                 setTimeout(() => {
-                                    gameRef.once('value', s => {
+                                    if (gameRef !== flipRef || gameRoom !== flipRoom) return; // different game now
+                                    flipRef.once('value', s => {
                                         const d = s.val();
-                                        if(d && d.activeFlips && d.activeFlips.length === 2) {
-                                            // Make sure they are still active and not part of a new turn somehow
+                                        if(d && d.activeFlips && d.activeFlips.length === 2 && d.activeFlips.includes(flipA) && d.activeFlips.includes(flipB)) {
                                             let revertFlipped = [...d.flipped];
-                                            revertFlipped[d.activeFlips[0]] = false;
-                                            revertFlipped[d.activeFlips[1]] = false;
-                                            gameRef.update({
+                                            revertFlipped[flipA] = false;
+                                            revertFlipped[flipB] = false;
+                                            flipRef.update({
                                                 flipped: revertFlipped,
                                                 activeFlips: []
                                             });
@@ -5439,7 +5437,7 @@ function sendNotification(title, body, icon) {
                 for(let i=0; i<16; i++) {
                     const card = document.createElement('div');
                     card.id = 'mmCard-' + i;
-                    card.style.cssText = "background: var(--island); border: 2px solid var(--glass-border); border-radius: 12px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; user-select: none; transition: transform 0.3s;";
+                    card.style.cssText = "background: var(--panel-2); border: 1px solid var(--glass-border); border-radius: 14px; height: 70px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; user-select: none; transition: transform 0.3s;";
                     card.onclick = () => flipMemoryCard(i);
                     board.appendChild(card);
                 }
@@ -5451,11 +5449,11 @@ function sendNotification(title, body, icon) {
                 if(card) {
                     if(data.flipped[i] || data.matched[i]) {
                         card.innerText = data.board[i];
-                        card.style.background = data.matched[i] ? 'rgba(0,255,102,0.2)' : '#fff';
-                        card.style.borderColor = data.matched[i] ? '#00ff66' : '#fff';
+                        card.style.background = data.matched[i] ? 'rgba(70,167,88,0.22)' : '#F4F5F7';
+                        card.style.borderColor = data.matched[i] ? '#46A758' : '#F4F5F7';
                     } else {
                         card.innerText = '';
-                        card.style.background = 'var(--island)';
+                        card.style.background = 'var(--panel-2)';
                         card.style.borderColor = 'var(--glass-border)';
                     }
                 }
@@ -5470,7 +5468,8 @@ function sendNotification(title, body, icon) {
                     [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
                 }
 
-                gameRef.set({
+                // update(), not set(): set() wiped p1Name/p2Name on rematch.
+                gameRef.update({
                     board: emojis,
                     flipped: Array(16).fill(false),
                     matched: Array(16).fill(false),
@@ -5523,7 +5522,11 @@ function sendNotification(title, body, icon) {
         window.updateBoardUI = function(board) {
             for (let i = 0; i < 9; i++) {
                 const cell = document.getElementById('ttt-' + i);
-                if (cell) cell.innerText = board[i];
+                if (cell) {
+                    cell.innerText = board[i];
+                    // X/O colours (the overriding second draft had dropped these)
+                    cell.style.color = board[i] === 'X' ? 'var(--accent-yellow)' : (board[i] === 'O' ? '#00e5ff' : '');
+                }
             }
         };
 
@@ -5538,21 +5541,18 @@ function sendNotification(title, body, icon) {
                 const data = snap.val();
                 if (!data || data.winner) return;
 
+                // One locked-in move per player per round: a move that is
+                // already recorded can never be overwritten. (The previous
+                // version also re-wrote p1Name/p2Name to the DB on every
+                // move — names are set once at session start; dropped.)
                 let updates = {};
-                if (mySymbol === 'X') {
-                    gameRef.update({ p1Name: myProfile.name || 'P1' });
-                } else {
-                    gameRef.update({ p2Name: myProfile.name || 'P2' });
-                }
-                if (mySymbol === 'X') {
-                    updates.playerX = move;
-                } else {
-                    updates.playerO = move;
-                }
+                if (mySymbol === 'X' && data.playerX === '') updates.playerX = move;
+                if (mySymbol === 'O' && data.playerO === '') updates.playerO = move;
+                if (!updates.playerX && !updates.playerO) return; // already moved
 
-                if ((mySymbol === 'X' && data.playerO !== '') || (mySymbol === 'O' && data.playerX !== '')) {
-                    let moveX = updates.playerX || data.playerX;
-                    let moveO = updates.playerO || data.playerO;
+                const moveX = updates.playerX || data.playerX;
+                const moveO = updates.playerO || data.playerO;
+                if (moveX !== '' && moveO !== '') {
                     updates.winner = determineRPSWinner(moveX, moveO);
                 }
 
@@ -5645,7 +5645,8 @@ function sendNotification(title, body, icon) {
         let isLudoAnimating = false;
 
         const ludoGrid = 600 / 15;
-        const ludoColors = { bg: '#FFFFFF', lines: '#333333', 0: '#e53935', 1: '#43a047', 2: '#ffeb3b', 3: '#1e88e5', inactive: '#EEEEEE', safe: '#e0e0e0', boardBg: '#1a1f35' };
+        // V3 palette (matches dc-v3.html): R #E5484D / G #46A758 / Y #FFC926 / B #3E63DD
+        const ludoColors = { bg: '#22232D', lines: 'rgba(255,255,255,0.07)', 0: '#E5484D', 1: '#46A758', 2: '#FFC926', 3: '#3E63DD', inactive: '#2C2D38', safe: '#2C2D38', boardBg: '#12131A' };
 
         const mainPath = [
             {x:0,y:6}, {x:1,y:6}, {x:2,y:6}, {x:3,y:6}, {x:4,y:6}, {x:5,y:6}, {x:6,y:5}, {x:6,y:4}, {x:6,y:3}, {x:6,y:2}, {x:6,y:1}, {x:6,y:0},
@@ -5706,6 +5707,13 @@ function sendNotification(title, body, icon) {
         window.startLudoGameLoop = function() {
             const canvas = document.getElementById('ludoCanvas');
             const ctx = canvas.getContext('2d');
+
+            // Re-entry guard: a second start (leave -> requeue -> start) must
+            // not stack another RAF loop and another pair of listeners on top
+            // of the previous match's — the old code overwrote ludoRaf and
+            // leaked the earlier loop against the new state.
+            if (ludoRaf) { cancelAnimationFrame(ludoRaf); ludoRaf = null; }
+            if (gameRef) { gameRef.off('value'); gameRef.child('ludoChat').off('child_added'); }
 
             // Set rotation so my base is always at bottom left visually
             // Team 0 -> 0deg, Team 1 -> 270deg, Team 2 -> 180deg, Team 3 -> 90deg
@@ -5775,32 +5783,50 @@ function sendNotification(title, body, icon) {
                             });
                         }
 
-                        // Generate UI Profile
+                        // Generate UI Profile (built with DOM APIs: the player
+                        // name is set via innerText, never interpolated into
+                        // innerHTML — display names are user-controlled text.
+                        // The avatar is a team-coloured initial disc, no emoji.)
                         let activeIndex = activeLudoTeams.indexOf(team);
                         let isUser = (team === myLudoTeam);
-                        let name = isUser ? "You" : (ludoState[`p${activeIndex+1}Name`] || "Opponent");
-                        let av = isUser ? "😎" : ludoEmojis[team];
-                        let html = `<div id="profile-${team}" class="player-profile" style="border-color: ${ludoColors[team]}">
-                                        <div class="profile-avatar">${av}</div>
-                                        <div class="profile-name">${name}</div>
-                                    </div>`;
+                        let rawName = isUser ? (myProfile.name || "You") : (ludoState[`p${activeIndex+1}Name`] || "Opponent");
+                        let profileEl = document.createElement('div');
+                        profileEl.id = `profile-${team}`;
+                        profileEl.className = 'player-profile';
+                        profileEl.style.borderColor = ludoColors[team];
+                        let avatarEl = document.createElement('div');
+                        avatarEl.className = 'profile-avatar';
+                        avatarEl.style.background = ludoColors[team];
+                        avatarEl.style.color = team === 2 ? '#1A1402' : '#FFFFFF';
+                        avatarEl.innerText = (rawName.charAt(0) || '?').toUpperCase();
+                        let nameEl = document.createElement('div');
+                        nameEl.className = 'profile-name';
+                        nameEl.innerText = isUser ? "You" : rawName;
+                        profileEl.appendChild(avatarEl);
+                        profileEl.appendChild(nameEl);
 
                         let relativeTurnOrder = (team - myLudoTeam + 4) % 4;
                         if (relativeTurnOrder === 0 || relativeTurnOrder === 1) {
-                            if(leftCol) leftCol.innerHTML += html;
+                            if(leftCol) leftCol.appendChild(profileEl);
                         } else {
-                            if(rightCol) rightCol.innerHTML += html;
+                            if(rightCol) rightCol.appendChild(profileEl);
                         }
                     });
                 }
 
                 if(ludoState.winner) {
-                    if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('ludoTurnIndicator').style.display = 'none';
                     document.getElementById('ludoDiceContainer').style.display = 'none';
                     let winnerIndex = activeLudoTeams.indexOf(parseInt(ludoState.winner));
                     let wName = ludoState[`p${winnerIndex+1}Name`] || 'Someone';
                     document.getElementById('ludoStatus').innerText = `${wName} Wins!`;
+                    // Rematch authority: the recorded room creator (hostUid)
+                    // when present; the legacy mySymbol guess only for rooms
+                    // created before hostUid existed. (Previously the
+                    // "(Waiting…)" note was appended BEFORE the result text
+                    // was assigned, so it was silently overwritten.)
+                    const iAmLudoHost = ludoState.hostUid ? (user.uid === ludoState.hostUid) : (mySymbol === 'X');
+                    if(iAmLudoHost) document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('rematchLudoBtn').style.display = 'none';
                     document.getElementById('ludoTurnIndicator').style.display = 'block';
@@ -5907,6 +5933,7 @@ function sendNotification(title, body, icon) {
                 setTimeout(() => {
                     gameRef.once('value', s => {
                         let ls = s.val();
+                        if(!ls) return; // game node gone (a player left mid-roll)
                         let myTokens = ls[`tokens_${myLudoTeam}`];
                         let legalMoves = [];
                         myTokens.forEach(t => {
@@ -5916,8 +5943,11 @@ function sendNotification(title, body, icon) {
 
                         if(legalMoves.length === 0) {
                             setTimeout(() => { nextLudoTurn(ls); }, 600);
-                        } else if(legalMoves.length === 1 && myTokens.filter(t => t.state === 'active').length < 2) {
-                            // Auto move if only 1 choice
+                        } else if(legalMoves.length === 1) {
+                            // Auto move if only 1 choice (previously this also
+                            // required <2 active tokens, so with 2+ tokens out
+                            // a forced single move still demanded a tap —
+                            // inconsistent; the shortcut now always applies)
                             setTimeout(() => { processMove(legalMoves[0].token, legalMoves[0].type); }, 300);
                         }
                     });
@@ -5928,6 +5958,7 @@ function sendNotification(title, body, icon) {
         function processMove(st, type) {
             gameRef.once('value', s => {
                 let ls = s.val();
+                if(!ls) return; // game node gone (a player left mid-turn)
                 let updates = {};
                 let teamStr = `tokens_${myLudoTeam}`;
                 let myTs = ls[teamStr];
@@ -5992,10 +6023,16 @@ function sendNotification(title, body, icon) {
         }
 
         window.resetLudo = function() {
-            if(gameRef && mySymbol === 'X') {
+            if(gameRef) {
                 gameRef.once('value', snap => {
                     let ls = snap.val();
                     if (!ls) return;
+                    // Authority comes from the room itself (hostUid = the
+                    // recorded creator) — mySymbol is derived from a stale
+                    // pre-join queue snapshot and can name the wrong host.
+                    // Rooms created before hostUid existed fall back to it.
+                    const isHost = ls.hostUid ? (user.uid === ls.hostUid) : (mySymbol === 'X');
+                    if (!isHost) return;
                     let updates = {
                         turn: 0,
                         diceRoll: 0,
@@ -6035,18 +6072,20 @@ function sendNotification(title, body, icon) {
         }
 
         function drawLudoBoard(ctx) {
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 600, 600); // Overall background
+            // V3 board (mirrors dc-v3.html): dark panel, hairline grid gaps,
+            // team-tinted yards, solid home columns, centre finish triangles.
+            ctx.fillStyle = ludoColors.boardBg; ctx.fillRect(0, 0, 600, 600);
 
+            const inset = 0.75, cellSize = ludoGrid - inset * 2;
             ctx.lineWidth = 1; ctx.setLineDash([]);
             for(let i=0; i<52; i++) {
                 let px = mainPath[i].x * ludoGrid; let py = mainPath[i].y * ludoGrid;
                 ctx.fillStyle = safeZones.includes(i) ? ludoColors.safe : ludoColors.bg;
-                ctx.fillRect(px, py, ludoGrid, ludoGrid);
-                ctx.strokeStyle = ludoColors.lines; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+                ctx.fillRect(px + inset, py + inset, cellSize, cellSize);
 
                 if (safeZones.includes(i)) {
-                    let starColor = '#ccc';
-                    if (i===1) starColor = ludoColors[0]; if (i===27) starColor = ludoColors[2];
+                    const starTeam = {1: 0, 14: 1, 27: 2, 40: 3}[i];
+                    let starColor = starTeam !== undefined ? ludoColors[starTeam] : 'rgba(255,255,255,0.35)';
                     drawLudoStar(ctx, px + ludoGrid/2, py + ludoGrid/2, 5, ludoGrid*0.3, ludoGrid*0.15, starColor);
                 }
             }
@@ -6055,14 +6094,13 @@ function sendNotification(title, body, icon) {
                 homePaths[team].forEach(coord => {
                     let px = coord.x * ludoGrid; let py = coord.y * ludoGrid;
                     ctx.fillStyle = ludoColors[team];
-                    ctx.fillRect(px, py, ludoGrid, ludoGrid);
-                    ctx.strokeStyle = '#fff'; ctx.strokeRect(px, py, ludoGrid, ludoGrid);
+                    ctx.fillRect(px + inset, py + inset, cellSize, cellSize);
                 });
 
                 let startCoord = mainPath[startPos[team]];
-                ctx.fillStyle = ludoColors[team]; ctx.fillRect(startCoord.x*ludoGrid, startCoord.y*ludoGrid, ludoGrid, ludoGrid);
-                ctx.beginPath(); ctx.arc(startCoord.x*ludoGrid + ludoGrid/2, startCoord.y*ludoGrid + ludoGrid/2, ludoGrid*0.2, 0, Math.PI*2);
-                ctx.fillStyle = '#fff'; ctx.fill();
+                ctx.fillStyle = ludoColors[team]; ctx.fillRect(startCoord.x*ludoGrid + inset, startCoord.y*ludoGrid + inset, cellSize, cellSize);
+                ctx.beginPath(); ctx.arc(startCoord.x*ludoGrid + ludoGrid/2, startCoord.y*ludoGrid + ludoGrid/2, ludoGrid*0.24, 0, Math.PI*2);
+                ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2.5; ctx.stroke();
             });
 
             // Draw all bases
@@ -6074,20 +6112,33 @@ function sendNotification(title, body, icon) {
                 drawLudoBase(ctx, baseOffsets[team].x*ludoGrid, baseOffsets[team].y*ludoGrid, col, isActive, team);
             }
 
-            // Center
-            ctx.fillStyle = '#ddd'; ctx.fillRect(6*ludoGrid, 6*ludoGrid, 3*ludoGrid, 3*ludoGrid);
-            ctx.fillStyle = activeLudoTeams.includes(0) ? ludoColors[0] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.strokeStyle = '#000'; ctx.stroke();
-            ctx.fillStyle = activeLudoTeams.includes(1) ? ludoColors[1] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = activeLudoTeams.includes(2) ? ludoColors[2] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = activeLudoTeams.includes(3) ? ludoColors[3] : '#ddd'; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.fill(); ctx.stroke();
+            // Centre finish: four triangles meeting at the middle
+            const triStroke = 'rgba(11,12,15,0.85)';
+            ctx.lineWidth = 1.5; ctx.strokeStyle = triStroke;
+            ctx.fillStyle = activeLudoTeams.includes(0) ? ludoColors[0] : ludoColors.inactive; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(1) ? ludoColors[1] : ludoColors.inactive; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 6*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(2) ? ludoColors[2] : ludoColors.inactive; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(9*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = activeLudoTeams.includes(3) ? ludoColors[3] : ludoColors.inactive; ctx.beginPath(); ctx.moveTo(7.5*ludoGrid, 7.5*ludoGrid); ctx.lineTo(6*ludoGrid, 9*ludoGrid); ctx.lineTo(6*ludoGrid, 6*ludoGrid); ctx.closePath(); ctx.fill(); ctx.stroke();
 
-            // CEO: ADVANCED CLUSTERING TO FIX OVERLAPS AND RENDER FINISHED TOKENS
+            // Finished tokens: rendered inside their team's centre triangle
+            // (previously they vanished from the board entirely on finishing)
+            const homeAnchors = { 0: {x: 7.5, y: 6.62}, 1: {x: 8.38, y: 7.5}, 2: {x: 7.5, y: 8.38}, 3: {x: 6.62, y: 7.5} };
+            const homeOffsets = [ {x: -0.15, y: -0.15}, {x: 0.15, y: -0.15}, {x: -0.15, y: 0.15}, {x: 0.15, y: 0.15} ];
             let rendered = new Set();
+            renderTokens.forEach(t => {
+                if (t.state !== 'home') return;
+                rendered.add(t);
+                const a = homeAnchors[t.team], o = homeOffsets[t.id] || homeOffsets[0];
+                drawLudoSingleToken(ctx, t, (a.x + o.x) * ludoGrid, (a.y + o.y) * ludoGrid, 0.55);
+            });
+
+            // CEO: ADVANCED CLUSTERING TO FIX OVERLAPS
             renderTokens.forEach(t => {
                 if (rendered.has(t)) return;
 
                 // Find all tokens on this exact same square (ignoring those safely separated in their bases)
                 let cluster = renderTokens.filter(other =>
+                    other.state !== 'home' &&
                     Math.abs(other.displayX - t.displayX) < 5 &&
                     Math.abs(other.displayY - t.displayY) < 5
                 );
@@ -6111,27 +6162,30 @@ function sendNotification(title, body, icon) {
                 });
             });
 
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.strokeRect(3, 3, 594, 594);
+            ctx.strokeStyle = 'rgba(255,255,255,0.10)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, 598, 598);
         }
 
         function drawLudoSingleToken(ctx, t, x, y, scale) {
-            if (t.state === 'home') return;
+            // Crisp pawn: team-coloured disc, white ring, soft offset shadow
+            // disc and a small highlight — canvas shapes only, no filters.
+            // (Finished 'home' tokens DO render now — drawLudoBoard positions
+            // them inside the centre finish triangles.)
             let radius = ludoGrid * 0.35 * scale;
             ctx.beginPath(); ctx.arc(x + 2*scale, y + 3*scale, radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fill();
+            ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fill();
 
             ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2);
             ctx.fillStyle = ludoColors[t.team]; ctx.fill();
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
+            ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2 * scale; ctx.stroke();
 
-            ctx.beginPath(); ctx.arc(x - 2*scale, y - 2*scale, radius * 0.4, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fill();
+            ctx.beginPath(); ctx.arc(x - radius * 0.32, y - radius * 0.32, radius * 0.38, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
 
-            // Highlight playable tokens
-            if (!isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0 && t.team === myLudoTeam) {
+            // Highlight playable tokens with a gold dashed ring
+            if (t.state !== 'home' && !isLudoAnimating && ludoState && t.team === ludoState.turn && ludoState.diceRoll > 0 && t.team === myLudoTeam) {
                 if ((t.state === 'base' && ludoState.diceRoll === 6) || (t.state === 'active' && t.stepsTaken + ludoState.diceRoll <= 56)) {
                     ctx.beginPath(); ctx.arc(x, y, radius + 4*scale, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#000'; ctx.lineWidth = 2*scale; ctx.setLineDash([4*scale, 4*scale]); ctx.stroke();
+                    ctx.strokeStyle = '#FFC926'; ctx.lineWidth = 2*scale; ctx.setLineDash([4*scale, 4*scale]); ctx.stroke();
                     ctx.setLineDash([]);
                 }
             }
@@ -6149,42 +6203,41 @@ function sendNotification(title, body, icon) {
         }
 
         function drawLudoBase(ctx, x, y, color, isActive, teamId) {
-            // Draw large colored base
-            ctx.fillStyle = color; ctx.fillRect(x, y, ludoGrid * 6, ludoGrid * 6);
-            ctx.strokeStyle = ludoColors.lines; ctx.lineWidth = 2;
-            ctx.strokeRect(x, y, ludoGrid * 6, ludoGrid * 6);
+            // V3 yard (mirrors dc-v3.html): team colour at ~22% over the board
+            // panel, a flat inner panel, and dark pawn-base discs ringed in
+            // the team colour. The team whose turn it is gets a coloured
+            // outline around its yard.
+            const S = ludoGrid * 6;
+            const isPlaying = activeLudoTeams.includes(teamId);
 
-            // Inner white area
-            ctx.fillStyle = isActive ? '#FFFFFF' : '#f5f5f5';
+            if (isPlaying) {
+                ctx.fillStyle = ludoColors.boardBg; ctx.fillRect(x, y, S, S);
+                ctx.fillStyle = color; ctx.globalAlpha = 0.22; ctx.fillRect(x, y, S, S); ctx.globalAlpha = 1.0;
+            } else {
+                ctx.fillStyle = '#1B1C26'; ctx.fillRect(x, y, S, S);
+            }
+
+            // Inner panel
+            ctx.fillStyle = '#22232D';
             ctx.fillRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
+            ctx.strokeStyle = ludoColors.lines; ctx.lineWidth = 1.5;
             ctx.strokeRect(x + ludoGrid, y + ludoGrid, ludoGrid * 4, ludoGrid * 4);
 
-            // Draw beautiful design
-            // Diagonal overlay square
-            ctx.save();
-            ctx.translate(x + ludoGrid*3, y + ludoGrid*3);
-            ctx.rotate(Math.PI / 4);
-            ctx.fillStyle = color;
-            ctx.globalAlpha = isActive ? 0.2 : 0.1;
-            ctx.fillRect(-ludoGrid*1.5, -ludoGrid*1.5, ludoGrid*3, ludoGrid*3);
-            ctx.globalAlpha = 1.0;
-            ctx.restore();
+            // Turn highlight
+            if (isActive && isPlaying) {
+                ctx.strokeStyle = color; ctx.lineWidth = 2.5;
+                ctx.strokeRect(x + 1.5, y + 1.5, S - 3, S - 3);
+            }
 
-            // Slot circles
+            // Pawn base slots
             baseSlots.forEach(slot => {
                 ctx.beginPath();
-                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.6, 0, Math.PI*2);
-                ctx.fillStyle = isActive ? '#ffffff' : '#f0f0f0';
+                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.58, 0, Math.PI*2);
+                ctx.fillStyle = '#12131A';
                 ctx.fill();
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 3;
                 ctx.stroke();
-
-                // inner dot
-                ctx.beginPath();
-                ctx.arc(x + slot.x*ludoGrid, y + slot.y*ludoGrid, ludoGrid*0.25, 0, Math.PI*2);
-                ctx.fillStyle = color;
-                ctx.fill();
             });
         }
 
@@ -6254,8 +6307,8 @@ function sendNotification(title, body, icon) {
                     document.getElementById('rematchDotsBtn').style.display = 'none';
                 }
 
-                document.getElementById('dotsScoreP1').innerText = `${localDotsState.p1Name || 'P1'} (Pink): ${localDotsState.scoreX}`;
-                document.getElementById('dotsScoreP2').innerText = `${localDotsState.p2Name || 'P2'} (Cyan): ${localDotsState.scoreO}`;
+                document.getElementById('dotsScoreP1').innerText = `${localDotsState.p1Name || 'P1'} (Gold): ${localDotsState.scoreX}`;
+                document.getElementById('dotsScoreP2').innerText = `${localDotsState.p2Name || 'P2'} (Blue): ${localDotsState.scoreO}`;
 
                 drawDotsBoard(ctx);
             });
@@ -6298,7 +6351,17 @@ function sendNotification(title, body, icon) {
                 else ns.winner = 'Draw';
             }
 
-            gameRef.update(ns);
+            // Write only the game fields — the old code updated with the
+            // entire local snapshot (names and any stale fields included).
+            gameRef.update({
+                hLines: ns.hLines,
+                vLines: ns.vLines,
+                boxes: ns.boxes,
+                scoreX: ns.scoreX,
+                scoreO: ns.scoreO,
+                turn: ns.turn,
+                winner: ns.winner
+            });
         }
 
         function drawDotsBoard(ctx) {
@@ -6311,10 +6374,10 @@ function sendNotification(title, body, icon) {
                 for(let c=0; c<4; c++) {
                     let bIdx = r*4 + c;
                     if(localDotsState.boxes[bIdx] === 'X') {
-                        ctx.fillStyle = 'rgba(255, 20, 147, 0.3)';
+                        ctx.fillStyle = 'rgba(255, 201, 38, 0.25)'; // P1 gold (V3)
                         ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
                     } else if (localDotsState.boxes[bIdx] === 'O') {
-                        ctx.fillStyle = 'rgba(0, 229, 255, 0.3)';
+                        ctx.fillStyle = 'rgba(62, 99, 221, 0.35)'; // P2 blue (V3)
                         ctx.fillRect(offset + c*gridSpacing, offset + r*gridSpacing, gridSpacing, gridSpacing);
                     }
                 }
@@ -6331,7 +6394,7 @@ function sendNotification(title, body, icon) {
                         ctx.beginPath();
                         ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
                         ctx.lineTo(offset + (c+1)*gridSpacing, offset + r*gridSpacing);
-                        ctx.strokeStyle = '#fff';
+                        ctx.strokeStyle = '#F4F5F7';
                         ctx.stroke();
                     }
                 }
@@ -6344,14 +6407,14 @@ function sendNotification(title, body, icon) {
                         ctx.beginPath();
                         ctx.moveTo(offset + c*gridSpacing, offset + r*gridSpacing);
                         ctx.lineTo(offset + c*gridSpacing, offset + (r+1)*gridSpacing);
-                        ctx.strokeStyle = '#fff';
+                        ctx.strokeStyle = '#F4F5F7';
                         ctx.stroke();
                     }
                 }
             }
 
             // Draw dots
-            ctx.fillStyle = '#aaa';
+            ctx.fillStyle = '#7A7F88';
             for(let r=0; r<5; r++) {
                 for(let c=0; c<5; c++) {
                     ctx.beginPath();
@@ -6391,7 +6454,7 @@ function sendNotification(title, body, icon) {
             if(mySymbol === 'X') {
                 if(checkStartInterval) clearInterval(checkStartInterval);
                 checkStartInterval = setInterval(() => {
-                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    if(!gameRef || !gameRoom) { clearInterval(checkStartInterval); checkStartInterval = null; return; }
                     gameRef.once('value', s => {
                         const d = s.val();
                         if(d && d.status === 'waiting' && Date.now() > d.start) {
@@ -6410,9 +6473,12 @@ function sendNotification(title, body, icon) {
                     cancelAnimationFrame(stopTimerRaf);
                     stopTimerRaf = null; // reset so the next round's loop can start on BOTH clients
                     document.getElementById('stActionBtn').style.display = 'none';
-                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchStBtn').style.display = 'block'; else document.getElementById('stStatus').innerText += ' (Waiting for Host to restart)';
+                    playWinSound();
                     document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
                     document.getElementById('stDisplay').innerText = data.p1Stop > 0 ? (mySymbol === 'X' ? (data.p1Stop/1000).toFixed(2) : (data.p2Stop/1000).toFixed(2)) : "10.00";
+                    // Set the result text FIRST, then the host note (appending
+                    // before the assignment meant it was overwritten unseen)
+                    if(mySymbol === 'X') document.getElementById('rematchStBtn').style.display = 'block'; else document.getElementById('stStatus').innerText += ' (Waiting for Host to restart)';
                     return;
                 }
 
@@ -6471,7 +6537,7 @@ function sendNotification(title, body, icon) {
 
                 if(checkStartInterval) clearInterval(checkStartInterval);
                 checkStartInterval = setInterval(() => {
-                    if(!gameRef) { clearInterval(checkStartInterval); return; }
+                    if(!gameRef || !gameRoom) { clearInterval(checkStartInterval); checkStartInterval = null; return; }
                     gameRef.once('value', s => {
                         const d = s.val();
                         if(d && d.status === 'waiting' && Date.now() > d.start) {
@@ -6493,7 +6559,7 @@ function sendNotification(title, body, icon) {
                 if(data.winner) {
                     cancelAnimationFrame(reactionRaf);
                     if (reactionWinnerTimer) { clearTimeout(reactionWinnerTimer); reactionWinnerTimer = null; }
-                    playWinSound(); if(mySymbol === 'X') document.getElementById('rematchRtBtn').style.display = 'block'; else document.getElementById('rtStatus').innerText += ' (Waiting for Host to restart)';
+                    playWinSound();
                     document.getElementById('rtTapZone').style.display = 'none';
                     if(data.winner === 'Early') {
                         document.getElementById('rtInstruction').innerText = "Someone false started!";
@@ -6502,6 +6568,7 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rtInstruction').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
                         document.getElementById('rtStatus').innerText = `Tap Time: ${Math.min(data.p1Tap || 9999, data.p2Tap || 9999)}ms`;
                     }
+                    if(mySymbol === 'X') document.getElementById('rematchRtBtn').style.display = 'block'; else document.getElementById('rtStatus').innerText += ' (Waiting for Host to restart)';
                     return;
                 }
 
@@ -6512,7 +6579,7 @@ function sendNotification(title, body, icon) {
                     document.getElementById('rtTapZone').style.display = 'block';
                     // Let the host's interval handle switching to go
                 } else if (data.status === 'go') {
-                    document.getElementById('reactionOverlay').style.background = '#32CD32';
+                    document.getElementById('reactionOverlay').style.background = '#46A758';
                     document.getElementById('rtInstruction').innerText = "TAP NOW!";
                 }
 
@@ -6545,7 +6612,7 @@ function sendNotification(title, body, icon) {
             checkTimeInterval = null;
             if(mySymbol === 'X') {
                 checkTimeInterval = setInterval(() => {
-                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    if(!gameRef || !gameRoom) { clearInterval(checkTimeInterval); checkTimeInterval = null; return; }
                     gameRef.once('value', s => {
                         const d = s.val();
                         if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
@@ -6582,7 +6649,7 @@ function sendNotification(title, body, icon) {
 
                 if(checkTimeInterval) clearInterval(checkTimeInterval);
                 checkTimeInterval = setInterval(() => {
-                    if(!gameRef) { clearInterval(checkTimeInterval); return; }
+                    if(!gameRef || !gameRoom) { clearInterval(checkTimeInterval); checkTimeInterval = null; return; }
                     gameRef.once('value', s => {
                         const d = s.val();
                         if(d && d.status === 'waiting' && Date.now() > d.greenTime) {
@@ -6613,8 +6680,8 @@ function sendNotification(title, body, icon) {
                 if(data.winner) {
                     document.getElementById('msControls').style.display = 'none';
                     playWinSound();
-                    if(mySymbol === 'X') document.getElementById('rematchMsBtn').style.display = 'block'; else document.getElementById('msStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('msStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                    if(mySymbol === 'X') document.getElementById('rematchMsBtn').style.display = 'block'; else document.getElementById('msStatus').innerText += ' (Waiting for Host to restart)';
                     return;
                 } else {
                     document.getElementById('rematchMsBtn').style.display = 'none';
@@ -6661,9 +6728,9 @@ function sendNotification(title, body, icon) {
 
                 if(data.winner) {
                     playWinSound();
-                    if(mySymbol === 'X') document.getElementById('rematchHcBtn').style.display = 'block'; else document.getElementById('hcStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('hcDrawBtn').style.display = 'none';
                     document.getElementById('hcStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                    if(mySymbol === 'X') document.getElementById('rematchHcBtn').style.display = 'block'; else document.getElementById('hcStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('rematchHcBtn').style.display = 'none';
                     let myC = mySymbol === 'X' ? data.p1Card : data.p2Card;
@@ -6708,26 +6775,39 @@ function sendNotification(title, body, icon) {
         }
 
         // --- GUESS THE NUMBER ---
+        // Sequence of the last hint this client has rendered. The old code
+        // appended data.lastHint on EVERY snapshot while it was non-empty
+        // (and only the host cleared it a round-trip later), so any unrelated
+        // field change in between printed the same hint twice. Writers now
+        // bump hintSeq with each hint; each client renders a seq once.
+        let gnLastSeq = 0;
         window.startGuessNumberLoop = function() {
+            gnLastSeq = 0;
             gameRef.on('value', snap => {
                 const data = snap.val();
                 if(!data) return;
 
                 if(data.lastHint) {
-                    const p = document.createElement('div');
-                    p.innerText = data.lastHint;
-                    const hist = document.getElementById('gnHistory');
-                    hist.appendChild(p);
-                    hist.scrollTop = hist.scrollHeight;
+                    const seq = data.hintSeq;
+                    // Legacy rooms (no hintSeq) keep the old append+clear
+                    // behaviour; sequenced hints render exactly once.
+                    if (seq === undefined || seq !== gnLastSeq) {
+                        if (seq !== undefined) gnLastSeq = seq;
+                        const p = document.createElement('div');
+                        p.innerText = data.lastHint;
+                        const hist = document.getElementById('gnHistory');
+                        hist.appendChild(p);
+                        hist.scrollTop = hist.scrollHeight;
+                    }
                     // reset hint so we don't spam it (host resets it)
-                    if(mySymbol === 'X') gameRef.update({ lastHint: '' });
+                    if(mySymbol === 'X' && data.lastHint) gameRef.update({ lastHint: '' });
                 }
 
                 if(data.winner) {
                     document.getElementById('gnControls').style.display = 'none';
-                    if(mySymbol === 'X') document.getElementById('rematchGnBtn').style.display = 'block'; else document.getElementById('gnStatus').innerText += ' (Waiting for Host to restart)';
                     playWinSound();
                     document.getElementById('gnStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Guessed It!` : `${data.p2Name || 'P2'} Guessed It!`;
+                    if(mySymbol === 'X') document.getElementById('rematchGnBtn').style.display = 'block'; else document.getElementById('gnStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('gnControls').style.display = 'flex';
                     document.getElementById('rematchGnBtn').style.display = 'none';
@@ -6744,19 +6824,23 @@ function sendNotification(title, body, icon) {
                 const d = snap.val();
                 if(d && !d.winner) {
                     let playerStr = mySymbol === 'X' ? (d.p1Name || 'P1') : (d.p2Name || 'P2');
+                    const nextSeq = (d.hintSeq || 0) + 1; // pairs with the listener's render-once guard
                     if(v === d.secret) {
-                        gameRef.update({ winner: mySymbol === 'X' ? 'P1' : 'P2', lastHint: `${playerStr} guessed ${v} and WON!` });
+                        gameRef.update({ winner: mySymbol === 'X' ? 'P1' : 'P2', lastHint: `${playerStr} guessed ${v} and WON!`, hintSeq: nextSeq });
                     } else if (v > d.secret) {
-                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too High)` });
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too High)`, hintSeq: nextSeq });
                     } else {
-                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too Low)` });
+                        gameRef.update({ lastHint: `${playerStr} guessed ${v} (Too Low)`, hintSeq: nextSeq });
                     }
                 }
             });
         }
         window.resetGuessNumber = function() {
             if(gameRef && mySymbol === 'X') {
-                gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', winner: null });
+                gameRef.once('value', snap => {
+                    const d = snap.val();
+                    gameRef.update({ secret: Math.floor(Math.random()*100)+1, p1Guess: 0, p2Guess: 0, lastHint: 'Game restarted!', hintSeq: ((d && d.hintSeq) || 0) + 1, winner: null });
+                });
             }
         }
 
@@ -6770,10 +6854,10 @@ function sendNotification(title, body, icon) {
                 if(data.winner) {
                     coinFlipResolving = false;
                     playWinSound();
-                    if(mySymbol === 'X') document.getElementById('rematchCfBtn').style.display = 'block'; else document.getElementById('cfStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('cfControls').style.display = 'none';
                     document.getElementById('cfCoin').innerText = data.result === 'Heads' ? 'H' : 'T';
                     document.getElementById('cfStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                    if(mySymbol === 'X') document.getElementById('rematchCfBtn').style.display = 'block'; else document.getElementById('cfStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('rematchCfBtn').style.display = 'none';
                     let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
@@ -6827,10 +6911,10 @@ function sendNotification(title, body, icon) {
                 document.getElementById('hlCard').innerText = data.currentCard;
 
                 if(data.winner) {
-                    if(mySymbol === 'X') document.getElementById('rematchHlBtn').style.display = 'block'; else document.getElementById('hlStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('hlControls').style.display = 'none';
                     playWinSound();
                     document.getElementById('hlStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : (data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins! Next was ${data.nextCard}` : `${data.p2Name || 'P2'} Wins! Next was ${data.nextCard}`);
+                    if(mySymbol === 'X') document.getElementById('rematchHlBtn').style.display = 'block'; else document.getElementById('hlStatus').innerText += ' (Waiting for Host to restart)';
                 } else {
                     document.getElementById('rematchHlBtn').style.display = 'none';
                     let myC = mySymbol === 'X' ? data.p1Choice : data.p2Choice;
@@ -6874,6 +6958,10 @@ function sendNotification(title, body, icon) {
 
         window.leaveLudo = function() {
             if(ludoRaf) cancelAnimationFrame(ludoRaf);
+            ludoRaf = null;
+            ludoState = null;
+            renderTokens = [];
+            isLudoAnimating = false;
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.child('ludoChat').off(); gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('ludoOverlay').style.display = 'none';
@@ -6888,6 +6976,8 @@ function sendNotification(title, body, icon) {
 
         window.leaveStopTimer = function() {
             if(stopTimerRaf) cancelAnimationFrame(stopTimerRaf);
+            stopTimerRaf = null;
+            if(checkStartInterval) { clearInterval(checkStartInterval); checkStartInterval = null; } // host poller must not outlive the game
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('stopTimerOverlay').style.display = 'none';
@@ -6897,6 +6987,9 @@ function sendNotification(title, body, icon) {
         }
         window.leaveReaction = function() {
             if(reactionRaf) cancelAnimationFrame(reactionRaf);
+            reactionRaf = null;
+            if(checkTimeInterval) { clearInterval(checkTimeInterval); checkTimeInterval = null; } // host poller must not outlive the game
+            if (reactionWinnerTimer) { clearTimeout(reactionWinnerTimer); reactionWinnerTimer = null; }
             if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
             if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
             document.getElementById('reactionOverlay').style.display = 'none';
@@ -6942,6 +7035,22 @@ function sendNotification(title, body, icon) {
             document.getElementById('higherLowerOverlay').style.display = 'none';
             document.getElementById('gameChatContainer').style.display = 'none';
             if(typeof user !== 'undefined' && user) { db.ref('gameQueue/HigherLower/' + user.uid).off(); db.ref('gameQueue/HigherLower/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveConnect4 = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('connect4Overlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Connect4/' + user.uid).off(); db.ref('gameQueue/Connect4/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveMemoryMatch = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('memoryMatchOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/MemoryMatch/' + user.uid).off(); db.ref('gameQueue/MemoryMatch/' + user.uid).remove(); }
             gameRoom = null;
         }
 
@@ -8051,19 +8160,19 @@ window.burnImage = function(element, url, key) {
 
     <div id="dotsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
         <button onclick="leaveDots()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px; z-index: 2;"><i class="fa-solid fa-chevron-left"></i></button>
-        <h2 style="color: #FF1493; margin-bottom: 5px;" id="dotsTitle">Dots & Boxes</h2>
+        <h2 style="color: var(--accent-yellow); margin-bottom: 5px;" id="dotsTitle">Dots & Boxes</h2>
         <p id="dotsStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
 
         <div style="display: flex; gap: 20px; margin-bottom: 15px; font-weight: bold;" id="dotsScoresContainer">
-            <div style="color: #FF1493;" id="dotsScoreP1">P1 (Pink): 0</div>
-            <div style="color: #00e5ff;" id="dotsScoreP2">P2 (Cyan): 0</div>
+            <div style="color: #FFC926;" id="dotsScoreP1">P1 (Gold): 0</div>
+            <div style="color: #7A9BFF;" id="dotsScoreP2">P2 (Blue): 0</div>
         </div>
 
-        <div id="dotsGameContainer" style="position: relative; width: 300px; height: 300px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+        <div id="dotsGameContainer" style="position: relative; width: 300px; height: 300px; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
             <canvas id="dotsCanvas" width="300" height="300" style="width: 100%; height: 100%; object-fit: contain;"></canvas>
         </div>
 
-        <button id="rematchDotsBtn" onclick="resetDots()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #FF1493; color: white; font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
+        <button id="rematchDotsBtn" onclick="resetDots()" style="display:none; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none; margin-top: 20px;">Play Again</button>
     </div>
 
     <div id="rpsOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8083,7 +8192,7 @@ window.burnImage = function(element, url, key) {
             <button class="rps-btn" onclick="makeRPSMove('scissors')" style="width: 80px; height: 80px; border-radius: 50%; font-size: 30px; background: var(--island); border: 2px solid var(--glass-border); color: white; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-hand-scissors"></i></button>
         </div>
 
-        <button id="rematchRpsBtn" onclick="resetRPS()" style="display:none; padding: 15px 30px; border-radius: 30px; background: #00e5ff; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchRpsBtn" onclick="resetRPS()" style="display:none; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="ticTacToeOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8091,19 +8200,19 @@ window.burnImage = function(element, url, key) {
         <h2 style="color: var(--accent-yellow); margin-bottom: 5px;">Tic-Tac-Toe</h2>
         <p id="gameStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
 
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 300px; background: var(--glass-border); padding: 10px; border-radius: 16px;">
-            <div class="ttt-cell" id="ttt-0" onclick="makeMove(0)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-1" onclick="makeMove(1)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-2" onclick="makeMove(2)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-3" onclick="makeMove(3)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-4" onclick="makeMove(4)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-5" onclick="makeMove(5)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-6" onclick="makeMove(6)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-7" onclick="makeMove(7)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
-            <div class="ttt-cell" id="ttt-8" onclick="makeMove(8)" style="background: var(--island); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 300px; height: 300px; background: var(--panel); border: 1px solid var(--glass-border); padding: 10px; border-radius: 16px;">
+            <div class="ttt-cell" id="ttt-0" onclick="makeMove(0)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-1" onclick="makeMove(1)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-2" onclick="makeMove(2)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-3" onclick="makeMove(3)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-4" onclick="makeMove(4)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-5" onclick="makeMove(5)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-6" onclick="makeMove(6)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-7" onclick="makeMove(7)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
+            <div class="ttt-cell" id="ttt-8" onclick="makeMove(8)" style="background: var(--panel-2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; cursor: pointer;"></div>
         </div>
 
-        <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--accent-yellow); color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchBtn" onclick="resetGame()" style="display:none; margin-top: 30px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
 
@@ -8114,8 +8223,8 @@ window.burnImage = function(element, url, key) {
         <p id="stStatus" style="color: var(--text-secondary); margin-bottom: 30px;">Waiting for opponent...</p>
         <div style="font-size: 80px; font-weight: 900; margin-bottom: 20px; font-family: monospace;" id="stDisplay">0.00</div>
         <div style="margin-bottom: 40px; font-size: 16px; text-align: center;">Stop it as close to <strong style="color: #FFD700;">10.00</strong> as possible!</div>
-        <button id="stActionBtn" onclick="stopTimerAction()" style="display:none; padding: 25px 50px; border-radius: 40px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 28px; border: none; box-shadow: 0 4px 15px rgba(255,215,0,0.3);">STOP</button>
-        <button id="rematchStBtn" onclick="resetStopTimer()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #FFD700; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="stActionBtn" onclick="stopTimerAction()" style="display:none; padding: 25px 50px; border-radius: 40px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 28px; border: none;">STOP</button>
+        <button id="rematchStBtn" onclick="resetStopTimer()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="reactionOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto; transition: background 0.1s;">
@@ -8124,7 +8233,7 @@ window.burnImage = function(element, url, key) {
         <p id="rtStatus" style="color: rgba(255,255,255,0.7); margin-bottom: 30px;">Waiting for opponent...</p>
         <div id="rtInstruction" style="font-size: 32px; font-weight: bold; color: white; text-align: center; padding: 40px;">Wait for Green...</div>
         <div id="rtTapZone" onclick="reactionTapAction()" style="display: none; position: absolute; inset: 0; z-index: 1; cursor: pointer;"></div>
-        <button id="rematchRtBtn" onclick="resetReaction()" style="display:none; z-index: 3; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: white; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchRtBtn" onclick="resetReaction()" style="display:none; z-index: 3; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="matchsticksOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8136,11 +8245,11 @@ window.burnImage = function(element, url, key) {
         <div id="msContainer" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; width: 320px; margin-bottom: 40px; min-height: 120px;"></div>
 
         <div id="msControls" style="display: none; gap: 15px;">
-            <button onclick="takeMatchsticks(1)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">1</button>
-            <button onclick="takeMatchsticks(2)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">2</button>
-            <button onclick="takeMatchsticks(3)" class="btn-primary" style="background: #ff6b6b; border: none; width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">3</button>
+            <button onclick="takeMatchsticks(1)" class="btn-primary" style="background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--accent-yellow); width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">1</button>
+            <button onclick="takeMatchsticks(2)" class="btn-primary" style="background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--accent-yellow); width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">2</button>
+            <button onclick="takeMatchsticks(3)" class="btn-primary" style="background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--accent-yellow); width: 80px; height: 80px; font-size: 32px; border-radius: 16px;">3</button>
         </div>
-        <button id="rematchMsBtn" onclick="resetMatchsticks()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #ff6b6b; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchMsBtn" onclick="resetMatchsticks()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="highCardOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8160,8 +8269,8 @@ window.burnImage = function(element, url, key) {
             </div>
         </div>
 
-        <button id="hcDrawBtn" onclick="drawHighCard()" style="display:none; padding: 20px 50px; border-radius: 40px; background: #9b59b6; color: white; font-weight: 900; font-size: 24px; border: none; box-shadow: 0 4px 15px rgba(155,89,182,0.3);">DRAW</button>
-        <button id="rematchHcBtn" onclick="resetHighCard()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #9b59b6; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="hcDrawBtn" onclick="drawHighCard()" style="display:none; padding: 20px 50px; border-radius: 40px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 24px; border: none;">DRAW</button>
+        <button id="rematchHcBtn" onclick="resetHighCard()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="guessNumberOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8170,13 +8279,13 @@ window.burnImage = function(element, url, key) {
         <p id="gnStatus" style="color: var(--text-secondary); margin-bottom: 10px;">Waiting for opponent...</p>
         <div style="font-size: 16px; margin-bottom: 30px; color: white;">Guess the secret number between 1 and 100</div>
 
-        <div id="gnHistory" style="width: 280px; height: 180px; background: var(--island); border: 2px solid var(--glass-border); border-radius: 12px; overflow-y: auto; padding: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: white;"></div>
+        <div id="gnHistory" style="width: 280px; height: 180px; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; overflow-y: auto; padding: 15px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; color: white;"></div>
 
         <div id="gnControls" style="display: none; gap: 10px; width: 280px;">
             <input type="number" id="gnInput" min="1" max="100" placeholder="1-100" style="flex: 1; padding: 20px; border-radius: 16px; border: 2px solid var(--glass-border); background: var(--bg-dark); color: white; font-size: 24px; outline: none; text-align: center;">
-            <button onclick="submitGuessNumber()" style="padding: 0 25px; border-radius: 16px; background: #f1c40f; color: var(--bg-dark); font-weight: bold; border: none; font-size: 24px;"><i class="fa-solid fa-paper-plane"></i></button>
+            <button onclick="submitGuessNumber()" style="padding: 0 25px; border-radius: 16px; background: var(--gold-grad); color: #1A1402; font-weight: bold; border: none; font-size: 24px;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
-        <button id="rematchGnBtn" onclick="resetGuessNumber()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #f1c40f; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchGnBtn" onclick="resetGuessNumber()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="coinFlipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8190,7 +8299,7 @@ window.burnImage = function(element, url, key) {
             <button onclick="makeCoinChoice('Heads')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Heads</button>
             <button onclick="makeCoinChoice('Tails')" style="padding: 20px 40px; border-radius: 16px; background: var(--island); border: 2px solid var(--glass-border); color: white; font-size: 24px; font-weight: bold;">Tails</button>
         </div>
-        <button id="rematchCfBtn" onclick="resetCoinFlip()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #bdc3c7; color: var(--bg-dark); font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchCfBtn" onclick="resetCoinFlip()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <div id="higherLowerOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
@@ -8201,27 +8310,54 @@ window.burnImage = function(element, url, key) {
         <div id="hlCard" style="width: 120px; height: 180px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 70px; color: black; font-weight: bold; border: 2px solid var(--glass-border); margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">?</div>
 
         <div id="hlControls" style="display: none; gap: 20px;">
-            <button onclick="makeHlChoice('Higher')" style="padding: 20px 30px; border-radius: 16px; background: #2ecc71; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-up"></i> Higher</button>
-            <button onclick="makeHlChoice('Lower')" style="padding: 20px 30px; border-radius: 16px; background: #e74c3c; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-down"></i> Lower</button>
+            <button onclick="makeHlChoice('Higher')" style="padding: 20px 30px; border-radius: 16px; background: #46A758; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-up"></i> Higher</button>
+            <button onclick="makeHlChoice('Lower')" style="padding: 20px 30px; border-radius: 16px; background: #E5484D; border: none; color: white; font-size: 20px; font-weight: bold;"><i class="fa-solid fa-arrow-down"></i> Lower</button>
         </div>
-        <button id="rematchHlBtn" onclick="resetHigherLower()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: #e74c3c; color: white; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+        <button id="rematchHlBtn" onclick="resetHigherLower()" style="display:none; margin-top: 20px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="connect4Overlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveConnect4()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #E5484D; margin-bottom: 5px;">Connect 4</h2>
+        <p id="c4Status" style="color: var(--text-secondary); margin-bottom: 25px;">Waiting for opponent...</p>
+
+        <div id="c4Board" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 302px; max-width: 92vw; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; box-sizing: border-box;"></div>
+
+        <button id="rematchC4Btn" onclick="resetConnect4()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="memoryMatchOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMemoryMatch()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #A78BFA; margin-bottom: 5px;">Memory Match</h2>
+        <p id="mmStatus" style="color: var(--text-secondary); margin-bottom: 15px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: var(--accent-yellow); margin-right: 6px;">X</span><span id="mmScoreX">0</span></div>
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: #00e5ff; margin-right: 6px;">O</span><span id="mmScoreO">0</span></div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px;">
+            <div id="mmBoard"></div>
+        </div>
+
+        <button id="rematchMmBtn" onclick="resetMemoryMatch()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <!-- GAME CHAT -->
 
 
     <!-- PREMIUM LUDO OVERLAY -->
-    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background-color: #0b3b60; background-image: radial-gradient(#155b94 15%, transparent 16%), radial-gradient(#155b94 15%, transparent 16%); background-size: 30px 30px; background-position: 0 0, 15px 15px; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; width: 100vw; height: 100dvh;">
+    <div id="ludoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; width: 100vw; height: 100dvh;">
 
-        <button onclick="leaveLudo()" style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; color: #fff; font-size: 20px; z-index: 10000; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-left"></i></button>
+        <button onclick="leaveLudo()" style="position: absolute; top: 10px; left: 10px; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 50%; width: 44px; height: 44px; color: var(--text-primary); font-size: 20px; z-index: 10000; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-chevron-left"></i></button>
 
         <div id="ludoStatusWrapper" style="position: absolute; top: 15px; left: 0; width: 100%; text-align: center; z-index: 1000;">
-            <p id="ludoStatus" style="color: #fff; font-weight: bold; background: rgba(0,0,0,0.6); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.2); margin:0;">Waiting for opponents...</p>
+            <p id="ludoStatus" style="color: var(--text-primary); font-weight: bold; background: var(--panel); display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; border: 1px solid var(--glass-border); margin:0;">Waiting for opponents...</p>
         </div>
 
-        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 55dvh; aspect-ratio: 1 / 1; background: #222; position: relative; margin: 0; padding: 0; border-bottom: 4px solid #fff; border-radius: 0 0 10px 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); z-index: 5; margin-top: 20px;">
+        <div id="ludoGameContainer" style="width: 100vw; max-width: 100%; max-height: 55dvh; aspect-ratio: 1 / 1; background: var(--panel); position: relative; margin: 0; padding: 0; border-bottom: 1px solid var(--glass-border); border-radius: 0 0 16px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 5; margin-top: 20px;">
             <canvas id="ludoCanvas" width="600" height="600" style="width: 100%; height: 100%; max-height: 55dvh; cursor: pointer; display: block; border-radius: 0 0 10px 10px; transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);"></canvas>
-            <div id="hologram-msg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); border: 2px solid #fff; color: #fff; padding: 15px 30px; border-radius: 30px; font-size: 1.5rem; font-weight: bold; font-style: italic; z-index: 200; pointer-events: none; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;">Hello!</div>
+            <div id="hologram-msg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(11,12,15,0.92); border: 1px solid var(--glass-border); color: var(--text-primary); padding: 15px 30px; border-radius: 30px; font-size: 1.5rem; font-weight: bold; font-style: italic; z-index: 200; pointer-events: none; opacity: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;">Hello!</div>
         </div>
 
         <div class="controls-area" style="flex: 1; display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%; padding: 0 15px; box-sizing: border-box; position: relative; z-index: 10;">
@@ -8232,25 +8368,25 @@ window.burnImage = function(element, url, key) {
                     <div id="ludoDice" onclick="rollLudoDice()" style="width: 80px; height: 80px; border-radius: 0 0 15px 15px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 12px; gap: 6px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease; background: #fff; border: 4px solid transparent; border-top: none !important;"></div>
                 </div>
                 <div id="ludoTurnIndicator" style="font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 5px; margin-top: auto; margin-bottom: auto; transition: all 0.3s ease; text-shadow: 0 5px 15px rgba(0,0,0,0.6); display: none;">RED</div>
-                <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: auto; margin-bottom: auto; padding: 12px 24px; border-radius: 30px; background: #4CAF50; color: white; font-weight: 900; font-size: 16px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.6);">Play Again</button>
+                <button id="rematchLudoBtn" onclick="resetLudo()" style="display:none; margin-top: auto; margin-bottom: auto; padding: 12px 24px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
             </div>
 
             <div class="profile-col" id="profiles-right" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 65px;"></div>
         </div>
 
-        <button class="chat-btn-float" onclick="toggleLudoChat()" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: #ff4757; color: white; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 24px; cursor: pointer; z-index: 500; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"><i class="fa-solid fa-comment-dots"></i></button>
+        <button class="chat-btn-float" onclick="toggleLudoChat()" style="position: absolute; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--gold-grad); color: #1A1402; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 24px; cursor: pointer; z-index: 500; display: flex; align-items: center; justify-content: center; transition: transform 0.2s;"><i class="fa-solid fa-comment-dots"></i></button>
 
-        <div id="ludo-chat-drawer" style="position: absolute; bottom: 90px; right: 20px; width: 280px; background: rgba(255,255,255,0.95); border-radius: 15px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #2f3542; display: flex; flex-direction: column; gap: 10px; z-index: 499; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
-            <div style="font-weight: 900; color: #2f3542; border-bottom: 2px solid #dfe4ea; padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem;">Quick Chat</div>
+        <div id="ludo-chat-drawer" style="position: absolute; bottom: 90px; right: 20px; width: 280px; background: var(--panel); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; z-index: 499; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
+            <div style="font-weight: 900; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem;">Quick Chat</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Hello!</button>
-                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Good Luck!</button>
-                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Oops!</button>
-                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer;">Gotcha!</button>
+                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Hello!</button>
+                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Good Luck!</button>
+                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Oops!</button>
+                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Gotcha!</button>
             </div>
             <div style="display: flex; gap: 5px; margin-top: 5px;">
-                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ced6e0; outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
-                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 8px; border: none; background: #2ed573; color: white; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--field); color: var(--text-primary); outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
+                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 8px; border: none; background: var(--gold-grad); color: #1A1402; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
 
@@ -8261,11 +8397,11 @@ window.burnImage = function(element, url, key) {
             @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
             .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
 
-            .player-profile { width: 100%; height: 75px; background: rgba(0,0,0,0.6); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
-            .profile-active { border-color: #fff !important; box-shadow: 0 0 20px rgba(255,255,255,0.8); transform: scale(1.1); background: rgba(0,0,0,0.85); z-index: 10; }
-            .profile-avatar { width: 45px; height: 45px; border-radius: 50%; background: #fff; border: 2px solid #ccc; margin-bottom: 4px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; overflow:hidden;}
+            .player-profile { width: 100%; height: 75px; background: var(--panel-2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid var(--glass-border); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+            .profile-active { border-color: var(--accent-yellow) !important; box-shadow: 0 0 18px rgba(255,201,38,0.35); transform: scale(1.08); background: var(--panel); z-index: 10; }
+            .profile-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--panel); border: 2px solid rgba(255,255,255,0.85); margin-bottom: 4px; display:flex; align-items:center; justify-content:center; font-size:1.15rem; font-weight:800; overflow:hidden;}
             .profile-avatar img { width:100%; height:100%; object-fit:cover; }
-            .profile-name { font-size: 0.85rem; font-weight: bold; color: #fff; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;}
+            .profile-name { font-size: 0.85rem; font-weight: bold; color: var(--text-primary); text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;}
 
             #hologram-msg.show { animation: hologramPop 3s ease-out forwards; }
             @keyframes hologramPop { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 20% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -70%) scale(0.9); } }
