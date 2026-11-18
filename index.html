@@ -974,6 +974,32 @@
             padding: 4px 14px;
         }
         .dock-btn:active { transform: scale(0.9); }
+
+        /* Stage 7B: dock + chat-row unread badges */
+        .dock-badge {
+            position: absolute; top: 4px; right: calc(50% - 24px);
+            min-width: 18px; height: 18px; padding: 0 5px;
+            border-radius: 9px; background: var(--gold-grad);
+            color: #1A1402; font-size: 10px; font-weight: 800; line-height: 1;
+            display: none; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.45); z-index: 2; pointer-events: none;
+        }
+        .dock-badge.show { display: flex; }
+        .unread-badge {
+            background: var(--gold-grad); color: #1A1402;
+            font-size: 10px; font-weight: 800;
+            min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+            display: none; align-items: center; justify-content: center;
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        /* Stage 7B: friends-online row on the dashboard */
+        .online-row { display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 6px; }
+        .online-friend { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 56px; flex: none; cursor: pointer; }
+        .online-friend img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--success-green); background: black; }
+        .online-friend span { font-size: 10px; color: var(--text-secondary); max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* Stage 7B: deleted-message tombstone */
+        .msg-deleted { font-style: italic; opacity: 0.55; }
         
         .fab {
             position: fixed;
@@ -1882,6 +1908,11 @@
                 <div id="searchResults" class="search-results-dropdown"></div>
             </div>
 
+            <div class="v3-sec" id="onlineFriendsSec" style="display:none;">
+                <p class="v3-lbl">Friends Online</p>
+                <div class="online-row" id="onlineFriendsRow"></div>
+            </div>
+
             <div class="v3-sec">
                 <p class="v3-lbl">Jump Back In</p>
                 <!-- Dynamic Global Rooms Container -->
@@ -1960,6 +1991,7 @@
             <div class="content-wrapper" id="content-contacts-wrapper" style="display:none;">
                 <div id="emptyFriends" class="empty-state">
                     <i class="fa-solid fa-address-book"></i><h4>Directory Empty</h4><p>Search for usernames in the Dashboard to add friends.</p>
+                    <button class="friend-action-btn" style="margin-top:12px;" onclick="shareAppInvite()"><i class="fa-solid fa-user-plus"></i> Invite Friends</button>
                 </div>
                 <div id="friendsList" style="width: 100%; max-width: 380px; padding: 0 20px;"></div>
             </div>
@@ -1995,6 +2027,7 @@
                     <span class="v3-cta">Shop</span>
                 </div>
                 <p class="prof-note">Daily bonus &middot; +50 Sparks are added automatically every day you open the app.</p>
+                <p class="prof-note" id="streakLine" style="display:none;"><i class="fa-solid fa-fire" style="color:#FF9E00;"></i> <span id="streakText"></span></p>
             </div>
 
             <div class="v3-sec">
@@ -2095,6 +2128,14 @@
                     </div>
                     <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
+                <div class="v3-row ripple-target" onclick="shareAppInvite()">
+                    <div class="v3-row-tile" style="color: #6FD598;"><i class="fa-solid fa-user-plus"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">Invite Friends</div>
+                        <div class="v3-row-sub">Share your Direct Chat link</div>
+                    </div>
+                    <button class="icon-btn" style="width:30px; height:30px; font-size:14px; background:var(--glass-surface); color:#25D366;" onclick="event.stopPropagation(); shareAppInviteWhatsApp();" title="Share on WhatsApp" aria-label="Share invite on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                </div>
             </div>
 
             <div class="v3-sec">
@@ -2191,8 +2232,8 @@
 
         <div class="floating-dock">
             <div class="dock-btn active" data-tab="tab-dashboard"><i class="fa-solid fa-house"></i><span class="dock-label">Home</span></div>
-            <div class="dock-btn" data-tab="tab-chats"><i class="fa-solid fa-message"></i><span class="dock-label">Chats</span></div>
-            <div class="dock-btn" data-tab="tab-contacts"><i class="fa-solid fa-users"></i><span class="dock-label">Friends</span></div>
+            <div class="dock-btn" data-tab="tab-chats"><i class="fa-solid fa-message"></i><span class="dock-label">Chats</span><span class="dock-badge" id="dockBadgeChats"></span></div>
+            <div class="dock-btn" data-tab="tab-contacts"><i class="fa-solid fa-users"></i><span class="dock-label">Friends</span><span class="dock-badge" id="dockBadgeFriends"></span></div>
             <div class="dock-btn" data-tab="tab-shop"><i class="fa-solid fa-bag-shopping"></i><span class="dock-label">Shop</span></div>
             <div class="dock-btn" data-tab="tab-profile"><i class="fa-solid fa-user"></i><span class="dock-label">Profile</span></div>
         </div>
@@ -2253,6 +2294,16 @@
             </div>
 
             <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
+                <h3 style="margin: 0; font-size: 15px; color: var(--error-red);"><i class="fa-solid fa-flag"></i> Reports <span id="adminReportsCount" style="font-size: 12px; color: var(--text-secondary);"></span></h3>
+                <div id="adminReportsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                    <div style="text-align:center; color:var(--text-secondary); font-style:italic;">No open reports.</div>
+                </div>
+                <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 12px 10px; font-size: 13px; font-weight: bold; border-radius: 12px; background: rgba(255, 59, 48, 0.15); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.35); box-shadow: none;" onclick="loadAdminReports()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh Reports
+                </button>
+            </div>
+
+            <div class="hub-card" style="width: 100%; max-width: 400px; padding: 20px; flex-direction: column; align-items: stretch; gap: 16px; cursor: default; flex: none; height: auto;">
                 <h3 style="margin: 0; font-size: 15px; color: var(--accent-purple);"><i class="fa-solid fa-store"></i> Shop Management (Ultimate Power)</h3>
                 <p style="font-size: 11px; color: var(--text-secondary); margin: 0;">Add new custom items directly to the global database.</p>
                 <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(175, 82, 222, 0.2); color: var(--accent-purple); border: 1px solid rgba(175, 82, 222, 0.4); box-shadow: none;" onclick="openAdminShopManager()">
@@ -2303,6 +2354,10 @@
             <span class="react-emoji" onclick="sendReaction('😮')">😮</span>
             <div style="width: 1px; height: 24px; background: var(--glass-border); margin: 0 5px;"></div>
             <button class="icon-btn" onclick="initiateReply()" style="width: 30px; height: 30px; color: var(--accent-yellow); font-size: 16px;" aria-label="Reply to message"><i class="fa-solid fa-reply"></i></button>
+            <button class="icon-btn" id="msgCopyBtn" onclick="copyActiveMessage()" style="display: none; width: 30px; height: 30px; color: var(--text-primary); font-size: 15px;" aria-label="Copy message text"><i class="fa-solid fa-copy"></i></button>
+            <button class="icon-btn" id="msgEditBtn" onclick="editActiveMessage()" style="display: none; width: 30px; height: 30px; color: var(--accent-yellow); font-size: 15px;" aria-label="Edit message"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn" id="msgDeleteBtn" onclick="deleteActiveMessage()" style="display: none; width: 30px; height: 30px; color: var(--error-red); font-size: 15px;" aria-label="Delete message for everyone"><i class="fa-solid fa-trash"></i></button>
+            <button class="icon-btn" id="msgReportBtn" onclick="reportActiveMessage()" style="display: none; width: 30px; height: 30px; color: var(--error-red); font-size: 15px;" aria-label="Report message"><i class="fa-solid fa-flag"></i></button>
         </div>
 
         <div id="emojiPicker" class="picker">
@@ -2946,6 +3001,7 @@ function sendNotification(title, body, icon) {
         // Logged-out landing state: hub visible, dynamic lists empty,
         // skeleton loaders swapped for the built-in empty states.
         function enterBrowseMode() {
+            resetStage7B();
             const hub = document.getElementById('hub-screen');
             if (hub && !hub.classList.contains('active')) switchScreen('hub-screen');
 
@@ -2980,6 +3036,7 @@ function sendNotification(title, body, icon) {
                 checkDailyReward();
                 listenForFriends();
                 listenForRecentChats();
+                listenForStage7B();
                 requestNotificationPermission();
                 loadDynamicDashboard();
 
@@ -3001,6 +3058,8 @@ function sendNotification(title, body, icon) {
                 db.ref('friendRequests/'+user.uid).off();
                 db.ref('friends/'+user.uid).off();
                 db.ref('recentChats/'+user.uid).off();
+                db.ref('lastRead/'+user.uid).off();
+                db.ref('gameInvites/'+user.uid).off();
                 db.ref('globalSettings/features').off();
                 db.ref('globalSettings/rooms').off();
                 db.ref('status/'+user.uid).off();
@@ -3243,6 +3302,33 @@ function sendNotification(title, body, icon) {
             showToast("Wallpaper reset to default", "success");
         }
         // --- DAILY LOGIN REWARDS ---
+        // Stage 7B: zero-padded local date (YYYY-MM-DD) for the streak node.
+        function dcDateStr(d) {
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+        // Stage 7B: pure streak math — same day: unchanged; yesterday:
+        // count + 1; anything older (or no record): reset to 1.
+        function computeNextStreak(current, todayStr) {
+            if (!current || !current.lastDay) return { count: 1, changed: true };
+            const prev = parseInt(current.count) || 0;
+            if (current.lastDay === todayStr) return { count: prev || 1, changed: false };
+            const y = new Date(todayStr + 'T00:00:00');
+            y.setDate(y.getDate() - 1);
+            if (current.lastDay === dcDateStr(y)) return { count: prev + 1, changed: true };
+            return { count: 1, changed: true };
+        }
+        function renderStreakLine() {
+            const line = document.getElementById('streakLine');
+            const txt = document.getElementById('streakText');
+            if (!line || !txt) return;
+            const s = myProfile.streak;
+            if (s && s.count >= 1) {
+                txt.innerText = `Day ${s.count} streak`;
+                line.style.display = '';
+            } else {
+                line.style.display = 'none';
+            }
+        }
         function checkDailyReward() {
             if(!user || !myProfile) return;
             const now = new Date();
@@ -3255,6 +3341,24 @@ function sendNotification(title, body, icon) {
                     db.ref('users/'+user.uid+'/lastRewardDate').set(todayStr);
                     db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + 50).then(() => {
                         showToast("Daily Login: +50 Sparks!", "success");
+                    });
+                }
+            });
+
+            // Stage 7B: daily streak on users/{uid}/streak = {count, lastDay}.
+            // Milestone bonuses are credited transactionally on the orbs node:
+            // day 7 -> +100, day 30 -> +500.
+            const todayIso = dcDateStr(now);
+            db.ref('users/'+user.uid+'/streak').once('value', snap => {
+                const next = computeNextStreak(snap.val(), todayIso);
+                myProfile.streak = { count: next.count, lastDay: todayIso };
+                renderStreakLine();
+                if (!next.changed) return;
+                db.ref('users/'+user.uid+'/streak').set(myProfile.streak);
+                const bonus = next.count === 7 ? 100 : (next.count === 30 ? 500 : 0);
+                if (bonus > 0) {
+                    db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + bonus).then(() => {
+                        showToast(`Day ${next.count} streak! Bonus +${bonus} Sparks!`, "success");
                     });
                 }
             });
@@ -3346,6 +3450,8 @@ function sendNotification(title, body, icon) {
                 myProfile.pic = d.pic || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}&backgroundColor=b6e3f4`; 
                 myProfile.banner = d.banner || ''; 
                 myProfile.orbs = d.orbs || 0;
+                myProfile.streak = d.streak || null;
+                renderStreakLine();
                 myProfile.bio = d.bio || "Hey! I am using VIP Direct Chat.";
                 myProfile.joinDate = d.joinDate || Date.now();
                 myProfile.chatColor = d.chatColor || '#ffcc00';
@@ -3769,6 +3875,7 @@ function sendNotification(title, body, icon) {
                         <button class="sheet-btn center fire-soft ripple-target" onclick="nukeChat('${targetUid}')"><i class="fa-solid fa-bomb"></i> Nuke Chat (-500 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i>)</button>
                         <button class="sheet-btn center danger-soft ripple-target" onclick="removeFriend('${targetUid}', '${safeName}')"><i class="fa-solid fa-user-minus"></i> Remove Friend</button>
                         <button class="sheet-btn center danger-soft ripple-target" onclick="blockUser('${targetUid}')"><i class="fa-solid fa-ban"></i> Block User</button>
+                        <button class="sheet-btn center danger-soft ripple-target" onclick="reportUser('${targetUid}')"><i class="fa-solid fa-flag"></i> Report User</button>
                     `;
                 } else {
                     const safeName = uData.name.replace(/'/g, "\\'");
@@ -3777,6 +3884,7 @@ function sendNotification(title, body, icon) {
                         <button class="sheet-btn center gold-ghost ripple-target" onclick="openChallengePicker('${targetUid}', '${safeName}', '${uData.pic}')"><i class="fa-solid fa-gamepad"></i> Challenge to a Game</button>
                         <button class="sheet-btn center gold-ghost ripple-target" onclick="tipUser('${targetUid}', '${safeName}')"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Sparks</button>
                         <button class="sheet-btn center danger-soft ripple-target" onclick="blockUser('${targetUid}')"><i class="fa-solid fa-ban"></i> Block User</button>
+                        <button class="sheet-btn center danger-soft ripple-target" onclick="reportUser('${targetUid}')"><i class="fa-solid fa-flag"></i> Report User</button>
                     `;
                 }
                 
@@ -4029,7 +4137,9 @@ function sendNotification(title, body, icon) {
                         const safeNameHtml = escapeHTML(c.name || '');
                         const safePicHtml = escapeHTML(c.pic || '');
                         const safeLastMsg = escapeHTML(c.lastMsg || '');
-                        const unreadBadge = c.unreadCount ? `<div style="background:var(--error-red); color:white; font-size:10px; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; right:15px; top:50%; transform:translateY(-50%); box-shadow: 0 0 10px var(--error-red);">${c.unreadCount}</div>` : '';
+                        // Stage 7B: badge count comes from the lastRead-based
+                        // dmUnreadByFriend map (renderDmUnreadBadges fills it).
+                        const unreadBadge = `<div class="unread-badge" id="row-unread-${c.uid}"></div>`;
                         html += `
                         <div class="chat-list-card ripple-target" onclick="openDM('${c.uid}', '${safeName}', '${c.pic}')">
                             <img src="${safePicHtml}" class="chat-list-avatar" alt="${safeNameHtml} avatar">
@@ -4055,6 +4165,12 @@ function sendNotification(title, body, icon) {
                         }
                     });
                     chatsBox.innerHTML = html;
+
+                    // Stage 7B: refresh lastRead-based unread counts for the
+                    // row badges + the dock Chats total.
+                    lastRecentChats = chats;
+                    chats.forEach(c => computeDmUnread(c));
+                    renderDmUnreadBadges();
                     
                     // Set up Live Typing Previews
                     chats.forEach(c => {
@@ -4074,7 +4190,8 @@ function sendNotification(title, body, icon) {
                         });
                     });
                     
-                } else { 
+                } else {
+                    lastRecentChats = [];
                     document.getElementById('emptyChats').style.display = 'flex';
                     chatsBox.style.display = 'none';
                 }
@@ -4289,6 +4406,270 @@ function sendNotification(title, body, icon) {
             });
         }
 
+        // ================= STAGE 7B — APP-SOCIAL PACK =================
+        // Unread badges (lastRead), friends-online row, invite sharing,
+        // report submission. (Streak lives in checkDailyReward; message
+        // edit/delete/report actions live by the reaction picker.)
+
+        let lastReadMap = {};       // roomId -> server ts of last read
+        let dmUnreadMap = {};       // roomKey -> unread count (dock total)
+        let dmUnreadByFriend = {};  // friendUid -> unread count (chat rows)
+        let dmUnreadStamp = {};     // roomKey -> "lastRead|lastMsgTime" cache key
+        let lastRecentChats = [];   // latest recentChats entries (for recompute)
+        let friendReqCount = 0;
+        let gameInviteCount = 0;
+        let friendStatusRefs = [];  // per-friend presence refs (online row)
+        let friendPresenceMap = {}; // friendUid -> bool
+        let friendMetaMap = {};     // friendUid -> {name, pic}
+        let lastReadWriteAt = 0;
+
+        function setDockBadge(id, count) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.innerText = count > 99 ? '99+' : String(count);
+            el.classList.toggle('show', count > 0);
+        }
+
+        function refreshDockBadges() {
+            if (!user) {
+                setDockBadge('dockBadgeChats', 0);
+                setDockBadge('dockBadgeFriends', 0);
+                return;
+            }
+            let total = 0;
+            Object.values(dmUnreadMap).forEach(n => { total += n || 0; });
+            setDockBadge('dockBadgeChats', total);
+            setDockBadge('dockBadgeFriends', friendReqCount + gameInviteCount);
+        }
+
+        function dmRoomKey(fUid) {
+            return user.uid < fUid ? user.uid + '_' + fUid : fUid + '_' + user.uid;
+        }
+
+        function markRoomRead(roomId) {
+            if (!user || !roomId) return;
+            db.ref('lastRead/' + user.uid + '/' + roomId).set(firebase.database.ServerValue.TIMESTAMP);
+        }
+
+        function markRoomReadThrottled(roomId) {
+            const now = Date.now();
+            if (now - lastReadWriteAt < 3000) return;
+            lastReadWriteAt = now;
+            markRoomRead(roomId);
+        }
+
+        // Unread for one DM = messages in rooms/{roomKey} newer than
+        // lastRead with sender != me. Computed with a one-shot query from
+        // the recentChats listener (no new persistent listeners); the
+        // stamp cache re-runs it only when lastRead or the chat's last
+        // message time actually changed.
+        function computeDmUnread(c) {
+            if (!user || !c || !c.uid) return;
+            const roomKey = dmRoomKey(c.uid);
+            const lr = lastReadMap[roomKey] || 0;
+            const stamp = lr + '|' + (c.time || 0);
+            if (dmUnreadStamp[roomKey] === stamp) return;
+            dmUnreadStamp[roomKey] = stamp;
+            if (room === roomKey) {
+                dmUnreadMap[roomKey] = 0;
+                dmUnreadByFriend[c.uid] = 0;
+                renderDmUnreadBadges();
+                refreshDockBadges();
+                return;
+            }
+            db.ref('rooms/' + roomKey).orderByChild('time').startAt(lr + 1).once('value', msnap => {
+                let n = 0;
+                msnap.forEach(m => {
+                    const md = m.val();
+                    if (md && md.uid !== user.uid && !md.deleted) n++;
+                });
+                dmUnreadMap[roomKey] = n;
+                dmUnreadByFriend[c.uid] = n;
+                renderDmUnreadBadges();
+                refreshDockBadges();
+            });
+        }
+
+        function recomputeAllUnread() {
+            lastRecentChats.forEach(c => computeDmUnread(c));
+        }
+
+        function renderDmUnreadBadges() {
+            Object.keys(dmUnreadByFriend).forEach(fUid => {
+                const el = document.getElementById('row-unread-' + fUid);
+                if (!el) return;
+                const n = dmUnreadByFriend[fUid] || 0;
+                el.innerText = n > 99 ? '99+' : String(n);
+                el.style.display = n > 0 ? 'flex' : 'none';
+            });
+        }
+
+        function listenForStage7B() {
+            if (!user) return;
+
+            db.ref('lastRead/' + user.uid).on('value', snap => {
+                lastReadMap = snap.val() || {};
+                recomputeAllUnread();
+            });
+
+            db.ref('friendRequests/' + user.uid).on('value', snap => {
+                friendReqCount = snap.numChildren();
+                refreshDockBadges();
+            });
+
+            // Pending game invites (written by Stage 7A challenges).
+            // Invites older than the 15-minute accept window are pruned
+            // here, as 7A anticipated, and never counted.
+            db.ref('gameInvites/' + user.uid).on('value', snap => {
+                let n = 0;
+                const cutoff = Date.now() - 15 * 60 * 1000;
+                snap.forEach(ch => {
+                    const inv = ch.val();
+                    if (inv && inv.status === 'pending') {
+                        if (inv.ts && inv.ts < cutoff) {
+                            ch.ref.remove();
+                        } else {
+                            n++;
+                        }
+                    }
+                });
+                gameInviteCount = n;
+                refreshDockBadges();
+            });
+
+            listenForOnlineFriends();
+            refreshDockBadges();
+        }
+
+        // Friends-online row: one presence listener per friend (friends
+        // lists are small), rebuilt whenever the friends node changes and
+        // detached on logout via resetStage7B / the friends .off() there.
+        function listenForOnlineFriends() {
+            db.ref(`friends/${user.uid}`).on('value', snap => {
+                friendStatusRefs.forEach(r => r.off());
+                friendStatusRefs = [];
+                friendPresenceMap = {};
+                friendMetaMap = {};
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        const fUid = child.key;
+                        const f = child.val() || {};
+                        friendMetaMap[fUid] = { name: f.name || '', pic: f.pic || '' };
+                        const sRef = db.ref('status/' + fUid);
+                        friendStatusRefs.push(sRef);
+                        sRef.on('value', sSnap => {
+                            friendPresenceMap[fUid] = !!(sSnap.exists() && sSnap.val().state === 'online');
+                            renderOnlineFriends();
+                        });
+                    });
+                }
+                renderOnlineFriends();
+            });
+        }
+
+        function renderOnlineFriends() {
+            const sec = document.getElementById('onlineFriendsSec');
+            const rowEl = document.getElementById('onlineFriendsRow');
+            if (!sec || !rowEl) return;
+            const blocked = myProfile.blockedUsers || [];
+            const online = Object.keys(friendPresenceMap).filter(uid => friendPresenceMap[uid] && !blocked.includes(uid));
+            if (!user || online.length === 0) {
+                sec.style.display = 'none';
+                rowEl.innerHTML = '';
+                return;
+            }
+            rowEl.innerHTML = online.map(uid => {
+                const m = friendMetaMap[uid] || {};
+                const safeName = (m.name || '').replace(/'/g, "\\'");
+                const firstName = (m.name || '').split(' ')[0];
+                return `<div class="online-friend ripple-target" onclick="openDM('${uid}', '${safeName}', '${m.pic || ''}')">
+                    <img src="${escapeHTML(m.pic || '')}" alt="${escapeHTML(m.name || '')} avatar">
+                    <span>${escapeHTML(firstName)}</span>
+                </div>`;
+            }).join('');
+            sec.style.display = '';
+        }
+
+        // --- Invite friends ---
+        const APP_INVITE_URL = 'https://rio90909.github.io/riolabs/';
+        const APP_INVITE_TEXT = 'Join me on Direct Chat — chat and play games with me: ' + APP_INVITE_URL;
+
+        function fallbackCopyText(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('Copied!', 'success');
+            } catch (e) {
+                showToast('Copy failed', 'error');
+            }
+            ta.remove();
+        }
+
+        function copyTextToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showToast('Copied!', 'success'))
+                    .catch(() => fallbackCopyText(text));
+            } else {
+                fallbackCopyText(text);
+            }
+        }
+
+        window.shareAppInvite = function() {
+            if (navigator.share) {
+                navigator.share({ title: 'Direct Chat', text: APP_INVITE_TEXT, url: APP_INVITE_URL }).catch(() => {});
+            } else {
+                copyTextToClipboard(APP_INVITE_TEXT);
+            }
+        };
+
+        window.shareAppInviteWhatsApp = function() {
+            window.open('https://wa.me/?text=' + encodeURIComponent(APP_INVITE_TEXT), '_blank');
+        };
+
+        // --- Reports (submission side; admin list is with the admin logic) ---
+        function submitReport(reportedUid, roomId, msgId) {
+            if (!requireAuth()) return;
+            if (!reportedUid || reportedUid === user.uid) return;
+            db.ref('reports').push({
+                reporter: user.uid,
+                reportedUid: reportedUid,
+                roomId: roomId || null,
+                msgId: msgId || null,
+                ts: firebase.database.ServerValue.TIMESTAMP,
+                status: 'open'
+            });
+            showToast('Thanks — the admin will review.', 'success');
+        }
+
+        window.reportUser = function(targetUid) {
+            if (!requireAuth()) return;
+            if (confirm('Report this user to the admin?')) submitReport(targetUid, null, null);
+        };
+
+        function resetStage7B() {
+            friendStatusRefs.forEach(r => r.off());
+            friendStatusRefs = [];
+            friendPresenceMap = {};
+            friendMetaMap = {};
+            lastReadMap = {};
+            dmUnreadMap = {};
+            dmUnreadByFriend = {};
+            dmUnreadStamp = {};
+            lastRecentChats = [];
+            friendReqCount = 0;
+            gameInviteCount = 0;
+            refreshDockBadges();
+            const sec = document.getElementById('onlineFriendsSec');
+            if (sec) sec.style.display = 'none';
+        }
+        // ================= END STAGE 7B (part 1) =================
+
         window.acceptFriend = function(fUid, fName, fPic) {
             if (!requireAuth()) return;
             db.ref(`friends/${user.uid}/${fUid}`).set({ name: fName, pic: fPic, uid: fUid });
@@ -4494,7 +4875,65 @@ function sendNotification(title, body, icon) {
         window.openAdminPanel = function() {
             if(!myProfile.isAdmin) return showToast("Unauthorized", "error");
             switchScreen('admin-screen');
+            loadAdminReports();
         }
+
+        // Stage 7B: open user reports. Reported names are resolved from
+        // users/{uid} exactly like the other admin lists; "Manage / Ban"
+        // jumps straight into the existing Edit User (ban) sheet for that
+        // uid, and Dismiss deletes the report.
+        window.loadAdminReports = function() {
+            if (!myProfile.isAdmin) return;
+            const box = document.getElementById('adminReportsList');
+            if (!box) return;
+            db.ref('reports').once('value', snap => {
+                const reports = [];
+                snap.forEach(ch => {
+                    const r = ch.val();
+                    if (r && r.status === 'open') reports.push({ key: ch.key, ...r });
+                });
+                reports.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+                const countEl = document.getElementById('adminReportsCount');
+                if (countEl) countEl.innerText = reports.length ? `(${reports.length} open)` : '';
+                if (!reports.length) {
+                    box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">No open reports.</div>';
+                    return;
+                }
+                box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">Loading...</div>';
+                Promise.all(reports.map(r =>
+                    db.ref('users/' + r.reportedUid).once('value')
+                        .then(s => (s.val() && s.val().name) || '')
+                        .catch(() => '')
+                )).then(names => {
+                    box.innerHTML = reports.map((r, i) => {
+                        const when = r.ts ? new Date(r.ts).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                        const ctx = r.msgId ? `Message reported in room ${escapeHTML(r.roomId || '')}` : 'Profile report';
+                        const safeUid = /^[A-Za-z0-9_-]+$/.test(r.reportedUid || '') ? r.reportedUid : '';
+                        const manageBtn = safeUid ? `<button class="friend-action-btn" onclick="adminEditUser('${safeUid}')">Manage / Ban</button>` : '';
+                        return `<div style="background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span style="font-weight:700; font-size:13px;">${escapeHTML(names[i] || 'Unknown user')}</span>
+                                <span style="font-size:10px; color:var(--text-secondary); flex:none;">${when}</span>
+                            </div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">${ctx}</div>
+                            <div style="font-size:10px; color:var(--text-secondary); word-break:break-all;">uid: ${escapeHTML(r.reportedUid || '')}</div>
+                            <div style="display:flex; gap:8px; margin-top:8px;">
+                                ${manageBtn}
+                                <button class="friend-action-btn reject" onclick="adminDismissReport('${r.key}')">Dismiss</button>
+                            </div>
+                        </div>`;
+                    }).join('');
+                });
+            });
+        };
+
+        window.adminDismissReport = function(reportKey) {
+            if (!myProfile.isAdmin) return;
+            db.ref('reports/' + reportKey).remove().then(() => {
+                showToast('Report dismissed', 'success');
+                loadAdminReports();
+            });
+        };
 
         window.adminClearGlobal = function() {
             if(!myProfile.isAdmin) return;
@@ -8060,7 +8499,8 @@ window.burnImage = function(element, url, key) {
             if (currentRoomRef) currentRoomRef.off();
             if (room) db.ref('typing/'+room).off();
             
-            room = k.replace(/[^a-zA-Z0-9_]/g, ""); 
+            room = k.replace(/[^a-zA-Z0-9_]/g, "");
+            markRoomRead(room);
             messageLimit = 20;
             switchScreen('chat-screen');
             
@@ -8338,8 +8778,96 @@ window.burnImage = function(element, url, key) {
         }
         window.openReactionPicker = function(key) {
             activeReactionMsgKey = key;
+            configureMsgActions(key);
             toggleChatPicker('reactPicker');
         }
+
+        // Stage 7B: the picker doubles as the message-actions menu. Which
+        // extra actions show depends on the tapped message: Copy for any
+        // live text message, Edit/Delete only on my own text (no burner,
+        // no tombstones), Report only on other people's messages.
+        function configureMsgActions(key) {
+            const btns = {
+                copy: document.getElementById('msgCopyBtn'),
+                edit: document.getElementById('msgEditBtn'),
+                del: document.getElementById('msgDeleteBtn'),
+                rep: document.getElementById('msgReportBtn')
+            };
+            Object.values(btns).forEach(b => { if (b) b.style.display = 'none'; });
+            if (!user) return;
+            db.ref('rooms/' + room + '/' + key).once('value', snap => {
+                if (!snap.exists() || activeReactionMsgKey !== key) return;
+                const d = snap.val();
+                const liveText = d.type === 'text' && !d.deleted;
+                if (btns.copy && liveText) btns.copy.style.display = '';
+                if (d.uid === user.uid) {
+                    if (btns.edit && liveText && !d.burner) btns.edit.style.display = '';
+                    if (btns.del && liveText) btns.del.style.display = '';
+                } else if (btns.rep && !d.deleted) {
+                    btns.rep.style.display = '';
+                }
+            });
+        }
+
+        window.copyActiveMessage = function() {
+            if (!activeReactionMsgKey) return;
+            const key = activeReactionMsgKey;
+            toggleChatPicker('reactPicker');
+            db.ref('rooms/' + room + '/' + key).once('value', snap => {
+                if (snap.exists() && snap.val().type === 'text' && !snap.val().deleted) {
+                    copyTextToClipboard(snap.val().txt || '');
+                }
+            });
+        };
+
+        window.editActiveMessage = function() {
+            if (!activeReactionMsgKey) return;
+            const key = activeReactionMsgKey;
+            toggleChatPicker('reactPicker');
+            db.ref('rooms/' + room + '/' + key).once('value', snap => {
+                if (!snap.exists()) return;
+                const d = snap.val();
+                if (d.uid !== user.uid || d.type !== 'text' || d.burner || d.deleted) return;
+                // Reuses the existing inline editor: sendMsg applies the
+                // profanity filter and stamps edited:true on save.
+                initiateEdit(key, btoa(unescape(encodeURIComponent(d.txt || ''))));
+            });
+        };
+
+        window.deleteActiveMessage = function() {
+            if (!activeReactionMsgKey) return;
+            const key = activeReactionMsgKey;
+            toggleChatPicker('reactPicker');
+            deleteMessageForEveryone(key);
+        };
+
+        // Stage 7B: delete-for-everyone leaves a tombstone (type stays,
+        // text replaced, reactions cleared) instead of removing the node,
+        // so replies and history keep a sensible placeholder.
+        window.deleteMessageForEveryone = function(key) {
+            if (!requireAuth()) return;
+            const ref = db.ref('rooms/' + room + '/' + key);
+            ref.once('value', snap => {
+                if (!snap.exists()) return;
+                const d = snap.val();
+                if (d.uid !== user.uid || d.deleted) return;
+                if (!confirm('Delete this message for everyone?')) return;
+                ref.update({ txt: 'This message was deleted', deleted: true, edited: false, reactions: null });
+                showToast('Message deleted', 'success');
+            });
+        };
+
+        window.reportActiveMessage = function() {
+            if (!activeReactionMsgKey) return;
+            const key = activeReactionMsgKey;
+            toggleChatPicker('reactPicker');
+            db.ref('rooms/' + room + '/' + key).once('value', snap => {
+                if (!snap.exists()) return;
+                const d = snap.val();
+                if (d.uid === user.uid || d.deleted) return;
+                if (confirm('Report this message to the admin?')) submitReport(d.uid, room, key);
+            });
+        };
 
         window.sendReaction = function(emoji) {
             if(!activeReactionMsgKey) return;
@@ -8737,6 +9265,10 @@ window.burnImage = function(element, url, key) {
                     }
                 }
 
+                // Stage 7B: keep lastRead current while sitting in the room,
+                // so the badges clear live (write throttled to 3s).
+                if (d.uid !== user.uid) markRoomReadThrottled(room);
+
                 // Send notification for DM or Global if not me
                 if (!initialRoomLoad && d.uid !== user.uid) {
                     if (room === 'GlobalLobby') {
@@ -8793,6 +9325,13 @@ window.burnImage = function(element, url, key) {
                     }
                 }
 
+                // Stage 7B: swap in the tombstone live when a message is
+                // deleted for everyone (reactions refresh below clears pills).
+                if (d.deleted) {
+                    const delEl = document.getElementById(`content-${key}`);
+                    if (delEl) delEl.innerHTML = deletedMsgHtml();
+                }
+
                 // Update Edited Messages
                 if (d.edited) {
                     const contentEl = document.getElementById(`content-${key}`);
@@ -8831,6 +9370,11 @@ window.burnImage = function(element, url, key) {
             });
         }
 
+        // Stage 7B: shared tombstone markup for deleted-for-everyone messages.
+        function deletedMsgHtml() {
+            return '<span class="msg-deleted"><i class="fa-solid fa-ban"></i> This message was deleted</span>';
+        }
+
         function createMessageNode(key, d, isHistorical) {
             const isMe = d.uid === user.uid;
             const div = document.createElement('div');
@@ -8861,7 +9405,12 @@ window.burnImage = function(element, url, key) {
             safeUrl.href = d.txt;
             const sanitizedUrl = safeUrl.href; // encodes quotes, etc.
 
-            if (d.type === 'image') {
+            if (d.deleted) {
+                // Stage 7B tombstone: a deleted-for-everyone message renders
+                // as one quiet italic line, whatever its original type was.
+                content = deletedMsgHtml();
+            }
+            else if (d.type === 'image') {
                 if (d.burner) {
                     content = `<div class="chat-img" style="display:flex; align-items:center; justify-content:center; height:150px; background:#000; border:2px dashed var(--fire); cursor:pointer;" onclick="burnImage(this, '${sanitizedUrl}', '${key}')"><i class="fa-solid fa-fire" style="font-size:30px; color:var(--fire);"></i><span style="margin-left:10px; font-weight:700;">Tap to View (5s)</span></div>`;
                 } else {
@@ -8981,11 +9530,11 @@ window.burnImage = function(element, url, key) {
             }
 
             const b64Txt = btoa(unescape(encodeURIComponent(d.txt))); // Base64 safe string encoding
-            let editBtn = isMe && d.type === 'text' ? `<button class="react-btn" onclick="initiateEdit('${key}', '${b64Txt}')" aria-label="Edit message"><i class="fa-solid fa-pen"></i></button>` : '';
-            let trash = isMe ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
+            let editBtn = isMe && d.type === 'text' && !d.deleted ? `<button class="react-btn" onclick="initiateEdit('${key}', '${b64Txt}')" aria-label="Edit message"><i class="fa-solid fa-pen"></i></button>` : '';
+            let trash = isMe && !d.deleted ? `<button class="delete-btn" onclick="db.ref('rooms/${room}/${key}').remove()" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>` : '';
             let burnerIcon = d.burner ? `<i class="fa-solid fa-fire" style="color:var(--fire);"></i> ` : '';
-            let editedTag = d.edited ? `<span style="font-size:9px; font-style:italic; opacity:0.6; margin-right:4px;">(edited)</span>` : '';
-            let reactBtn = `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>`;
+            let editedTag = d.edited && !d.deleted ? `<span style="font-size:9px; font-style:italic; opacity:0.6; margin-right:4px;">(edited)</span>` : '';
+            let reactBtn = !d.deleted ? `<button class="react-btn" onclick="openReactionPicker('${key}')" aria-label="Add reaction"><i class="fa-regular fa-face-smile"></i></button>` : '';
 
             let receiptHtml = '';
             if (isMe && currentChatFriend) {
