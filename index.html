@@ -40,6 +40,8 @@
             /* Static UI Variables */
             --error-red: #ED4245;
             --success-green: #3BA55D;
+            --accent-purple: #AF52DE;
+            --accent-blue: #03A9F4;
             --glass-surface: rgba(255, 255, 255, 0.04);
             --glass-border: rgba(255, 255, 255, 0.07);
             --fire: #ff6a00;
@@ -308,7 +310,7 @@
             pointer-events: none; 
         }
         .valid-check.visible { opacity: 1; transform: scale(1); }
-        .glass-input.is-valid { border-color: rgba(52, 199, 89, 0.5); }
+        .glass-input.is-valid { border-color: rgba(59, 165, 93, 0.5); }
         
         .caps-warning {
             position: absolute;
@@ -489,7 +491,7 @@
         .dot.green { background: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
         .dot.orange { background: #ff9900; box-shadow: 0 0 8px #ff9900; }
         .dot.red { background: var(--error-red); box-shadow: 0 0 8px var(--error-red); }
-        .dot.grey { background: #888; box-shadow: 0 0 8px #888; }
+        .dot.grey { background: var(--text-muted); box-shadow: 0 0 8px var(--text-muted); }
         
         .section-title {
             font-size: 11px;
@@ -508,14 +510,14 @@
         
         .secure-badge { 
             font-size: 9px; 
-            background: rgba(52, 199, 89, 0.15); 
+            background: rgba(59, 165, 93, 0.15); 
             color: var(--success-green); 
             padding: 2px 6px; 
             border-radius: 6px; 
             font-weight: 700; 
             text-transform: uppercase; 
             letter-spacing: 0.5px; 
-            border: 1px solid rgba(52, 199, 89, 0.3);
+            border: 1px solid rgba(59, 165, 93, 0.3);
         }
 
         /* ================= TOP SEARCH BAR ================= */
@@ -581,7 +583,7 @@
             overflow: hidden;
         }
         .hub-card:active { transform: scale(0.98); }
-        /* (V3: shimmer sweep removed — flat professional surfaces) */ 20%, 100% { left: 200%; } }
+        /* (V3: shimmer sweep removed — flat professional surfaces) */
         
         .card-icon {
             width: 48px;
@@ -753,7 +755,7 @@
         .status-toggle-bg {
             background: var(--field);
             border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 50px;
+            border-radius: 14px;
             display: flex;
             padding: 4px;
             gap: 5px;
@@ -761,7 +763,7 @@
         }
         .status-btn { 
             padding: 6px 16px; 
-            border-radius: 50px; 
+            border-radius: 10px; 
             font-size: 11px; 
             font-weight: 700; 
             color: var(--text-secondary); 
@@ -1011,7 +1013,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .sheet-btn:active { transform: scale(0.98); background: #1E1F28; }
+        .sheet-btn:active { transform: scale(0.98); background: #1B1C26; }
         .sheet-btn.primary { background: var(--gold-grad); color: #1A1402; border: none; justify-content: center;}
         
         .secret-input {
@@ -1061,11 +1063,11 @@
         
         /* SLEEK CANCEL BUTTON */
         .cancel-match-btn {
-            background: rgba(255, 59, 48, 0.1);
+            background: rgba(237, 66, 69, 0.1);
             color: var(--error-red);
-            border: 1px solid rgba(255, 59, 48, 0.4);
+            border: 1px solid rgba(237, 66, 69, 0.4);
             padding: 12px 30px;
-            border-radius: 30px;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
@@ -1078,7 +1080,7 @@
         }
         .cancel-match-btn:active {
             transform: scale(0.95);
-            background: rgba(255, 59, 48, 0.2);
+            background: rgba(237, 66, 69, 0.2);
         }
 
         /* ================= FULLSCREEN IMAGE MODAL ================= */
@@ -1091,7 +1093,6 @@
             width: 100%; 
             height: 100%; 
             background-color: rgba(0,0,0,0.95); 
-            backdrop-filter: blur(10px); 
             align-items: center; 
             justify-content: center; 
             opacity: 0; 
@@ -1113,7 +1114,7 @@
         #chat-screen { padding: 0; justify-content: flex-start; z-index: 20;}
         .chat-header {
             padding: 13px 16px;
-            background: rgba(14, 15, 20, 0.98);
+            background: rgba(18, 19, 26, 0.98);
             border-bottom: 1px solid rgba(255,255,255,0.06);
             display: flex;
             align-items: center;
@@ -1154,7 +1155,7 @@
         .chat-img { max-width: 100%; border-radius: 12px; margin-top: 5px; display: block; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.2s;}
         
         .reactions-container { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-        .reaction-pill { background: #23242F; border: 1px solid rgba(255,255,255,0.07); border-radius: 9px; padding: 2.5px 7px; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .reaction-pill { background: var(--panel-2); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 2.5px 7px; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
         
         #typing-indicator { font-size: 12px; color: var(--text-secondary); padding: 5px 20px; font-style: italic; height: 25px; display: none; width: 100%; text-align: left; z-index: 2;}
 
@@ -1169,7 +1170,7 @@
             right: 12px;
             background: var(--island);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 15px;
             z-index: 100;
             box-shadow: 0 16px 40px rgba(0,0,0,0.5);
@@ -1244,14 +1245,14 @@
         .friend-info { display: flex; align-items: center; gap: 12px; }
         .friend-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border); background: black; }
         .friend-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-        .friend-action-btn { background: var(--accent-yellow); color: #1A1402; border: none; padding: 6px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .friend-action-btn { background: var(--gold-grad); color: #1A1402; border: none; padding: 6px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .friend-action-btn:active { transform: scale(0.95); }
         .friend-action-btn.reject { background: rgba(255, 59, 48, 0.1); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.3); }
 
         .picker-tabs { display: flex; gap: 5px; width: 100%; background: var(--field); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; margin-bottom: 12px; padding: 4px; box-sizing: border-box; }
         .picker-tabs::-webkit-scrollbar { display: none; }
         .p-tab { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-radius: 9px; transition: 0.2s; box-sizing: border-box; width: 50%; }
-        .p-tab.active { background: var(--accent-yellow); color: #1A1402; font-weight: 700; }
+        .p-tab.active { background: var(--gold-grad); color: #1A1402; font-weight: 700; }
         
         .chat-list-card { background: var(--panel); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 14px; width: 100%; max-width: 380px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .chat-list-card:active { transform: scale(0.98); background: var(--panel-2); }
@@ -1259,6 +1260,20 @@
         .chat-list-info { flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
         .chat-list-name { margin: 0; font-size: 15px; font-weight: 700; color: var(--text-primary); }
         .chat-list-msg { margin: 0; font-size: 13px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* ================= TOGGLE SWITCHES (Stage 4) ================= */
+        /* Used by the admin Live Chat toggle and the feature-toggle rows;
+           the classes existed in markup/templates but were never styled. */
+        .switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; border-radius: 999px; background: var(--field); border: 1px solid rgba(255,255,255,0.1); transition: 0.25s; cursor: pointer; }
+        .slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--text-secondary); top: 50%; left: 3px; transform: translateY(-50%); transition: 0.25s; }
+        .switch input:checked + .slider { background: rgba(255, 201, 38, 0.18); border-color: rgba(255, 201, 38, 0.45); }
+        .switch input:checked + .slider::before { transform: translate(20px, -50%); background: #FFD34D; }
+
+        /* ================= PROFILE DANGER ROW (Stage 4) ================= */
+        .profile-menu-item.logout { color: var(--error-red); }
+        .profile-menu-item.logout .profile-menu-icon { color: var(--error-red); background: rgba(237, 66, 69, 0.1); }
     </style>
 </head>
 <body>
@@ -1414,7 +1429,7 @@
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Category</label>
-                <select id="adminShopCategory" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" onchange="adminUpdateShopFields()">
+                <select id="adminShopCategory" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:13px;  outline:none;" onchange="adminUpdateShopFields()">
                     <option value="bubbles" style="background:var(--bg-dark);">Chat Bubbles</option>
                     <option value="themes" style="background:var(--bg-dark);">App Themes</option>
                     <option value="badges" style="background:var(--bg-dark);">Profile Badges</option>
@@ -1426,24 +1441,24 @@
 
             <div id="adminShopEditSelectContainer" style="display:none; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Select Item to Edit</label>
-                <select id="adminShopEditSelect" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:8px;  outline:none;" onchange="adminLoadExistingShopItem()">
+                <select id="adminShopEditSelect" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--accent-purple); border-radius:13px;  outline:none;" onchange="adminLoadExistingShopItem()">
                     <!-- Populated by JS -->
                 </select>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:5px;">
                 <label style="font-size:12px; color:var(--text-secondary);">Unique Item ID</label>
-                <input type="text" id="adminShopId" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;" placeholder="e.g. b_custom_1">
+                <input type="text" id="adminShopId" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:13px;  outline:none;" placeholder="e.g. b_custom_1">
             </div>
 
             <div style="display:flex; gap: 10px; width: 100%;">
                 <div style="display:flex; flex-direction:column; gap:5px; flex:2;">
                     <label style="font-size:12px; color:var(--text-secondary);">Display Name</label>
-                    <input type="text" id="adminShopName" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:8px;  outline:none;">
+                    <input type="text" id="adminShopName" class="auth-input" style=" background:var(--glass-surface); border:1px solid var(--glass-border); color:var(--text-primary); border-radius:13px;  outline:none;">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
                     <label style="font-size:12px; color:var(--text-secondary);">Price (Orbs)</label>
-                    <input type="number" id="adminShopPrice" class="auth-input" style=" color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:8px;  outline:none;" value="1000">
+                    <input type="number" id="adminShopPrice" class="auth-input" style=" color:var(--accent-yellow); background:var(--glass-surface); border:1px solid var(--glass-border); border-radius:13px;  outline:none;" value="1000">
                 </div>
             </div>
 
@@ -1477,8 +1492,8 @@
              <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 15px;">Challenge strangers to live minigames!</p>
              <div class="hub-grid" style="padding:0;">
                 <div class="hub-card ripple-target" onclick="findStrangerGame('TicTacToe')">
-                    <div class="card-icon" style="color: #ffcc00;"><i class="fa-solid fa-hashtag"></i></div>
-                    <div class="card-text"><h3 style="color: #ffcc00;">Tic-Tac-Toe</h3></div>
+                    <div class="card-icon" style="color: #FFC926;"><i class="fa-solid fa-hashtag"></i></div>
+                    <div class="card-text"><h3 style="color: #FFC926;">Tic-Tac-Toe</h3></div>
                 </div>
                 <div class="hub-card ripple-target" onclick="findStrangerGame('RPS')">
                     <div class="card-icon" style="color: #00e5ff;"><i class="fa-solid fa-hand-back-fist"></i></div>
@@ -1563,7 +1578,7 @@
         
         <div class="pill-row" style="margin-bottom: 20px;">
             <span class="status-pill"><i class="fa-solid fa-calendar-days"></i> Joined <span id="upJoin">Date</span></span>
-            <span class="status-pill"><i class="fa-solid fa-gem" style="color: #ffcc00;"></i> <span id="upOrbs">0</span> Orbs</span>
+            <span class="status-pill"><i class="fa-solid fa-gem" style="color: #FFC926;"></i> <span id="upOrbs">0</span> Orbs</span>
         </div>
         
         <div id="upActions" style="width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center;">
@@ -1914,7 +1929,7 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                <div id="adminLiveChatBox" style="display:none; flex-direction:column; gap:5px; max-height: 250px; overflow-y:auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
                     <div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>
                 </div>
             </div>
@@ -3752,7 +3767,7 @@ function sendNotification(title, body, icon) {
                         const safeReqNameHtml = escapeHTML(r.name || '');
                         const safeReqPicHtml = escapeHTML(r.pic || '');
                         reqBox.innerHTML += `
-                            <div class="friend-list-item" style="border: 1px solid var(--accent-yellow);">
+                            <div class="friend-list-item" style="border: 1px solid rgba(255, 201, 38, 0.35);">
                                 <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
                                     <img src="${safeReqPicHtml}" class="friend-avatar" alt="${safeReqNameHtml} avatar">
                                     <span class="friend-name">${safeReqNameHtml}</span>
@@ -4599,7 +4614,7 @@ function sendNotification(title, body, icon) {
 
                     roomsArr.forEach(r => {
                         container.innerHTML += `
-                            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px;">
                                 <div style="display:flex; flex-direction:column;">
                                     <span style="font-size:14px; color:var(--text-primary);">${r.name}</span>
                                     <span style="font-size:11px; color:var(--text-secondary);">ID: ${r.key} | Order: ${r.order || 0}</span>
@@ -4659,21 +4674,21 @@ function sendNotification(title, body, icon) {
                 };
 
                 container.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px;">
                         <span style="font-size:14px; color:var(--text-primary);">Stranger Match</span>
                         <label class="switch">
                             <input type="checkbox" ${features.enableStrangerMatch !== false ? 'checked' : ''} onchange="adminToggleFeature('enableStrangerMatch', this.checked)">
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px;">
                         <span style="font-size:14px; color:var(--text-primary);">Mini Games</span>
                         <label class="switch">
                             <input type="checkbox" ${features.enableMiniGames !== false ? 'checked' : ''} onchange="adminToggleFeature('enableMiniGames', this.checked)">
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px;">
                         <span style="font-size:14px; color:var(--text-primary);">Global Lounges Tab</span>
                         <label class="switch">
                             <input type="checkbox" ${features.enableGlobalLounge !== false ? 'checked' : ''} onchange="adminToggleFeature('enableGlobalLounge', this.checked)">
@@ -4938,7 +4953,7 @@ function sendNotification(title, body, icon) {
                 const msg = snap.val();
                 const isMe = msg.uid === user.uid;
                 const msgEl = document.createElement('div');
-                msgEl.style.cssText = `padding: 5px 10px; border-radius: 10px; max-width: 80%; width: fit-content; margin-${isMe ? 'left' : 'right'}: auto; background: ${isMe ? 'var(--accent-yellow)' : 'var(--glass-border)'}; color: ${isMe ? 'var(--bg-dark)' : 'var(--text-primary)'};`;
+                msgEl.style.cssText = `padding: 7px 12px; border-radius: 14px; max-width: 80%; width: fit-content; margin-${isMe ? 'left' : 'right'}: auto; background: ${isMe ? 'var(--gold-grad)' : 'var(--panel-2)'}; color: ${isMe ? '#1A1402' : 'var(--text-primary)'};`;
                 msgEl.innerText = msg.text;
                 const container = document.getElementById('gameChatMessages');
                 container.appendChild(msgEl);
@@ -7900,7 +7915,7 @@ window.burnImage = function(element, url, key) {
                 } else {
                     const giftVal = d.giftValue;
                     const sender = d.uid;
-                    content = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px; border:2px dashed white; border-radius:12px; cursor:pointer;" onclick="openGift('${key}', ${giftVal}, '${sender}')"><i class="fa-solid fa-gift fa-bounce" style="font-size:30px; color:white; margin-bottom:10px;"></i><span style="font-weight:700;">Tap to Open Gift Box</span></div>`;
+                    content = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px; border:2px dashed currentColor; border-radius:12px; cursor:pointer;" onclick="openGift('${key}', ${giftVal}, '${sender}')"><i class="fa-solid fa-gift fa-bounce" style="font-size:30px; color:inherit; margin-bottom:10px;"></i><span style="font-weight:700;">Tap to Open Gift Box</span></div>`;
                 }
             }
             else {
@@ -7943,11 +7958,11 @@ window.burnImage = function(element, url, key) {
                                     if (data.data.image) {
                                         const simg = document.createElement('a');
                                         simg.href = data.data.image.url;
-                                        imgHtml = `<img src="${simg.href}" style="width:100%; height:120px; object-fit:cover; border-radius:8px 8px 0 0;">`;
+                                        imgHtml = `<img src="${simg.href}" style="width:100%; height:120px; object-fit:cover; border-radius:12px 12px 0 0;">`;
                                     }
 
                                     previewContainer.innerHTML = `
-                                        <a href="${sPreviewUrl}" target="_blank" style="display:block; text-decoration:none; color:inherit; margin-top:8px; border:1px solid var(--glass-border); border-radius:8px; background:var(--glass-surface); overflow:hidden; cursor:pointer;">
+                                        <a href="${sPreviewUrl}" target="_blank" style="display:block; text-decoration:none; color:inherit; margin-top:8px; border:1px solid var(--glass-border); border-radius:12px; background:var(--glass-surface); overflow:hidden; cursor:pointer;">
                                             ${imgHtml}
                                             <div style="padding:8px;">
                                                 <div style="font-weight:700; font-size:12px; margin-bottom:4px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">${safeTitle.innerHTML}</div>
@@ -8379,14 +8394,14 @@ window.burnImage = function(element, url, key) {
         <div id="ludo-chat-drawer" style="position: absolute; bottom: 90px; right: 20px; width: 280px; background: var(--panel); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; z-index: 499; transform: scale(0); transform-origin: bottom right; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none;">
             <div style="font-weight: 900; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem;">Quick Chat</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Hello!</button>
-                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Good Luck!</button>
-                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Oops!</button>
-                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Gotcha!</button>
+                <button onclick="ui_triggerLudoChat('Hello!')" style="padding: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Hello!</button>
+                <button onclick="ui_triggerLudoChat('Good Luck!')" style="padding: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Good Luck!</button>
+                <button onclick="ui_triggerLudoChat('Oops!')" style="padding: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Oops!</button>
+                <button onclick="ui_triggerLudoChat('Gotcha!')" style="padding: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--panel-2); font-weight: bold; color: var(--text-primary); cursor: pointer;">Gotcha!</button>
             </div>
             <div style="display: flex; gap: 5px; margin-top: 5px;">
-                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--field); color: var(--text-primary); outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
-                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 8px; border: none; background: var(--gold-grad); color: #1A1402; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="ludo-custom-msg" placeholder="Custom message..." style="flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--field); color: var(--text-primary); outline: none; font-family: inherit;" onkeypress="if(event.key === 'Enter') sendLudoCustomChat()">
+                <button onclick="sendLudoCustomChat()" style="padding: 8px 12px; border-radius: 12px; border: none; background: var(--gold-grad); color: #1A1402; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
 
@@ -8397,7 +8412,7 @@ window.burnImage = function(element, url, key) {
             @keyframes diceShake { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(15deg); } 50% { transform: scale(1) rotate(-15deg); } 75% { transform: scale(1.1) rotate(15deg); } 100% { transform: scale(1) rotate(0deg); } }
             .ludo-dot { width: 100%; height: 100%; border-radius: 50%; background-color: transparent; }
 
-            .player-profile { width: 100%; height: 75px; background: var(--panel-2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 2px solid var(--glass-border); box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: all 0.3s ease; }
+            .player-profile { width: 100%; height: 75px; background: var(--panel-2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 8px 5px; border: 1px solid var(--glass-border); box-shadow: 0 4px 12px rgba(0,0,0,0.35); transition: all 0.3s ease; }
             .profile-active { border-color: var(--accent-yellow) !important; box-shadow: 0 0 18px rgba(255,201,38,0.35); transform: scale(1.08); background: var(--panel); z-index: 10; }
             .profile-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--panel); border: 2px solid rgba(255,255,255,0.85); margin-bottom: 4px; display:flex; align-items:center; justify-content:center; font-size:1.15rem; font-weight:800; overflow:hidden;}
             .profile-avatar img { width:100%; height:100%; object-fit:cover; }
@@ -8412,7 +8427,7 @@ window.burnImage = function(element, url, key) {
         <div id="gameChatMessages" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px;"></div>
         <div style="padding: 10px; display: flex; gap: 10px; background: var(--bg-dark);">
             <input type="text" id="gameChatInput" placeholder="Chat with opponent..." style="flex: 1; padding: 10px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--island); color: var(--text-primary); outline: none;">
-            <button onclick="sendGameChat()" style="background: var(--accent-yellow); border: none; border-radius: 50%; width: 40px; height: 40px; color: var(--bg-dark);"><i class="fa-solid fa-paper-plane"></i></button>
+            <button onclick="sendGameChat()" style="background: var(--gold-grad); border: none; border-radius: 50%; width: 40px; height: 40px; color: #1A1402;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
