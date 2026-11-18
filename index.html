@@ -1680,6 +1680,79 @@
 
         </div>
 
+        <div id="sheetContentChallenge" style="width: 100%; display:none; flex-direction: column; align-items: center; max-height: 70vh; overflow-y: auto;">
+            <div style="width: 100%; max-width: 400px; padding: 0 20px; box-sizing: border-box; display: flex; flex-direction: column;">
+                <p style="font-size: 13px; color: var(--text-secondary); text-align: center; margin: 0 0 14px;">Pick a game &mdash; your friend gets an invite in your chat</p>
+                <div class="v3-games-grid">
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('TicTacToe')">
+                        <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
+                        <div class="v3-gcard-name">Tic-Tac-Toe</div>
+                        <div class="v3-gcard-sub">2 players · Quick match</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('RPS')">
+                        <div class="v3-gcard-tile" style="color: #F9A8D4;"><i class="fa-solid fa-hand-back-fist"></i></div>
+                        <div class="v3-gcard-name">Rock-Paper-Scissors</div>
+                        <div class="v3-gcard-sub">Best of 3</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Dots')">
+                        <div class="v3-gcard-tile" style="color: #6EE7B7;"><i class="fa-solid fa-braille"></i></div>
+                        <div class="v3-gcard-name">Dots &amp; Boxes</div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Ludo2')">
+                        <div class="v3-gcard-tile" style="color: #6FD598;"><i class="fa-solid fa-dice"></i></div>
+                        <div class="v3-gcard-name">Ludo (2P)</div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('StopTimer')">
+                        <div class="v3-gcard-tile" style="color: #FFD34D;"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="v3-gcard-name">Stop the Timer</div>
+                        <div class="v3-gcard-sub">Reflex duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Reaction')">
+                        <div class="v3-gcard-tile" style="color: #FFB86B;"><i class="fa-solid fa-bolt"></i></div>
+                        <div class="v3-gcard-name">Reaction Tap</div>
+                        <div class="v3-gcard-sub">Fastest tap wins</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Matchsticks')">
+                        <div class="v3-gcard-tile" style="color: #7DD3FC;"><i class="fa-solid fa-fire-flame-simple"></i></div>
+                        <div class="v3-gcard-name">Matchsticks</div>
+                        <div class="v3-gcard-sub">Strategy · 21 sticks</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('HighCard')">
+                        <div class="v3-gcard-tile" style="color: #5EEAD4;"><i class="fa-solid fa-diamond"></i></div>
+                        <div class="v3-gcard-name">High Card War</div>
+                        <div class="v3-gcard-sub">Luck of the draw</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('GuessNumber')">
+                        <div class="v3-gcard-tile" style="color: #C4B5FD;"><i class="fa-solid fa-question"></i></div>
+                        <div class="v3-gcard-name">Guess the Number</div>
+                        <div class="v3-gcard-sub">1 to 100</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('CoinFlip')">
+                        <div class="v3-gcard-tile" style="color: #FDE047;"><i class="fa-solid fa-coins"></i></div>
+                        <div class="v3-gcard-name">Coin Flip</div>
+                        <div class="v3-gcard-sub">Settle anything</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('HigherLower')">
+                        <div class="v3-gcard-tile" style="color: #93C5FD;"><i class="fa-solid fa-arrow-up-9-1"></i></div>
+                        <div class="v3-gcard-name">Higher or Lower</div>
+                        <div class="v3-gcard-sub">Streak game</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Connect4')">
+                        <div class="v3-gcard-tile" style="color: #8AABFF;"><i class="fa-solid fa-circle-dot"></i></div>
+                        <div class="v3-gcard-name">Connect 4</div>
+                        <div class="v3-gcard-sub">2 players</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('MemoryMatch')">
+                        <div class="v3-gcard-tile" style="color: #C4B5FD;"><i class="fa-solid fa-clone"></i></div>
+                        <div class="v3-gcard-name">Memory Match</div>
+                        <div class="v3-gcard-sub">Duel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="bottom-sheet" id="userProfileSheet" style="padding-top: 0; overflow: hidden;">
@@ -1706,6 +1779,7 @@
             <div class="pill-row" style="margin-bottom: 20px;">
                 <span class="status-pill"><i class="fa-solid fa-calendar-days"></i> Joined <span id="upJoin">Date</span></span>
                 <span class="status-pill"><i class="fa-solid fa-gem" style="color: #FFC926;"></i> <span id="upOrbs">0</span> Sparks</span>
+                <span class="status-pill" id="upRecordPill" style="display:none;"><i class="fa-solid fa-trophy" style="color: #FFC926;"></i> <span id="upRecord">0W · 0L</span></span>
             </div>
 
             <div id="upActions" style="width: 100%; max-width: 350px; display: flex; flex-direction: column; align-items: center;">
@@ -1969,6 +2043,17 @@
             </div>
 
             <div class="v3-sec">
+                <p class="v3-lbl">Game Record</p>
+                <div class="v3-row" style="cursor: default;">
+                    <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name" id="gameRecordSummary">No games yet</div>
+                        <div class="v3-row-sub" id="gameRecordDetail">Play a mini-game to start your record</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="v3-sec">
                 <p class="v3-lbl">Account</p>
                 <div id="adminBtn" class="v3-row prof-row-admin ripple-target" onclick="openAdminPanel()" style="display: none;">
                     <div class="v3-row-tile" style="color: #FF7A72;"><i class="fa-solid fa-shield-halved"></i></div>
@@ -2206,6 +2291,7 @@
                 <div class="chat-room-status" id="chatRoomStatusDot"></div>
                 <div class="chat-room-name" id="chatRoomTitle">ROOM NAME</div>
             </div>
+            <i class="fa-solid fa-gamepad" id="chatChallengeBtn" style="display:none; color:var(--accent-yellow); font-size:16px; cursor:pointer; margin-right:12px;" onclick="challengeFromChat()" title="Challenge to a game" aria-label="Challenge to a game"></i>
             <i class="fa-solid fa-shield-halved" style="color:var(--success-green); font-size:14px;"></i>
         </div>
 
@@ -3384,6 +3470,10 @@ function sendNotification(title, body, icon) {
                 const jd = new Date(myProfile.joinDate);
                 document.getElementById('displayJoinDate').innerText = jd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
+                // Stage 7A: game record section (live — this listener re-fires
+                // whenever users/{uid} changes, gameStats included).
+                renderGameRecord(d.gameStats);
+
                 updateSettingsUI();
 
                 if(!d.name || !d.pic || !d.joinDate) saveProfile();
@@ -3643,6 +3733,18 @@ function sendNotification(title, body, icon) {
                 document.getElementById('upJoin').innerText = jd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 document.getElementById('upOrbs').innerText = uData.orbs || 0;
 
+                // Stage 7A: total game record pill (from users/{uid}/gameStats)
+                const recPill = document.getElementById('upRecordPill');
+                if (recPill) {
+                    const totals = gameStatsTotals(uData.gameStats);
+                    if (totals.w || totals.l || totals.d) {
+                        document.getElementById('upRecord').innerText = `${totals.w}W · ${totals.l}L${totals.d ? ' · ' + totals.d + 'D' : ''}`;
+                        recPill.style.display = '';
+                    } else {
+                        recPill.style.display = 'none';
+                    }
+                }
+
                 // Live Online Status fetch for profile
                 db.ref('status/' + targetUid).once('value', statSnap => {
                     const onlineDot = document.getElementById('upOnlineDot');
@@ -3662,6 +3764,7 @@ function sendNotification(title, body, icon) {
                     const safeName = uData.name.replace(/'/g, "\\'");
                     actionHtml = `
                         <button class="sheet-btn primary ripple-target" onclick="closeSheet(); openDM('${targetUid}', '${safeName}', '${uData.pic}')"><i class="fa-solid fa-message"></i> Message VIP</button>
+                        <button class="sheet-btn center gold-ghost ripple-target" onclick="openChallengePicker('${targetUid}', '${safeName}', '${uData.pic}')"><i class="fa-solid fa-gamepad"></i> Challenge to a Game</button>
                         <button class="sheet-btn center gold-ghost ripple-target" onclick="tipUser('${targetUid}', '${safeName}')"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Sparks</button>
                         <button class="sheet-btn center fire-soft ripple-target" onclick="nukeChat('${targetUid}')"><i class="fa-solid fa-bomb"></i> Nuke Chat (-500 <i class="fa-solid fa-gem" style="color:var(--accent-yellow)"></i>)</button>
                         <button class="sheet-btn center danger-soft ripple-target" onclick="removeFriend('${targetUid}', '${safeName}')"><i class="fa-solid fa-user-minus"></i> Remove Friend</button>
@@ -3671,6 +3774,7 @@ function sendNotification(title, body, icon) {
                     const safeName = uData.name.replace(/'/g, "\\'");
                     actionHtml = `
                         <button class="sheet-btn primary ripple-target" id="upAddFriendBtn" onclick="sendFriendRequest('${targetUid}', '${safeName}', '${uData.pic}'); closeSheet();"><i class="fa-solid fa-user-plus"></i> Add to VIP List</button>
+                        <button class="sheet-btn center gold-ghost ripple-target" onclick="openChallengePicker('${targetUid}', '${safeName}', '${uData.pic}')"><i class="fa-solid fa-gamepad"></i> Challenge to a Game</button>
                         <button class="sheet-btn center gold-ghost ripple-target" onclick="tipUser('${targetUid}', '${safeName}')"><i class="fa-solid fa-hand-holding-dollar"></i> Tip 50 Sparks</button>
                         <button class="sheet-btn center danger-soft ripple-target" onclick="blockUser('${targetUid}')"><i class="fa-solid fa-ban"></i> Block User</button>
                     `;
@@ -4253,6 +4357,9 @@ function sendNotification(title, body, icon) {
 
             const contentGames = document.getElementById('sheetContentGames');
             if (contentGames) contentGames.style.display = type === 'games' ? 'flex' : 'none';
+
+            const contentChallenge = document.getElementById('sheetContentChallenge');
+            if (contentChallenge) contentChallenge.style.display = type === 'challenge' ? 'flex' : 'none';
             
             if(type === 'private') {
                 const ski = document.getElementById('secretKeyInput');
@@ -5082,6 +5189,458 @@ function sendNotification(title, body, icon) {
         let gameRef = null;
 
         let activeGameType = null;
+
+        // ================= STAGE 7A: CHALLENGES + GAME RECORD + LUDO TIMER =================
+        // Fixed display names for every game key. Invite cards and the
+        // profile record are built ONLY from this map (never from raw
+        // message data), so a crafted message can't inject markup.
+        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match' };
+        // Games a friend can be challenged to (every 2P game + Ludo 2P only;
+        // Ludo 3P/4P stay matchmaking-only).
+        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch'];
+        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch' };
+
+        function gameStatsTotals(stats) {
+            let w = 0, l = 0, d = 0;
+            if (stats) {
+                Object.keys(stats).forEach(k => {
+                    const s = stats[k] || {};
+                    w += s.w || 0; l += s.l || 0; d += s.d || 0;
+                });
+            }
+            return { w, l, d };
+        }
+
+        // Own-profile GAME RECORD section. Text-only writes (innerText) —
+        // game names come from the fixed GAME_DISPLAY map.
+        function renderGameRecord(stats) {
+            const sumEl = document.getElementById('gameRecordSummary');
+            const detEl = document.getElementById('gameRecordDetail');
+            if (!sumEl || !detEl) return;
+            const totals = gameStatsTotals(stats);
+            if (!totals.w && !totals.l && !totals.d) {
+                sumEl.innerText = 'No games yet';
+                detEl.innerText = 'Play a mini-game to start your record';
+                return;
+            }
+            sumEl.innerText = `${totals.w} Wins · ${totals.l} Losses${totals.d ? ' · ' + totals.d + ' Draws' : ''}`;
+            const parts = [];
+            if (stats) {
+                Object.keys(stats).forEach(k => {
+                    const s = stats[k] || {};
+                    if (s.w || s.l || s.d) parts.push(`${GAME_DISPLAY[k] || k}: ${s.w || 0}W${s.l ? ' · ' + s.l + 'L' : ''}${s.d ? ' · ' + s.d + 'D' : ''}`);
+                });
+            }
+            detEl.innerText = parts.join('   |   ');
+        }
+
+        // Records one finished game's result into users/{uid}/gameStats.
+        // The room's statsRecorded flag is claimed with a transaction first:
+        // only the client whose claim commits performs the increments, so a
+        // result can never be counted twice (both clients observe the win,
+        // rematches re-arm the flag — see attachStatsObserver).
+        function recordGameStats(roomRef, type, data) {
+            let outcomes = [];
+            if (type && type.startsWith('Ludo')) {
+                const tp = data.targetPlayers || 2;
+                const teams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
+                const wi = teams.indexOf(parseInt(data.winner));
+                if (wi === -1) return;
+                for (let i = 0; i < tp; i++) {
+                    const pUid = data['p' + (i + 1) + 'Uid'];
+                    if (!pUid) return; // legacy room without uids — cannot attribute
+                    outcomes.push([pUid, i === wi ? 'w' : 'l']);
+                }
+            } else {
+                const w = data.winner;
+                if (w === 'Early') {
+                    outcomes = []; // Reaction false start: match voided, no record — still claim the flag
+                } else {
+                    const p1 = data.p1Uid, p2 = data.p2Uid;
+                    if (!p1 || !p2) return; // uid stamps not in yet — a later snapshot retries
+                    if (w === 'Draw') outcomes = [[p1, 'd'], [p2, 'd']];
+                    else if (w === 'X' || w === 'P1') outcomes = [[p1, 'w'], [p2, 'l']];
+                    else if (w === 'O' || w === 'P2') outcomes = [[p2, 'w'], [p1, 'l']];
+                    else return;
+                }
+            }
+            roomRef.child('statsRecorded').transaction(cur => {
+                if (cur) return; // already recorded — abort
+                return Date.now();
+            }, (err, committed) => {
+                if (err || !committed) return;
+                outcomes.forEach(([oUid, field]) => {
+                    db.ref('users/' + oUid + '/gameStats/' + type + '/' + field).transaction(v => (v || 0) + 1);
+                });
+            });
+        }
+
+        // Watches the room's winner child for the current session. Attached
+        // to the child ref (not gameRef itself) so the Ludo loop's
+        // gameRef.off('value') can't detach it. Winner -> null (rematch)
+        // clears statsRecorded so the next result in the same room counts.
+        let statsObsRef = null;
+        function attachStatsObserver() {
+            if (statsObsRef) { statsObsRef.off(); statsObsRef = null; }
+            if (!gameRef || !gameRoom || !activeGameType) return;
+            const obsRef = gameRef, obsType = activeGameType;
+            const wRef = obsRef.child('winner');
+            statsObsRef = wRef;
+            wRef.on('value', snap => {
+                const w = snap.val();
+                if (w === null || w === undefined || w === '') {
+                    obsRef.child('statsRecorded').transaction(cur => {
+                        if (cur) return null; // delete the flag — re-arm for the rematch
+                        return; // not set — abort
+                    });
+                    return;
+                }
+                obsRef.once('value', rsnap => {
+                    const data = rsnap.val();
+                    if (!data || data.statsRecorded) return;
+                    recordGameStats(obsRef, obsType, data);
+                });
+            });
+        }
+
+        // Opens a game's overlay + status line exactly like findStrangerGame
+        // does before queueing, but with a caller-provided status text.
+        function openGameOverlayUI(gameType, statusText) {
+            if (gameType === 'TicTacToe') {
+                document.getElementById('ticTacToeOverlay').style.display = 'flex';
+                document.getElementById('gameStatus').innerText = statusText;
+            } else if (gameType === 'RPS') {
+                document.getElementById('rpsOverlay').style.display = 'flex';
+                document.getElementById('rpsStatus').innerText = statusText;
+            } else if (gameType === 'Dots') {
+                document.getElementById('dotsOverlay').style.display = 'flex';
+                document.getElementById('dotsStatus').innerText = statusText;
+            } else if (gameType.startsWith('Ludo')) {
+                document.getElementById('ludoOverlay').style.display = 'flex';
+                document.getElementById('ludoStatus').innerText = statusText;
+            } else if (gameType === 'StopTimer') {
+                document.getElementById('stopTimerOverlay').style.display = 'flex';
+                document.getElementById('stStatus').innerText = statusText;
+                document.getElementById('stDisplay').innerText = "0.00";
+            } else if (gameType === 'Reaction') {
+                document.getElementById('reactionOverlay').style.display = 'flex';
+                document.getElementById('rtStatus').innerText = statusText;
+            } else if (gameType === 'Matchsticks') {
+                document.getElementById('matchsticksOverlay').style.display = 'flex';
+                document.getElementById('msStatus').innerText = statusText;
+                document.getElementById('msContainer').innerHTML = '';
+            } else if (gameType === 'HighCard') {
+                document.getElementById('highCardOverlay').style.display = 'flex';
+                document.getElementById('hcStatus').innerText = statusText;
+            } else if (gameType === 'GuessNumber') {
+                document.getElementById('guessNumberOverlay').style.display = 'flex';
+                document.getElementById('gnStatus').innerText = statusText;
+                document.getElementById('gnHistory').innerHTML = '';
+            } else if (gameType === 'CoinFlip') {
+                document.getElementById('coinFlipOverlay').style.display = 'flex';
+                document.getElementById('cfStatus').innerText = statusText;
+            } else if (gameType === 'HigherLower') {
+                document.getElementById('higherLowerOverlay').style.display = 'flex';
+                document.getElementById('hlStatus').innerText = statusText;
+            } else if (gameType === 'Connect4') {
+                document.getElementById('connect4Overlay').style.display = 'flex';
+                document.getElementById('c4Status').innerText = statusText;
+                renderC4Board();
+            } else if (gameType === 'MemoryMatch') {
+                document.getElementById('memoryMatchOverlay').style.display = 'flex';
+                document.getElementById('mmStatus').innerText = statusText;
+                document.getElementById('mmBoard').innerHTML = '';
+                document.getElementById('mmScoreX').innerText = '0';
+                document.getElementById('mmScoreO').innerText = '0';
+            }
+        }
+
+        // ---- Challenge a friend ----
+        let challengeTarget = null; // { uid, name, pic }
+        let challengeWatchMsgRef = null;
+        let challengeWatchRoomRef = null;
+
+        function stopChallengeWatch() {
+            if (challengeWatchMsgRef) { challengeWatchMsgRef.off(); challengeWatchMsgRef = null; }
+            if (challengeWatchRoomRef) { challengeWatchRoomRef.off(); challengeWatchRoomRef = null; }
+        }
+
+        window.openChallengePicker = function(uid, name, pic) {
+            if (!requireAuth(() => openChallengePicker(uid, name, pic))) return;
+            if (uid === user.uid) return showToast("You can't challenge yourself", "error");
+            challengeTarget = { uid: uid, name: name, pic: pic };
+            closeSheet();
+            openSheet('Challenge ' + (name || 'Player'), 'challenge');
+        }
+
+        window.challengeFromChat = function() {
+            if (currentChatFriend) openChallengePicker(currentChatFriend.uid, currentChatFriend.name, currentChatFriend.pic);
+        }
+
+        // The waiting-state room node for a challenge: the same initial
+        // fields the host writes in startGameSession, plus challengePending.
+        function challengeInitState(game) {
+            switch (game) {
+                case 'TicTacToe': return { board: ['', '', '', '', '', '', '', '', ''], turn: 'X', winner: null };
+                case 'RPS': return { playerX: '', playerO: '', winner: null };
+                case 'Dots': return { hLines: Array(20).fill(false), vLines: Array(20).fill(false), boxes: Array(16).fill(''), turn: 'X', scoreX: 0, scoreO: 0, winner: null };
+                case 'StopTimer': return { start: Date.now() + 1500, p1Stop: 0, p2Stop: 0, winner: null, status: 'waiting' };
+                case 'Reaction': return { greenTime: Date.now() + 1500 + Math.random() * 2000, p1Tap: 0, p2Tap: 0, winner: null, status: 'waiting' };
+                case 'Matchsticks': return { sticks: 21, turn: 'X', winner: null };
+                case 'HighCard': return { p1Card: 0, p2Card: 0, winner: null };
+                case 'GuessNumber': return { secret: Math.floor(Math.random() * 100) + 1, p1Guess: 0, p2Guess: 0, lastHint: '', winner: null };
+                case 'CoinFlip': return { p1Choice: '', p2Choice: '', result: '', winner: null };
+                case 'HigherLower': return { currentCard: Math.floor(Math.random() * 13) + 2, nextCard: 0, p1Choice: '', p2Choice: '', winner: null };
+                case 'Connect4': return { board: Array(42).fill(''), turn: 'X', winner: null };
+                case 'MemoryMatch': {
+                    const emojis = ['🍎', '🍎', '🍌', '🍌', '🍇', '🍇', '🍉', '🍉', '🍓', '🍓', '🍒', '🍒', '🍍', '🍍', '🥝', '🥝'];
+                    for (let i = emojis.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
+                    }
+                    return { board: emojis, flipped: Array(16).fill(false), matched: Array(16).fill(false), activeFlips: [], turn: 'X', scoreX: 0, scoreO: 0, winner: null };
+                }
+                case 'Ludo2': {
+                    const baseTokens = () => [{ id: 0, state: 'base', stepsTaken: -1 }, { id: 1, state: 'base', stepsTaken: -1 }, { id: 2, state: 'base', stepsTaken: -1 }, { id: 3, state: 'base', stepsTaken: -1 }];
+                    return { turn: 0, diceRoll: 0, lastRollWasSix: false, winner: null, state: 'playing', targetPlayers: 2, turnStamp: Date.now(), tokens_0: baseTokens(), tokens_2: baseTokens() };
+                }
+            }
+            return { winner: null };
+        }
+
+        window.sendGameChallenge = function(game) {
+            if (!requireAuth(() => sendGameChallenge(game))) return;
+            if (!challengeTarget || !CHALLENGE_GAMES.includes(game)) return;
+            const target = challengeTarget;
+            closeSheet();
+            stopChallengeWatch();
+
+            const dmRoom = user.uid < target.uid ? user.uid + '_' + target.uid : target.uid + '_' + user.uid;
+            const roomId = 'challenge_' + user.uid + '_' + target.uid + '_' + Date.now();
+
+            // 1) Pre-create the game room in a waiting state (host = P1).
+            const init = challengeInitState(game);
+            init.p1Name = myProfile.name || 'P1';
+            init.p1Uid = user.uid;
+            init.challengePending = true;
+            init.challengeFrom = user.uid;
+            init.challengeTo = target.uid;
+            init.createdAt = Date.now();
+            if (game === 'Ludo2') {
+                init.hostUid = user.uid;
+                init.p2Name = target.name || 'P2';
+                init.p2Uid = target.uid;
+            }
+            db.ref('games/' + roomId).set(init);
+
+            // 2) The invite message inside the existing DM conversation.
+            const bdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
+            let appliedNameColor = myProfile.nameColor;
+            if (appliedNameColor === 'nc_custom' && myProfile.customNameColor) appliedNameColor = myProfile.customNameColor;
+            else {
+                let ncObj = shopData.nameColors.find(n => n.id === myProfile.nameColor);
+                if (ncObj) appliedNameColor = ncObj.value;
+            }
+            const msgRef = db.ref('rooms/' + dmRoom).push();
+            msgRef.set({
+                txt: 'Game challenge',
+                type: 'gameInvite',
+                uid: user.uid,
+                name: myProfile.name,
+                nameColor: appliedNameColor,
+                pic: myProfile.pic,
+                avatarRing: myProfile.avatarRing,
+                badge: bdg && bdg.icon ? bdg.icon : '',
+                time: firebase.database.ServerValue.TIMESTAMP,
+                burner: false,
+                expiresAt: null,
+                chatColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? myProfile.customBubbleColor : myProfile.chatColor,
+                chatTextColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? getContrastYIQ(myProfile.customBubbleColor) : myProfile.chatTextColor,
+                chatFont: myProfile.chatFont,
+                game: game,
+                gameRoom: roomId,
+                toUid: target.uid,
+                inviteStatus: 'pending',
+                read: false,
+                delivered: false,
+                edited: false
+            });
+
+            // 3) Lightweight invite node so a badge can find it (Stage 7B).
+            db.ref('gameInvites/' + target.uid + '/' + roomId).set({
+                from: user.uid, fromName: myProfile.name, game: game, roomId: roomId,
+                msgKey: msgRef.key, dmRoom: dmRoom, ts: Date.now(), status: 'pending'
+            });
+
+            // 4) recentChats previews, mirroring sendMsg.
+            const preview = '🎮 ' + GAME_DISPLAY[game] + ' challenge';
+            db.ref(`recentChats/${user.uid}/${target.uid}`).set({
+                uid: target.uid, name: target.name, pic: target.pic,
+                lastMsg: preview, senderUid: user.uid,
+                time: firebase.database.ServerValue.TIMESTAMP, unreadCount: 0
+            });
+            db.ref(`recentChats/${target.uid}/${user.uid}`).transaction(curr => {
+                let newCount = (curr && curr.unreadCount) ? curr.unreadCount + 1 : 1;
+                return {
+                    uid: user.uid, name: myProfile.name, pic: myProfile.pic,
+                    lastMsg: preview, senderUid: user.uid,
+                    time: firebase.database.ServerValue.TIMESTAMP, unreadCount: newCount
+                };
+            });
+
+            showToast('Challenge sent to ' + target.name + '!', 'success');
+            enterChallengeRoomAsHost(game, roomId, target, { msgKey: msgRef.key, dmRoom: dmRoom });
+        }
+
+        function enterChallengeRoomAsHost(game, roomId, target, invite) {
+            activeGameType = game;
+            gameRoom = roomId;
+            mySymbol = 'X';
+            // Point gameRef at the waiting room so the overlay's Leave
+            // button cleans it up exactly like a matchmade game.
+            gameRef = db.ref('games/' + roomId);
+            openGameOverlayUI(game, 'Waiting for ' + target.name + ' to accept…');
+
+            let sessionStarted = false;
+            challengeWatchRoomRef = db.ref('games/' + roomId);
+            challengeWatchRoomRef.on('value', snap => {
+                const d = snap.val();
+                if (!d) {
+                    // Room deleted while the invite was still pending (we
+                    // left, or it was cleaned up): retire the invite.
+                    db.ref('rooms/' + invite.dmRoom + '/' + invite.msgKey).once('value', msnap => {
+                        const m = msnap.val();
+                        if (m && m.inviteStatus === 'pending') {
+                            db.ref('rooms/' + invite.dmRoom + '/' + invite.msgKey).update({ inviteStatus: 'expired' });
+                            db.ref('gameInvites/' + target.uid + '/' + roomId).remove();
+                        }
+                    });
+                    return;
+                }
+                if (!d.challengePending && !sessionStarted) {
+                    sessionStarted = true;
+                    const wasLudo = game.startsWith('Ludo');
+                    stopChallengeWatch();
+                    showToast(target.name + ' accepted your challenge!', 'success');
+                    // Ludo's session was already started below (host watches
+                    // the board while waiting); 2P games start now that the
+                    // guest has actually joined.
+                    if (!wasLudo) startGameSession();
+                }
+            });
+
+            challengeWatchMsgRef = db.ref('rooms/' + invite.dmRoom + '/' + invite.msgKey);
+            challengeWatchMsgRef.on('value', snap => {
+                const m = snap.val();
+                if (m && m.inviteStatus === 'declined') {
+                    stopChallengeWatch();
+                    showToast(target.name + ' declined your challenge', 'error');
+                    const leaveFn = GAME_LEAVE_FN[game];
+                    if (leaveFn && typeof window[leaveFn] === 'function') window[leaveFn]();
+                }
+            });
+
+            // Ludo rooms are fully populated at creation (both players
+            // assigned), so the host can sit on the live board while
+            // waiting; rollLudoDice stays locked until acceptance.
+            if (game.startsWith('Ludo')) startGameSession();
+        }
+
+        window.acceptGameInvite = function(msgKey, game, roomId) {
+            if (!requireAuth(() => acceptGameInvite(msgKey, game, roomId))) return;
+            if (!CHALLENGE_GAMES.includes(game)) return;
+            const cleanRoom = String(roomId || '').replace(/[^a-zA-Z0-9_]/g, '');
+            if (!cleanRoom) return;
+            db.ref('games/' + cleanRoom).once('value', snap => {
+                const d = snap.val();
+                if (!d || !d.challengePending) {
+                    db.ref('rooms/' + room + '/' + msgKey).update({ inviteStatus: 'expired' });
+                    db.ref('gameInvites/' + user.uid + '/' + cleanRoom).remove();
+                    return showToast('This challenge is no longer available', 'error');
+                }
+                if (Date.now() - (d.createdAt || 0) > 15 * 60 * 1000) {
+                    db.ref('rooms/' + room + '/' + msgKey).update({ inviteStatus: 'expired' });
+                    db.ref('gameInvites/' + user.uid + '/' + cleanRoom).remove();
+                    db.ref('games/' + cleanRoom).remove();
+                    return showToast('This challenge has expired', 'error');
+                }
+                db.ref('rooms/' + room + '/' + msgKey).update({ inviteStatus: 'accepted' });
+                db.ref('gameInvites/' + user.uid + '/' + cleanRoom).remove();
+
+                activeGameType = game;
+                gameRoom = cleanRoom;
+                mySymbol = 'O';
+                openGameOverlayUI(game, 'Joining game…');
+                // Clearing challengePending is the host's start signal.
+                db.ref('games/' + cleanRoom).update({ challengePending: null });
+                startGameSession();
+            });
+        }
+
+        window.declineGameInvite = function(msgKey, game, roomId) {
+            if (!requireAuth()) return;
+            const cleanRoom = String(roomId || '').replace(/[^a-zA-Z0-9_]/g, '');
+            db.ref('rooms/' + room + '/' + msgKey).update({ inviteStatus: 'declined' });
+            if (cleanRoom) db.ref('gameInvites/' + user.uid + '/' + cleanRoom).remove();
+            showToast('Challenge declined', 'success');
+        }
+
+        // Re-enter an accepted challenge from its DM card (e.g. after
+        // leaving the overlay mid-game).
+        window.joinChallengeRoom = function(msgKey, game, roomId) {
+            if (!requireAuth(() => joinChallengeRoom(msgKey, game, roomId))) return;
+            if (!CHALLENGE_GAMES.includes(game)) return;
+            const cleanRoom = String(roomId || '').replace(/[^a-zA-Z0-9_]/g, '');
+            if (!cleanRoom) return;
+            db.ref('games/' + cleanRoom).once('value', snap => {
+                const d = snap.val();
+                if (!d) return showToast('That game is gone', 'error');
+                if (d.winner) return showToast('That game already ended', 'error');
+                activeGameType = game;
+                gameRoom = cleanRoom;
+                mySymbol = d.challengeFrom === user.uid ? 'X' : 'O';
+                openGameOverlayUI(game, 'Joining game…');
+                startGameSession();
+            });
+        }
+
+        // Invite card markup for DM messages. Game name comes from the
+        // fixed map and the room id is sanitized before it reaches an
+        // onclick, so crafted message data can't break out of the HTML.
+        function inviteCardHtml(key, d) {
+            const g = CHALLENGE_GAMES.includes(d.game) ? d.game : null;
+            const cleanRoom = String(d.gameRoom || '').replace(/[^a-zA-Z0-9_]/g, '');
+            if (!g || !cleanRoom) {
+                return `<div style="padding:10px; font-weight:700;">🎮 Game challenge</div>`;
+            }
+            const gName = GAME_DISPLAY[g];
+            const status = d.inviteStatus || 'pending';
+            const isMe = d.uid === user.uid;
+            const sub = isMe ? 'You sent this challenge' : escapeHTML(d.name || 'Someone') + ' wants to play with you';
+            let actions = '';
+            if (status === 'pending') {
+                if (isMe) {
+                    actions = `<div style="font-size:12px; opacity:0.75; margin-top:8px;">Waiting for them to accept…</div>`;
+                } else {
+                    actions = `<div style="display:flex; gap:8px; margin-top:10px;">
+                        <button class="btn-primary ripple-target" style="flex:1; padding:9px 0; border-radius:10px; font-weight:700;" onclick="acceptGameInvite('${key}', '${g}', '${cleanRoom}')">Accept</button>
+                        <button class="btn-glass ripple-target" style="flex:1; padding:9px 0; border-radius:10px; font-weight:700;" onclick="declineGameInvite('${key}', '${g}', '${cleanRoom}')">Decline</button>
+                    </div>`;
+                }
+            } else if (status === 'accepted') {
+                actions = `<button class="btn-primary ripple-target" style="width:100%; margin-top:10px; padding:9px 0; border-radius:10px; font-weight:700;" onclick="joinChallengeRoom('${key}', '${g}', '${cleanRoom}')">Join Game</button>`;
+            } else if (status === 'declined') {
+                actions = `<div style="font-size:12px; opacity:0.6; margin-top:8px;">Declined</div>`;
+            } else {
+                actions = `<div style="font-size:12px; opacity:0.6; margin-top:8px;">This challenge has expired</div>`;
+            }
+            return `<div style="display:flex; flex-direction:column; padding:12px; border:2px dashed currentColor; border-radius:12px; min-width:210px;">
+                <div style="display:flex; align-items:center; gap:8px; font-weight:800;"><i class="fa-solid fa-gamepad"></i><span>${gName} Challenge</span></div>
+                <div style="font-size:12px; opacity:0.8; margin-top:4px;">${sub}</div>
+                ${actions}
+            </div>`;
+        }
+
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
             if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch'].includes(gameType)) {
@@ -5209,7 +5768,8 @@ function sendNotification(title, body, icon) {
                                 winner: null,
                                 state: 'playing',
                                 targetPlayers: targetPlayers,
-                                hostUid: user.uid
+                                hostUid: user.uid,
+                                turnStamp: Date.now()
                             };
 
                             // Initialize all teams dynamically based on mode
@@ -5612,6 +6172,15 @@ function sendNotification(title, body, icon) {
                     }
                 });
             }
+
+            // Stage 7A: stamp my uid into 2P rooms (Ludo rooms already carry
+            // p{n}Uid from creation). Additive only — names/turns untouched.
+            // The stats observer then attributes results by uid, not by name.
+            if (gameRef && activeGameType && !activeGameType.startsWith('Ludo')) {
+                if (mySymbol === 'X') gameRef.update({ p1Uid: user.uid });
+                else if (mySymbol === 'O') gameRef.update({ p2Uid: user.uid });
+            }
+            attachStatsObserver();
         }
 
         // NOTE (Stage 3): the first-draft TicTacToe/RPS functions that used to
@@ -5999,6 +6568,7 @@ function sendNotification(title, body, icon) {
         // ==========================================
         let ludoRaf = null;
         let ludoState = null;
+        let ludoTurnTimerInterval = null; // Stage 7A: 45s no-move turn skip
         let myLudoTeam = 0; // 0 = Red, 1 = Green, 2 = Yellow, 3 = Blue
         let isLudoAnimating = false;
 
@@ -6072,6 +6642,10 @@ function sendNotification(title, body, icon) {
             // leaked the earlier loop against the new state.
             if (ludoRaf) { cancelAnimationFrame(ludoRaf); ludoRaf = null; }
             if (gameRef) { gameRef.off('value'); gameRef.child('ludoChat').off('child_added'); }
+
+            // Stage 7A: (re)start the 45s turn timer for this match.
+            if (ludoTurnTimerInterval) clearInterval(ludoTurnTimerInterval);
+            ludoTurnTimerInterval = setInterval(ludoTurnTimerTick, 1000);
 
             // Set rotation so my base is always at bottom left visually
             // Team 0 -> 0deg, Team 1 -> 270deg, Team 2 -> 180deg, Team 3 -> 90deg
@@ -6275,6 +6849,7 @@ function sendNotification(title, body, icon) {
 
         window.rollLudoDice = function() {
             if(!gameRef || !ludoState || ludoState.turn !== myLudoTeam || ludoState.diceRoll !== 0 || isLudoAnimating || ludoState.winner) return;
+            if (ludoState.challengePending) { showToast('Waiting for your friend to accept the challenge…', 'error'); return; }
 
             const diceEl = document.getElementById('ludoDice');
             diceEl.classList.add('rolling');
@@ -6285,7 +6860,7 @@ function sendNotification(title, body, icon) {
                 const roll = Math.floor(Math.random() * 6) + 1;
                 let nextIsSix = roll === 6;
 
-                gameRef.update({ diceRoll: roll, lastRollWasSix: nextIsSix });
+                gameRef.update({ diceRoll: roll, lastRollWasSix: nextIsSix, turnStamp: Date.now() });
 
                 // Auto check for forced turns
                 setTimeout(() => {
@@ -6370,6 +6945,7 @@ function sendNotification(title, body, icon) {
                     }
                 }
 
+                updates.turnStamp = Date.now(); // Stage 7A: a move restarts the 45s turn clock
                 gameRef.update(updates);
             });
         }
@@ -6377,7 +6953,37 @@ function sendNotification(title, body, icon) {
         function nextLudoTurn(ls) {
             let activeIndex = activeLudoTeams.indexOf(myLudoTeam);
             let nextTeam = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
-            gameRef.update({ turn: nextTeam, diceRoll: 0, lastRollWasSix: false });
+            gameRef.update({ turn: nextTeam, diceRoll: 0, lastRollWasSix: false, turnStamp: Date.now() });
+        }
+
+        // Stage 7A: Ludo turn timer. Driven by the room's turnStamp so all
+        // clients agree on the deadline; only the CURRENT player's client
+        // performs the skip, and the skip is claimed with a transaction on
+        // turnStamp — if the player acted in the meantime (any move/roll
+        // bumps turnStamp) the claim aborts and nothing happens.
+        function ludoTurnTimerTick() {
+            if (!gameRef || !gameRoom || !ludoState) return;
+            if (ludoState.winner) return; // game finished
+            if (ludoState.challengePending) return; // challenge not accepted yet
+            if (ludoState.turn !== myLudoTeam) return; // only the current player skips their own turn
+            const stamp = ludoState.turnStamp;
+            if (!stamp) {
+                // Legacy room (created before turnStamp existed): start the clock.
+                gameRef.update({ turnStamp: Date.now() });
+                return;
+            }
+            if (Date.now() - stamp < 45000) return;
+            gameRef.child('turnStamp').transaction(cur => {
+                if (cur !== stamp) return; // a move/roll landed first — abort
+                return Date.now();
+            }, (err, committed) => {
+                if (err || !committed || !gameRef || !ludoState || ludoState.winner) return;
+                showToast('Turn skipped — no move', 'error');
+                let activeIndex = activeLudoTeams.indexOf(ludoState.turn);
+                if (activeIndex === -1) return;
+                let nextTeam = activeLudoTeams[(activeIndex + 1) % activeLudoTeams.length];
+                gameRef.update({ turn: nextTeam, diceRoll: 0, lastRollWasSix: false, turnStamp: Date.now() });
+            });
         }
 
         window.resetLudo = function() {
@@ -6396,7 +7002,8 @@ function sendNotification(title, body, icon) {
                         diceRoll: 0,
                         lastRollWasSix: false,
                         winner: null,
-                        state: 'playing'
+                        state: 'playing',
+                        turnStamp: Date.now()
                     };
                     const tp = ls.targetPlayers || 2;
                     let teams = tp === 2 ? [0, 2] : (tp === 3 ? [0, 1, 2] : [0, 1, 2, 3]);
@@ -7317,6 +7924,7 @@ function sendNotification(title, body, icon) {
         window.leaveLudo = function() {
             if(ludoRaf) cancelAnimationFrame(ludoRaf);
             ludoRaf = null;
+            if(ludoTurnTimerInterval) { clearInterval(ludoTurnTimerInterval); ludoTurnTimerInterval = null; }
             ludoState = null;
             renderTokens = [];
             isLudoAnimating = false;
@@ -7469,6 +8077,10 @@ window.burnImage = function(element, url, key) {
                 crTitle.innerText = room === "GlobalLobby" ? "Global Lounge" : "KEY: " + room; 
                 if(dot) dot.style.display = 'none';
             }
+
+            // Stage 7A: the game-challenge shortcut only exists inside DMs.
+            const ccBtn = document.getElementById('chatChallengeBtn');
+            if (ccBtn) ccBtn.style.display = currentChatFriend ? 'block' : 'none';
 
             if (currentChatFriend && dot) {
                 db.ref('status/' + currentChatFriend.uid).on('value', snap => {
@@ -8162,7 +8774,13 @@ window.burnImage = function(element, url, key) {
             currentRoomRef.on('child_changed', snap => {
                 const d = snap.val();
                 const key = snap.key;
-                
+
+                // Stage 7A: live-update invite cards (accept/decline/expire)
+                if (d.type === 'gameInvite') {
+                    const cEl = document.getElementById(`content-${key}`);
+                    if (cEl) cEl.innerHTML = inviteCardHtml(key, d);
+                }
+
                 // Update Read Receipts
                 const rec = document.getElementById(`receipt-${key}`);
                 if (rec) {
@@ -8252,6 +8870,9 @@ window.burnImage = function(element, url, key) {
             }
             else if (d.type === 'gif') content = `<img src="${sanitizedUrl}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${sanitizedUrl}')" alt="Chat GIF">`;
             else if (d.type === 'audio') content = `<audio controls src="${sanitizedUrl}" style="width: 200px; height: 35px; margin-top: 5px; outline: none;"></audio>`;
+            else if (d.type === 'gameInvite') {
+                content = inviteCardHtml(key, d);
+            }
             else if (d.type === 'gift') {
                 if (d.giftOpened) {
                     content = `<div style="font-weight: 700;">${escapeHTML(d.txt || '')}</div>`;
