@@ -36,6 +36,7 @@
             --field: #14151C;
             --text-muted: #7A7F88;
             --gold-grad: linear-gradient(135deg, #FFD34D, #FF9E00);
+            --ease-sheet: cubic-bezier(0.32, 0.72, 0.25, 1);
 
             /* Static UI Variables */
             --error-red: #ED4245;
@@ -144,7 +145,7 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             transform: translateY(105%);
-            transition: transform 0.38s cubic-bezier(0.32, 0.72, 0.25, 1);
+            transition: transform 0.38s var(--ease-sheet);
             padding: 12px 0 30px;
         }
         #auth-screen.open { transform: translateY(0); }
@@ -381,6 +382,7 @@
             overflow: hidden;
         }
         .btn-primary:active { transform: scale(0.96); }
+        .btn-primary:active { transform: scale(0.97); }
         .btn-text { transition: 0.2s; }
         
         .btn-check-icon { 
@@ -639,6 +641,7 @@
         .v3-games-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         .v3-gcard { border-radius: 16px; padding: 14px; background: var(--panel); border: 1px solid rgba(255,255,255,0.06); cursor: pointer; transition: transform 0.15s ease; position: relative; overflow: hidden; }
         .v3-gcard:active { transform: scale(0.97); }
+        .v3-hero:active, .v3-row:active { transform: scale(0.97); }
         .v3-gcard-tile { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04); background: color-mix(in srgb, currentColor 13%, transparent); border: 1px solid rgba(255,255,255,0.07); border-color: color-mix(in srgb, currentColor 18%, transparent); display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 10px; }
         .v3-gcard-name { font-size: 14.5px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
         .v3-gcard-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
@@ -660,6 +663,19 @@
         .shop-item-name .v3-chip-new, .shop-item-name .v3-chip-free { vertical-align: 2px; margin-left: 4px; }
         .shop-tier-lbl { grid-column: 1 / -1; margin: 8px 2px -2px; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; }
         .shop-tier-lbl:first-child { margin-top: 0; }
+        /* ================= STAGE 12: SHOP SHOWCASE ================= */
+        .shop-rail-wrap { grid-column: 1 / -1; }
+        .shop-rail { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 2px 10px; scrollbar-width: none; }
+        .shop-rail::-webkit-scrollbar { display: none; }
+        .shop-feature-rail .shop-item.shop-item-wide { flex: 0 0 272px; scroll-snap-align: start; flex-direction: column; align-items: stretch; gap: 10px; min-height: 196px; }
+        .shop-feature-rail .shop-item.shop-item-wide .shop-preview { width: 100%; height: 96px; margin-bottom: 0; font-size: 13px; }
+        .shop-feature-rail .shop-item-wide .shop-wide-mid { flex: none; }
+        .shop-feature-rail .shop-item-wide .shop-price-row { width: 100%; margin-top: auto; flex: none; }
+        .shop-newin-card { flex: 0 0 106px; min-height: 104px; scroll-snap-align: start; background: var(--panel); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 10px; cursor: pointer; transition: transform 0.15s ease; box-sizing: border-box; }
+        .shop-newin-card:active { transform: scale(0.97); }
+        .shop-newin-card .shop-preview { height: 46px; font-size: 11px; margin-bottom: 8px; }
+        .shop-newin-name { font-size: 12px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .shop-newin-price { font-size: 11px; font-weight: 700; color: #FFD34D; margin-top: 2px; }
         .shop-item.shop-item-wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; min-height: 88px; }
         .shop-item.shop-item-wide .shop-preview { width: 92px; height: 52px; margin-bottom: 0; flex: none; font-size: 11.5px; padding: 0 6px; text-align: center; box-sizing: border-box; }
         .shop-item.shop-item-wide .shop-wide-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
@@ -973,7 +989,7 @@
             transition: 0.3s;
             position: relative;
         }
-        .dock-btn i { font-size: 20px; }
+        .dock-btn i { font-size: 20px; opacity: 0.8; transition: opacity 0.25s ease, transform 0.25s var(--ease-sheet); }
         .dock-btn .dock-label { font-size: 10px; line-height: 1; }
         .dock-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
         .dock-btn.active {
@@ -984,6 +1000,8 @@
             background: rgba(255, 201, 38, 0.13);
             border-radius: 11px;
             padding: 4px 14px;
+            opacity: 1;
+            transform: translateY(-1px);
         }
         .dock-btn:active { transform: scale(0.9); }
 
@@ -1044,7 +1062,7 @@
             z-index: 9998;
             opacity: 0;
             pointer-events: none;
-            transition: 0.3s;
+            transition: opacity 0.3s ease;
         }
         .sheet-overlay.show { opacity: 1; pointer-events: auto; }
         
@@ -1059,7 +1077,7 @@
             border-top-right-radius: 24px;
             padding: 14px 24px 34px;
             transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.38s var(--ease-sheet);
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -1227,7 +1245,7 @@
             width: 100%; 
         }
         
-        .msg-row { display: flex; flex-direction: column; max-width: 80%; transition: all 0.4s ease; animation: slideUp 0.3s ease;}
+        .msg-row { display: flex; flex-direction: column; max-width: 80%; transition: all 0.4s ease; }
         .msg-row.me { align-self: flex-end; align-items: flex-end; }
         .msg-row.other { align-self: flex-start; align-items: flex-start; }
         .bubble { padding: 10px 14px; border-radius: 18px; font-size: 14.5px; position: relative; line-height: 1.4; word-wrap: break-word; min-width: 80px;}
@@ -1247,6 +1265,22 @@
         #typing-indicator { font-size: 12px; color: var(--text-secondary); padding: 5px 20px; font-style: italic; height: 25px; display: none; width: 100%; text-align: left; z-index: 2;}
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ================= STAGE 12: CHAT FEEL ================= */
+        @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .msg-row.msg-enter { animation: msgIn 0.18s ease-out; }
+        .msg-row.msg-pending .bubble { opacity: 0.55; }
+        .chat-imgbox { position: relative; width: min(250px, 64vw); aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: var(--panel-2); border: 1px solid var(--glass-border); margin-top: 5px; }
+        .chat-imgbox .chat-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; margin: 0; border: none; border-radius: 0; opacity: 0; transition: opacity 0.25s ease; box-sizing: border-box; }
+        .chat-imgbox .chat-img.img-ready { opacity: 1; }
+        .newmsg-pill { position: fixed; left: 50%; bottom: 108px; transform: translateX(-50%) translateY(10px); z-index: 95; display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,201,38,0.4); background: #1C1D24; color: #FFD34D; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s var(--ease-sheet); }
+        .newmsg-pill.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+        .newmsg-pill.show:active { transform: translateX(-50%) translateY(0) scale(0.97); }
+        @media (prefers-reduced-motion: reduce) {
+            .msg-row.msg-enter { animation: none; }
+            .newmsg-pill { transition: none; }
+            .chat-imgbox .chat-img { transition: none; }
+        }
 
         /* ================= PICKERS ================= */
         .picker {
@@ -2122,7 +2156,7 @@
                 <svg class="v3-hd-logo" viewBox="0 0 48 48" role="img" aria-label="Direct Chat logo"><use href="#logoMark"></use></svg>
                 <div class="v3-hd-mid">
                     <div class="v3-hd-title">Direct Chat</div>
-                    <div class="v3-hd-sub">Welcome back</div>
+                    <div class="v3-hd-sub" id="dashGreeting">Welcome back</div>
                 </div>
                 <div class="v3-hd-btn"><i class="fa-regular fa-bell"></i></div>
             </div>
@@ -2153,6 +2187,11 @@
                         <span class="v3-cta">Join</span>
                     </div>
                 </div>
+            </div>
+
+            <div class="v3-sec" id="spotlightSec">
+                <p class="v3-lbl">Spotlight</p>
+                <div id="spotlightCard"></div>
             </div>
 
             <div class="v3-sec">
@@ -2617,6 +2656,8 @@
         <div class="fab ripple-target" id="scrollToBottomBtn" onclick="scrollToBottom()" style="bottom: 100px; right: 20px; width: 45px; height: 45px; z-index: 100; transition: all 0.3s ease;">
             <i class="fa-solid fa-chevron-down"></i>
         </div>
+
+        <button id="newMsgPill" class="newmsg-pill" onclick="pillScrollToBottom()" aria-label="Jump to latest messages"><i class="fa-solid fa-arrow-down"></i><span id="newMsgPillText">New messages</span></button>
 
         <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="uploadImageToSupabase(event)">
 
@@ -3121,6 +3162,7 @@ function sendNotification(title, body, icon) {
                     };
                     switchShopTab(tabMap[activeTabEl.id]);
                 }
+                renderSpotlight();
             } else {
                 // Initialize Firebase with defaults if empty
                 db.ref('globalSettings/shopData').set(shopData);
@@ -3296,6 +3338,7 @@ function sendNotification(title, body, icon) {
         // skeleton loaders swapped for the built-in empty states.
         function enterBrowseMode() {
             resetStage7B();
+            refreshHomePremium();
             const hub = document.getElementById('hub-screen');
             if (hub && !hub.classList.contains('active')) switchScreen('hub-screen');
 
@@ -3746,6 +3789,7 @@ function sendNotification(title, body, icon) {
                 myProfile.orbs = d.orbs || 0;
                 myProfile.streak = d.streak || null;
                 renderStreakLine();
+                refreshHomePremium();
                 myProfile.bio = d.bio || "Hey! I am using VIP Direct Chat.";
                 myProfile.joinDate = d.joinDate || Date.now();
                 myProfile.chatColor = d.chatColor || '#ffcc00';
@@ -4402,7 +4446,27 @@ function sendNotification(title, body, icon) {
                 })
                 .join('');
             if (featuredCards) {
-                html += `<div class="shop-tier-lbl">Featured</div>` + featuredCards;
+                // Stage 12: Featured is now a horizontal snap-scroll
+                // showcase with larger preview art (.shop-feature-rail).
+                html += `<div class="shop-tier-lbl">Featured</div><div class="shop-rail-wrap"><div class="shop-rail shop-feature-rail">${featuredCards}</div></div>`;
+            }
+
+            // Stage 12: "New In" rail — every item flagged new:true across
+            // all categories; tapping a card jumps to that item's tab.
+            const newInCards = [];
+            Object.keys(shopData).forEach(cat => {
+                (shopData[cat] || []).forEach(it => {
+                    if (it && it.new) newInCards.push({ cat: cat, it: it });
+                });
+            });
+            if (newInCards.length) {
+                html += `<div class="shop-tier-lbl">New In &middot; ${newInCards.length}</div><div class="shop-rail-wrap"><div class="shop-rail shop-newin-rail">` +
+                    newInCards.slice(0, 14).map(entry => `
+                    <div class="shop-newin-card ripple-target" onclick="switchShopTab('${entry.cat}')">
+                        ${shopPreviewHtml(entry.cat, entry.it, shopDynColor(entry.cat, entry.it))}
+                        <div class="shop-newin-name">${entry.it.name}</div>
+                        <div class="shop-newin-price">${entry.it.price === 0 ? 'Free' : entry.it.price + ' Sparks'}</div>
+                    </div>`).join('') + `</div></div>`;
             }
 
             // Stage 8: tier groups — Free / Classic (<=600) / Premium (>600).
@@ -4416,7 +4480,7 @@ function sendNotification(title, body, icon) {
             tiers.forEach(tier => {
                 const group = items.filter(tier.test);
                 if (!group.length) return;
-                html += `<div class="shop-tier-lbl">${tier.label}</div>`;
+                html += `<div class="shop-tier-lbl">${tier.label} &middot; ${group.length}</div>`;
                 group.forEach(item => { html += shopCardHtml(tab, item, false); });
             });
 
@@ -12637,6 +12701,51 @@ window.burnImage = function(element, url, key) {
             scrollToBottom();
             if(msgInput) msgInput.focus();
 
+            // Stage 12: optimistic send. The push key is generated locally,
+            // so the bubble renders NOW with a subtle sending state
+            // (.msg-pending); the child_added echo carries the same key and
+            // reconciles in place (see listen()). Skipped for edits and
+            // while offline — the offline queue owns those sends, exactly
+            // as before.
+            let pendingRef = null;
+            if (!currentEditingKey && navigator.onLine) {
+                pendingRef = db.ref('rooms/'+currentRoom).push();
+                const pBdg = shopData.badges.find(b => b.id === (myProfile.badge || 'badge_none'));
+                let pNameColor = myProfile.nameColor;
+                if (pNameColor === 'nc_custom' && myProfile.customNameColor) pNameColor = myProfile.customNameColor;
+                else {
+                    const pNcObj = shopData.nameColors.find(n => n.id === myProfile.nameColor);
+                    if (pNcObj) pNameColor = pNcObj.value;
+                }
+                const localMsg = {
+                    txt: txt,
+                    type: type,
+                    uid: user.uid,
+                    name: myProfile.name,
+                    nameColor: pNameColor,
+                    pic: myProfile.pic,
+                    avatarRing: myProfile.avatarRing,
+                    badge: pBdg && pBdg.icon ? pBdg.icon : '',
+                    time: Date.now(),
+                    burner: burnerMode,
+                    expiresAt: burnerMode ? Date.now() + burnerTime : null,
+                    chatColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? myProfile.customBubbleColor : myProfile.chatColor,
+                    chatTextColor: (myProfile.chatColor === 'b_custom' && myProfile.customBubbleColor) ? getContrastYIQ(myProfile.customBubbleColor) : myProfile.chatTextColor,
+                    chatFont: myProfile.chatFont,
+                    read: false,
+                    delivered: false,
+                    edited: false
+                };
+                if (currentReplyingTo) localMsg.replyTo = currentReplyingTo;
+                const pendingNode = createMessageNode(pendingRef.key, localMsg, false);
+                const cmDiv = document.getElementById('chat-messages');
+                if (pendingNode && cmDiv) {
+                    pendingNode.classList.add('msg-enter', 'msg-pending');
+                    cmDiv.appendChild(pendingNode);
+                    cmDiv.scrollTop = cmDiv.scrollHeight;
+                }
+            }
+
             // Offload DOM updates for pickers
             setTimeout(() => {
                 document.querySelectorAll('.picker').forEach(p => {
@@ -12702,7 +12811,9 @@ window.burnImage = function(element, url, key) {
                     offlineQueue.push({ room: currentRoom, data: msgData });
                     showToast("Message queued offline", "error");
                 } else {
-                    newRef = db.ref('rooms/'+currentRoom).push();
+                    // Stage 12: reuse the optimistic ref when one was made,
+                    // so the echo lands on the already-rendered bubble's key.
+                    newRef = pendingRef || db.ref('rooms/'+currentRoom).push();
                     newRef.set(msgData).catch(err => console.error(err.message));
                 }
 
@@ -12746,6 +12857,164 @@ window.burnImage = function(element, url, key) {
             });
         }
 
+        // ================= STAGE 12: HOME PREMIUM + CHAT FEEL =================
+        // Pure helpers (unit-tested in Node — see STAGE12.md).
+        function greetingForHour(h) {
+            if (h < 12) return 'Good morning';
+            if (h < 17) return 'Good afternoon';
+            return 'Good evening';
+        }
+
+        function dayOfYearIndex(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            return Math.floor((date - start) / 86400000);
+        }
+
+        // Spotlight rotation: games and shop picks alternate through the
+        // pool; an active streak takes every 4th slot. One descriptor is
+        // returned for the given day index, so the card changes daily with
+        // zero listeners or timers.
+        function pickSpotlight(dayIdx, games, shopPicks, streakCount) {
+            const pool = [];
+            const n = Math.max(games.length, shopPicks.length);
+            for (let i = 0; i < n; i++) {
+                if (games.length) pool.push({ kind: 'game', key: games[i % games.length] });
+                if (shopPicks.length) pool.push({ kind: 'shop', cat: shopPicks[i % shopPicks.length].cat, id: shopPicks[i % shopPicks.length].id });
+            }
+            if (streakCount > 0) {
+                const woven = [];
+                pool.forEach((entry, i) => {
+                    woven.push(entry);
+                    if ((i + 1) % 4 === 0) woven.push({ kind: 'streak' });
+                });
+                if (!woven.length) woven.push({ kind: 'streak' });
+                return woven[dayIdx % woven.length];
+            }
+            return pool.length ? pool[dayIdx % pool.length] : null;
+        }
+
+        function chatNearBottom(el, threshold) {
+            if (!el) return true;
+            return el.scrollHeight - el.scrollTop - el.clientHeight < (threshold || 120);
+        }
+
+        const SPOT_GAME_ICONS = { TicTacToe: 'fa-hashtag', RPS: 'fa-hand-back-fist', Dots: 'fa-braille', Ludo2: 'fa-dice', Ludo3: 'fa-dice-three', Ludo4: 'fa-dice-d20', StopTimer: 'fa-stopwatch', Reaction: 'fa-bolt', Matchsticks: 'fa-fire-flame-simple', HighCard: 'fa-diamond', GuessNumber: 'fa-question', CoinFlip: 'fa-coins', HigherLower: 'fa-arrow-up-9-1', Connect4: 'fa-circle-dot', MemoryMatch: 'fa-clone', Battleship: 'fa-ship', Reversi: 'fa-circle-half-stroke', Gomoku: 'fa-grip', Snakes: 'fa-stairs', PigDice: 'fa-piggy-bank', Checkers: 'fa-chess-board', Mancala: 'fa-gem', Mastermind: 'fa-lock-open', Bingo: 'fa-ticket', Flood: 'fa-palette', Chess: 'fa-chess', Dominoes: 'fa-grip-vertical', Hangman: 'fa-spell-check', Trivia: 'fa-brain', MathDuel: 'fa-plus-minus', Simon: 'fa-bullseye', WordChain: 'fa-link' };
+
+        function updateDashGreeting() {
+            const el = document.getElementById('dashGreeting');
+            if (!el) return;
+            if (typeof user !== 'undefined' && user && user.uid && typeof myProfile !== 'undefined' && myProfile && myProfile.name) {
+                const first = String(myProfile.name).trim().split(/\s+/)[0] || '';
+                el.innerHTML = greetingForHour(new Date().getHours()) + (first ? ', ' + escapeHTML(first) : '');
+            } else {
+                el.innerText = 'Welcome back';
+            }
+        }
+
+        function renderSpotlight() {
+            const card = document.getElementById('spotlightCard');
+            if (!card) return;
+            const games = Object.keys(GAME_DISPLAY);
+            const picks = [];
+            SHOP_FEATURED.forEach(f => {
+                const it = (shopData[f.cat] || []).find(i => i.id === f.id);
+                if (it) picks.push({ cat: f.cat, id: f.id, name: it.name, price: it.price });
+            });
+            Object.keys(shopData).forEach(cat => {
+                (shopData[cat] || []).filter(i => i && i.new).slice(0, 1).forEach(it => {
+                    if (!picks.some(pk => pk.id === it.id)) picks.push({ cat: cat, id: it.id, name: it.name, price: it.price });
+                });
+            });
+            const streakCount = (typeof user !== 'undefined' && user && user.uid && typeof myProfile !== 'undefined' && myProfile && myProfile.streak && myProfile.streak.count) ? myProfile.streak.count : 0;
+            const pick = pickSpotlight(dayOfYearIndex(new Date()), games, picks, streakCount);
+            if (!pick) { card.innerHTML = ''; return; }
+            if (pick.kind === 'game') {
+                card.innerHTML = `
+                <div class="v3-hero ripple-target" onclick="findStrangerGame('${pick.key}')">
+                    <div class="v3-hero-tile"><i class="fa-solid ${SPOT_GAME_ICONS[pick.key] || 'fa-gamepad'}"></i></div>
+                    <div class="v3-hero-mid">
+                        <div class="v3-hero-name">${GAME_DISPLAY[pick.key]}</div>
+                        <div class="v3-hero-sub">Featured game &middot; Play a live match now</div>
+                    </div>
+                    <span class="v3-cta">Play</span>
+                </div>`;
+            } else if (pick.kind === 'shop') {
+                const found = picks.find(x => x.id === pick.id) || { name: 'Shop pick', price: 0 };
+                card.innerHTML = `
+                <div class="v3-row ripple-target" onclick="openSpotlightShop('${pick.cat}')">
+                    <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <div class="v3-row-mid">
+                        <div class="v3-row-name">${escapeHTML(found.name)}</div>
+                        <div class="v3-row-sub">Shop pick &middot; ${found.price === 0 ? 'Free' : found.price + ' Sparks'}</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right v3-chev"></i>
+                </div>`;
+            } else {
+                card.innerHTML = `
+                <div class="v3-hero ripple-target" onclick="document.querySelector('.dock-btn[data-tab=\'tab-profile\']').click()">
+                    <div class="v3-hero-tile"><i class="fa-solid fa-fire"></i></div>
+                    <div class="v3-hero-mid">
+                        <div class="v3-hero-name">Day ${streakCount} streak</div>
+                        <div class="v3-hero-sub">Open Direct Chat daily to keep it alive</div>
+                    </div>
+                    <span class="v3-cta">View</span>
+                </div>`;
+            }
+        }
+
+        window.openSpotlightShop = function(cat) {
+            const dockBtn = document.querySelector('.dock-btn[data-tab="tab-shop"]');
+            if (dockBtn) dockBtn.click();
+            switchShopTab(cat);
+        };
+
+        function refreshHomePremium() {
+            updateDashGreeting();
+            renderSpotlight();
+        }
+
+        // ================= STAGE 12: NEW-MESSAGE PILL =================
+        let newMsgPillCount = 0;
+
+        function bumpNewMsgPill() {
+            newMsgPillCount++;
+            const pill = document.getElementById('newMsgPill');
+            const label = document.getElementById('newMsgPillText');
+            if (label) label.innerText = newMsgPillCount > 1 ? newMsgPillCount + ' new messages' : 'New messages';
+            if (pill) pill.classList.add('show');
+        }
+
+        function hideNewMsgPill() {
+            newMsgPillCount = 0;
+            const pill = document.getElementById('newMsgPill');
+            if (pill) pill.classList.remove('show');
+        }
+
+        window.pillScrollToBottom = function() {
+            const cm = document.getElementById('chat-messages');
+            if (cm) cm.scrollTo({ top: cm.scrollHeight, behavior: 'smooth' });
+            hideNewMsgPill();
+        };
+
+        // One passive, rAF-throttled scroll watcher: when the user scrolls
+        // back to the bottom themselves, the pill clears. (The pagination
+        // handler in enterRoom is a separate onscroll property — untouched.)
+        (function() {
+            const cm = document.getElementById('chat-messages');
+            if (!cm) return;
+            let pillRaf = false;
+            cm.addEventListener('scroll', function() {
+                if (pillRaf) return;
+                pillRaf = true;
+                requestAnimationFrame(function() {
+                    pillRaf = false;
+                    if (chatNearBottom(cm)) hideNewMsgPill();
+                });
+            }, { passive: true });
+        })();
+
+        refreshHomePremium();
+
         // LISTEN FOR MESSAGES (DISCORD BUBBLES INJECTED & REACTIONS)
         function listen(isPagination = false) {
             let initialRoomLoad = true;
@@ -12769,13 +13038,27 @@ window.burnImage = function(element, url, key) {
                 return; // Early return to avoid duplicate `on` event bindings
             }
 
+            hideNewMsgPill();
             currentRoomRef.once('value').then(() => { initialRoomLoad = false; });
 
             currentRoomRef.on('child_added', snap => {
                 const d = snap.val();
                 const key = snap.key;
-                
-                if(document.getElementById(key)) return;
+
+                // Stage 12: reconcile the optimistic (pending) copy of my
+                // own message with the server echo — same key, so swap in
+                // the server-rendered content and clear the sending state
+                // instead of appending a duplicate bubble.
+                const priorNode = document.getElementById(key);
+                if (priorNode) {
+                    if (priorNode.classList.contains('msg-pending')) {
+                        priorNode.classList.remove('msg-pending');
+                        const freshNode = createMessageNode(key, d, true);
+                        if (freshNode) priorNode.innerHTML = freshNode.innerHTML;
+                        updateReactionsUI(key, d.reactions);
+                    }
+                    return;
+                }
 
                 if (myProfile.blockedUsers && myProfile.blockedUsers.includes(d.uid)) return;
 
@@ -12809,15 +13092,23 @@ window.burnImage = function(element, url, key) {
                 const node = createMessageNode(key, d, false);
                 const chatMessagesDiv = document.getElementById('chat-messages');
                 if(chatMessagesDiv && node) {
+                    if (!initialRoomLoad) node.classList.add('msg-enter');
                     // Use requestAnimationFrame for smoother UI updates instead of direct append blocking
                     requestAnimationFrame(() => {
+                        // Stage 12 smart scroll: measure BEFORE appending.
+                        // Stick to the bottom for my own messages, during the
+                        // initial load, or when the user is already near the
+                        // bottom; otherwise hold the reading position and
+                        // surface the "new messages" pill instead of yanking.
+                        const nearBottom = chatNearBottom(chatMessagesDiv);
                         chatMessagesDiv.appendChild(node);
                         updateReactionsUI(key, d.reactions);
 
-                        // Only auto-scroll if user is already near bottom or it's my message
-                        const isAtBottom = chatMessagesDiv.scrollHeight - chatMessagesDiv.scrollTop - chatMessagesDiv.clientHeight < 100;
-                        if (d.uid === user.uid || isAtBottom || !initialRoomLoad) {
+                        if (initialRoomLoad || d.uid === user.uid || nearBottom) {
                             setTimeout(() => { chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; }, 10);
+                            hideNewMsgPill();
+                        } else {
+                            bumpNewMsgPill();
                         }
                     });
                 }
@@ -12901,7 +13192,6 @@ window.burnImage = function(element, url, key) {
             const div = document.createElement('div');
             div.className = isMe ? 'msg-row me' : 'msg-row other';
             div.id = key;
-            if (!isHistorical) div.style.animation = 'slideUp 0.3s ease';
 
             let tStr = d.time ? new Date(d.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "";
 
@@ -12935,10 +13225,10 @@ window.burnImage = function(element, url, key) {
                 if (d.burner) {
                     content = `<div class="chat-img" style="display:flex; align-items:center; justify-content:center; height:150px; background:#000; border:2px dashed var(--fire); cursor:pointer;" onclick="burnImage(this, '${sanitizedUrl}', '${key}')"><i class="fa-solid fa-fire" style="font-size:30px; color:var(--fire);"></i><span style="margin-left:10px; font-weight:700;">Tap to View (5s)</span></div>`;
                 } else {
-                    content = `<img src="${sanitizedUrl}" class="chat-img" onclick="openImageModal('${sanitizedUrl}')" alt="Chat Image">`;
+                    content = `<div class="chat-imgbox"><img src="${sanitizedUrl}" class="chat-img" onload="this.classList.add('img-ready')" onclick="openImageModal('${sanitizedUrl}')" alt="Chat Image"></div>`;
                 }
             }
-            else if (d.type === 'gif') content = `<img src="${sanitizedUrl}" class="chat-img gif-img" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}" onclick="openImageModal('${sanitizedUrl}')" alt="Chat GIF">`;
+            else if (d.type === 'gif') content = `<div class="chat-imgbox" style="border-color:${isMe ? (d.chatColor || 'var(--accent-yellow)') : 'var(--glass-border)'}"><img src="${sanitizedUrl}" class="chat-img gif-img" onload="this.classList.add('img-ready')" onclick="openImageModal('${sanitizedUrl}')" alt="Chat GIF"></div>`;
             else if (d.type === 'audio') content = `<audio controls src="${sanitizedUrl}" style="width: 200px; height: 35px; margin-top: 5px; outline: none;"></audio>`;
             else if (d.type === 'gameInvite') {
                 content = inviteCardHtml(key, d);
@@ -13136,6 +13426,7 @@ window.burnImage = function(element, url, key) {
             typingTimeout = setTimeout(() => { db.ref('typing/'+room+'/'+user.uid).remove(); }, 2000); 
         }
         
+        let typingHideTimer = null;
         function listenTyping() { 
             db.ref('typing/'+room).on('value', snap => { 
                 const typers = Object.values(snap.val() || {}).filter(t => t.name !== myProfile.name);
@@ -13143,12 +13434,19 @@ window.burnImage = function(element, url, key) {
                 if(!indicator) return; 
 
                 if (typers.length > 0) {
+                    // Stage 12: cancel any pending hide so bursts of typing
+                    // don't flicker the indicator off between keystrokes.
+                    if (typingHideTimer) { clearTimeout(typingHideTimer); typingHideTimer = null; }
                     const t = typers[0];
                     indicator.innerText = `${t.name} is typing...`;
                     indicator.style.display = "block";
-                } else {
-                    indicator.innerText = "";
-                    indicator.style.display = "none";
+                } else if (!typingHideTimer) {
+                    // Stage 12: debounce the disappearance by ~600ms.
+                    typingHideTimer = setTimeout(() => {
+                        typingHideTimer = null;
+                        indicator.innerText = "";
+                        indicator.style.display = "none";
+                    }, 600);
                 }
             }); 
         }
