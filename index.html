@@ -2460,6 +2460,11 @@ function sendNotification(title, body, icon) {
             const p = document.getElementById('passInput').value;
             
             if(!e || !p) return showToast("Please fill all fields", "error");
+
+            if (mode !== 'login') {
+                const cp = document.getElementById('confirmInput').value;
+                if (p !== cp) return showToast("Passwords do not match", "error");
+            }
             
             const btn = document.getElementById('mainBtn'); 
             btn.classList.add('btn-loading');
@@ -2542,6 +2547,8 @@ function sendNotification(title, body, icon) {
                 db.ref('friendRequests/'+user.uid).off();
                 db.ref('friends/'+user.uid).off();
                 db.ref('recentChats/'+user.uid).off();
+                db.ref('globalSettings/features').off();
+                db.ref('globalSettings/rooms').off();
                 db.ref('status/'+user.uid).off();
                 db.ref('status/'+user.uid).set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
             }
@@ -2573,36 +2580,51 @@ function sendNotification(title, body, icon) {
         // --- PROFILE LOGIC ---
 
         // --- SHOP CONSUMABLES ---
+        // Transactional Orbs debit: aborts if the LIVE balance is insufficient,
+        // so double-taps / multiple tabs can never spend the same Orbs twice.
+        // onDone(success, newBalance) runs when the transaction resolves.
+        function debitOrbs(amount, onDone) {
+            db.ref(`users/${user.uid}/orbs`).transaction(curr => {
+                curr = curr || 0;
+                if (curr < amount) return; // abort: insufficient balance
+                return curr - amount;
+            }, (error, committed, snap) => {
+                if (typeof onDone === 'function') onDone(!error && committed, snap ? snap.val() : null);
+            });
+        }
+
         window.buyMegaphone = function() {
             if (myProfile.orbs >= 1000) {
                 const msg = prompt("Enter your Global Megaphone message (Max 100 chars):");
                 if (msg && msg.trim().length > 0) {
                     const cleanMsg = msg.trim().substring(0, 100);
-                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 1000);
+                    debitOrbs(1000, (ok, newBalance) => {
+                        if (!ok) { showToast("Not enough Orbs! (1000 required)", "error"); return; }
 
-                    const newRef = db.ref('rooms/GlobalLobby').push();
-                    newRef.set({
-                        txt: `📢 MEGAPHONE: ${cleanMsg}`,
-                        type: 'text',
-                        uid: user.uid,
-                        name: myProfile.name,
-                        nameColor: myProfile.nameColor,
-                        pic: myProfile.pic,
-                        avatarRing: myProfile.avatarRing,
-                        badge: myProfile.badge,
-                        time: firebase.database.ServerValue.TIMESTAMP,
-                        burner: false,
-                        chatColor: 'linear-gradient(45deg, #ff00cc, #3333ff)',
-                        chatTextColor: '#fff',
-                        chatFont: myProfile.chatFont,
-                        read: false,
-                        delivered: false,
-                        edited: false
+                        const newRef = db.ref('rooms/GlobalLobby').push();
+                        newRef.set({
+                            txt: `📢 MEGAPHONE: ${cleanMsg}`,
+                            type: 'text',
+                            uid: user.uid,
+                            name: myProfile.name,
+                            nameColor: myProfile.nameColor,
+                            pic: myProfile.pic,
+                            avatarRing: myProfile.avatarRing,
+                            badge: myProfile.badge,
+                            time: firebase.database.ServerValue.TIMESTAMP,
+                            burner: false,
+                            chatColor: 'linear-gradient(45deg, #ff00cc, #3333ff)',
+                            chatTextColor: '#fff',
+                            chatFont: myProfile.chatFont,
+                            read: false,
+                            delivered: false,
+                            edited: false
+                        });
+
+                        document.getElementById('shopOrbCount').innerText = newBalance;
+                        showToast("Megaphone Activated!", "success");
+                        closeSheet();
                     });
-
-                    document.getElementById('shopOrbCount').innerText = myProfile.orbs - 1000;
-                    showToast("Megaphone Activated!", "success");
-                    closeSheet();
                 }
             } else {
                 showToast("Not enough Orbs! (1000 required)", "error");
@@ -2613,37 +2635,39 @@ function sendNotification(title, body, icon) {
             if (!currentChatFriend) return showToast("You must be in a DM to send a Gift Box!", "error");
 
             if (myProfile.orbs >= 300) {
-                db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 300);
+                debitOrbs(300, (ok, newBalance) => {
+                    if (!ok) { showToast("Not enough Orbs! (300 required)", "error"); return; }
 
-                const boxValue = Math.floor(Math.random() * (500 - 50 + 1) + 50); // random between 50 and 500
-                const giftId = `gift_${Date.now()}`;
+                    const boxValue = Math.floor(Math.random() * (500 - 50 + 1) + 50); // random between 50 and 500
+                    const giftId = `gift_${Date.now()}`;
 
-                const newRef = db.ref('rooms/'+room).push();
-                newRef.set({
-                    txt: `🎁 Sent a Mystery Gift Box!`,
-                    type: 'gift',
-                    giftValue: boxValue,
-                    giftId: giftId,
-                    giftOpened: false,
-                    uid: user.uid,
-                    name: myProfile.name,
-                    nameColor: myProfile.nameColor,
-                    pic: myProfile.pic,
-                    avatarRing: myProfile.avatarRing,
-                    badge: myProfile.badge,
-                    time: firebase.database.ServerValue.TIMESTAMP,
-                    burner: false,
-                    chatColor: '#ff007f',
-                    chatTextColor: '#fff',
-                    chatFont: myProfile.chatFont,
-                    read: false,
-                    delivered: false,
-                    edited: false
+                    const newRef = db.ref('rooms/'+room).push();
+                    newRef.set({
+                        txt: `🎁 Sent a Mystery Gift Box!`,
+                        type: 'gift',
+                        giftValue: boxValue,
+                        giftId: giftId,
+                        giftOpened: false,
+                        uid: user.uid,
+                        name: myProfile.name,
+                        nameColor: myProfile.nameColor,
+                        pic: myProfile.pic,
+                        avatarRing: myProfile.avatarRing,
+                        badge: myProfile.badge,
+                        time: firebase.database.ServerValue.TIMESTAMP,
+                        burner: false,
+                        chatColor: '#ff007f',
+                        chatTextColor: '#fff',
+                        chatFont: myProfile.chatFont,
+                        read: false,
+                        delivered: false,
+                        edited: false
+                    });
+
+                    document.getElementById('shopOrbCount').innerText = newBalance;
+                    showToast("Gift Box Sent!", "success");
+                    closeSheet();
                 });
-
-                document.getElementById('shopOrbCount').innerText = myProfile.orbs - 300;
-                showToast("Gift Box Sent!", "success");
-                closeSheet();
             } else {
                 showToast("Not enough Orbs! (300 required)", "error");
             }
@@ -2653,11 +2677,23 @@ function sendNotification(title, body, icon) {
             if (user.uid === senderUid) return showToast("You cannot open your own gift!", "error");
 
             const ref = db.ref('rooms/'+room+'/'+key);
-            ref.once('value', snap => {
-                if(snap.exists() && !snap.val().giftOpened) {
-                    ref.update({ giftOpened: true, txt: `🎉 Opened Gift Box: +${value} Orbs!` });
-                    db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + value);
-                    showToast(`You won ${value} Orbs!`, "success");
+            // Claim the box transactionally and credit the value stored in the
+            // database (giftValue) — never the click-handler argument, which a
+            // tampered client could inflate. Aborts if already opened.
+            ref.transaction(curr => {
+                if (!curr || curr.giftOpened) return; // abort
+                const gv = parseInt(curr.giftValue, 10) || 0;
+                curr.giftOpened = true;
+                curr.giftValue = gv;
+                curr.txt = `🎉 Opened Gift Box: +${gv} Orbs!`;
+                return curr;
+            }, (error, committed, snap) => {
+                if (error) {
+                    showToast("Could not open gift. Try again.", "error");
+                } else if (committed && snap) {
+                    const gv = parseInt(snap.val().giftValue, 10) || 0;
+                    db.ref(`users/${user.uid}/orbs`).transaction(curr => (curr || 0) + gv);
+                    showToast(`You won ${gv} Orbs!`, "success");
                     playReactionAnimation();
                 } else {
                     showToast("Gift already opened!", "error");
@@ -2669,15 +2705,17 @@ function sendNotification(title, body, icon) {
         window.activateGhostMode = function() {
             if (myProfile.orbs >= 200) {
                 if (confirm("Spend 200 Orbs to activate Ghost Mode for 24 hours? You will be hidden from the online list and won't send read receipts.")) {
-                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 200);
-                    myProfile.ghostModeUntil = Date.now() + (24 * 60 * 60 * 1000);
-                    saveProfile();
+                    debitOrbs(200, (ok, newBalance) => {
+                        if (!ok) { showToast("Not enough Orbs!", "error"); return; }
+                        myProfile.ghostModeUntil = Date.now() + (24 * 60 * 60 * 1000);
+                        saveProfile();
 
-                    // Force status to offline
-                    db.ref('status/' + user.uid).set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
+                        // Force status to offline
+                        db.ref('status/' + user.uid).set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
 
-                    showToast("Ghost Mode Activated!", "success");
-                    document.getElementById('shopOrbCount').innerText = myProfile.orbs - 200;
+                        showToast("Ghost Mode Activated!", "success");
+                        document.getElementById('shopOrbCount').innerText = newBalance;
+                    });
                 }
             } else {
                 showToast("Not enough Orbs!", "error");
@@ -2689,19 +2727,22 @@ function sendNotification(title, body, icon) {
                 if (confirm("WARNING: Spend 500 Orbs to NUKE this chat history for both of you? This cannot be undone.")) {
                     const roomId = user.uid < targetUid ? user.uid + '_' + targetUid : targetUid + '_' + user.uid;
 
-                    // Nuke room history
-                    db.ref('rooms/'+roomId).remove();
+                    // Charge orbs first (transactional); only nuke if the debit commits
+                    debitOrbs(500, (ok) => {
+                        if (!ok) { showToast("Not enough Orbs!", "error"); return; }
 
-                    // Nuke recent chats
-                    db.ref(`recentChats/${user.uid}/${targetUid}`).remove();
-                    db.ref(`recentChats/${targetUid}/${user.uid}`).remove();
+                        // Nuke room history
+                        db.ref('rooms/'+roomId).remove();
 
-                    // Charge orbs
-                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 500);
-                    saveProfile();
+                        // Nuke recent chats
+                        db.ref(`recentChats/${user.uid}/${targetUid}`).remove();
+                        db.ref(`recentChats/${targetUid}/${user.uid}`).remove();
 
-                    showToast("Chat Nuked 💥", "success");
-                    leaveChat();
+                        saveProfile();
+
+                        showToast("Chat Nuked 💥", "success");
+                        leaveChat();
+                    });
                 }
             } else {
                 showToast("Not enough Orbs!", "error");
@@ -2788,14 +2829,16 @@ function sendNotification(title, body, icon) {
                     roomsArr.sort((a,b) => (a.order || 0) - (b.order || 0));
 
                     roomsArr.forEach(r => {
+                        const safeRoomName = escapeHTML(r.name || '');
+                        const safeRoomDesc = r.desc ? escapeHTML(r.desc) : '';
                         container.innerHTML += `
                             <div class="hub-card ripple-target" onclick="openSheet('${r.name}', 'global', '${r.key}')">
                                 <div class="card-icon">${r.icon || '<i class="fa-solid fa-earth-americas"></i>'}</div>
                                 <div class="card-text">
-                                    <h3>${r.name}</h3>
+                                    <h3>${safeRoomName}</h3>
                                     <div class="pill-row" style="justify-content: flex-start;">
                                         <span class="status-pill"><div class="dot green"></div> Live</span>
-                                        ${r.desc ? `<span class="status-pill">${r.desc}</span>` : `<span class="status-pill">Public</span>`}
+                                        ${r.desc ? `<span class="status-pill">${safeRoomDesc}</span>` : `<span class="status-pill">Public</span>`}
                                     </div>
                                 </div>
                             </div>
@@ -3125,7 +3168,7 @@ function sendNotification(title, body, icon) {
 
                 const iconHtml = bdg && bdg.icon ? bdg.icon : '';
                 const un = document.getElementById('upName');
-                un.innerHTML = `${uData.name} ${iconHtml} <span id="upOnlineDot" class="dot grey"></span>`;
+                un.innerHTML = `${escapeHTML(uData.name || '')} ${iconHtml} <span id="upOnlineDot" class="dot grey"></span>`;
                 un.style.color = 'var(--text-primary)';
                 un.style.background = 'none';
                 un.style.webkitTextFillColor = 'initial';
@@ -3197,12 +3240,14 @@ function sendNotification(title, body, icon) {
 
         window.tipUser = function(targetUid, targetName) {
             if (myProfile.orbs < 50) return showToast("Not enough Orbs to tip!", "error");
-            
-            db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - 50);
-            db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + 50);
-            
-            showToast(`Tipped 50 Orbs to ${targetName}!`, 'success');
-            closeSheet();
+
+            debitOrbs(50, (ok) => {
+                if (!ok) { showToast("Not enough Orbs to tip!", "error"); return; }
+                db.ref(`users/${targetUid}/orbs`).transaction(curr => (curr || 0) + 50);
+
+                showToast(`Tipped 50 Orbs to ${targetName}!`, 'success');
+                closeSheet();
+            });
         }
 
         // --- ORBS SHOP (WITH BADGES) ---
@@ -3322,31 +3367,33 @@ function sendNotification(title, body, icon) {
                 showToast(item.name + " equipped!", "success");
             } else {
                 if (myProfile.orbs >= item.price) {
-                    db.ref(`users/${user.uid}/orbs`).set(myProfile.orbs - item.price);
-                    unlocked.push(itemId); 
-                    myProfile.unlocked = unlocked;
-                    
-                    if (item.isCustom) {
+                    debitOrbs(item.price, (ok, newBalance) => {
+                        if (!ok) { showToast("Not enough Orbs! Earn more by chatting.", "error"); return; }
+                        unlocked.push(itemId);
+                        myProfile.unlocked = unlocked;
+
+                        if (item.isCustom) {
+                            saveProfile();
+                            renderShop(tab);
+                            document.getElementById('shopOrbCount').innerText = newBalance;
+                            showToast("Successfully purchased " + item.name + "!", "success");
+                            handleShopClick(tab, itemId); // Open picker immediately after purchase
+                            return;
+                        }
+
+                        if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; }
+                        else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
+                        else if (tab === 'badges') { myProfile.badge = item.id; }
+                        else if (tab === 'fonts') { myProfile.chatFont = item.id; }
+                        else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
+                        else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
+                        else if (tab === 'sounds') { myProfile.chatSound = item.id; }
+
                         saveProfile();
                         renderShop(tab);
-                        document.getElementById('shopOrbCount').innerText = myProfile.orbs - item.price;
+                        document.getElementById('shopOrbCount').innerText = newBalance;
                         showToast("Successfully purchased " + item.name + "!", "success");
-                        handleShopClick(tab, itemId); // Open picker immediately after purchase
-                        return;
-                    }
-
-                    if (tab === 'bubbles') { myProfile.chatColor = item.color; myProfile.chatTextColor = item.text; } 
-                    else if (tab === 'themes') { myProfile.appTheme = item.id; window.applyAppTheme(item.id); }
-                    else if (tab === 'badges') { myProfile.badge = item.id; }
-                    else if (tab === 'fonts') { myProfile.chatFont = item.id; }
-                    else if (tab === 'nameColors') { myProfile.nameColor = item.id; }
-                    else if (tab === 'avatarRings') { myProfile.avatarRing = item.id; }
-                    else if (tab === 'sounds') { myProfile.chatSound = item.id; }
-                    
-                    saveProfile(); 
-                    renderShop(tab); 
-                    document.getElementById('shopOrbCount').innerText = myProfile.orbs - item.price;
-                    showToast("Successfully purchased " + item.name + "!", "success");
+                    });
                 } else { 
                     showToast("Not enough Orbs! Earn more by chatting.", "error"); 
                 }
@@ -3384,13 +3431,16 @@ function sendNotification(title, body, icon) {
                     
                     chats.forEach(c => {
                         const safeName = c.name.replace(/'/g, "\\'");
+                        const safeNameHtml = escapeHTML(c.name || '');
+                        const safePicHtml = escapeHTML(c.pic || '');
+                        const safeLastMsg = escapeHTML(c.lastMsg || '');
                         const unreadBadge = c.unreadCount ? `<div style="background:var(--error-red); color:white; font-size:10px; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; right:15px; top:50%; transform:translateY(-50%); box-shadow: 0 0 10px var(--error-red);">${c.unreadCount}</div>` : '';
                         html += `
                         <div class="chat-list-card ripple-target" onclick="openDM('${c.uid}', '${safeName}', '${c.pic}')">
-                            <img src="${c.pic}" class="chat-list-avatar" alt="${c.name} avatar">
+                            <img src="${safePicHtml}" class="chat-list-avatar" alt="${safeNameHtml} avatar">
                             <div class="chat-list-info" style="padding-right: 30px;">
-                                <h3 class="chat-list-name">${c.name}</h3>
-                                <p class="chat-list-msg" id="recent-msg-${c.uid}">${c.lastMsg}</p>
+                                <h3 class="chat-list-name">${safeNameHtml}</h3>
+                                <p class="chat-list-msg" id="recent-msg-${c.uid}">${safeLastMsg}</p>
                             </div>
                             ${unreadBadge}
                         </div>`;
@@ -3486,11 +3536,13 @@ function sendNotification(title, body, icon) {
                         if (ud.name && ud.name.toLowerCase().includes(query) && child.key !== user.uid && !myFriendsMap[child.key]) {
                             found = true; 
                             const safeTargetName = ud.name.replace(/'/g, "\\'");
+                            const safeUdNameHtml = escapeHTML(ud.name || '');
+                            const safeUdPicHtml = escapeHTML(ud.pic || '');
                             resultsBox.innerHTML += `
                                 <div class="friend-list-item">
                                     <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                        <img src="${ud.pic}" class="friend-avatar" alt="${ud.name} avatar">
-                                        <span class="friend-name">${ud.name}</span>
+                                        <img src="${safeUdPicHtml}" class="friend-avatar" alt="${safeUdNameHtml} avatar">
+                                        <span class="friend-name">${safeUdNameHtml}</span>
                                     </div>
                                     <button class="friend-action-btn" onclick="sendFriendRequest('${child.key}', '${safeTargetName}', '${ud.pic}')">Add VIP</button>
                                 </div>`;
@@ -3529,11 +3581,13 @@ function sendNotification(title, body, icon) {
                     snap.forEach(child => {
                         const r = child.val(); 
                         const safeName = r.name.replace(/'/g, "\\'");
+                        const safeReqNameHtml = escapeHTML(r.name || '');
+                        const safeReqPicHtml = escapeHTML(r.pic || '');
                         reqBox.innerHTML += `
                             <div class="friend-list-item" style="border: 1px solid var(--accent-yellow);">
                                 <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                    <img src="${r.pic}" class="friend-avatar" alt="${r.name} avatar">
-                                    <span class="friend-name">${r.name}</span>
+                                    <img src="${safeReqPicHtml}" class="friend-avatar" alt="${safeReqNameHtml} avatar">
+                                    <span class="friend-name">${safeReqNameHtml}</span>
                                 </div>
                                 <div style="display:flex; gap:5px;">
                                     <button class="friend-action-btn" onclick="acceptFriend('${child.key}', '${safeName}', '${r.pic}')">Accept</button>
@@ -3576,8 +3630,8 @@ function sendNotification(title, body, icon) {
                             fBox.innerHTML += `
                                 <div class="friend-list-item">
                                     <div class="friend-info" onclick="openUserProfile('${child.key}')" style="cursor:pointer;">
-                                        <img src="${f.pic}" class="friend-avatar" alt="${f.name} avatar">
-                                        <span class="friend-name">${f.name} <span class="${dotClass}" style="margin-left: 5px;"></span></span>
+                                        <img src="${escapeHTML(f.pic || '')}" class="friend-avatar" alt="${escapeHTML(f.name || '')} avatar">
+                                        <span class="friend-name">${escapeHTML(f.name || '')} <span class="${dotClass}" style="margin-left: 5px;"></span></span>
                                     </div>
                                     <button class="friend-action-btn" style="background:var(--glass-surface); color:var(--text-primary); border: 1px solid var(--glass-border);" onclick="openDM('${child.key}', '${safeFName}', '${f.pic}')">
                                         <i class="fa-solid fa-message"></i> Chat
@@ -3738,7 +3792,7 @@ function sendNotification(title, body, icon) {
                 }
 
                 if (!found) {
-                    db.ref('queue/' + user.uid).set(true);
+                    db.ref('queue/' + user.uid).set({ active: true, name: (typeof myProfile !== 'undefined' && myProfile && myProfile.name) || 'Stranger' });
 
                     db.ref('queue/' + user.uid).on('value', matchSnap => {
                         const val = matchSnap.val();
@@ -3886,6 +3940,13 @@ function sendNotification(title, body, icon) {
         function escapeAdminHTML(str) {
             if(!str) return '';
             return str.replace(/[&<>'"]/g,
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
+            );
+        }
+
+        function escapeHTML(str) {
+            if(str === null || str === undefined) return '';
+            return String(str).replace(/[&<>'"]/g,
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])
             );
         }
@@ -4337,8 +4398,11 @@ function sendNotification(title, body, icon) {
             }).catch(err => showToast(err.message, "error"));
         }
 
+        let adminRoomsListening = false;
         window.adminLoadRooms = function() {
             if(!myProfile.isAdmin) return;
+            if (adminRoomsListening) return; // attach once — re-opening the sheet must not stack listeners
+            adminRoomsListening = true;
             db.ref('globalSettings/rooms').on('value', snap => {
                 const container = document.getElementById('adminRoomsList');
                 if(!container) return;
@@ -5558,7 +5622,8 @@ function sendNotification(title, body, icon) {
                     if(mySymbol === 'X') document.getElementById('rematchLudoBtn').style.display = 'block'; else document.getElementById('ludoStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('ludoTurnIndicator').style.display = 'none';
                     document.getElementById('ludoDiceContainer').style.display = 'none';
-                    let wName = ludoState[`p${parseInt(ludoState.winner)+1}Name`] || 'Someone';
+                    let winnerIndex = activeLudoTeams.indexOf(parseInt(ludoState.winner));
+                    let wName = ludoState[`p${winnerIndex+1}Name`] || 'Someone';
                     document.getElementById('ludoStatus').innerText = `${wName} Wins!`;
                 } else {
                     document.getElementById('rematchLudoBtn').style.display = 'none';
@@ -6164,6 +6229,7 @@ function sendNotification(title, body, icon) {
 
                 if(data.winner) {
                     cancelAnimationFrame(stopTimerRaf);
+                    stopTimerRaf = null; // reset so the next round's loop can start on BOTH clients
                     document.getElementById('stActionBtn').style.display = 'none';
                     playWinSound(); if(mySymbol === 'X') document.getElementById('rematchStBtn').style.display = 'block'; else document.getElementById('stStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('stStatus').innerText = data.winner === 'Draw' ? "It's a Tie!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
@@ -6505,12 +6571,14 @@ function sendNotification(title, body, icon) {
         }
 
         // --- COIN FLIP ---
+        let coinFlipResolving = false;
         window.startCoinFlipLoop = function() {
             gameRef.on('value', snap => {
                 const data = snap.val();
                 if(!data) return;
 
                 if(data.winner) {
+                    coinFlipResolving = false;
                     playWinSound();
                     if(mySymbol === 'X') document.getElementById('rematchCfBtn').style.display = 'block'; else document.getElementById('cfStatus').innerText += ' (Waiting for Host to restart)';
                     document.getElementById('cfControls').style.display = 'none';
@@ -6526,7 +6594,8 @@ function sendNotification(title, body, icon) {
                     }
                 }
 
-                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner) {
+                if(data.p1Choice !== '' && data.p2Choice !== '' && mySymbol === 'X' && !data.winner && !coinFlipResolving) {
+                    coinFlipResolving = true; // resolve exactly once; snapshots during the delay must not re-roll
                     // Server resolve
                     let res = Math.random() > 0.5 ? 'Heads' : 'Tails';
                     let p1Win = data.p1Choice === res;
@@ -6554,6 +6623,7 @@ function sendNotification(title, body, icon) {
         }
         window.resetCoinFlip = function() {
             if(gameRef && mySymbol === 'X') {
+                coinFlipResolving = false;
                 gameRef.update({ p1Choice: '', p2Choice: '', result: '', winner: null });
             }
         }
@@ -6777,6 +6847,7 @@ window.burnImage = function(element, url, key) {
         window.leaveChat = function() { 
             if (currentRoomRef) currentRoomRef.off(); 
             if (room) db.ref('typing/'+room).off(); 
+            if (currentChatFriend) db.ref('status/' + currentChatFriend.uid).off(); // DM presence listener cleanup
             
             currentChatFriend = null; 
             room = '';
@@ -7215,7 +7286,7 @@ window.burnImage = function(element, url, key) {
                 }
 
                 if (currentEditingKey) {
-                    db.ref('rooms/'+room+'/'+currentEditingKey).update({
+                    db.ref('rooms/'+currentRoom+'/'+currentEditingKey).update({
                         txt: txt,
                         edited: true
                     });
@@ -7258,10 +7329,10 @@ window.burnImage = function(element, url, key) {
 
                 let newRef = null;
                 if (!navigator.onLine) {
-                    offlineQueue.push({ room: room, data: msgData });
+                    offlineQueue.push({ room: currentRoom, data: msgData });
                     showToast("Message queued offline", "error");
                 } else {
-                    newRef = db.ref('rooms/'+room).push();
+                    newRef = db.ref('rooms/'+currentRoom).push();
                     newRef.set(msgData).catch(err => console.error(err.message));
                 }
 
@@ -7399,7 +7470,7 @@ window.burnImage = function(element, url, key) {
                 if (d.edited) {
                     const contentEl = document.getElementById(`content-${key}`);
                     if (contentEl && d.type === 'text') {
-                        let safeContent = d.txt;
+                        let safeContent = escapeHTML(d.txt || '');
 
                         // Link Previews Logic Re-applied
                         const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -7407,11 +7478,11 @@ window.burnImage = function(element, url, key) {
                         if (urls && urls.length > 0) {
                             const url = urls[0];
                             const safePreviewUrl = document.createElement('a');
-                            safePreviewUrl.href = url;
+                            safePreviewUrl.href = url.replace(/&amp;/g, '&');
 
                             safeContent = safeContent.replace(urlRegex, function(u) {
                                 const su = document.createElement('a');
-                                su.href = u;
+                                su.href = u.replace(/&amp;/g, '&');
                                 return '<a href="' + su.href + '" target="_blank" style="color: inherit; text-decoration: underline;">' + su.href + '</a>';
                             });
                         }
@@ -7474,7 +7545,7 @@ window.burnImage = function(element, url, key) {
             else if (d.type === 'audio') content = `<audio controls src="${sanitizedUrl}" style="width: 200px; height: 35px; margin-top: 5px; outline: none;"></audio>`;
             else if (d.type === 'gift') {
                 if (d.giftOpened) {
-                    content = `<div style="font-weight: 700;">${d.txt}</div>`;
+                    content = `<div style="font-weight: 700;">${escapeHTML(d.txt || '')}</div>`;
                 } else {
                     const giftVal = d.giftValue;
                     const sender = d.uid;
@@ -7482,6 +7553,9 @@ window.burnImage = function(element, url, key) {
                 }
             }
             else {
+                // Escape user text BEFORE linkification so stored HTML/JS can never execute (XSS fix)
+                content = escapeHTML(content || '');
+
                 // Link Previews
                 const urlRegex = /(https?:\/\/[^\s]+)/g;
                 const urls = content.match(urlRegex);
@@ -7491,12 +7565,12 @@ window.burnImage = function(element, url, key) {
 
                     // Sanitize URLs to prevent XSS payloads inside <a href> or onclick strings
                     const safePreviewUrl = document.createElement('a');
-                    safePreviewUrl.href = url;
+                    safePreviewUrl.href = url.replace(/&amp;/g, '&');
                     const sPreviewUrl = safePreviewUrl.href;
 
                     content = content.replace(urlRegex, function(u) {
                         const su = document.createElement('a');
-                        su.href = u;
+                        su.href = u.replace(/&amp;/g, '&');
                         return '<a href="' + su.href + '" target="_blank" style="color: ' + (isMe ? 'inherit' : 'var(--accent-yellow)') + '; text-decoration: underline;">' + su.href + '</a>';
                     });
 
@@ -7538,7 +7612,8 @@ window.burnImage = function(element, url, key) {
                 }
             }
 
-            let safeName = d.name || "Unknown User";
+            let safeName = escapeHTML(d.name || "Unknown User");
+            const safePic = escapeHTML(d.pic || '');
             let badgeHtml = d.badge || '';
 
             const nColor = shopData.nameColors.find(n => n.id === (d.nameColor || 'nc_white'));
@@ -7560,17 +7635,17 @@ window.burnImage = function(element, url, key) {
             // DISCORD STYLE PROFILE CLICKER WITH BADGE
             let header = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer;" onclick="openUserProfile('${d.uid}')">
-                    <img src="${d.pic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; background: black; ${ringStyle}" alt="${safeName} Avatar">
+                    <img src="${safePic}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; background: black; ${ringStyle}" alt="${safeName} Avatar">
                     <span style="font-weight:700; font-size:11px; opacity:0.8; ${nameStyle}">${isMe ? 'You' : safeName} ${badgeHtml}</span>
                 </div>`;
 
             let replyHtml = '';
             if (d.replyTo) {
-                let rPreview = d.replyTo.type === 'text' ? d.replyTo.txt : (d.replyTo.type === 'image' ? '🖼️ Image' : (d.replyTo.type === 'audio' ? '🎤 Voice Message' : '🎞️ GIF'));
+                let rPreview = d.replyTo.type === 'text' ? escapeHTML(d.replyTo.txt || '') : (d.replyTo.type === 'image' ? '🖼️ Image' : (d.replyTo.type === 'audio' ? '🎤 Voice Message' : '🎞️ GIF'));
                 replyHtml = `
                 <div onclick="scrollToMessage('${d.replyTo.key}')" style="display:flex; align-items:center; gap:8px; font-size:11px; opacity:0.7; margin-bottom:5px; cursor:pointer; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; max-width: 100%;">
                     <i class="fa-solid fa-reply" style="transform: scaleX(-1);"></i>
-                    <span style="font-weight:700;">${d.replyTo.name}:</span>
+                    <span style="font-weight:700;">${escapeHTML(d.replyTo.name || '')}:</span>
                     <span style="overflow:hidden; text-overflow:ellipsis;">${rPreview}</span>
                 </div>`;
             }
@@ -7637,13 +7712,13 @@ window.burnImage = function(element, url, key) {
             if (now - lastTypingUpdate > 500) {
                 // Throttle Firebase writes to prevent UI thread blocking and lag
                 setTimeout(() => {
-                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, typing: true, ts: Date.now() });
                 }, 0);
                 lastTypingUpdate = now;
             } else {
                 if(window.typingThrottleTimer) clearTimeout(window.typingThrottleTimer);
                 window.typingThrottleTimer = setTimeout(() => {
-                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, text: inputVal });
+                    db.ref('typing/'+room+'/'+user.uid).set({ name: myProfile.name, typing: true, ts: Date.now() });
                     lastTypingUpdate = Date.now();
                 }, 500);
             }
@@ -7660,8 +7735,7 @@ window.burnImage = function(element, url, key) {
 
                 if (typers.length > 0) {
                     const t = typers[0];
-                    let previewText = t.text && t.text.length > 0 ? `"${t.text}..."` : "is typing...";
-                    indicator.innerText = `${t.name} ${previewText}`;
+                    indicator.innerText = `${t.name} is typing...`;
                     indicator.style.display = "block";
                 } else {
                     indicator.innerText = "";
