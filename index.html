@@ -1638,7 +1638,7 @@
                     </div>
                     <span class="v3-cta">Play</span>
                 </div>
-                <p class="v3-lbl">All Games &middot; 13</p>
+                <p class="v3-lbl">All Games &middot; 18</p>
                 <div class="v3-games-grid">
                     <div class="v3-gcard ripple-target" onclick="findStrangerGame('TicTacToe')">
                         <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
@@ -1715,6 +1715,31 @@
                         <div class="v3-gcard-name">Memory Match <span class="v3-chip-new">NEW</span></div>
                         <div class="v3-gcard-sub">Duel</div>
                     </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Battleship')">
+                        <div class="v3-gcard-tile" style="color: #7DD3FC;"><i class="fa-solid fa-ship"></i></div>
+                        <div class="v3-gcard-name">Battleship <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Naval duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Reversi')">
+                        <div class="v3-gcard-tile" style="color: #D1D5DB;"><i class="fa-solid fa-circle-half-stroke"></i></div>
+                        <div class="v3-gcard-name">Reversi <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Flip to win</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Gomoku')">
+                        <div class="v3-gcard-tile" style="color: #FCA5A5;"><i class="fa-solid fa-grip"></i></div>
+                        <div class="v3-gcard-name">Gomoku <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Five in a row</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Snakes')">
+                        <div class="v3-gcard-tile" style="color: #86EFAC;"><i class="fa-solid fa-stairs"></i></div>
+                        <div class="v3-gcard-name">Snakes &amp; Ladders <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Race to 100</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('PigDice')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-piggy-bank"></i></div>
+                        <div class="v3-gcard-name">Pig Dice <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">First to bank 100</div>
+                    </div>
                 </div>
             </div>
 
@@ -1788,6 +1813,31 @@
                         <div class="v3-gcard-tile" style="color: #C4B5FD;"><i class="fa-solid fa-clone"></i></div>
                         <div class="v3-gcard-name">Memory Match</div>
                         <div class="v3-gcard-sub">Duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Battleship')">
+                        <div class="v3-gcard-tile" style="color: #7DD3FC;"><i class="fa-solid fa-ship"></i></div>
+                        <div class="v3-gcard-name">Battleship</div>
+                        <div class="v3-gcard-sub">Naval duel</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Reversi')">
+                        <div class="v3-gcard-tile" style="color: #D1D5DB;"><i class="fa-solid fa-circle-half-stroke"></i></div>
+                        <div class="v3-gcard-name">Reversi</div>
+                        <div class="v3-gcard-sub">Flip to win</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Gomoku')">
+                        <div class="v3-gcard-tile" style="color: #FCA5A5;"><i class="fa-solid fa-grip"></i></div>
+                        <div class="v3-gcard-name">Gomoku</div>
+                        <div class="v3-gcard-sub">Five in a row</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Snakes')">
+                        <div class="v3-gcard-tile" style="color: #86EFAC;"><i class="fa-solid fa-stairs"></i></div>
+                        <div class="v3-gcard-name">Snakes &amp; Ladders</div>
+                        <div class="v3-gcard-sub">Race to 100</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('PigDice')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-piggy-bank"></i></div>
+                        <div class="v3-gcard-name">Pig Dice</div>
+                        <div class="v3-gcard-sub">First to bank 100</div>
                     </div>
                 </div>
             </div>
@@ -1970,7 +2020,7 @@
                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
                     <div class="v3-row-mid">
                         <div class="v3-row-name">Mini-Games</div>
-                        <div class="v3-row-sub">Live play &middot; 13 games with strangers</div>
+                        <div class="v3-row-sub">Live play &middot; 18 games with strangers</div>
                     </div>
                     <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
@@ -5823,11 +5873,11 @@ function sendNotification(title, body, icon) {
         // Fixed display names for every game key. Invite cards and the
         // profile record are built ONLY from this map (never from raw
         // message data), so a crafted message can't inject markup.
-        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match' };
+        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice' };
         // Games a friend can be challenged to (every 2P game + Ludo 2P only;
         // Ludo 3P/4P stay matchmaking-only).
-        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch'];
-        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch' };
+        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice'];
+        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice' };
 
         function gameStatsTotals(stats) {
             let w = 0, l = 0, d = 0;
@@ -5981,6 +6031,26 @@ function sendNotification(title, body, icon) {
                 document.getElementById('mmBoard').innerHTML = '';
                 document.getElementById('mmScoreX').innerText = '0';
                 document.getElementById('mmScoreO').innerText = '0';
+            } else if (gameType === 'Battleship') {
+                document.getElementById('battleshipOverlay').style.display = 'flex';
+                document.getElementById('bsStatus').innerText = statusText;
+                resetBsLocal();
+                renderBsBoards();
+            } else if (gameType === 'Reversi') {
+                document.getElementById('reversiOverlay').style.display = 'flex';
+                document.getElementById('rvStatus').innerText = statusText;
+                renderRvBoard();
+            } else if (gameType === 'Gomoku') {
+                document.getElementById('gomokuOverlay').style.display = 'flex';
+                document.getElementById('gmStatus').innerText = statusText;
+                renderGmBoard();
+            } else if (gameType === 'Snakes') {
+                document.getElementById('snakesOverlay').style.display = 'flex';
+                document.getElementById('snStatus').innerText = statusText;
+                renderSnBoard();
+            } else if (gameType === 'PigDice') {
+                document.getElementById('pigDiceOverlay').style.display = 'flex';
+                document.getElementById('pdStatus').innerText = statusText;
             }
         }
 
@@ -6029,6 +6099,11 @@ function sendNotification(title, body, icon) {
                     }
                     return { board: emojis, flipped: Array(16).fill(false), matched: Array(16).fill(false), activeFlips: [], turn: 'X', scoreX: 0, scoreO: 0, winner: null };
                 }
+                case 'Battleship': return { phase: 'place', turn: 'P1', winner: null, ready1: false, ready2: false, fleet1: null, fleet2: null, shots1: null, shots2: null };
+                case 'Reversi': return { board: rvInitialBoard(), turn: 'P1', winner: null, lastPass: null };
+                case 'Gomoku': return { board: Array(225).fill(''), turn: 'P1', winner: null, lastMove: null };
+                case 'Snakes': return { pos1: 0, pos2: 0, turn: 'P1', dice: 0, fx: '', fxTo: 0, lastBy: null, winner: null };
+                case 'PigDice': return { bank1: 0, bank2: 0, turnTotal: 0, turn: 'P1', dice: 0, bust: false, winner: null };
                 case 'Ludo2': {
                     const baseTokens = () => [{ id: 0, state: 'base', stepsTaken: -1 }, { id: 1, state: 'base', stepsTaken: -1 }, { id: 2, state: 'base', stepsTaken: -1 }, { id: 3, state: 'base', stepsTaken: -1 }];
                     return { turn: 0, diceRoll: 0, lastRollWasSix: false, winner: null, state: 'playing', targetPlayers: 2, turnStamp: Date.now(), tokens_0: baseTokens(), tokens_2: baseTokens() };
@@ -6272,7 +6347,7 @@ function sendNotification(title, body, icon) {
 
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -6328,6 +6403,26 @@ function sendNotification(title, body, icon) {
                 document.getElementById('mmBoard').innerHTML = ''; // force a fresh card grid on session start
                 document.getElementById('mmScoreX').innerText = '0';
                 document.getElementById('mmScoreO').innerText = '0';
+            } else if (gameType === 'Battleship') {
+                document.getElementById('battleshipOverlay').style.display = 'flex';
+                document.getElementById('bsStatus').innerText = "Searching for opponent...";
+                resetBsLocal();
+                renderBsBoards(); // build both 10x10 grids up front
+            } else if (gameType === 'Reversi') {
+                document.getElementById('reversiOverlay').style.display = 'flex';
+                document.getElementById('rvStatus').innerText = "Searching for opponent...";
+                renderRvBoard();
+            } else if (gameType === 'Gomoku') {
+                document.getElementById('gomokuOverlay').style.display = 'flex';
+                document.getElementById('gmStatus').innerText = "Searching for opponent...";
+                renderGmBoard();
+            } else if (gameType === 'Snakes') {
+                document.getElementById('snakesOverlay').style.display = 'flex';
+                document.getElementById('snStatus').innerText = "Searching for opponent...";
+                renderSnBoard();
+            } else if (gameType === 'PigDice') {
+                document.getElementById('pigDiceOverlay').style.display = 'flex';
+                document.getElementById('pdStatus').innerText = "Searching for opponent...";
             }
 
             if (gameType.startsWith('Ludo')) {
@@ -6800,6 +6895,171 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchMmBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType === 'Battleship') {
+                document.getElementById('bsStatus').innerText = "Opponent found! Place your fleet...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    // Guarded init: in a challenge room the guest may already
+                    // have submitted a fleet before this session start runs,
+                    // so only write the initial state into a room that has
+                    // no phase yet (matchmaking rooms are always fresh).
+                    gameRef.once('value', snap => {
+                        const d = snap.val();
+                        if (!d || !d.phase) {
+                            gameRef.update({ phase: 'place', turn: 'P1', winner: null, ready1: false, ready2: false, fleet1: null, fleet2: null, shots1: null, shots2: null });
+                        }
+                    });
+                }
+                renderBsBoards();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data) return;
+                    bsData = data;
+                    renderBsAll(data);
+                });
+            } else if (activeGameType === 'Reversi') {
+                document.getElementById('rvStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ board: rvInitialBoard(), turn: 'P1', winner: null, lastPass: null });
+                }
+                renderRvBoard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.board) return;
+
+                    updateRvUI(data);
+                    const counts = rvCounts(data.board);
+                    document.getElementById('rvScoreP1').innerText = counts.P1;
+                    document.getElementById('rvScoreP2').innerText = counts.P2;
+
+                    if (data.winner) {
+                        document.getElementById('rvStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchRvBtn').style.display = 'block'; else document.getElementById('rvStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        let st = data.turn === myGameRole() ? "Your Turn" : "Opponent's Turn";
+                        if (data.lastPass) st += ` (${data.lastPass === 'P1' ? (data.p1Name || 'P1') : (data.p2Name || 'P2')} had no moves — skipped)`;
+                        document.getElementById('rvStatus').innerText = st;
+                        document.getElementById('rematchRvBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Gomoku') {
+                document.getElementById('gmStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ board: Array(225).fill(''), turn: 'P1', winner: null, lastMove: null });
+                }
+                renderGmBoard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.board) return;
+
+                    updateGmUI(data);
+
+                    if (data.winner) {
+                        document.getElementById('gmStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchGmBtn').style.display = 'block'; else document.getElementById('gmStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('gmStatus').innerText = data.turn === myGameRole() ? "Your Turn" : "Opponent's Turn";
+                        document.getElementById('rematchGmBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Snakes') {
+                document.getElementById('snStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ pos1: 0, pos2: 0, turn: 'P1', dice: 0, fx: '', fxTo: 0, lastBy: null, winner: null });
+                }
+                renderSnBoard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data) return;
+
+                    updateSnUI(data);
+
+                    if (data.winner) {
+                        document.getElementById('snStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchSnBtn').style.display = 'block'; else document.getElementById('snStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        let st = '';
+                        if (data.lastBy) {
+                            const mover = data.lastBy === 'P1' ? (data.p1Name || 'P1') : (data.p2Name || 'P2');
+                            st = `${mover} rolled ${data.dice || ''}`;
+                            if (data.fx === 'ladder') st += ` — ladder up to ${data.fxTo}!`;
+                            else if (data.fx === 'snake') st += ` — snake down to ${data.fxTo}!`;
+                            else if (data.fx === 'stay') st += ` — overshoot, no move`;
+                            st += ' · ';
+                        }
+                        st += data.turn === myGameRole() ? "Your roll" : "Opponent's roll";
+                        document.getElementById('snStatus').innerText = st;
+                        document.getElementById('rematchSnBtn').style.display = 'none';
+                    }
+                    const rollBtn = document.getElementById('snRollBtn');
+                    const canRoll = !data.winner && data.turn === myGameRole();
+                    rollBtn.style.opacity = canRoll ? '1' : '0.45';
+                    rollBtn.style.pointerEvents = canRoll ? 'auto' : 'none';
+                });
+            } else if (activeGameType === 'PigDice') {
+                document.getElementById('pdStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ bank1: 0, bank2: 0, turnTotal: 0, turn: 'P1', dice: 0, bust: false, winner: null });
+                }
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data) return;
+
+                    updatePdUI(data);
+
+                    if (data.winner) {
+                        document.getElementById('pdStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchPdBtn').style.display = 'block'; else document.getElementById('pdStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        let st = data.turn === myGameRole() ? "Your Turn — roll or hold" : "Opponent's Turn";
+                        if (data.bust) st += ' (rolled a 1 — turn points lost)';
+                        document.getElementById('pdStatus').innerText = st;
+                        document.getElementById('rematchPdBtn').style.display = 'none';
+                    }
+                });
             }
 
             // Stage 7A: stamp my uid into 2P rooms (Ludo rooms already carry
@@ -7040,6 +7300,543 @@ function sendNotification(title, body, icon) {
             }
             document.getElementById('rematchMmBtn').style.display = 'none';
         }
+
+
+        // ================= STAGE 9: GAMES BATCH 1 =================
+        // Battleship, Reversi, Gomoku, Snakes & Ladders, Pig Dice.
+        // All five use 'P1'/'P2' turn + winner semantics (host = P1),
+        // which the Stage 7A stats observer already maps to p1Uid/p2Uid.
+
+        function myGameRole() { return mySymbol === 'X' ? 'P1' : 'P2'; }
+        function oppGameRole() { return mySymbol === 'X' ? 'P2' : 'P1'; }
+
+        // ---------- Pure logic (extracted verbatim by the Stage 9 tests) ----------
+        // Battleship: cells are indices 0..99 on a 10x10 board.
+        function bsCellsFor(start, len, horiz) {
+            const row = Math.floor(start / 10), col = start % 10;
+            const cells = [];
+            for (let i = 0; i < len; i++) {
+                const r = horiz ? row : row + i;
+                const c = horiz ? col + i : col;
+                if (r > 9 || c > 9) return null;
+                cells.push(r * 10 + c);
+            }
+            return cells;
+        }
+        function bsFleetCells(fleet) {
+            const set = new Set();
+            (fleet || []).forEach(sh => (sh.cells || []).forEach(c => set.add(c)));
+            return set;
+        }
+        function bsShotResult(fleet, idx) { return bsFleetCells(fleet).has(idx) ? 'hit' : 'miss'; }
+        function bsShipSunk(fleet, shots, shipIdx) {
+            const sh = (fleet || [])[shipIdx];
+            if (!sh) return false;
+            return (sh.cells || []).every(c => shots && shots[c] === 'hit');
+        }
+        function bsAllSunk(fleet, shots) {
+            if (!fleet || !fleet.length) return false;
+            return fleet.every((sh, i) => bsShipSunk(fleet, shots, i));
+        }
+        function bsAutoPlaceFleet(rand) {
+            rand = rand || Math.random;
+            const lens = [5, 4, 3, 3, 2];
+            for (let attempt = 0; attempt < 200; attempt++) {
+                const used = new Set(); const fleet = []; let ok = true;
+                for (const len of lens) {
+                    let placed = null;
+                    for (let t = 0; t < 100 && !placed; t++) {
+                        const horiz = rand() < 0.5;
+                        const start = Math.floor(rand() * 100);
+                        const cells = bsCellsFor(start, len, horiz);
+                        if (cells && cells.every(c => !used.has(c))) placed = cells;
+                    }
+                    if (!placed) { ok = false; break; }
+                    placed.forEach(c => used.add(c));
+                    fleet.push({ len: len, cells: placed });
+                }
+                if (ok) return fleet;
+            }
+            return null;
+        }
+        // Reversi: board is Array(64) of '' | 'P1' | 'P2'.
+        const RV_DIRS = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+        function rvInitialBoard() {
+            const b = Array(64).fill('');
+            b[27] = 'P2'; b[28] = 'P1'; b[35] = 'P1'; b[36] = 'P2';
+            return b;
+        }
+        function rvFlipsFor(board, idx, player) {
+            if (board[idx]) return [];
+            const opp = player === 'P1' ? 'P2' : 'P1';
+            const r0 = Math.floor(idx / 8), c0 = idx % 8;
+            let all = [];
+            for (const d of RV_DIRS) {
+                const line = [];
+                let r = r0 + d[0], c = c0 + d[1];
+                while (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r * 8 + c] === opp) {
+                    line.push(r * 8 + c); r += d[0]; c += d[1];
+                }
+                if (line.length && r >= 0 && r < 8 && c >= 0 && c < 8 && board[r * 8 + c] === player) all = all.concat(line);
+            }
+            return all;
+        }
+        function rvLegalMoves(board, player) {
+            const moves = {};
+            for (let i = 0; i < 64; i++) { const f = rvFlipsFor(board, i, player); if (f.length) moves[i] = f; }
+            return moves;
+        }
+        function rvApplyMove(board, idx, player) {
+            const flips = rvFlipsFor(board, idx, player);
+            if (!flips.length) return null;
+            const nb = board.slice();
+            nb[idx] = player;
+            flips.forEach(i => { nb[i] = player; });
+            return nb;
+        }
+        function rvCounts(board) {
+            let a = 0, b = 0;
+            (board || []).forEach(v => { if (v === 'P1') a++; else if (v === 'P2') b++; });
+            return { P1: a, P2: b };
+        }
+        function rvNextState(board, player) {
+            // `player` has just moved on `board`. Returns whose turn is next,
+            // who (if anyone) was passed, and the winner if the game is over.
+            const opp = player === 'P1' ? 'P2' : 'P1';
+            if (Object.keys(rvLegalMoves(board, opp)).length) return { turn: opp, winner: null, passed: null };
+            if (Object.keys(rvLegalMoves(board, player)).length) return { turn: player, winner: null, passed: opp };
+            const c = rvCounts(board);
+            return { turn: opp, winner: c.P1 === c.P2 ? 'Draw' : (c.P1 > c.P2 ? 'P1' : 'P2'), passed: null };
+        }
+        // Gomoku: board is Array(225) of '' | 'P1' | 'P2', 15x15.
+        function gmCheckWin(board, idx) {
+            const p = board[idx];
+            if (!p) return false;
+            const r0 = Math.floor(idx / 15), c0 = idx % 15;
+            const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+            for (const d of dirs) {
+                let n = 1;
+                for (const sgn of [1, -1]) {
+                    let r = r0 + d[0] * sgn, c = c0 + d[1] * sgn;
+                    while (r >= 0 && r < 15 && c >= 0 && c < 15 && board[r * 15 + c] === p) { n++; r += d[0] * sgn; c += d[1] * sgn; }
+                }
+                if (n >= 5) return true;
+            }
+            return false;
+        }
+        // Snakes & Ladders: classic UK layout.
+        const SN_LADDERS = { 1: 38, 4: 14, 9: 31, 21: 42, 28: 84, 36: 44, 51: 67, 71: 91, 80: 100 };
+        const SN_SNAKES = { 16: 6, 47: 26, 49: 11, 56: 53, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 98: 78 };
+        function snApplyRoll(pos, roll) {
+            const to = pos + roll;
+            if (to > 100) return { pos: pos, fx: 'stay', fxTo: pos };
+            if (SN_LADDERS[to]) return { pos: SN_LADDERS[to], fx: 'ladder', fxTo: SN_LADDERS[to] };
+            if (SN_SNAKES[to]) return { pos: SN_SNAKES[to], fx: 'snake', fxTo: SN_SNAKES[to] };
+            if (to === 100) return { pos: 100, fx: 'win', fxTo: 100 };
+            return { pos: to, fx: '', fxTo: to };
+        }
+        // Pig Dice: pure turn transitions.
+        function pdRoll(state, roll) {
+            const s = Object.assign({}, state);
+            s.dice = roll;
+            if (roll === 1) {
+                s.turnTotal = 0;
+                s.bust = true;
+                s.turn = state.turn === 'P1' ? 'P2' : 'P1';
+            } else {
+                s.turnTotal = (state.turnTotal || 0) + roll;
+                s.bust = false;
+            }
+            return s;
+        }
+        function pdHold(state) {
+            const s = Object.assign({}, state);
+            const bankKey = state.turn === 'P1' ? 'bank1' : 'bank2';
+            s[bankKey] = (state[bankKey] || 0) + (state.turnTotal || 0);
+            s.turnTotal = 0;
+            s.bust = false;
+            if (s[bankKey] >= 100) s.winner = state.turn;
+            else s.turn = state.turn === 'P1' ? 'P2' : 'P1';
+            return s;
+        }
+
+        // ---------- BATTLESHIP ----------
+        const BS_SHIP_LENS = [5, 4, 3, 3, 2];
+        const BS_SHIP_NAMES = ['Carrier (5)', 'Battleship (4)', 'Cruiser (3)', 'Submarine (3)', 'Destroyer (2)'];
+        let bsData = null;          // latest room snapshot (rendering + tap guards)
+        let bsLocalFleet = [];      // ships placed locally, not yet submitted
+        let bsLocalOrient = true;   // placement orientation: horizontal
+        let bsSubmitted = false;    // my fleet is written to the room
+
+        function resetBsLocal() {
+            bsData = null;
+            bsLocalFleet = [];
+            bsLocalOrient = true;
+            bsSubmitted = false;
+        }
+
+        window.renderBsBoards = function() {
+            buildBsBoard('bsFleetBoard');
+            buildBsBoard('bsShotBoard');
+        };
+        function buildBsBoard(elId) {
+            const el = document.getElementById(elId);
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.id = elId + '-' + i;
+                cell.style.cssText = 'background: var(--bg-dark); border-radius: 4px; aspect-ratio: 1; box-shadow: inset 0 2px 5px rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; cursor: pointer;';
+                cell.onclick = elId === 'bsFleetBoard' ? () => bsFleetCellTap(i) : () => bsShotCellTap(i);
+                el.appendChild(cell);
+            }
+        }
+
+        function bsFleetCellTap(i) {
+            if (!bsData || bsData.phase !== 'place' || bsSubmitted) return;
+            const len = BS_SHIP_LENS[bsLocalFleet.length];
+            if (len === undefined) return;
+            const cells = bsCellsFor(i, len, bsLocalOrient);
+            if (!cells) { showToast('Ship does not fit there', 'error'); return; }
+            const used = bsFleetCells(bsLocalFleet);
+            if (cells.some(c => used.has(c))) { showToast('Ships cannot overlap', 'error'); return; }
+            bsLocalFleet.push({ len: len, cells: cells });
+            paintBsBoards();
+        }
+        function bsShotCellTap(i) {
+            if (!gameRef || !bsData) return;
+            const data = bsData;
+            const myRole = myGameRole();
+            if (data.phase !== 'play' || data.winner || data.turn !== myRole) return;
+            const myNum = myRole === 'P1' ? 1 : 2;
+            const oppNum = myNum === 1 ? 2 : 1;
+            const myShots = data['shots' + myNum] || {};
+            if (myShots[i]) return;
+            const oppFleet = data['fleet' + oppNum];
+            if (!oppFleet) return;
+            const result = bsShotResult(oppFleet, i);
+            const newShots = Object.assign({}, myShots);
+            newShots[i] = result;
+            const upd = { turn: oppGameRole(), winner: bsAllSunk(oppFleet, newShots) ? myRole : null };
+            upd['shots' + myNum + '/' + i] = result;
+            gameRef.update(upd);
+        }
+
+        window.bsToggleOrient = function() {
+            bsLocalOrient = !bsLocalOrient;
+            const btn = document.getElementById('bsOrientBtn');
+            btn.innerHTML = bsLocalOrient ? '<i class="fa-solid fa-arrows-left-right"></i> Horizontal' : '<i class="fa-solid fa-arrows-up-down"></i> Vertical';
+        };
+        window.bsRandomFleet = function() {
+            if (bsSubmitted) return;
+            bsLocalFleet = bsAutoPlaceFleet() || [];
+            paintBsBoards();
+        };
+        window.bsClearFleet = function() {
+            if (bsSubmitted) return;
+            bsLocalFleet = [];
+            paintBsBoards();
+        };
+        window.bsReady = function() {
+            if (!gameRef || bsSubmitted || bsLocalFleet.length < 5) return;
+            const myNum = myGameRole() === 'P1' ? 1 : 2;
+            const oppNum = myNum === 1 ? 2 : 1;
+            gameRef.once('value', snap => {
+                const d = snap.val();
+                if (!d) return;
+                const upd = {};
+                upd['fleet' + myNum] = bsLocalFleet;
+                upd['ready' + myNum] = true;
+                if (d['ready' + oppNum]) { upd.phase = 'play'; upd.turn = 'P1'; }
+                bsSubmitted = true;
+                gameRef.update(upd);
+            });
+        };
+
+        function paintBsBoards() {
+            if (!document.getElementById('bsFleetBoard-0')) return;
+            const data = bsData || {};
+            const myRole = myGameRole();
+            const myNum = myRole === 'P1' ? 1 : 2;
+            const oppNum = myNum === 1 ? 2 : 1;
+            const phase = data.phase || 'place';
+            const placing = phase === 'place' && !bsSubmitted;
+            const myFleet = placing ? bsLocalFleet : (data['fleet' + myNum] || []);
+            const myCells = bsFleetCells(myFleet);
+            const oppFleet = data['fleet' + oppNum] || [];
+            const myShots = data['shots' + myNum] || {};
+            const oppShots = data['shots' + oppNum] || {};
+            const DOT = '<div style="width:7px;height:7px;border-radius:50%;background:rgba(244,245,247,0.45);"></div>';
+
+            for (let i = 0; i < 100; i++) {
+                const fc = document.getElementById('bsFleetBoard-' + i);
+                if (fc) {
+                    if (oppShots[i] === 'hit') { fc.style.background = '#E5484D'; fc.innerHTML = ''; }
+                    else if (myCells.has(i)) { fc.style.background = '#3E63DD'; fc.innerHTML = ''; }
+                    else { fc.style.background = 'var(--bg-dark)'; fc.innerHTML = oppShots[i] === 'miss' ? DOT : ''; }
+                }
+                const sc = document.getElementById('bsShotBoard-' + i);
+                if (sc) {
+                    if (myShots[i] === 'hit') {
+                        const shipIdx = oppFleet.findIndex(sh => (sh.cells || []).includes(i));
+                        const sunk = shipIdx >= 0 && bsShipSunk(oppFleet, myShots, shipIdx);
+                        sc.style.background = '#E5484D';
+                        sc.style.boxShadow = sunk ? 'inset 0 0 0 2px #FFC926' : 'inset 0 2px 5px rgba(0,0,0,0.55)';
+                        sc.innerHTML = '';
+                    } else {
+                        sc.style.background = 'var(--bg-dark)';
+                        sc.style.boxShadow = 'inset 0 2px 5px rgba(0,0,0,0.55)';
+                        sc.innerHTML = myShots[i] === 'miss' ? DOT : '';
+                    }
+                }
+            }
+
+            const panel = document.getElementById('bsPlacePanel');
+            const btns = document.getElementById('bsPlaceBtns');
+            const info = document.getElementById('bsPlaceInfo');
+            if (panel) panel.style.display = phase === 'place' ? 'block' : 'none';
+            if (phase === 'place') {
+                if (placing) {
+                    if (btns) btns.style.display = 'flex';
+                    const next = BS_SHIP_LENS[bsLocalFleet.length];
+                    if (info) info.innerText = next === undefined ? 'Fleet complete — tap Ready when you are.' : `Placing: ${BS_SHIP_NAMES[bsLocalFleet.length]} — tap a cell to drop it.`;
+                    const rb = document.getElementById('bsReadyBtn');
+                    if (rb) {
+                        const ready = bsLocalFleet.length >= 5;
+                        rb.style.opacity = ready ? '1' : '0.45';
+                        rb.style.pointerEvents = ready ? 'auto' : 'none';
+                    }
+                } else {
+                    if (btns) btns.style.display = 'none';
+                    if (info) info.innerText = 'Fleet locked in — waiting for your opponent to finish placing…';
+                }
+            }
+            const shotWrap = document.getElementById('bsShotWrap');
+            if (shotWrap) shotWrap.style.display = phase === 'place' ? 'none' : 'block';
+        }
+
+        function renderBsAll(data) {
+            // Rematch returned the room to placement: clear last game's locals.
+            const myNum = myGameRole() === 'P1' ? 1 : 2;
+            if (data.phase === 'place' && !data['ready' + myNum] && bsSubmitted && !data.winner) {
+                bsSubmitted = false;
+                bsLocalFleet = [];
+            }
+            paintBsBoards();
+            const statusEl = document.getElementById('bsStatus');
+            if (data.winner) {
+                statusEl.innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                playWinSound();
+                if (mySymbol === 'X') document.getElementById('rematchBsBtn').style.display = 'block'; else statusEl.innerText += ' (Waiting for Host to restart)';
+            } else if (data.phase === 'play') {
+                statusEl.innerText = data.turn === myGameRole() ? 'Your turn — tap enemy waters to fire' : "Opponent's turn";
+                document.getElementById('rematchBsBtn').style.display = 'none';
+            } else {
+                statusEl.innerText = bsSubmitted ? 'Waiting for opponent to finish placing…' : 'Place your fleet';
+                document.getElementById('rematchBsBtn').style.display = 'none';
+            }
+        }
+
+        window.resetBattleship = function() {
+            if (gameRef && mySymbol === 'X') {
+                bsSubmitted = false;
+                bsLocalFleet = [];
+                gameRef.update({ phase: 'place', turn: 'P1', winner: null, ready1: false, ready2: false, fleet1: null, fleet2: null, shots1: null, shots2: null });
+            }
+            document.getElementById('rematchBsBtn').style.display = 'none';
+        };
+        // ================= STAGE 9 BATCH 1 (continued below) =================
+
+        // ---------- REVERSI ----------
+        window.renderRvBoard = function() {
+            const el = document.getElementById('rvBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 64; i++) {
+                const cell = document.createElement('div');
+                cell.style.cssText = 'background: var(--bg-dark); border-radius: 6px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; cursor: pointer;';
+                const disc = document.createElement('div');
+                disc.id = 'rv-disc-' + i;
+                disc.style.cssText = 'width: 78%; aspect-ratio: 1; border-radius: 50%; display: none; box-shadow: inset 0 -3px 6px rgba(0,0,0,0.35);';
+                cell.appendChild(disc);
+                cell.onclick = () => makeRvMove(i);
+                el.appendChild(cell);
+            }
+        };
+        window.updateRvUI = function(data) {
+            const hints = (!data.winner && data.turn === myGameRole()) ? rvLegalMoves(data.board, data.turn) : {};
+            for (let i = 0; i < 64; i++) {
+                const cell = document.getElementById('rvBoard') && document.getElementById('rvBoard').children[i];
+                const disc = document.getElementById('rv-disc-' + i);
+                if (!disc) continue;
+                const v = data.board[i];
+                if (v === 'P1') { disc.style.display = 'block'; disc.style.background = '#E5484D'; }
+                else if (v === 'P2') { disc.style.display = 'block'; disc.style.background = '#FFC926'; }
+                else disc.style.display = 'none';
+                if (cell) cell.style.boxShadow = hints[i] ? 'inset 0 0 0 2px rgba(255,201,38,0.55)' : '';
+            }
+        };
+        window.makeRvMove = function(idx) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || !data.board || data.winner || data.turn !== myGameRole()) return;
+                const nb = rvApplyMove(data.board, idx, myGameRole());
+                if (!nb) return;
+                const ns = rvNextState(nb, myGameRole());
+                gameRef.update({ board: nb, turn: ns.turn, winner: ns.winner, lastPass: ns.passed });
+            });
+        };
+        window.resetReversi = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ board: rvInitialBoard(), turn: 'P1', winner: null, lastPass: null });
+            }
+            document.getElementById('rematchRvBtn').style.display = 'none';
+        };
+
+        // ---------- GOMOKU ----------
+        window.renderGmBoard = function() {
+            const el = document.getElementById('gmBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 225; i++) {
+                const cell = document.createElement('div');
+                cell.style.cssText = 'background: rgba(255,255,255,0.05); border-radius: 2px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; cursor: pointer;';
+                const stone = document.createElement('div');
+                stone.id = 'gm-stone-' + i;
+                stone.style.cssText = 'width: 84%; aspect-ratio: 1; border-radius: 50%; display: none;';
+                cell.appendChild(stone);
+                cell.onclick = () => makeGmMove(i);
+                el.appendChild(cell);
+            }
+        };
+        window.updateGmUI = function(data) {
+            for (let i = 0; i < 225; i++) {
+                const stone = document.getElementById('gm-stone-' + i);
+                if (!stone) continue;
+                const v = data.board[i];
+                if (v === 'P1') { stone.style.display = 'block'; stone.style.background = '#E5484D'; }
+                else if (v === 'P2') { stone.style.display = 'block'; stone.style.background = '#FFC926'; }
+                else stone.style.display = 'none';
+                stone.style.boxShadow = data.lastMove === i && v ? '0 0 0 2px #F4F5F7' : '';
+            }
+        };
+        window.makeGmMove = function(idx) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || !data.board || data.winner || data.turn !== myGameRole() || data.board[idx] !== '') return;
+                const nb = [...data.board];
+                nb[idx] = myGameRole();
+                const win = gmCheckWin(nb, idx);
+                const draw = !win && !nb.includes('');
+                gameRef.update({ board: nb, turn: oppGameRole(), winner: win ? myGameRole() : (draw ? 'Draw' : null), lastMove: idx });
+            });
+        };
+        window.resetGomoku = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ board: Array(225).fill(''), turn: 'P1', winner: null, lastMove: null });
+            }
+            document.getElementById('rematchGmBtn').style.display = 'none';
+        };
+
+        // ---------- SNAKES & LADDERS ----------
+        window.renderSnBoard = function() {
+            const el = document.getElementById('snBoard');
+            if (!el || el.children.length) return;
+            for (let dr = 0; dr < 10; dr++) {
+                const rb = 9 - dr; // board row from bottom
+                for (let dc = 0; dc < 10; dc++) {
+                    const col = rb % 2 === 0 ? dc : 9 - dc; // boustrophedon
+                    const pos = rb * 10 + col + 1;
+                    const cell = document.createElement('div');
+                    cell.style.cssText = 'border-radius: 4px; aspect-ratio: 1; position: relative; padding: 1px; box-sizing: border-box; background: ' + (SN_LADDERS[pos] ? 'rgba(70,167,88,0.20)' : (SN_SNAKES[pos] ? 'rgba(229,72,77,0.16)' : 'var(--bg-dark)')) + ';';
+                    const num = document.createElement('div');
+                    num.style.cssText = 'font-size: 8px; line-height: 1; color: var(--text-secondary);';
+                    num.innerText = SN_LADDERS[pos] ? pos + '→' + SN_LADDERS[pos] : (SN_SNAKES[pos] ? pos + '→' + SN_SNAKES[pos] : '' + pos);
+                    const pawns = document.createElement('div');
+                    pawns.id = 'sn-pawn-' + pos;
+                    pawns.style.cssText = 'position: absolute; left: 0; right: 0; bottom: 1px; display: flex; gap: 2px; justify-content: center;';
+                    cell.appendChild(num);
+                    cell.appendChild(pawns);
+                    el.appendChild(cell);
+                }
+            }
+        };
+        window.updateSnUI = function(data) {
+            const P1DOT = '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#E5484D;border:1px solid #F4F5F7;"></span>';
+            const P2DOT = '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#FFC926;border:1px solid #F4F5F7;"></span>';
+            for (let p = 1; p <= 100; p++) {
+                const el = document.getElementById('sn-pawn-' + p);
+                if (!el) continue;
+                let h = '';
+                if (data.pos1 === p) h += P1DOT;
+                if (data.pos2 === p) h += P2DOT;
+                el.innerHTML = h;
+            }
+            document.getElementById('snDiceVal').innerText = data.dice ? data.dice : '–';
+            const fmt = v => v === 0 || v === undefined || v === null ? 'Start' : '' + v;
+            document.getElementById('snPosInfo').innerText = `${data.p1Name || 'P1'}: ${fmt(data.pos1)}  ·  ${data.p2Name || 'P2'}: ${fmt(data.pos2)}`;
+        };
+        window.rollSnakes = function() {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || data.turn !== myGameRole()) return;
+                const myPos = myGameRole() === 'P1' ? (data.pos1 || 0) : (data.pos2 || 0);
+                const roll = Math.floor(Math.random() * 6) + 1;
+                const res = snApplyRoll(myPos, roll);
+                const upd = { dice: roll, fx: res.fx, fxTo: res.fxTo, lastBy: myGameRole(), turn: oppGameRole(), winner: res.pos === 100 ? myGameRole() : null };
+                upd[myGameRole() === 'P1' ? 'pos1' : 'pos2'] = res.pos;
+                gameRef.update(upd);
+            });
+        };
+        window.resetSnakes = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ pos1: 0, pos2: 0, turn: 'P1', dice: 0, fx: '', fxTo: 0, lastBy: null, winner: null });
+            }
+            document.getElementById('rematchSnBtn').style.display = 'none';
+        };
+
+        // ---------- PIG DICE ----------
+        const PD_DICE_ICONS = ['', 'fa-dice-one', 'fa-dice-two', 'fa-dice-three', 'fa-dice-four', 'fa-dice-five', 'fa-dice-six'];
+        window.updatePdUI = function(data) {
+            document.getElementById('pdName1').innerText = data.p1Name || 'P1';
+            document.getElementById('pdName2').innerText = data.p2Name || 'P2';
+            document.getElementById('pdBank1').innerText = data.bank1 || 0;
+            document.getElementById('pdBank2').innerText = data.bank2 || 0;
+            document.getElementById('pdTurnTotal').innerText = data.turnTotal || 0;
+            document.getElementById('pdDiceIcon').className = 'fa-solid ' + (PD_DICE_ICONS[data.dice || 0] || 'fa-dice');
+            document.getElementById('pdCard1').style.borderColor = data.turn === 'P1' && !data.winner ? '#FFC926' : 'var(--glass-border)';
+            document.getElementById('pdCard2').style.borderColor = data.turn === 'P2' && !data.winner ? '#FFC926' : 'var(--glass-border)';
+            const myTurn = !data.winner && data.turn === myGameRole();
+            for (const id of ['pdRollBtn', 'pdHoldBtn']) {
+                const b = document.getElementById(id);
+                b.style.opacity = myTurn ? '1' : '0.45';
+                b.style.pointerEvents = myTurn ? 'auto' : 'none';
+            }
+        };
+        window.pdRollDice = function() {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || data.turn !== myGameRole()) return;
+                const ns = pdRoll(data, Math.floor(Math.random() * 6) + 1);
+                gameRef.update({ dice: ns.dice, turnTotal: ns.turnTotal, turn: ns.turn, bust: ns.bust });
+            });
+        };
+        window.pdHoldTurn = function() {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || data.turn !== myGameRole()) return;
+                const ns = pdHold(data);
+                gameRef.update({ bank1: ns.bank1 || 0, bank2: ns.bank2 || 0, turnTotal: ns.turnTotal, turn: ns.turn, bust: ns.bust, winner: ns.winner || null });
+            });
+        };
+        window.resetPigDice = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ bank1: 0, bank2: 0, turnTotal: 0, turn: 'P1', dice: 0, bust: false, winner: null });
+            }
+            document.getElementById('rematchPdBtn').style.display = 'none';
+        };
 
 
         // --- TIC TAC TOE & RPS MOVE LOGIC ---
@@ -8648,6 +9445,47 @@ function sendNotification(title, body, icon) {
             if(typeof user !== 'undefined' && user) { db.ref('gameQueue/MemoryMatch/' + user.uid).off(); db.ref('gameQueue/MemoryMatch/' + user.uid).remove(); }
             gameRoom = null;
         }
+        window.leaveBattleship = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('battleshipOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Battleship/' + user.uid).off(); db.ref('gameQueue/Battleship/' + user.uid).remove(); }
+            resetBsLocal();
+            gameRoom = null;
+        }
+        window.leaveReversi = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('reversiOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Reversi/' + user.uid).off(); db.ref('gameQueue/Reversi/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveGomoku = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('gomokuOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Gomoku/' + user.uid).off(); db.ref('gameQueue/Gomoku/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveSnakes = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('snakesOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Snakes/' + user.uid).off(); db.ref('gameQueue/Snakes/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leavePigDice = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('pigDiceOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/PigDice/' + user.uid).off(); db.ref('gameQueue/PigDice/' + user.uid).remove(); }
+            gameRoom = null;
+        }
 
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
@@ -10059,6 +10897,114 @@ window.burnImage = function(element, url, key) {
         </div>
 
         <button id="rematchMmBtn" onclick="resetMemoryMatch()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="battleshipOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveBattleship()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #38BDF8; margin-bottom: 5px;">Battleship</h2>
+        <p id="bsStatus" style="color: var(--text-secondary); margin-bottom: 18px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div id="bsPlacePanel" style="width: 322px; max-width: 94vw; margin-bottom: 14px;">
+            <p id="bsPlaceInfo" style="color: var(--text-secondary); font-size: 13px; text-align: center; margin: 0 0 10px;">Place your fleet</p>
+            <div id="bsPlaceBtns" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                <button id="bsOrientBtn" onclick="bsToggleOrient()" style="padding: 10px 14px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 700; font-size: 13px;"><i class="fa-solid fa-arrows-left-right"></i> Horizontal</button>
+                <button onclick="bsRandomFleet()" style="padding: 10px 14px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 700; font-size: 13px;"><i class="fa-solid fa-shuffle"></i> Random</button>
+                <button onclick="bsClearFleet()" style="padding: 10px 14px; border-radius: 12px; background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 700; font-size: 13px;"><i class="fa-solid fa-eraser"></i> Clear</button>
+                <button id="bsReadyBtn" onclick="bsReady()" style="padding: 10px 18px; border-radius: 12px; background: var(--gold-grad); border: none; color: #1A1402; font-weight: 900; font-size: 13px; opacity: 0.45; pointer-events: none;"><i class="fa-solid fa-check"></i> Ready</button>
+            </div>
+        </div>
+
+        <p style="color: var(--text-secondary); font-size: 12px; font-weight: 700; letter-spacing: 1px; margin: 0 0 6px;">YOUR FLEET</p>
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; margin-bottom: 16px;">
+            <div id="bsFleetBoard" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 302px; max-width: 88vw;"></div>
+        </div>
+
+        <div id="bsShotWrap" style="display: none;">
+            <p style="color: var(--text-secondary); font-size: 12px; font-weight: 700; letter-spacing: 1px; margin: 0 0 6px; text-align: center;">ENEMY WATERS</p>
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px;">
+                <div id="bsShotBoard" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 302px; max-width: 88vw;"></div>
+            </div>
+        </div>
+
+        <button id="rematchBsBtn" onclick="resetBattleship()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="reversiOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveReversi()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #F4F5F7; margin-bottom: 5px;">Reversi</h2>
+        <p id="rvStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: #E5484D; margin-right: 6px;">P1</span><span id="rvScoreP1">2</span></div>
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: #FFC926; margin-right: 6px;">P2</span><span id="rvScoreP2">2</span></div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px;">
+            <div id="rvBoard" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; width: 302px; max-width: 92vw;"></div>
+        </div>
+
+        <button id="rematchRvBtn" onclick="resetReversi()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="gomokuOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveGomoku()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FCA5A5; margin-bottom: 5px;">Gomoku</h2>
+        <p id="gmStatus" style="color: var(--text-secondary); margin-bottom: 18px;">Waiting for opponent...</p>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px;">
+            <div id="gmBoard" style="display: grid; grid-template-columns: repeat(15, 1fr); gap: 1px; width: 316px; max-width: 94vw;"></div>
+        </div>
+
+        <button id="rematchGmBtn" onclick="resetGomoku()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="snakesOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveSnakes()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #46A758; margin-bottom: 5px;">Snakes &amp; Ladders</h2>
+        <p id="snStatus" style="color: var(--text-secondary); margin-bottom: 14px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px; margin-bottom: 14px;">
+            <div id="snBoard" style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 312px; max-width: 94vw;"></div>
+        </div>
+
+        <p id="snPosInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 12px;">P1: Start  ·  P2: Start</p>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div id="snDiceVal" style="width: 54px; height: 54px; border-radius: 14px; background: var(--panel); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: var(--text-primary); transition: transform 0.15s ease;">–</div>
+            <button id="snRollBtn" onclick="rollSnakes()" style="padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;"><i class="fa-solid fa-dice"></i> Roll</button>
+        </div>
+
+        <button id="rematchSnBtn" onclick="resetSnakes()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="pigDiceOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leavePigDice()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FFC926; margin-bottom: 5px;">Pig Dice</h2>
+        <p id="pdStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 22px;">
+            <div id="pdCard1" style="background: var(--panel); border: 2px solid var(--glass-border); border-radius: 16px; padding: 14px 20px; text-align: center; min-width: 110px; box-sizing: border-box;">
+                <div id="pdName1" style="font-size: 13px; color: var(--text-secondary); font-weight: 700; margin-bottom: 4px;">P1</div>
+                <div id="pdBank1" style="font-size: 30px; font-weight: 900; color: #E5484D;">0</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">BANKED</div>
+            </div>
+            <div id="pdCard2" style="background: var(--panel); border: 2px solid var(--glass-border); border-radius: 16px; padding: 14px 20px; text-align: center; min-width: 110px; box-sizing: border-box;">
+                <div id="pdName2" style="font-size: 13px; color: var(--text-secondary); font-weight: 700; margin-bottom: 4px;">P2</div>
+                <div id="pdBank2" style="font-size: 30px; font-weight: 900; color: #FFC926;">0</div>
+                <div style="font-size: 11px; color: var(--text-secondary);">BANKED</div>
+            </div>
+        </div>
+
+        <div style="font-size: 13px; color: var(--text-secondary); font-weight: 700; letter-spacing: 1px;">TURN POINTS</div>
+        <div id="pdTurnTotal" style="font-size: 44px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">0</div>
+        <div style="font-size: 64px; color: var(--text-primary); margin: 8px 0 20px;"><i id="pdDiceIcon" class="fa-solid fa-dice"></i></div>
+
+        <div style="display: flex; gap: 14px;">
+            <button id="pdRollBtn" onclick="pdRollDice()" style="padding: 15px 28px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;"><i class="fa-solid fa-dice"></i> Roll</button>
+            <button id="pdHoldBtn" onclick="pdHoldTurn()" style="padding: 15px 28px; border-radius: 30px; background: var(--panel-2); color: var(--text-primary); font-weight: 900; font-size: 16px; border: 1px solid var(--glass-border);"><i class="fa-solid fa-piggy-bank"></i> Hold</button>
+        </div>
+
+        <button id="rematchPdBtn" onclick="resetPigDice()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
     <!-- GAME CHAT -->
