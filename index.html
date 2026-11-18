@@ -1638,7 +1638,7 @@
                     </div>
                     <span class="v3-cta">Play</span>
                 </div>
-                <p class="v3-lbl">All Games &middot; 18</p>
+                <p class="v3-lbl">All Games &middot; 23</p>
                 <div class="v3-games-grid">
                     <div class="v3-gcard ripple-target" onclick="findStrangerGame('TicTacToe')">
                         <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
@@ -1740,6 +1740,31 @@
                         <div class="v3-gcard-name">Pig Dice <span class="v3-chip-new">NEW</span></div>
                         <div class="v3-gcard-sub">First to bank 100</div>
                     </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Checkers')">
+                        <div class="v3-gcard-tile" style="color: #F87171;"><i class="fa-solid fa-chess-board"></i></div>
+                        <div class="v3-gcard-name">Checkers <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Jumps &amp; kings</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Mancala')">
+                        <div class="v3-gcard-tile" style="color: #FDA4AF;"><i class="fa-solid fa-gem"></i></div>
+                        <div class="v3-gcard-name">Mancala <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Sow &amp; capture</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Mastermind')">
+                        <div class="v3-gcard-tile" style="color: #A5B4FC;"><i class="fa-solid fa-lock-open"></i></div>
+                        <div class="v3-gcard-name">Mastermind <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Crack the code</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Bingo')">
+                        <div class="v3-gcard-tile" style="color: #67E8F9;"><i class="fa-solid fa-ticket"></i></div>
+                        <div class="v3-gcard-name">Bingo Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Caller race</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Flood')">
+                        <div class="v3-gcard-tile" style="color: #4ADE80;"><i class="fa-solid fa-palette"></i></div>
+                        <div class="v3-gcard-name">Colour Flood <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">20 picks each</div>
+                    </div>
                 </div>
             </div>
 
@@ -1838,6 +1863,31 @@
                         <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-piggy-bank"></i></div>
                         <div class="v3-gcard-name">Pig Dice</div>
                         <div class="v3-gcard-sub">First to bank 100</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Checkers')">
+                        <div class="v3-gcard-tile" style="color: #F87171;"><i class="fa-solid fa-chess-board"></i></div>
+                        <div class="v3-gcard-name">Checkers</div>
+                        <div class="v3-gcard-sub">Jumps &amp; kings</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Mancala')">
+                        <div class="v3-gcard-tile" style="color: #FDA4AF;"><i class="fa-solid fa-gem"></i></div>
+                        <div class="v3-gcard-name">Mancala</div>
+                        <div class="v3-gcard-sub">Sow &amp; capture</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Mastermind')">
+                        <div class="v3-gcard-tile" style="color: #A5B4FC;"><i class="fa-solid fa-lock-open"></i></div>
+                        <div class="v3-gcard-name">Mastermind</div>
+                        <div class="v3-gcard-sub">Crack the code</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Bingo')">
+                        <div class="v3-gcard-tile" style="color: #67E8F9;"><i class="fa-solid fa-ticket"></i></div>
+                        <div class="v3-gcard-name">Bingo Duel</div>
+                        <div class="v3-gcard-sub">Caller race</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Flood')">
+                        <div class="v3-gcard-tile" style="color: #4ADE80;"><i class="fa-solid fa-palette"></i></div>
+                        <div class="v3-gcard-name">Colour Flood</div>
+                        <div class="v3-gcard-sub">20 picks each</div>
                     </div>
                 </div>
             </div>
@@ -2020,7 +2070,7 @@
                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
                     <div class="v3-row-mid">
                         <div class="v3-row-name">Mini-Games</div>
-                        <div class="v3-row-sub">Live play &middot; 18 games with strangers</div>
+                        <div class="v3-row-sub">Live play &middot; 23 games with strangers</div>
                     </div>
                     <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
@@ -5873,11 +5923,11 @@ function sendNotification(title, body, icon) {
         // Fixed display names for every game key. Invite cards and the
         // profile record are built ONLY from this map (never from raw
         // message data), so a crafted message can't inject markup.
-        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice' };
+        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice', Checkers: 'Checkers', Mancala: 'Mancala', Mastermind: 'Mastermind', Bingo: 'Bingo Duel', Flood: 'Colour Flood' };
         // Games a friend can be challenged to (every 2P game + Ludo 2P only;
         // Ludo 3P/4P stay matchmaking-only).
-        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice'];
-        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice' };
+        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood'];
+        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice', Checkers: 'leaveCheckers', Mancala: 'leaveMancala', Mastermind: 'leaveMastermind', Bingo: 'leaveBingo', Flood: 'leaveFlood' };
 
         function gameStatsTotals(stats) {
             let w = 0, l = 0, d = 0;
@@ -6051,6 +6101,29 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'PigDice') {
                 document.getElementById('pigDiceOverlay').style.display = 'flex';
                 document.getElementById('pdStatus').innerText = statusText;
+            } else if (gameType === 'Checkers') {
+                document.getElementById('checkersOverlay').style.display = 'flex';
+                document.getElementById('ckStatus').innerText = statusText;
+                renderCkBoard();
+            } else if (gameType === 'Mancala') {
+                document.getElementById('mancalaOverlay').style.display = 'flex';
+                document.getElementById('mcStatus').innerText = statusText;
+                renderMcBoard();
+            } else if (gameType === 'Mastermind') {
+                document.getElementById('mastermindOverlay').style.display = 'flex';
+                document.getElementById('mdStatus').innerText = statusText;
+                resetMdLocal();
+                renderMdPalette();
+                renderMdAll();
+            } else if (gameType === 'Bingo') {
+                document.getElementById('bingoOverlay').style.display = 'flex';
+                document.getElementById('bgStatus').innerText = statusText;
+                renderBgCard();
+            } else if (gameType === 'Flood') {
+                document.getElementById('floodOverlay').style.display = 'flex';
+                document.getElementById('flStatus').innerText = statusText;
+                renderFlBoard();
+                renderFlPalette();
             }
         }
 
@@ -6104,6 +6177,11 @@ function sendNotification(title, body, icon) {
                 case 'Gomoku': return { board: Array(225).fill(''), turn: 'P1', winner: null, lastMove: null };
                 case 'Snakes': return { pos1: 0, pos2: 0, turn: 'P1', dice: 0, fx: '', fxTo: 0, lastBy: null, winner: null };
                 case 'PigDice': return { bank1: 0, bank2: 0, turnTotal: 0, turn: 'P1', dice: 0, bust: false, winner: null };
+                case 'Checkers': return { board: ckInitialBoard(), turn: 'P1', winner: null, lastMove: null, mustJump: null };
+                case 'Mancala': return { pits: mcInitialPits(), turn: 'P1', winner: null };
+                case 'Mastermind': return { code: mdNewCode(), g1: null, g2: null, winner: null };
+                case 'Bingo': return { card1: bgNewCard(), card2: bgNewCard(), drawOrder: bgNewDrawOrder(), startStamp: 0, marks1: bgEmptyMarks(), marks2: bgEmptyMarks(), winner: null, claimLock1: 0, claimLock2: 0 };
+                case 'Flood': { const fg = flGenGrid(Math.floor(Math.random() * 1000000000)); return { grid: fg, c1: fg[132], c2: fg[11], turn: 'P1', moves1: 0, moves2: 0, winner: null }; }
                 case 'Ludo2': {
                     const baseTokens = () => [{ id: 0, state: 'base', stepsTaken: -1 }, { id: 1, state: 'base', stepsTaken: -1 }, { id: 2, state: 'base', stepsTaken: -1 }, { id: 3, state: 'base', stepsTaken: -1 }];
                     return { turn: 0, diceRoll: 0, lastRollWasSix: false, winner: null, state: 'playing', targetPlayers: 2, turnStamp: Date.now(), tokens_0: baseTokens(), tokens_2: baseTokens() };
@@ -6347,7 +6425,7 @@ function sendNotification(title, body, icon) {
 
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -6423,6 +6501,30 @@ function sendNotification(title, body, icon) {
             } else if (gameType === 'PigDice') {
                 document.getElementById('pigDiceOverlay').style.display = 'flex';
                 document.getElementById('pdStatus').innerText = "Searching for opponent...";
+            }
+            else if (gameType === 'Checkers') {
+                document.getElementById('checkersOverlay').style.display = 'flex';
+                document.getElementById('ckStatus').innerText = "Searching for opponent...";
+                renderCkBoard();
+            } else if (gameType === 'Mancala') {
+                document.getElementById('mancalaOverlay').style.display = 'flex';
+                document.getElementById('mcStatus').innerText = "Searching for opponent...";
+                renderMcBoard();
+            } else if (gameType === 'Mastermind') {
+                document.getElementById('mastermindOverlay').style.display = 'flex';
+                document.getElementById('mdStatus').innerText = "Searching for opponent...";
+                resetMdLocal();
+                renderMdPalette();
+                renderMdAll();
+            } else if (gameType === 'Bingo') {
+                document.getElementById('bingoOverlay').style.display = 'flex';
+                document.getElementById('bgStatus').innerText = "Searching for opponent...";
+                renderBgCard();
+            } else if (gameType === 'Flood') {
+                document.getElementById('floodOverlay').style.display = 'flex';
+                document.getElementById('flStatus').innerText = "Searching for opponent...";
+                renderFlBoard();
+                renderFlPalette();
             }
 
             if (gameType.startsWith('Ludo')) {
@@ -7060,6 +7162,165 @@ function sendNotification(title, body, icon) {
                         document.getElementById('rematchPdBtn').style.display = 'none';
                     }
                 });
+            } else if (activeGameType === 'Checkers') {
+                document.getElementById('ckStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ board: ckInitialBoard(), turn: 'P1', winner: null, lastMove: null, mustJump: null });
+                }
+                renderCkBoard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.board) return;
+                    ckData = data;
+                    if (data.turn === myGameRole() && data.mustJump !== null && data.mustJump !== undefined) ckSelected = data.mustJump;
+                    if (data.turn !== myGameRole() || data.winner) ckSelected = null;
+                    updateCkUI(data);
+                    const counts = ckCounts(data.board);
+                    document.getElementById('ckScoreP1').innerText = counts.P1;
+                    document.getElementById('ckScoreP2').innerText = counts.P2;
+
+                    if (data.winner) {
+                        document.getElementById('ckStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchCkBtn').style.display = 'block'; else document.getElementById('ckStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        let st = data.turn === myGameRole() ? "Your Turn" : "Opponent's Turn";
+                        if (data.mustJump !== null && data.mustJump !== undefined) st += data.turn === myGameRole() ? ' — jump again!' : ' — must jump again';
+                        document.getElementById('ckStatus').innerText = st;
+                        document.getElementById('rematchCkBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Mancala') {
+                document.getElementById('mcStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ pits: mcInitialPits(), turn: 'P1', winner: null });
+                }
+                renderMcBoard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.pits) return;
+
+                    updateMcUI(data);
+
+                    if (data.winner) {
+                        document.getElementById('mcStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchMcBtn').style.display = 'block'; else document.getElementById('mcStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('mcStatus').innerText = data.turn === myGameRole() ? "Your Turn — pick one of your pits" : "Opponent's Turn";
+                        document.getElementById('rematchMcBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Mastermind') {
+                document.getElementById('mdStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ code: mdNewCode(), g1: null, g2: null, winner: null });
+                }
+                resetMdLocal();
+                renderMdPalette();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data) return;
+                    mdData = data;
+                    renderMdAll();
+
+                    if (data.winner) {
+                        document.getElementById('mdStatus').innerText = data.winner === 'Draw' ? "Nobody cracked it — It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} cracked the code!` : `${data.p2Name || 'P2'} cracked the code!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchMdBtn').style.display = 'block'; else document.getElementById('mdStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        const myList = (myGameRole() === 'P1' ? data.g1 : data.g2) || [];
+                        const opList = (myGameRole() === 'P1' ? data.g2 : data.g1) || [];
+                        document.getElementById('mdStatus').innerText = `Race to crack the code — You: ${myList.length}/10 · Opponent: ${opList.length}/10`;
+                        document.getElementById('rematchMdBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Bingo') {
+                document.getElementById('bgStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    gameRef.update({ card1: bgNewCard(), card2: bgNewCard(), drawOrder: bgNewDrawOrder(), startStamp: Date.now() + 3000, marks1: bgEmptyMarks(), marks2: bgEmptyMarks(), winner: null, claimLock1: 0, claimLock2: 0 });
+                }
+                renderBgCard();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data) return;
+                    bgData = data;
+                    updateBgUI(data);
+
+                    if (data.winner) {
+                        if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
+                        document.getElementById('bgStatus').innerText = data.winner === 'P1' ? `${data.p1Name || 'P1'} got BINGO!` : `${data.p2Name || 'P2'} got BINGO!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchBgBtn').style.display = 'block'; else document.getElementById('bgStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        if (!bgTimer) bgTimer = setInterval(() => { if (bgData) updateBgUI(bgData); }, 500);
+                        document.getElementById('bgStatus').innerText = 'Numbers call every 4 seconds — tap a called number to mark it';
+                        document.getElementById('rematchBgBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Flood') {
+                document.getElementById('flStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+
+                if (mySymbol === 'X') {
+                    gameRef.update({ p1Name: myProfile.name || 'P1' });
+                } else {
+                    gameRef.update({ p2Name: myProfile.name || 'P2' });
+                }
+                if (mySymbol === 'X') {
+                    const fg = flGenGrid(Math.floor(Math.random() * 1000000000));
+                    gameRef.update({ grid: fg, c1: fg[132], c2: fg[11], turn: 'P1', moves1: 0, moves2: 0, winner: null });
+                }
+                renderFlBoard();
+                renderFlPalette();
+
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if(!data || !data.grid) return;
+
+                    updateFlUI(data);
+
+                    if (data.winner) {
+                        document.getElementById('flStatus').innerText = data.winner === 'Draw' ? "Dead even — It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if(mySymbol === 'X') document.getElementById('rematchFlBtn').style.display = 'block'; else document.getElementById('flStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('flStatus').innerText = data.turn === myGameRole() ? "Your pick — flood your corner" : "Opponent's pick";
+                        document.getElementById('rematchFlBtn').style.display = 'none';
+                    }
+                });
             }
 
             // Stage 7A: stamp my uid into 2P rooms (Ludo rooms already carry
@@ -7460,6 +7721,279 @@ function sendNotification(title, body, icon) {
             return s;
         }
 
+        // ---------- CHECKERS (pure logic) ----------
+        // Board Array(64): '' | 'r'/'R' (P1, bottom, moves up) | 'b'/'B' (P2).
+        // Dark squares are (row+col) odd. Captures are forced; a jump that can
+        // continue must continue (the room's mustJump pins the piece); a man
+        // that reaches the far rank is crowned and the turn ends there.
+        function ckInitialBoard() {
+            const b = Array(64).fill('');
+            for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) b[r * 8 + c] = 'b';
+            for (let r = 5; r < 8; r++) for (let c = 0; c < 8; c++) if ((r + c) % 2 === 1) b[r * 8 + c] = 'r';
+            return b;
+        }
+        function ckOwner(piece) { return piece === 'r' || piece === 'R' ? 'P1' : (piece === 'b' || piece === 'B' ? 'P2' : null); }
+        function ckIsKing(piece) { return piece === 'R' || piece === 'B'; }
+        // Every single hop (step or jump) for the piece at idx: [{to, cap}].
+        function ckHopsFor(board, idx) {
+            const piece = board[idx];
+            if (!piece) return [];
+            const me = ckOwner(piece), r = Math.floor(idx / 8), c = idx % 8;
+            const rowDirs = ckIsKing(piece) ? [-1, 1] : [me === 'P1' ? -1 : 1];
+            const hops = [];
+            for (const dr of rowDirs) for (const dc of [-1, 1]) {
+                const r1 = r + dr, c1 = c + dc;
+                if (r1 < 0 || r1 > 7 || c1 < 0 || c1 > 7) continue;
+                const mid = r1 * 8 + c1;
+                if (board[mid] === '') hops.push({ to: mid, cap: null });
+                else if (ckOwner(board[mid]) !== me) {
+                    const r2 = r + 2 * dr, c2 = c + 2 * dc;
+                    if (r2 >= 0 && r2 < 8 && c2 >= 0 && c2 < 8 && board[r2 * 8 + c2] === '') hops.push({ to: r2 * 8 + c2, cap: mid });
+                }
+            }
+            return hops;
+        }
+        // All legal hops for a side with forced captures applied. When
+        // mustJump is set, only that piece's (capture) hops are legal.
+        function ckLegalHops(board, role, mustJump) {
+            let pieces = [];
+            if (mustJump !== null && mustJump !== undefined && ckOwner(board[mustJump]) === role) pieces = [mustJump];
+            else for (let i = 0; i < 64; i++) if (ckOwner(board[i]) === role) pieces.push(i);
+            const caps = [], steps = [];
+            for (const i of pieces) for (const h of ckHopsFor(board, i)) (h.cap !== null ? caps : steps).push({ from: i, to: h.to, cap: h.cap });
+            return caps.length ? caps : steps;
+        }
+        // Apply one hop. Returns {board, captured, kinged, chain} — chain is
+        // the index the same piece must jump from again, or null.
+        function ckApplyHop(board, from, to) {
+            const nb = [...board];
+            let piece = nb[from];
+            let captured = null;
+            if (Math.abs(to - from) > 9) { captured = (from + to) / 2; nb[captured] = ''; }
+            nb[from] = '';
+            let kinged = false;
+            const row = Math.floor(to / 8);
+            if (piece === 'r' && row === 0) { piece = 'R'; kinged = true; }
+            if (piece === 'b' && row === 7) { piece = 'B'; kinged = true; }
+            nb[to] = piece;
+            let chain = null;
+            if (captured !== null && !kinged && ckHopsFor(nb, to).some(h => h.cap !== null)) chain = to;
+            return { board: nb, captured: captured, kinged: kinged, chain: chain };
+        }
+        function ckCounts(board) {
+            let P1 = 0, P2 = 0;
+            for (const p of board) { const o = ckOwner(p); if (o === 'P1') P1++; else if (o === 'P2') P2++; }
+            return { P1: P1, P2: P2 };
+        }
+        // Winner once the turn has passed: the side to move loses when it has
+        // no pieces left or no legal hop.
+        function ckWinnerFor(board, sideToMove) {
+            const counts = ckCounts(board);
+            if (counts.P1 === 0) return 'P2';
+            if (counts.P2 === 0) return 'P1';
+            if (!ckLegalHops(board, sideToMove, null).length) return sideToMove === 'P1' ? 'P2' : 'P1';
+            return null;
+        }
+
+        // ---------- MANCALA (pure logic) ----------
+        // Kalah: pits[0..5] P1, pits[6] P1 store, pits[7..12] P2, pits[13]
+        // P2 store. Sowing runs index-up (counterclockwise), skipping the
+        // opponent's store. Last seed in the own store earns another turn;
+        // last seed in an empty own pit captures it plus the opposite pit.
+        // The game ends when either side's pits are all empty; the other
+        // side's remaining seeds sweep into their store.
+        function mcInitialPits() { return [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0]; }
+        function mcSideEmpty(pits, role) {
+            const start = role === 'P1' ? 0 : 7;
+            for (let i = start; i < start + 6; i++) if (pits[i] > 0) return false;
+            return true;
+        }
+        function mcSow(pitsIn, role, pitIdx) {
+            const myStore = role === 'P1' ? 6 : 13;
+            const oppStore = role === 'P1' ? 13 : 6;
+            const lo = role === 'P1' ? 0 : 7, hi = lo + 5;
+            if (pitIdx < lo || pitIdx > hi || !pitsIn[pitIdx]) return null;
+            const pits = [...pitsIn];
+            let seeds = pits[pitIdx];
+            pits[pitIdx] = 0;
+            let i = pitIdx;
+            while (seeds > 0) {
+                i = (i + 1) % 14;
+                if (i === oppStore) continue;
+                pits[i]++;
+                seeds--;
+            }
+            const last = i;
+            const extra = last === myStore;
+            let captured = 0;
+            if (!extra && last >= lo && last <= hi && pits[last] === 1 && pits[12 - last] > 0) {
+                captured = pits[12 - last] + 1;
+                pits[myStore] += captured;
+                pits[12 - last] = 0;
+                pits[last] = 0;
+            }
+            let over = false, winner = null;
+            if (mcSideEmpty(pits, 'P1') || mcSideEmpty(pits, 'P2')) {
+                over = true;
+                for (let k = 0; k < 6; k++) { pits[6] += pits[k]; pits[k] = 0; }
+                for (let k = 7; k < 13; k++) { pits[13] += pits[k]; pits[k] = 0; }
+                winner = pits[6] > pits[13] ? 'P1' : (pits[13] > pits[6] ? 'P2' : 'Draw');
+            }
+            return { pits: pits, next: extra ? role : (role === 'P1' ? 'P2' : 'P1'), extra: extra, captured: captured, over: over, winner: winner };
+        }
+
+        // ---------- MASTERMIND (pure logic) ----------
+        // One shared secret code (4 pegs, 6 colours, duplicates allowed).
+        // Both players race it in parallel with up to 10 guesses each; the
+        // guess lists live in per-player room fields (g1/g2) and the UI only
+        // ever shows the opponent's guess COUNT, never their pegs.
+        const MD_COLORS = ['#E5484D', '#FFC926', '#46A758', '#3E63DD', '#8E4EC6', '#12A594'];
+        function mdNewCode() { return [0, 0, 0, 0].map(() => Math.floor(Math.random() * 6)); }
+        // Duplicate-safe feedback: black = exact place; white = right colour,
+        // wrong place, counted on the non-black remainder only.
+        function mdFeedback(code, guess) {
+            let black = 0;
+            const cRest = [], gRest = [];
+            for (let i = 0; i < 4; i++) {
+                if (code[i] === guess[i]) black++;
+                else { cRest.push(code[i]); gRest.push(guess[i]); }
+            }
+            const counts = {};
+            for (const c of cRest) counts[c] = (counts[c] || 0) + 1;
+            let white = 0;
+            for (const g of gRest) if (counts[g] > 0) { white++; counts[g]--; }
+            return { black: black, white: white };
+        }
+        function mdCrackAt(guesses) {
+            if (!guesses) return -1;
+            for (let i = 0; i < guesses.length; i++) if (guesses[i] && guesses[i].black === 4) return i;
+            return -1;
+        }
+        // Race resolution from the two guess lists alone: a crack wins as
+        // soon as the opponent can no longer match it in fewer guesses; if
+        // both crack, fewer guesses wins (equal = Draw); if neither cracks
+        // in 10, Draw.
+        function mdWinner(g1, g2) {
+            const n1 = g1 ? g1.length : 0, n2 = g2 ? g2.length : 0;
+            const c1 = mdCrackAt(g1), c2 = mdCrackAt(g2);
+            if (c1 >= 0 && c2 >= 0) return c1 < c2 ? 'P1' : (c2 < c1 ? 'P2' : 'Draw');
+            if (c1 >= 0) { if (n2 >= 10 || n2 > c1) return 'P1'; return null; }
+            if (c2 >= 0) { if (n1 >= 10 || n1 > c2) return 'P2'; return null; }
+            if (n1 >= 10 && n2 >= 10) return 'Draw';
+            return null;
+        }
+
+        // ---------- BINGO DUEL (pure logic) ----------
+        // Cards are row-major Array(25): column c draws from c*15+1..c*15+15,
+        // centre (12) is the free cell (0). The caller is deterministic: the
+        // full draw order is stored at start and the reveal index is derived
+        // from elapsed time since startStamp (one number every 4 seconds),
+        // so both clients always render the same sequence.
+        function bgColPicks(col, rng) {
+            const pool = [];
+            for (let n = col * 15 + 1; n <= col * 15 + 15; n++) pool.push(n);
+            const picks = [];
+            for (let k = 0; k < 5; k++) picks.push(pool.splice(Math.floor(rng() * pool.length), 1)[0]);
+            return picks;
+        }
+        function bgNewCard(rng) {
+            rng = rng || Math.random;
+            const cols = [0, 1, 2, 3, 4].map(c => bgColPicks(c, rng));
+            const card = [];
+            for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) card.push(cols[c][r]);
+            card[12] = 0;
+            return card;
+        }
+        function bgNewDrawOrder(rng) {
+            rng = rng || Math.random;
+            const order = [];
+            for (let n = 1; n <= 75; n++) order.push(n);
+            for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); const t = order[i]; order[i] = order[j]; order[j] = t; }
+            return order;
+        }
+        function bgEmptyMarks() { const m = Array(25).fill(false); m[12] = true; return m; }
+        function bgCalledCount(startStamp, now) {
+            if (!startStamp) return 0;
+            return Math.max(0, Math.min(75, Math.floor((now - startStamp) / 4000)));
+        }
+        const BG_LINES = [
+            [0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14], [15, 16, 17, 18, 19], [20, 21, 22, 23, 24],
+            [0, 5, 10, 15, 20], [1, 6, 11, 16, 21], [2, 7, 12, 17, 22], [3, 8, 13, 18, 23], [4, 9, 14, 19, 24],
+            [0, 6, 12, 18, 24], [4, 8, 12, 16, 20]
+        ];
+        // A line wins only when every cell is both marked and already called
+        // (the centre free cell always counts).
+        function bgHasLine(card, marks, calledSet) {
+            for (const line of BG_LINES) {
+                let ok = true;
+                for (const idx of line) {
+                    if (idx === 12) continue;
+                    if (!marks[idx] || !calledSet.has(card[idx])) { ok = false; break; }
+                }
+                if (ok) return true;
+            }
+            return false;
+        }
+
+        // ---------- COLOUR FLOOD (pure logic) ----------
+        // 12x12 grid, 6 colours, generated from a shared seed so both
+        // clients agree. P1 floods from the bottom-left cell (132), P2 from
+        // the top-right (11). A pick recolours your connected region and
+        // absorbs adjacent cells of the new colour. You may not pick your
+        // own current colour or your opponent's. 20 picks each.
+        const FL_COLORS = ['#E5484D', '#FFC926', '#46A758', '#3E63DD', '#8E4EC6', '#12A594'];
+        const FL_MAX_MOVES = 20;
+        function flMulberry(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a |= 0; a = a + 0x6D2B79F5 | 0;
+                let t = Math.imul(a ^ a >>> 15, 1 | a);
+                t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            };
+        }
+        function flGenGrid(seed) {
+            const rng = flMulberry(seed);
+            const grid = [];
+            for (let i = 0; i < 144; i++) grid.push(Math.floor(rng() * 6));
+            if (grid[132] === grid[11]) grid[11] = (grid[11] + 1) % 6;
+            return grid;
+        }
+        function flRegionCells(grid, start) {
+            const colour = grid[start];
+            const seen = new Set([start]);
+            const stack = [start];
+            while (stack.length) {
+                const cur = stack.pop();
+                const r = Math.floor(cur / 12), c = cur % 12;
+                const nb = [];
+                if (r > 0) nb.push(cur - 12);
+                if (r < 11) nb.push(cur + 12);
+                if (c > 0) nb.push(cur - 1);
+                if (c < 11) nb.push(cur + 1);
+                for (const n of nb) if (!seen.has(n) && grid[n] === colour) { seen.add(n); stack.push(n); }
+            }
+            return seen;
+        }
+        function flSizes(grid) {
+            return { s1: flRegionCells(grid, 132).size, s2: flRegionCells(grid, 11).size };
+        }
+        function flApply(grid, role, colour, c1, c2) {
+            const mine = role === 'P1' ? c1 : c2;
+            const theirs = role === 'P1' ? c2 : c1;
+            if (colour === mine || colour === theirs) return null;
+            const start = role === 'P1' ? 132 : 11;
+            const region = flRegionCells(grid, start);
+            const ng = [...grid];
+            for (const idx of region) ng[idx] = colour;
+            return { grid: ng, colour: colour, size: flRegionCells(ng, start).size };
+        }
+        function flWinnerAfter(grid, moves1, moves2) {
+            if (moves1 < FL_MAX_MOVES || moves2 < FL_MAX_MOVES) return null;
+            const sz = flSizes(grid);
+            return sz.s1 > sz.s2 ? 'P1' : (sz.s2 > sz.s1 ? 'P2' : 'Draw');
+        }
+
         // ---------- BATTLESHIP ----------
         const BS_SHIP_LENS = [5, 4, 3, 3, 2];
         const BS_SHIP_NAMES = ['Carrier (5)', 'Battleship (4)', 'Cruiser (3)', 'Submarine (3)', 'Destroyer (2)'];
@@ -7836,6 +8370,440 @@ function sendNotification(title, body, icon) {
                 gameRef.update({ bank1: 0, bank2: 0, turnTotal: 0, turn: 'P1', dice: 0, bust: false, winner: null });
             }
             document.getElementById('rematchPdBtn').style.display = 'none';
+        };
+
+        // ---------- CHECKERS ----------
+        let ckData = null;          // latest room snapshot (rendering + tap guards)
+        let ckSelected = null;      // locally selected piece index
+        window.renderCkBoard = function() {
+            const el = document.getElementById('ckBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 64; i++) {
+                const r = Math.floor(i / 8), c = i % 8;
+                const cell = document.createElement('div');
+                cell.id = 'ck-cell-' + i;
+                cell.style.cssText = 'border-radius: 4px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; background: ' + ((r + c) % 2 === 1 ? '#101116' : 'rgba(255,255,255,0.06)') + ';';
+                const piece = document.createElement('div');
+                piece.id = 'ck-piece-' + i;
+                piece.style.cssText = 'width: 80%; aspect-ratio: 1; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 11px; box-sizing: border-box;';
+                cell.appendChild(piece);
+                cell.onclick = () => ckTap(i);
+                el.appendChild(cell);
+            }
+        };
+        window.updateCkUI = function(data) {
+            const myTurn = !data.winner && data.turn === myGameRole();
+            const hops = myTurn ? ckLegalHops(data.board, myGameRole(), data.mustJump) : [];
+            const targets = {}, movable = {};
+            for (const h of hops) { movable[h.from] = true; if (h.from === ckSelected) targets[h.to] = true; }
+            for (let i = 0; i < 64; i++) {
+                const piece = document.getElementById('ck-piece-' + i);
+                const cell = document.getElementById('ck-cell-' + i);
+                if (!piece || !cell) continue;
+                const v = data.board[i];
+                if (v) {
+                    piece.style.display = 'flex';
+                    if (v === 'r' || v === 'R') { piece.style.background = '#E5484D'; piece.style.border = '2px solid #FF8589'; }
+                    else { piece.style.background = '#23252C'; piece.style.border = '2px solid #565B66'; }
+                    piece.style.color = '#FFD34D';
+                    piece.innerHTML = ckIsKing(v) ? '<i class="fa-solid fa-crown"></i>' : '';
+                } else piece.style.display = 'none';
+                let shadow = '';
+                if (i === ckSelected) shadow = 'inset 0 0 0 2px #FFC926';
+                else if (targets[i]) shadow = 'inset 0 0 0 2px rgba(70,167,88,0.95)';
+                else if (data.lastMove === i) shadow = 'inset 0 0 0 2px rgba(244,245,247,0.35)';
+                else if (myTurn && movable[i] && ckSelected === null) shadow = 'inset 0 0 0 1px rgba(255,201,38,0.45)';
+                cell.style.boxShadow = shadow;
+            }
+        };
+        window.ckTap = function(idx) {
+            if (!gameRef || !ckData) return;
+            const data = ckData;
+            if (data.winner || data.turn !== myGameRole()) return;
+            const hops = ckLegalHops(data.board, myGameRole(), data.mustJump);
+            const hop = hops.find(h => h.from === ckSelected && h.to === idx);
+            if (hop) {
+                const res = ckApplyHop(data.board, hop.from, hop.to);
+                const upd = { board: res.board, lastMove: hop.to };
+                if (res.chain !== null) upd.mustJump = res.chain;
+                else { upd.mustJump = null; upd.turn = oppGameRole(); upd.winner = ckWinnerFor(res.board, oppGameRole()); }
+                ckSelected = res.chain;
+                gameRef.update(upd);
+                return;
+            }
+            if (ckOwner(data.board[idx]) === myGameRole() && hops.some(h => h.from === idx)) {
+                ckSelected = idx;
+                updateCkUI(data);
+            }
+        };
+        window.resetCheckers = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ board: ckInitialBoard(), turn: 'P1', winner: null, lastMove: null, mustJump: null });
+            }
+            ckSelected = null;
+            document.getElementById('rematchCkBtn').style.display = 'none';
+        };
+
+        // ---------- MANCALA ----------
+        window.renderMcBoard = function() {
+            const el = document.getElementById('mcBoard');
+            if (!el || el.children.length) return;
+            const mk = (idx, isStore, col, row) => {
+                const cell = document.createElement('div');
+                cell.id = 'mc-pit-' + idx;
+                cell.style.cssText = 'background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 12px; padding: 5px 1px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box; grid-column: ' + col + '; grid-row: ' + row + ';' + (isStore ? ' border-color: ' + (idx === 6 ? '#E5484D' : '#FFC926') + ';' : ' cursor: pointer;');
+                const dots = document.createElement('div');
+                dots.id = 'mc-dots-' + idx;
+                dots.style.cssText = 'display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; align-content: center; max-width: 44px; min-height: 7px;';
+                const num = document.createElement('div');
+                num.id = 'mc-num-' + idx;
+                num.style.cssText = 'font-weight: 900; font-size: ' + (isStore ? '20px' : '14px') + '; color: var(--text-primary); line-height: 1;';
+                num.innerText = '0';
+                cell.appendChild(dots);
+                cell.appendChild(num);
+                if (!isStore) cell.onclick = () => mcTap(idx);
+                el.appendChild(cell);
+            };
+            mk(13, true, '1', '1 / 3');
+            for (let idx = 12; idx >= 7; idx--) mk(idx, false, '' + (14 - idx), '1');
+            mk(6, true, '8', '1 / 3');
+            for (let idx = 0; idx <= 5; idx++) mk(idx, false, '' + (idx + 2), '2');
+        };
+        window.updateMcUI = function(data) {
+            const DOT = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#E8C476;"></span>';
+            const myTurn = !data.winner && data.turn === myGameRole();
+            const lo = myGameRole() === 'P1' ? 0 : 7;
+            for (let i = 0; i < 14; i++) {
+                const num = document.getElementById('mc-num-' + i);
+                const dots = document.getElementById('mc-dots-' + i);
+                const cell = document.getElementById('mc-pit-' + i);
+                if (!num || !dots || !cell) continue;
+                const n = data.pits[i] || 0;
+                num.innerText = n;
+                dots.innerHTML = DOT.repeat(Math.min(n, 14));
+                const playable = myTurn && i >= lo && i <= lo + 5 && n > 0;
+                cell.style.boxShadow = playable ? 'inset 0 0 0 2px rgba(255,201,38,0.6)' : '';
+            }
+            document.getElementById('mcScore').innerText = `Stores — ${data.p1Name || 'P1'}: ${data.pits[6] || 0} · ${data.p2Name || 'P2'}: ${data.pits[13] || 0}`;
+        };
+        window.mcTap = function(idx) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || !data.pits || data.winner || data.turn !== myGameRole()) return;
+                const res = mcSow(data.pits, myGameRole(), idx);
+                if (!res) return;
+                if (res.extra) showToast('Last seed in your store — take another turn', 'success');
+                else if (res.captured > 0) showToast('Captured ' + res.captured + ' seeds!', 'success');
+                gameRef.update({ pits: res.pits, turn: res.next, winner: res.winner });
+            });
+        };
+        window.resetMancala = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ pits: mcInitialPits(), turn: 'P1', winner: null });
+            }
+            document.getElementById('rematchMcBtn').style.display = 'none';
+        };
+
+        // ---------- MASTERMIND ----------
+        let mdData = null;          // latest room snapshot
+        let mdGuess = [];           // locally built guess (colour indexes)
+        function resetMdLocal() { mdGuess = []; }
+        window.renderMdPalette = function() {
+            const el = document.getElementById('mdPalette');
+            if (el && !el.children.length) {
+                MD_COLORS.forEach((hex, i) => {
+                    const b = document.createElement('button');
+                    b.style.cssText = 'width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); background: ' + hex + '; cursor: pointer; box-sizing: border-box;';
+                    b.onclick = () => mdAddPeg(i);
+                    el.appendChild(b);
+                });
+            }
+            const slots = document.getElementById('mdGuessSlots');
+            if (slots && !slots.children.length) {
+                for (let i = 0; i < 4; i++) {
+                    const sl = document.createElement('div');
+                    sl.id = 'md-slot-' + i;
+                    sl.style.cssText = 'width: 40px; height: 40px; border-radius: 50%; border: 2px dashed var(--glass-border); background: var(--bg-dark); cursor: pointer; box-sizing: border-box;';
+                    sl.onclick = () => mdRemovePeg(i);
+                    slots.appendChild(sl);
+                }
+            }
+            renderMdGuessRow();
+        };
+        function renderMdGuessRow() {
+            for (let i = 0; i < 4; i++) {
+                const sl = document.getElementById('md-slot-' + i);
+                if (!sl) continue;
+                if (i < mdGuess.length) { sl.style.background = MD_COLORS[mdGuess[i]]; sl.style.border = '2px solid rgba(255,255,255,0.35)'; }
+                else { sl.style.background = 'var(--bg-dark)'; sl.style.border = '2px dashed var(--glass-border)'; }
+            }
+            const sub = document.getElementById('mdSubmitBtn');
+            if (sub) {
+                const ok = mdGuess.length === 4 && !(mdData && mdData.winner);
+                sub.style.opacity = ok ? '1' : '0.45';
+                sub.style.pointerEvents = ok ? 'auto' : 'none';
+            }
+        }
+        function mdPegRow(arr) {
+            const row = document.createElement('div');
+            row.style.cssText = 'display: flex; gap: 5px;';
+            for (const c of (arr || [])) {
+                const p = document.createElement('div');
+                p.style.cssText = 'width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: ' + (MD_COLORS[c] || 'transparent') + ';';
+                row.appendChild(p);
+            }
+            return row;
+        }
+        window.renderMdAll = function() {
+            renderMdGuessRow();
+            const mine = document.getElementById('mdMyGuesses');
+            const oppInfo = document.getElementById('mdOppInfo');
+            if (!mine || !oppInfo) return;
+            mine.innerHTML = '';
+            if (!mdData) { oppInfo.innerText = ''; return; }
+            const myKey = myGameRole() === 'P1' ? 'g1' : 'g2';
+            const oppKey = myKey === 'g1' ? 'g2' : 'g1';
+            const myList = mdData[myKey] || [];
+            const oppList = mdData[oppKey] || [];
+            if (!myList.length) {
+                const p = document.createElement('p');
+                p.style.cssText = 'color: var(--text-secondary); font-size: 13px; text-align: center; margin: 4px 0;';
+                p.innerText = 'No guesses yet — build a code below and submit.';
+                mine.appendChild(p);
+            }
+            myList.forEach((entry, i) => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 7px 10px;';
+                const num = document.createElement('span');
+                num.style.cssText = 'font-size: 12px; color: var(--text-secondary); font-weight: 700; min-width: 16px;';
+                num.innerText = (i + 1) + '';
+                row.appendChild(num);
+                row.appendChild(mdPegRow(entry.guess || []));
+                const fb = document.createElement('span');
+                fb.style.cssText = 'font-size: 12px; font-weight: 700; color: var(--text-primary); margin-left: auto; white-space: nowrap;';
+                fb.innerText = (entry.black || 0) + ' exact · ' + (entry.white || 0) + ' close';
+                row.appendChild(fb);
+                mine.appendChild(row);
+            });
+            const oppName = myGameRole() === 'P1' ? (mdData.p2Name || 'Opponent') : (mdData.p1Name || 'Opponent');
+            let ot = oppName + ': ' + oppList.length + '/10 guesses';
+            const oc = mdCrackAt(oppList);
+            if (oc >= 0) ot += ' — cracked it in ' + (oc + 1) + '!';
+            oppInfo.innerText = ot;
+            const rev = document.getElementById('mdCodeReveal');
+            if (mdData.winner) {
+                rev.style.display = 'flex';
+                const pegs = document.getElementById('mdCodePegs');
+                pegs.innerHTML = '';
+                pegs.appendChild(mdPegRow(mdData.code || []));
+            } else rev.style.display = 'none';
+        };
+        window.mdAddPeg = function(colour) {
+            if (mdGuess.length >= 4) return;
+            if (mdData && mdData.winner) return;
+            mdGuess.push(colour);
+            renderMdGuessRow();
+        };
+        window.mdRemovePeg = function(pos) {
+            if (pos < mdGuess.length) { mdGuess.splice(pos, 1); renderMdGuessRow(); }
+        };
+        window.mdUndoPeg = function() { mdGuess.pop(); renderMdGuessRow(); };
+        window.mdSubmitGuess = function() {
+            if (!gameRef || mdGuess.length !== 4) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || data.winner || !data.code) return;
+                const myKey = myGameRole() === 'P1' ? 'g1' : 'g2';
+                const mine = data[myKey] ? [...data[myKey]] : [];
+                if (mine.length >= 10 || mdCrackAt(mine) >= 0) return;
+                const fb = mdFeedback(data.code, mdGuess);
+                mine.push({ guess: [...mdGuess], black: fb.black, white: fb.white });
+                const upd = {};
+                upd[myKey] = mine;
+                upd.winner = mdWinner(myKey === 'g1' ? mine : data.g1, myKey === 'g2' ? mine : data.g2);
+                gameRef.update(upd);
+                mdGuess = [];
+                renderMdGuessRow();
+            });
+        };
+        window.resetMastermind = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ code: mdNewCode(), g1: null, g2: null, winner: null });
+            }
+            mdGuess = [];
+            document.getElementById('rematchMdBtn').style.display = 'none';
+        };
+
+        // ---------- BINGO DUEL ----------
+        let bgData = null;          // latest room snapshot
+        let bgTimer = null;         // caller tick (reveal index is time-derived)
+        window.renderBgCard = function() {
+            const el = document.getElementById('bgCard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.id = 'bg-cell-' + i;
+                cell.style.cssText = 'border-radius: 8px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; background: rgba(255,255,255,0.05); color: var(--text-primary); cursor: pointer; box-sizing: border-box;';
+                if (i === 12) cell.innerHTML = '<i class="fa-solid fa-star" style="color: #FFC926; font-size: 13px;"></i>';
+                cell.onclick = () => bgTapCell(i);
+                el.appendChild(cell);
+            }
+        };
+        window.updateBgUI = function(data) {
+            if (!data || !data.card1 || !data.card2) return;
+            const role = myGameRole();
+            const card = role === 'P1' ? data.card1 : data.card2;
+            const marks = (role === 'P1' ? data.marks1 : data.marks2) || bgEmptyMarks();
+            const oppMarks = (role === 'P1' ? data.marks2 : data.marks1) || bgEmptyMarks();
+            const now = Date.now();
+            const calledCount = bgCalledCount(data.startStamp, now);
+            const called = new Set((data.drawOrder || []).slice(0, calledCount));
+            for (let i = 0; i < 25; i++) {
+                const cell = document.getElementById('bg-cell-' + i);
+                if (!cell) continue;
+                if (i !== 12) cell.innerText = card[i];
+                if (marks[i]) { cell.style.background = 'var(--gold-grad)'; cell.style.color = '#1A1402'; cell.style.boxShadow = ''; }
+                else if (called.has(card[i])) { cell.style.background = 'rgba(255,201,38,0.14)'; cell.style.color = 'var(--text-primary)'; cell.style.boxShadow = 'inset 0 0 0 2px rgba(255,201,38,0.65)'; }
+                else { cell.style.background = 'rgba(255,255,255,0.05)'; cell.style.color = 'var(--text-primary)'; cell.style.boxShadow = ''; }
+            }
+            const nowEl = document.getElementById('bgCallNow');
+            const metaEl = document.getElementById('bgCallMeta');
+            if (calledCount > 0 && data.drawOrder) {
+                nowEl.innerText = data.drawOrder[calledCount - 1];
+                const remain = 4 - Math.floor(((now - data.startStamp) % 4000) / 1000);
+                metaEl.innerText = data.winner ? 'Game over' : (calledCount >= 75 ? 'All numbers called' : 'Called ' + calledCount + '/75 · Next in ' + Math.max(1, remain) + 's');
+            } else {
+                nowEl.innerText = '–';
+                const secs = data.startStamp ? Math.max(0, Math.ceil((data.startStamp - now) / 1000)) : 0;
+                metaEl.innerText = 'First call in ' + secs + 's · Mark numbers as they land';
+            }
+            const hist = document.getElementById('bgCallHistory');
+            if (hist && data.drawOrder) {
+                hist.innerHTML = '';
+                const recent = data.drawOrder.slice(0, calledCount).slice(-12).reverse();
+                for (const n of recent) {
+                    const sp = document.createElement('span');
+                    sp.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--panel-2);border:1px solid var(--glass-border);font-size:12px;font-weight:700;';
+                    sp.innerText = n;
+                    hist.appendChild(sp);
+                }
+            }
+            document.getElementById('bgOppInfo').innerText = 'Opponent has marked ' + oppMarks.filter(Boolean).length + ' numbers';
+            const claim = document.getElementById('bgClaimBtn');
+            const lock = (role === 'P1' ? data.claimLock1 : data.claimLock2) || 0;
+            if (data.winner) { claim.style.opacity = '0.45'; claim.style.pointerEvents = 'none'; claim.innerText = 'BINGO'; }
+            else if (lock > now) { claim.style.opacity = '0.45'; claim.style.pointerEvents = 'none'; claim.innerText = 'Locked ' + Math.ceil((lock - now) / 1000) + 's'; }
+            else { claim.style.opacity = '1'; claim.style.pointerEvents = 'auto'; claim.innerText = 'BINGO!'; }
+        };
+        window.bgTapCell = function(idx) {
+            if (!gameRef || !bgData || bgData.winner || idx === 12) return;
+            const data = bgData;
+            const role = myGameRole();
+            const card = role === 'P1' ? data.card1 : data.card2;
+            const marksKey = role === 'P1' ? 'marks1' : 'marks2';
+            const marks = data[marksKey] ? [...data[marksKey]] : bgEmptyMarks();
+            if (marks[idx]) return;
+            const called = new Set((data.drawOrder || []).slice(0, bgCalledCount(data.startStamp, Date.now())));
+            if (!called.has(card[idx])) { showToast('That number has not been called yet', 'error'); return; }
+            marks[idx] = true;
+            const upd = {};
+            upd[marksKey] = marks;
+            gameRef.update(upd);
+        };
+        window.bgClaimBingo = function() {
+            if (!gameRef || !bgData || bgData.winner) return;
+            const data = bgData;
+            const role = myGameRole();
+            const lockKey = role === 'P1' ? 'claimLock1' : 'claimLock2';
+            if ((data[lockKey] || 0) > Date.now()) return;
+            const called = new Set((data.drawOrder || []).slice(0, bgCalledCount(data.startStamp, Date.now())));
+            const card = role === 'P1' ? data.card1 : data.card2;
+            const marks = (role === 'P1' ? data.marks1 : data.marks2) || bgEmptyMarks();
+            if (bgHasLine(card, marks, called)) {
+                gameRef.update({ winner: role });
+            } else {
+                const upd = {};
+                upd[lockKey] = Date.now() + 10000;
+                gameRef.update(upd);
+                showToast('No complete line yet — BINGO locked for 10 seconds', 'error');
+            }
+        };
+        window.resetBingo = function() {
+            if (gameRef && mySymbol === 'X') {
+                gameRef.update({ card1: bgNewCard(), card2: bgNewCard(), drawOrder: bgNewDrawOrder(), startStamp: Date.now() + 3000, marks1: bgEmptyMarks(), marks2: bgEmptyMarks(), winner: null, claimLock1: 0, claimLock2: 0 });
+            }
+            document.getElementById('rematchBgBtn').style.display = 'none';
+        };
+
+        // ---------- COLOUR FLOOD ----------
+        window.renderFlBoard = function() {
+            const el = document.getElementById('flBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 144; i++) {
+                const cell = document.createElement('div');
+                cell.id = 'fl-cell-' + i;
+                cell.style.cssText = 'border-radius: 2px; aspect-ratio: 1; background: rgba(255,255,255,0.05);';
+                el.appendChild(cell);
+            }
+        };
+        window.renderFlPalette = function() {
+            const el = document.getElementById('flPalette');
+            if (!el || el.children.length) return;
+            FL_COLORS.forEach((hex, i) => {
+                const b = document.createElement('button');
+                b.id = 'fl-col-' + i;
+                b.style.cssText = 'width: 42px; height: 42px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); background: ' + hex + '; cursor: pointer; box-sizing: border-box;';
+                b.onclick = () => flPick(i);
+                el.appendChild(b);
+            });
+        };
+        window.updateFlUI = function(data) {
+            if (!data || !data.grid) return;
+            const r1 = flRegionCells(data.grid, 132);
+            const r2 = flRegionCells(data.grid, 11);
+            for (let i = 0; i < 144; i++) {
+                const cell = document.getElementById('fl-cell-' + i);
+                if (!cell) continue;
+                cell.style.background = FL_COLORS[data.grid[i]];
+                cell.style.boxShadow = (r1.has(i) || r2.has(i)) ? 'inset 0 0 0 2px rgba(255,255,255,0.55)' : '';
+            }
+            const role = myGameRole();
+            const mySize = role === 'P1' ? r1.size : r2.size;
+            const opSize = role === 'P1' ? r2.size : r1.size;
+            const myMoves = role === 'P1' ? (data.moves1 || 0) : (data.moves2 || 0);
+            document.getElementById('flScore').innerText = 'Territory — You ' + mySize + ' · Opponent ' + opSize + ' · Picks left: ' + (FL_MAX_MOVES - myMoves);
+            const myTurn = !data.winner && data.turn === role;
+            for (let i = 0; i < 6; i++) {
+                const b = document.getElementById('fl-col-' + i);
+                if (!b) continue;
+                const illegal = i === data.c1 || i === data.c2;
+                const off = !myTurn || illegal;
+                b.style.opacity = off ? '0.3' : '1';
+                b.style.pointerEvents = off ? 'none' : 'auto';
+                b.style.border = i === (role === 'P1' ? data.c1 : data.c2) ? '3px solid #F4F5F7' : '2px solid rgba(255,255,255,0.25)';
+            }
+        };
+        window.flPick = function(colour) {
+            if (!gameRef) return;
+            gameRef.once('value', snap => {
+                const data = snap.val();
+                if (!data || !data.grid || data.winner || data.turn !== myGameRole()) return;
+                const res = flApply(data.grid, myGameRole(), colour, data.c1, data.c2);
+                if (!res) return;
+                const m1 = (data.moves1 || 0) + (myGameRole() === 'P1' ? 1 : 0);
+                const m2 = (data.moves2 || 0) + (myGameRole() === 'P2' ? 1 : 0);
+                const upd = { grid: res.grid, turn: oppGameRole(), moves1: m1, moves2: m2, winner: flWinnerAfter(res.grid, m1, m2) };
+                if (myGameRole() === 'P1') upd.c1 = colour; else upd.c2 = colour;
+                gameRef.update(upd);
+            });
+        };
+        window.resetFlood = function() {
+            if (gameRef && mySymbol === 'X') {
+                const fg = flGenGrid(Math.floor(Math.random() * 1000000000));
+                gameRef.update({ grid: fg, c1: fg[132], c2: fg[11], turn: 'P1', moves1: 0, moves2: 0, winner: null });
+            }
+            document.getElementById('rematchFlBtn').style.display = 'none';
         };
 
 
@@ -9486,6 +10454,52 @@ function sendNotification(title, body, icon) {
             if(typeof user !== 'undefined' && user) { db.ref('gameQueue/PigDice/' + user.uid).off(); db.ref('gameQueue/PigDice/' + user.uid).remove(); }
             gameRoom = null;
         }
+        window.leaveCheckers = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('checkersOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Checkers/' + user.uid).off(); db.ref('gameQueue/Checkers/' + user.uid).remove(); }
+            ckData = null;
+            ckSelected = null;
+            gameRoom = null;
+        }
+        window.leaveMancala = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('mancalaOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Mancala/' + user.uid).off(); db.ref('gameQueue/Mancala/' + user.uid).remove(); }
+            gameRoom = null;
+        }
+        window.leaveMastermind = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('mastermindOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Mastermind/' + user.uid).off(); db.ref('gameQueue/Mastermind/' + user.uid).remove(); }
+            mdData = null;
+            mdGuess = [];
+            gameRoom = null;
+        }
+        window.leaveBingo = function() {
+            if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('bingoOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Bingo/' + user.uid).off(); db.ref('gameQueue/Bingo/' + user.uid).remove(); }
+            bgData = null;
+            gameRoom = null;
+        }
+        window.leaveFlood = function() {
+            if(typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if(typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('floodOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if(typeof user !== 'undefined' && user) { db.ref('gameQueue/Flood/' + user.uid).off(); db.ref('gameQueue/Flood/' + user.uid).remove(); }
+            gameRoom = null;
+        }
 
         // --- CHAT HEADER ACTIONS ---
         function openChatMenu() {
@@ -11006,6 +12020,118 @@ window.burnImage = function(element, url, key) {
 
         <button id="rematchPdBtn" onclick="resetPigDice()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
+    <div id="checkersOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveCheckers()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #F87171; margin-bottom: 5px;">Checkers</h2>
+        <p id="ckStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: #E5484D; margin-right: 6px;">P1</span><span id="ckScoreP1">12</span></div>
+            <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; font-weight: 700; font-size: 14px;"><span style="color: #9BA1AB; margin-right: 6px;">P2</span><span id="ckScoreP2">12</span></div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px;">
+            <div id="ckBoard" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; width: 302px; max-width: 92vw;"></div>
+        </div>
+
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Captures are forced — if a jump is available, you must take it. Chain jumps in a single turn; reach the far side to be crowned.</p>
+
+        <button id="rematchCkBtn" onclick="resetCheckers()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="mancalaOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMancala()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FDA4AF; margin-bottom: 5px;">Mancala</h2>
+        <p id="mcStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; margin-bottom: 14px;">
+            <div id="mcBoard" style="display: grid; grid-template-columns: 46px repeat(6, 1fr) 46px; gap: 5px; width: 332px; max-width: 94vw;"></div>
+        </div>
+
+        <p id="mcScore" style="color: var(--text-secondary); font-size: 13px; margin: 0;">Stores — P1: 0 · P2: 0</p>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 12px; text-align: center; padding: 0 24px;">Tap one of your pits to sow its seeds. Last seed in your store earns another turn; last seed in an empty pit on your side captures across.</p>
+
+        <button id="rematchMcBtn" onclick="resetMancala()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="mastermindOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMastermind()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #A5B4FC; margin-bottom: 5px;">Mastermind</h2>
+        <p id="mdStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div id="mdCodeReveal" style="display: none; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--text-secondary);">THE CODE</span>
+            <div id="mdCodePegs"></div>
+        </div>
+
+        <p id="mdOppInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 12px;"></p>
+
+        <div id="mdMyGuesses" style="display: flex; flex-direction: column; gap: 6px; width: 322px; max-width: 94vw; margin-bottom: 18px;"></div>
+
+        <div style="font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 8px;">YOUR GUESS</div>
+        <div id="mdGuessSlots" style="display: flex; gap: 10px; margin-bottom: 14px;"></div>
+        <div id="mdPalette" style="display: flex; gap: 10px; margin-bottom: 16px;"></div>
+
+        <div style="display: flex; gap: 12px;">
+            <button id="mdUndoBtn" onclick="mdUndoPeg()" style="padding: 13px 22px; border-radius: 30px; background: var(--panel-2); color: var(--text-primary); font-weight: 900; font-size: 15px; border: 1px solid var(--glass-border);"><i class="fa-solid fa-delete-left"></i> Undo</button>
+            <button id="mdSubmitBtn" onclick="mdSubmitGuess()" style="padding: 13px 26px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 15px; border: none; opacity: 0.45; pointer-events: none;"><i class="fa-solid fa-check"></i> Submit Guess</button>
+        </div>
+
+        <button id="rematchMdBtn" onclick="resetMastermind()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="bingoOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveBingo()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #67E8F9; margin-bottom: 5px;">Bingo Duel</h2>
+        <p id="bgStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+            <div id="bgCallNow" style="width: 62px; height: 62px; border-radius: 50%; background: var(--gold-grad); color: #1A1402; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900;">–</div>
+            <div>
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--text-secondary);">NOW CALLING</div>
+                <div id="bgCallMeta" style="font-size: 13px; color: var(--text-primary); font-weight: 600;">Waiting to start</div>
+            </div>
+        </div>
+
+        <div id="bgCallHistory" style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; min-height: 26px; max-width: 322px; margin-bottom: 14px;"></div>
+
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 302px; max-width: 92vw; margin-bottom: 4px; font-size: 17px;">
+            <div style="text-align: center; font-weight: 900; color: #E5484D;">B</div>
+            <div style="text-align: center; font-weight: 900; color: #FFC926;">I</div>
+            <div style="text-align: center; font-weight: 900; color: #46A758;">N</div>
+            <div style="text-align: center; font-weight: 900; color: #3E63DD;">G</div>
+            <div style="text-align: center; font-weight: 900; color: #8E4EC6;">O</div>
+        </div>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 10px; margin-bottom: 14px;">
+            <div id="bgCard" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 302px; max-width: 92vw;"></div>
+        </div>
+
+        <p id="bgOppInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 14px;">Opponent has marked 0 numbers</p>
+
+        <button id="bgClaimBtn" onclick="bgClaimBingo()" style="padding: 15px 44px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 18px; border: none; letter-spacing: 1px;">BINGO!</button>
+
+        <button id="rematchBgBtn" onclick="resetBingo()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="floodOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveFlood()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #4ADE80; margin-bottom: 5px;">Colour Flood</h2>
+        <p id="flStatus" style="color: var(--text-secondary); margin-bottom: 15px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+
+        <p id="flScore" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 12px;">Territory — You 1 · Opponent 1 · Picks left: 20</p>
+
+        <div style="background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 8px; margin-bottom: 16px;">
+            <div id="flBoard" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; width: 300px; max-width: 94vw;"></div>
+        </div>
+
+        <div id="flPalette" style="display: flex; gap: 10px;"></div>
+
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Pick a colour to flood your corner and absorb matching neighbours. You cannot pick your own current colour or your opponent's. Most territory after 20 picks each wins.</p>
+
+        <button id="rematchFlBtn" onclick="resetFlood()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
 
     <!-- GAME CHAT -->
 
