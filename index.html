@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@600;800&family=Rubik:wght@400;500;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- GLOBAL FIXES & THEME VARIABLES --- */
         *, *::before, *::after { 
@@ -1030,6 +1030,27 @@
         .online-friend span { font-size: 10px; color: var(--text-secondary); max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         /* Stage 7B: deleted-message tombstone */
         .msg-deleted { font-style: italic; opacity: 0.55; }
+        /* Stage 13: polls */
+        .poll-wrap { display: flex; flex-direction: column; gap: 6px; min-width: 215px; max-width: 280px; }
+        .poll-q { font-weight: 800; font-size: 14px; }
+        .poll-opt { position: relative; border: 1px solid var(--glass-border); border-radius: 10px; padding: 8px 10px; cursor: pointer; overflow: hidden; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+        .poll-opt .poll-bar { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255, 201, 38, 0.22); transition: width 0.3s ease; }
+        .poll-opt.mine { border-color: #FFC926; }
+        .poll-opt .poll-opt-txt { position: relative; z-index: 1; font-weight: 600; }
+        .poll-opt .poll-pct { position: relative; z-index: 1; opacity: 0.75; font-size: 12px; white-space: nowrap; }
+        .poll-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; opacity: 0.8; }
+        .poll-end-btn { background: none; border: 1px solid var(--glass-border); color: inherit; border-radius: 8px; padding: 3px 9px; font-size: 11px; cursor: pointer; font-family: inherit; }
+        /* Stage 13: mentions + admin warnings */
+        .mention { color: #FFC926; font-weight: 700; }
+        .bubble.mention-me { border-left: 3px solid #FFC926; }
+        .warn-box { display: flex; gap: 8px; align-items: flex-start; background: rgba(255, 59, 48, 0.13); border: 1px solid rgba(255, 59, 48, 0.45); border-radius: 10px; padding: 8px 10px; }
+        .warn-box i { color: #ff6b61; margin-top: 2px; }
+        /* Stage 13: pinned chats */
+        .pin-btn { background: none; border: none; color: var(--text-secondary); font-size: 13px; cursor: pointer; padding: 6px; flex: none; }
+        .pin-btn.pinned { color: #FFC926; }
+        .su-pad-btn { width: 52px; height: 44px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--panel); color: var(--text-primary); font-size: 16px; font-weight: 800; cursor: pointer; font-family: inherit; }
+        /* Stage 13: game record empty-state icon */
+        .gr-empty-ic { color: var(--accent-yellow); margin-right: 6px; }
         
         .fab {
             position: fixed;
@@ -1571,6 +1592,38 @@
                 </select>
             </div>
 
+            <div id="adminUserDetails" style="background: var(--island); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 12px; font-size: 12px; color: var(--text-secondary); line-height: 1.9;">
+                <!-- Stage 13: joined / streak / record / presence / mute state, filled by adminEditUser -->
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--accent-yellow);"><i class="fa-solid fa-gem"></i> Sparks Quick Actions</label>
+                <div style="display:flex; gap: 8px;">
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4);" onclick="adminAdjustOrbs(100)">+100</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4);" onclick="adminAdjustOrbs(500)">+500</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminAdjustOrbs(-100)">&minus;100</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminAdjustOrbs(-500)">&minus;500</button>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--error-red);"><i class="fa-solid fa-volume-xmark"></i> Timeout / Mute</label>
+                <div style="display:flex; gap: 8px;">
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(255, 149, 0, 0.18); color: #ff9f0a; border: 1px solid rgba(255, 149, 0, 0.4);" onclick="adminSetMute(10)">10 min</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(255, 149, 0, 0.18); color: #ff9f0a; border: 1px solid rgba(255, 149, 0, 0.4);" onclick="adminSetMute(60)">1 hour</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(255, 149, 0, 0.18); color: #ff9f0a; border: 1px solid rgba(255, 149, 0, 0.4);" onclick="adminSetMute(1440)">24 hours</button>
+                    <button class="btn-primary ripple-target" style="flex:1; height: 35px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4);" onclick="adminSetMute(0)">Unmute</button>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:12px; color:var(--error-red);"><i class="fa-solid fa-triangle-exclamation"></i> Warn User</label>
+                <div style="display:flex; gap: 8px;">
+                    <input type="text" id="adminWarnReason" class="auth-input" style="flex: 1;" placeholder="Reason (optional)" maxlength="120">
+                    <button class="btn-primary ripple-target" style="flex: none; height: auto; min-height: 44px; padding: 0 16px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminWarnUser()">Warn</button>
+                </div>
+            </div>
+
             <div style="display:flex; flex-direction:column; gap:5px; margin-top: 10px;">
                 <label style="font-size:12px; color:var(--accent-purple);"><i class="fa-solid fa-box-open"></i> Inventory Editor</label>
                 <div style="display:flex; gap: 10px;">
@@ -1622,6 +1675,15 @@
             <h3 style="margin: 15px 0 0 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Feature Toggles</h3>
             <div id="adminSettingsList" style="display:flex; flex-direction:column; gap:10px;">
                 <!-- Settings populated here -->
+            </div>
+
+            <h3 style="margin: 15px 0 0 0; font-size: 14px; color: var(--text-primary); border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;">Announcement Banner</h3>
+            <div style="display:flex; flex-direction:column; gap:8px; background:var(--island); padding:10px; border-radius:12px; border:1px dashed var(--glass-border);">
+                <input type="text" id="adminAnnounceText" class="auth-input" placeholder="Announcement for every user's dashboard" maxlength="140">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 40px; background: rgba(255, 201, 38, 0.2); color: var(--accent-yellow); border: 1px solid rgba(255, 201, 38, 0.4);" onclick="adminSetAnnouncement()">Set Banner</button>
+                    <button class="btn-primary ripple-target" style="flex: 1; height: 40px; background: rgba(255, 59, 48, 0.2); color: var(--error-red); border: 1px solid rgba(255, 59, 48, 0.4);" onclick="adminClearAnnouncement()">Clear</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1714,7 +1776,7 @@
                     </div>
                     <span class="v3-cta">Play</span>
                 </div>
-                <p class="v3-lbl">All Games &middot; 30</p>
+                <p class="v3-lbl">All Games &middot; 35</p>
                 <div class="v3-games-grid">
                     <div class="v3-gcard ripple-target" onclick="findStrangerGame('TicTacToe')">
                         <div class="v3-gcard-tile" style="color: #FF8589;"><i class="fa-solid fa-hashtag"></i></div>
@@ -1876,6 +1938,31 @@
                         <div class="v3-gcard-name">Word Chain <span class="v3-chip-new">NEW</span></div>
                         <div class="v3-gcard-sub">Last letter wins</div>
                     </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('UltimateTTT')">
+                        <div class="v3-gcard-tile" style="color: #FCA5A5;"><i class="fa-solid fa-table-cells-large"></i></div>
+                        <div class="v3-gcard-name">Ultimate Tic-Tac-Toe <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Win the big board</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('TypingRace')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="v3-gcard-name">Typing Race <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Fastest fingers win</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Sudoku')">
+                        <div class="v3-gcard-tile" style="color: #93C5FD;"><i class="fa-solid fa-table-cells"></i></div>
+                        <div class="v3-gcard-name">Sudoku Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Same grid — first solved</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Blackjack')">
+                        <div class="v3-gcard-tile" style="color: #6EE7B7;"><i class="fa-solid fa-diamond"></i></div>
+                        <div class="v3-gcard-name">Blackjack Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Beat the dealer</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="findStrangerGame('Mines')">
+                        <div class="v3-gcard-tile" style="color: #F9A8D4;"><i class="fa-solid fa-bomb"></i></div>
+                        <div class="v3-gcard-name">Mines Duel <span class="v3-chip-new">NEW</span></div>
+                        <div class="v3-gcard-sub">Gems good, mines bad</div>
+                    </div>
                 </div>
             </div>
 
@@ -2035,6 +2122,31 @@
                         <div class="v3-gcard-name">Word Chain</div>
                         <div class="v3-gcard-sub">Last letter wins</div>
                     </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('UltimateTTT')">
+                        <div class="v3-gcard-tile" style="color: #FCA5A5;"><i class="fa-solid fa-table-cells-large"></i></div>
+                        <div class="v3-gcard-name">Ultimate Tic-Tac-Toe</div>
+                        <div class="v3-gcard-sub">Win the big board</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('TypingRace')">
+                        <div class="v3-gcard-tile" style="color: #FDBA74;"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="v3-gcard-name">Typing Race</div>
+                        <div class="v3-gcard-sub">Fastest fingers win</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Sudoku')">
+                        <div class="v3-gcard-tile" style="color: #93C5FD;"><i class="fa-solid fa-table-cells"></i></div>
+                        <div class="v3-gcard-name">Sudoku Duel</div>
+                        <div class="v3-gcard-sub">Same grid — first solved</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Blackjack')">
+                        <div class="v3-gcard-tile" style="color: #6EE7B7;"><i class="fa-solid fa-diamond"></i></div>
+                        <div class="v3-gcard-name">Blackjack Duel</div>
+                        <div class="v3-gcard-sub">Beat the dealer</div>
+                    </div>
+                    <div class="v3-gcard ripple-target" onclick="sendGameChallenge('Mines')">
+                        <div class="v3-gcard-tile" style="color: #F9A8D4;"><i class="fa-solid fa-bomb"></i></div>
+                        <div class="v3-gcard-name">Mines Duel</div>
+                        <div class="v3-gcard-sub">Gems good, mines bad</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2169,6 +2281,17 @@
                 <div id="searchResults" class="search-results-dropdown"></div>
             </div>
 
+            <div id="announceBanner" style="display:none; margin: 2px 20px 6px; background: linear-gradient(135deg, rgba(255,211,77,0.16), rgba(255,158,0,0.10)); border: 1px solid rgba(255,201,38,0.45); border-radius: 14px; padding: 10px 12px; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-bullhorn" style="color:#FFC926; font-size:15px;"></i>
+                <span id="announceText" style="flex:1; font-size:13px; font-weight:600; color:var(--text-primary);"></span>
+                <button onclick="dismissAnnouncement()" aria-label="Dismiss announcement" style="background:none; border:none; color:var(--text-secondary); font-size:15px; cursor:pointer; padding:4px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="skeleton-loader" id="skel-dash" style="padding: 4px 20px 0;">
+                <div class="skeleton-item"><div class="skel-avatar"></div><div class="skel-lines"><div class="skel-line-1"></div><div class="skel-line-2"></div></div></div>
+                <div class="skeleton-item"><div class="skel-avatar"></div><div class="skel-lines"><div class="skel-line-1"></div><div class="skel-line-2"></div></div></div>
+            </div>
+
             <div class="v3-sec" id="onlineFriendsSec" style="display:none;">
                 <p class="v3-lbl">Friends Online</p>
                 <div class="online-row" id="onlineFriendsRow"></div>
@@ -2221,7 +2344,7 @@
                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
                     <div class="v3-row-mid">
                         <div class="v3-row-name">Mini-Games</div>
-                        <div class="v3-row-sub">Live play &middot; 30 games with strangers</div>
+                        <div class="v3-row-sub">Live play &middot; 35 games with strangers</div>
                     </div>
                     <i class="fa-solid fa-chevron-right v3-chev"></i>
                 </div>
@@ -2530,6 +2653,20 @@
                         <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Global Msgs</div>
                     </div>
                 </div>
+                <div style="display: flex; gap: 10px; justify-content: space-between;">
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: #4ade80;" id="analyticsOnlineNow">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Online Now</div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--accent-yellow);" id="analyticsTotalSparks">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Sparks in Circulation</div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-dark); padding: 15px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: 800; color: var(--error-red);" id="analyticsOpenReports">--</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Open Reports</div>
+                    </div>
+                </div>
                 <div style="display: flex; gap: 10px; margin-top: 5px;">
                     <button class="btn-primary ripple-target" style="flex: 1; height: auto; min-height: 50px; padding: 15px 10px; font-size: 14px; font-weight: bold; border-radius: 12px; background: rgba(52, 199, 89, 0.2); color: var(--success-green); border: 1px solid rgba(52, 199, 89, 0.4); box-shadow: none;" onclick="refreshAnalytics()">
                         <i class="fa-solid fa-arrows-rotate"></i> Refresh
@@ -2674,6 +2811,7 @@
                 <div class="island" id="islandInputBox">
                     <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
                     <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()" aria-label="Upload Image"><i class="fa-solid fa-image"></i></button>
+                    <button class="icon-btn" onclick="openPollSheet()" aria-label="Create Poll"><i class="fa-solid fa-square-poll-vertical"></i></button>
                     <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTypingThrottled()">
                     <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')" aria-label="Open Emoji Picker"><i class="fa-regular fa-face-smile"></i></button>
                 </div>
@@ -2732,12 +2870,33 @@
         window.refreshAnalytics = function() {
             document.getElementById('analyticsTotalUsers').innerText = "...";
             document.getElementById('analyticsTotalMessages').innerText = "...";
+            const aOn = document.getElementById('analyticsOnlineNow'); if (aOn) aOn.innerText = "...";
+            const aSp = document.getElementById('analyticsTotalSparks'); if (aSp) aSp.innerText = "...";
+            const aRp = document.getElementById('analyticsOpenReports'); if (aRp) aRp.innerText = "...";
 
             db.ref('users').once('value').then(snap => {
                 document.getElementById('analyticsTotalUsers').innerText = snap.numChildren();
+                // Stage 13: total Sparks in circulation, from the same one-shot read
+                let sparks = 0;
+                snap.forEach(u => { sparks += (u.val() || {}).orbs || 0; });
+                if (aSp) aSp.innerText = sparks.toLocaleString();
             }).catch(() => {
                 document.getElementById('analyticsTotalUsers').innerText = "Err";
             });
+
+            // Stage 13: Online Now — one-shot scan of presence (no listener)
+            db.ref('status').once('value').then(snap => {
+                let online = 0;
+                snap.forEach(c => { if ((c.val() || {}).state === 'online') online++; });
+                if (aOn) aOn.innerText = online;
+            }).catch(() => { if (aOn) aOn.innerText = "Err"; });
+
+            // Stage 13: Open Reports count — one-shot
+            db.ref('reports').once('value').then(snap => {
+                let open = 0;
+                snap.forEach(c => { if (((c.val() || {}).status || 'open') === 'open') open++; });
+                if (aRp) aRp.innerText = open;
+            }).catch(() => { if (aRp) aRp.innerText = "Err"; });
 
             db.ref('rooms/GlobalLobby').once('value').then(snap => {
                 document.getElementById('analyticsTotalMessages').innerText = snap.numChildren();
@@ -2981,6 +3140,7 @@ function sendNotification(title, body, icon) {
             appSoundEnabled: true,
             profanityFilterEnabled: true,
             blockedUsers: [],
+            mutedUntil: 0,
             isAdmin: false,
             isBanned: false,
             unlocked: ['t_free', 't_day', 't_midnight', 't_sakura', 't_cyberpunk', 't_sunset', 't_mint', 't_hacker', 't_dracula', 't_royal', 'b_free', 'b_gray', 'b_pink', 'b_purple', 'b_green', 'b_red', 'b_blue', 'b_black', 'badge_none', 'f_default', 'nc_white', 'ar_none', 's_default']
@@ -3032,7 +3192,10 @@ function sendNotification(title, body, icon) {
                 { id: 'b_forest', name: 'Forest Deep', color: '#166534', text: '#dcfce7', price: 500, new: true },
                 { id: 'b_lavender', name: 'Lavender Mist', color: 'linear-gradient(135deg, #c4b5fd, #8b5cf6)', text: '#fff', price: 600, new: true },
                 { id: 'b_sunset', name: 'Sunset Glow', color: 'linear-gradient(135deg, #ffb347, #ff5e7a)', text: '#fff', price: 900, new: true },
-                { id: 'b_midnight', name: 'Midnight Ink', color: 'linear-gradient(135deg, #1e293b, #0f172a)', text: '#e2e8f0', price: 1500, new: true }
+                { id: 'b_midnight', name: 'Midnight Ink', color: 'linear-gradient(135deg, #1e293b, #0f172a)', text: '#e2e8f0', price: 1500, new: true },
+                { id: 'b_pearl', name: 'Pearl White', color: '#f8fafc', text: '#1e293b', price: 0, new: true },
+                { id: 'b_carbon', name: 'Carbon', color: 'linear-gradient(135deg, #334155, #0b1120)', text: '#e2e8f0', price: 700, new: true },
+                { id: 'b_rosegold', name: 'Rose Gold', color: 'linear-gradient(135deg, #f6c9a0, #e88ca0)', text: '#3d1420', price: 1100, new: true }
             ],
             themes: [
                 { id: 't_white', name: 'Dark Mode', bg: '#0B0C0F', acc: '#FFC926', isl: 'rgba(18, 19, 26, 0.98)', txt: '#F4F5F7', txtSec: '#9BA1AB', price: 0 },
@@ -3043,7 +3206,9 @@ function sendNotification(title, body, icon) {
                 { id: 't_porcelain', name: 'Porcelain Night', bg: '#101418', acc: '#7dd3fc', isl: '#1a2129', txt: '#f2f7fb', txtSec: '#a8bdd0', price: 800, new: true },
                 { id: 't_ember', name: 'Ember', bg: '#170b06', acc: '#ff8c42', isl: '#26120a', txt: '#fff3e8', txtSec: '#e8b48f', price: 1000, new: true },
                 { id: 't_aurora', name: 'Aurora', bg: '#07131c', acc: '#34d399', isl: '#0d2130', txt: '#e6fff5', txtSec: '#8fd8c0', price: 1500, new: true },
-                { id: 't_nebula', name: 'Nebula', bg: '#0d0716', acc: '#a78bfa', isl: '#1a1030', txt: '#f1eaff', txtSec: '#bda8e8', price: 2500, new: true }
+                { id: 't_nebula', name: 'Nebula', bg: '#0d0716', acc: '#a78bfa', isl: '#1a1030', txt: '#f1eaff', txtSec: '#bda8e8', price: 2500, new: true },
+                { id: 't_forest', name: 'Deep Forest', bg: '#0a140e', acc: '#4ade80', isl: '#12241a', txt: '#eafff2', txtSec: '#9fd8b4', price: 1300, new: true },
+                { id: 't_mono', name: 'Monochrome', bg: '#0c0c0c', acc: '#f5f5f5', isl: '#171717', txt: '#fafafa', txtSec: '#a3a3a3', price: 1800, new: true }
             ],
                         badges: [
                 { id: 'badge_none', name: 'No Badge', icon: '', color: 'transparent', price: 0 },
@@ -3060,7 +3225,12 @@ function sendNotification(title, body, icon) {
                 { id: 'badge_rocket', name: 'Rocket', icon: '<i class="fa-solid fa-rocket" style="color:#f472b6;"></i>', color: '#f472b6', price: 600, new: true },
                 { id: 'badge_trophy', name: 'Champion', icon: '<i class="fa-solid fa-trophy" style="color:#ffb703;"></i>', color: '#ffb703', price: 900, new: true },
                 { id: 'badge_dragon', name: 'Dragon', icon: '<i class="fa-solid fa-dragon" style="color:#ef4444;"></i>', color: '#ef4444', price: 1200, new: true },
-                { id: 'badge_infinity', name: 'Infinity', icon: '<i class="fa-solid fa-infinity" style="color:#22d3ee;"></i>', color: '#22d3ee', price: 1800, new: true }
+                { id: 'badge_infinity', name: 'Infinity', icon: '<i class="fa-solid fa-infinity" style="color:#22d3ee;"></i>', color: '#22d3ee', price: 1800, new: true },
+                { id: 'badge_star', name: 'Rising Star', icon: '<i class="fa-solid fa-star" style="color:#facc15;"></i>', color: '#facc15', price: 250, new: true },
+                { id: 'badge_velocity', name: 'Velocity', icon: '<i class="fa-solid fa-gauge-high" style="color:#f97316;"></i>', color: '#f97316', price: 500, new: true },
+                { id: 'badge_guardian', name: 'Guardian', icon: '<i class="fa-solid fa-shield" style="color:#34d399;"></i>', color: '#34d399', price: 750, new: true },
+                { id: 'badge_phantom', name: 'Phantom', icon: '<i class="fa-solid fa-ghost" style="color:#a5b4fc;"></i>', color: '#a5b4fc', price: 1400, new: true },
+                { id: 'badge_meteor', name: 'Meteor', icon: '<i class="fa-solid fa-meteor" style="color:#fb7185;"></i>', color: '#fb7185', price: 1600, new: true }
             ],
             fonts: [
                 { id: 'f_default', name: 'Default', value: 'Inter, sans-serif', price: 0 },
@@ -3070,7 +3240,9 @@ function sendNotification(title, body, icon) {
                 { id: 'f_serif', name: 'Playfair Serif', value: '"Playfair Display", serif', price: 200, new: true },
                 { id: 'f_hand', name: 'Handwritten', value: '"Caveat", cursive', price: 450, new: true },
                 { id: 'f_tech', name: 'Space Mono', value: '"Space Mono", monospace', price: 700, new: true },
-                { id: 'f_futura', name: 'Orbitron', value: '"Orbitron", sans-serif', price: 1000, new: true }
+                { id: 'f_futura', name: 'Orbitron', value: '"Orbitron", sans-serif', price: 1000, new: true },
+                { id: 'f_rubik', name: 'Rubik Clean', value: '"Rubik", sans-serif', price: 350, new: true },
+                { id: 'f_sora', name: 'Sora Modern', value: '"Sora", sans-serif', price: 650, new: true }
             ],
             nameColors: [
                 { id: 'nc_white', name: 'Classic White', value: '#ffffff', price: 0 },
@@ -3083,7 +3255,11 @@ function sendNotification(title, body, icon) {
                 { id: 'nc_lime', name: 'Lime Punch', value: '#a3e635', price: 350, new: true },
                 { id: 'nc_violet', name: 'Violet', value: '#8b5cf6', price: 500, new: true },
                 { id: 'nc_sunsetg', name: 'Sunset Gradient', value: 'linear-gradient(90deg, #ff9a56, #ff5e7a, #c86bff)', price: 800, new: true },
-                { id: 'nc_ice', name: 'Ice Gradient', value: 'linear-gradient(90deg, #a5f3fc, #38bdf8, #818cf8)', price: 1200, new: true }
+                { id: 'nc_ice', name: 'Ice Gradient', value: 'linear-gradient(90deg, #a5f3fc, #38bdf8, #818cf8)', price: 1200, new: true },
+                { id: 'nc_mint', name: 'Mint Fresh', value: '#6ee7b7', price: 0, new: true },
+                { id: 'nc_peach', name: 'Peach', value: '#fdba74', price: 300, new: true },
+                { id: 'nc_cyanglow', name: 'Cyan Glow', value: '#22d3ee', price: 550, new: true },
+                { id: 'nc_aurora', name: 'Aurora Gradient', value: 'linear-gradient(90deg, #34d399, #38bdf8, #a78bfa)', price: 1000, new: true }
             ],
             avatarRings: [
                 { id: 'ar_none', name: 'None', value: '4px solid var(--bg-dark)', price: 0 },
@@ -3093,7 +3269,9 @@ function sendNotification(title, body, icon) {
                 { id: 'ar_rose', name: 'Rose Ring', value: '4px solid #fb7185; box-shadow: 0 0 12px rgba(251,113,133,0.8);', price: 500, new: true },
                 { id: 'ar_ice', name: 'Ice Ring', value: '4px solid #7dd3fc; box-shadow: 0 0 12px rgba(125,211,252,0.8);', price: 900, new: true },
                 { id: 'ar_prism', name: 'Prism Ring', value: '4px solid #c86bff; box-shadow: 0 0 14px rgba(200,107,255,0.85);', price: 1400, new: true },
-                { id: 'ar_eclipse', name: 'Eclipse Ring', value: '4px solid #f8fafc; box-shadow: 0 0 0 3px #0f172a, 0 0 16px rgba(248,250,252,0.7);', price: 2000, new: true }
+                { id: 'ar_eclipse', name: 'Eclipse Ring', value: '4px solid #f8fafc; box-shadow: 0 0 0 3px #0f172a, 0 0 16px rgba(248,250,252,0.7);', price: 2000, new: true },
+                { id: 'ar_emerald', name: 'Emerald Ring', value: '4px solid #10b981; box-shadow: 0 0 12px rgba(16,185,129,0.8);', price: 700, new: true },
+                { id: 'ar_solar', name: 'Solar Ring', value: '4px solid #f59e0b; box-shadow: 0 0 14px rgba(245,158,11,0.85);', price: 1100, new: true }
             ],
             sounds: [
                 { id: 's_default', name: 'Soft Peep', url: 'https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3', price: 0 },
@@ -3113,7 +3291,13 @@ function sendNotification(title, body, icon) {
                 { id: 'title_gamemaster', name: 'Game Master', price: 900, new: true },
                 { id: 'title_unstoppable', name: 'Unstoppable', price: 1500, new: true },
                 { id: 'title_legend', name: 'Legend', price: 2000, new: true },
-                { id: 'title_original', name: 'The Original', price: 2500, new: true }
+                { id: 'title_original', name: 'The Original', price: 2500, new: true },
+                { id: 'title_explorer', name: 'Explorer', price: 250, new: true },
+                { id: 'title_sharp', name: 'Sharpshooter', price: 700, new: true },
+                { id: 'title_royalty', name: 'Royalty', price: 1200, new: true },
+                { id: 'title_phantom', name: 'Phantom', price: 1700, new: true },
+                { id: 'title_immortal', name: 'Immortal', price: 3000, new: true },
+                { id: 'title_founder', name: 'Founder', price: 0, adminOnly: true }
             ]
         };
 
@@ -3337,6 +3521,8 @@ function sendNotification(title, body, icon) {
         // Logged-out landing state: hub visible, dynamic lists empty,
         // skeleton loaders swapped for the built-in empty states.
         function enterBrowseMode() {
+            attachStage13Settings(true); // Stage 13: logout offs the features path — re-attach so the maintenance gate works logged-out too
+            hideDashSkeleton();
             resetStage7B();
             refreshHomePremium();
             const hub = document.getElementById('hub-screen');
@@ -3445,6 +3631,7 @@ function sendNotification(title, body, icon) {
 
         window.buyMegaphone = function() {
             if (!requireAuth()) return;
+            if (checkMuted()) return;
             if (myProfile.orbs >= 1000) {
                 const msg = prompt("Enter your Global Megaphone message (Max 100 chars):");
                 if (msg && msg.trim().length > 0) {
@@ -3484,6 +3671,7 @@ function sendNotification(title, body, icon) {
 
         window.buyGiftBox = function() {
             if (!requireAuth()) return;
+            if (checkMuted()) return;
             if (!currentChatFriend) return showToast("You must be in a DM to send a Gift Box!", "error");
 
             if (myProfile.orbs >= 300) {
@@ -3719,6 +3907,7 @@ function sendNotification(title, body, icon) {
             });
 
             db.ref('globalSettings/rooms').on('value', snap => {
+                hideDashSkeleton(); // Stage 13: first real data replaces the skeleton
                 const container = document.getElementById('dynamicRoomsContainer');
                 if(!container) return;
                 container.innerHTML = '';
@@ -3803,6 +3992,7 @@ function sendNotification(title, body, icon) {
                 myProfile.chatWallpaper = d.chatWallpaper || '';
                 myProfile.chatSound = d.chatSound || 's_default';
                 myProfile.ghostModeUntil = d.ghostModeUntil || null;
+                myProfile.mutedUntil = d.mutedUntil || 0; // Stage 13: admin timeout state, refreshed with the profile
                 myProfile.appSoundEnabled = d.appSoundEnabled !== undefined ? d.appSoundEnabled : true;
                 myProfile.profanityFilterEnabled = d.profanityFilterEnabled !== undefined ? d.profanityFilterEnabled : true;
                 myProfile.blockedUsers = d.blockedUsers || [];
@@ -3814,12 +4004,13 @@ function sendNotification(title, body, icon) {
                 if (adminBtn) {
                     adminBtn.style.display = myProfile.isAdmin ? 'flex' : 'none';
                 }
+                applyMaintenanceGate(); // Stage 13: an admin opening the app mid-maintenance passes once the profile resolves
 
                 applyWallpaper();
                 
                 // Guarantee all free items are unlocked
                 let unlocked = d.unlocked || [];
-                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges, ...shopData.fonts, ...shopData.nameColors, ...shopData.avatarRings, ...shopData.sounds, ...(shopData.titles || [])].filter(i => i.price === 0).map(i => i.id);
+                const allFreeItems = [...shopData.bubbles, ...shopData.themes, ...shopData.badges, ...shopData.fonts, ...shopData.nameColors, ...shopData.avatarRings, ...shopData.sounds, ...(shopData.titles || [])].filter(i => i.price === 0 && !i.adminOnly).map(i => i.id);
                 allFreeItems.forEach(freeId => {
                     if (!unlocked.includes(freeId)) unlocked.push(freeId);
                 });
@@ -4433,7 +4624,7 @@ function sendNotification(title, body, icon) {
             const grid = document.getElementById('shopGridContent');
             if(!grid) return;
 
-            const items = shopData[tab] || [];
+            const items = (shopData[tab] || []).filter(i => !i.adminOnly); // Stage 13: adminOnly items (e.g. Founder title) never render in the shop
             let html = '';
 
             // Stage 8: Featured strip — wide cards pinned above every
@@ -4456,7 +4647,7 @@ function sendNotification(title, body, icon) {
             const newInCards = [];
             Object.keys(shopData).forEach(cat => {
                 (shopData[cat] || []).forEach(it => {
-                    if (it && it.new) newInCards.push({ cat: cat, it: it });
+                    if (it && it.new && !it.adminOnly) newInCards.push({ cat: cat, it: it });
                 });
             });
             if (newInCards.length) {
@@ -4596,7 +4787,9 @@ function sendNotification(title, body, icon) {
                             chats.push(child.val());
                         }
                     });
-                    chats.reverse(); 
+                    chats.reverse();
+                    const pinnedChats13 = getPinnedChats();
+                    chats.sort((a, b) => (pinnedChats13.includes(b.uid) ? 1 : 0) - (pinnedChats13.includes(a.uid) ? 1 : 0)); 
                     
                     chats.forEach(c => {
                         const safeName = c.name.replace(/'/g, "\\'");
@@ -4610,9 +4803,10 @@ function sendNotification(title, body, icon) {
                         <div class="chat-list-card ripple-target" onclick="openDM('${c.uid}', '${safeName}', '${c.pic}')">
                             <img src="${safePicHtml}" class="chat-list-avatar" alt="${safeNameHtml} avatar">
                             <div class="chat-list-info" style="padding-right: 30px;">
-                                <h3 class="chat-list-name">${safeNameHtml}</h3>
+                                <h3 class="chat-list-name">${pinnedChats13.includes(c.uid) ? '<i class="fa-solid fa-thumbtack" style="color:#FFC926; font-size:11px; margin-right:6px;"></i>' : ''}${safeNameHtml}</h3>
                                 <p class="chat-list-msg" id="recent-msg-${c.uid}">${safeLastMsg}</p>
                             </div>
+                            <button class="pin-btn ${pinnedChats13.includes(c.uid) ? 'pinned' : ''}" onclick="event.stopPropagation(); togglePinChat('${c.uid}')" aria-label="Pin chat"><i class="fa-solid fa-thumbtack"></i></button>
                             ${unreadBadge}
                         </div>`;
 
@@ -5376,6 +5570,9 @@ function sendNotification(title, body, icon) {
                         const ctx = r.msgId ? `Message reported in room ${escapeHTML(r.roomId || '')}` : 'Profile report';
                         const safeUid = /^[A-Za-z0-9_-]+$/.test(r.reportedUid || '') ? r.reportedUid : '';
                         const manageBtn = safeUid ? `<button class="friend-action-btn" onclick="adminEditUser('${safeUid}')">Manage / Ban</button>` : '';
+                        const safeRoom13 = /^[a-zA-Z0-9_]+$/.test(r.roomId || '') ? r.roomId : '';
+                        const banBtn13 = (safeUid && r.reportedUid !== user.uid) ? `<button class="friend-action-btn reject" onclick="adminBanFromReport('${safeUid}')">Ban</button>` : '';
+                        const viewBtn13 = safeRoom13 ? `<button class="friend-action-btn" onclick="adminViewRoom('${safeRoom13}')">View</button>` : '';
                         return `<div style="background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px;">
                             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
                                 <span style="font-weight:700; font-size:13px;">${escapeHTML(names[i] || 'Unknown user')}</span>
@@ -5385,6 +5582,8 @@ function sendNotification(title, body, icon) {
                             <div style="font-size:10px; color:var(--text-secondary); word-break:break-all;">uid: ${escapeHTML(r.reportedUid || '')}</div>
                             <div style="display:flex; gap:8px; margin-top:8px;">
                                 ${manageBtn}
+                                ${banBtn13}
+                                ${viewBtn13}
                                 <button class="friend-action-btn reject" onclick="adminDismissReport('${r.key}')">Dismiss</button>
                             </div>
                         </div>`;
@@ -5444,9 +5643,9 @@ function sendNotification(title, body, icon) {
 
             if (isChecked) {
                 box.style.display = 'flex';
-                box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to GlobalLobby...</div>';
+                box.innerHTML = '<div style="text-align:center; color:var(--text-secondary); font-style:italic;">Connecting to ' + (window._adminLiveRoom || 'GlobalLobby') + '...</div>';
 
-                adminLiveChatRef = db.ref('rooms/GlobalLobby');
+                adminLiveChatRef = db.ref('rooms/' + (window._adminLiveRoom || 'GlobalLobby')); // Stage 13: Reports 'View' can point the viewer at another room
                 adminLiveChatRef.limitToLast(15).on('child_added', snap => {
                     const msg = snap.val();
                     const key = snap.key;
@@ -5483,9 +5682,21 @@ function sendNotification(title, body, icon) {
             }
         }
 
+        // Stage 13: start/stop helpers so Reports 'View' can retarget the viewer
+        window.startAdminLiveChat = function() {
+            const t = document.getElementById('adminLiveChatToggle');
+            if (t) t.checked = true;
+            adminToggleLiveChat();
+        };
+        window.stopAdminLiveChat = function() {
+            if (adminLiveChatRef) { adminLiveChatRef.off(); adminLiveChatRef = null; }
+            const b = document.getElementById('adminLiveChatBox');
+            if (b) b.innerHTML = '';
+        };
+
         window.adminDeleteLiveMsg = function(msgKey) {
             if(!myProfile.isAdmin) return;
-            db.ref(`rooms/GlobalLobby/${msgKey}`).remove().then(() => {
+            db.ref('rooms/' + (window._adminLiveRoom || 'GlobalLobby') + '/' + msgKey).remove().then(() => {
                 showToast("Message deleted.", "success");
             }).catch(err => showToast(err.message, "error"));
         }
@@ -5671,6 +5882,14 @@ function sendNotification(title, body, icon) {
                 adminCurrentEditUserUnlocked = userData.unlocked || [];
                 adminUpdateInventorySelect(); // initialize the dropdown
 
+                // Stage 13: detail block (joined / streak / record / mute) renders
+                // from this same snapshot; last-online arrives via one one-shot read.
+                adminEditCache = { uid: targetUid, data: userData, status: null };
+                renderAdminUserDetails();
+                db.ref('status/' + targetUid).once('value').then(stSnap => {
+                    if (adminEditCache.uid === targetUid) { adminEditCache.status = stSnap.val() || null; renderAdminUserDetails(); }
+                }).catch(() => {});
+
                 const overlay = document.getElementById('sheetOverlay');
                 if(overlay) overlay.classList.add('show');
                 const sheet = document.getElementById('adminEditUserSheet');
@@ -5686,7 +5905,7 @@ function sendNotification(title, body, icon) {
             const items = shopData[cat] || [];
             items.forEach(item => {
                 // Determine if user has it
-                const hasIt = item.price === 0 || adminCurrentEditUserUnlocked.includes(item.id);
+                const hasIt = item.adminOnly ? adminCurrentEditUserUnlocked.includes(item.id) : (item.price === 0 || adminCurrentEditUserUnlocked.includes(item.id));
                 select.innerHTML += `<option value="${item.id}" ${hasIt ? 'style="color:var(--success-green);"' : ''}>${hasIt ? '✓ ' : ''}${item.name}</option>`;
             });
         }
@@ -5713,7 +5932,15 @@ function sendNotification(title, body, icon) {
             }
 
             // Immediately save to DB
-            db.ref(`users/${uid}/unlocked`).set(adminCurrentEditUserUnlocked).then(() => {
+            // Stage 13: transaction instead of set() on the cached array, so a
+            // grant can never clobber unlocks the user earned in the meantime.
+            db.ref(`users/${uid}/unlocked`).transaction(cur => {
+                let arr = Array.isArray(cur) ? cur.slice() : [];
+                if (action === 'grant') { if (!arr.includes(itemId)) arr.push(itemId); }
+                else { arr = arr.filter(id => id !== itemId); }
+                adminCurrentEditUserUnlocked = arr;
+                return arr;
+            }).then(() => {
                 showToast(`Item ${action}ed successfully!`, "success");
                 adminUpdateInventorySelect(); // refresh the visual ✓
             }).catch(err => showToast(err.message, "error"));
@@ -5959,7 +6186,15 @@ function sendNotification(title, body, icon) {
             db.ref('globalSettings/rooms').on('value', snap => {
                 const container = document.getElementById('adminRoomsList');
                 if(!container) return;
-                container.innerHTML = '';
+                container.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px; margin-bottom: 10px;">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span style="font-size:14px; color:var(--text-primary);">Global Lobby</span>
+                                    <span style="font-size:11px; color:var(--text-secondary);">ID: GlobalLobby | built-in</span>
+                                </div>
+                                <button class="btn-primary" style="height:30px; font-size:12px; background:var(--field); color:var(--text-primary); border:1px solid var(--glass-border); padding: 0 10px;" onclick="adminClearRoomChat('GlobalLobby')">Clear Chat</button>
+                            </div>
+                        `;
                 if(snap.exists()) {
                     let roomsArr = [];
                     snap.forEach(child => {
@@ -5974,7 +6209,10 @@ function sendNotification(title, body, icon) {
                                     <span style="font-size:14px; color:var(--text-primary);">${r.name}</span>
                                     <span style="font-size:11px; color:var(--text-secondary);">ID: ${r.key} | Order: ${r.order || 0}</span>
                                 </div>
-                                <button class="btn-primary" style="height:30px; font-size:12px; background:var(--error-red); border:none; padding: 0 10px;" onclick="adminDeleteRoom('${r.key}')">Delete</button>
+                                <span style="display:flex; gap:6px;">
+                                    <button class="btn-primary" style="height:30px; font-size:12px; background:var(--field); color:var(--text-primary); border:1px solid var(--glass-border); padding: 0 10px;" onclick="adminClearRoomChat('${r.key}')">Clear Chat</button>
+                                    <button class="btn-primary" style="height:30px; font-size:12px; background:var(--error-red); border:none; padding: 0 10px;" onclick="adminDeleteRoom('${r.key}')">Delete</button>
+                                </span>
                             </div>
                         `;
                     });
@@ -6050,6 +6288,13 @@ function sendNotification(title, body, icon) {
                             <span class="slider"></span>
                         </label>
                     </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--field); padding:10px; border-radius:12px;">
+                        <span style="font-size:14px; color:var(--text-primary);">Maintenance Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" ${features.maintenance === true ? 'checked' : ''} onchange="adminToggleFeature('maintenance', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 `;
             });
         }
@@ -6093,17 +6338,30 @@ function sendNotification(title, body, icon) {
         let mySymbol = '';
         let gameRef = null;
 
+        // Stage 13 REPAIR (latent Stage 11 defect): the seven Stage 11 games
+        // (Chess, Dominoes, Hangman, Trivia, Math Duel, Simon, Word Chain) read
+        // currentGameType / isHost / isChallengeRoom / playerNames / currentUser
+        // as free variables, but nothing ever declared them — reading one throws
+        // ReferenceError, so those sessions died at match start. They are now
+        // declared once here and re-synced at the top of startGameSession()
+        // from the session state the app does maintain.
+        var currentGameType = null;
+        var isHost = false;
+        var isChallengeRoom = false;
+        var playerNames = {};
+        var currentUser = null;
+
         let activeGameType = null;
 
         // ================= STAGE 7A: CHALLENGES + GAME RECORD + LUDO TIMER =================
         // Fixed display names for every game key. Invite cards and the
         // profile record are built ONLY from this map (never from raw
         // message data), so a crafted message can't inject markup.
-        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice', Checkers: 'Checkers', Mancala: 'Mancala', Mastermind: 'Mastermind', Bingo: 'Bingo Duel', Flood: 'Colour Flood', Chess: 'Chess', Dominoes: 'Dominoes', Hangman: 'Hangman Duel', Trivia: 'Trivia Duel', MathDuel: 'Math Duel', Simon: 'Simon Duel', WordChain: 'Word Chain' };
+        const GAME_DISPLAY = { TicTacToe: 'Tic-Tac-Toe', RPS: 'Rock-Paper-Scissors', Dots: 'Dots & Boxes', Ludo2: 'Ludo (2P)', Ludo3: 'Ludo (3P)', Ludo4: 'Ludo (4P)', StopTimer: 'Stop the Timer', Reaction: 'Reaction Tap', Matchsticks: 'Matchsticks', HighCard: 'High Card War', GuessNumber: 'Guess the Number', CoinFlip: 'Coin Flip', HigherLower: 'Higher or Lower', Connect4: 'Connect 4', MemoryMatch: 'Memory Match', Battleship: 'Battleship', Reversi: 'Reversi', Gomoku: 'Gomoku', Snakes: 'Snakes & Ladders', PigDice: 'Pig Dice', Checkers: 'Checkers', Mancala: 'Mancala', Mastermind: 'Mastermind', Bingo: 'Bingo Duel', Flood: 'Colour Flood', Chess: 'Chess', Dominoes: 'Dominoes', Hangman: 'Hangman Duel', Trivia: 'Trivia Duel', MathDuel: 'Math Duel', Simon: 'Simon Duel', WordChain: 'Word Chain', UltimateTTT: 'Ultimate Tic-Tac-Toe', TypingRace: 'Typing Race', Sudoku: 'Sudoku Duel', Blackjack: 'Blackjack Duel', Mines: 'Mines Duel' };
         // Games a friend can be challenged to (every 2P game + Ludo 2P only;
         // Ludo 3P/4P stay matchmaking-only).
-        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain'];
-        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice', Checkers: 'leaveCheckers', Mancala: 'leaveMancala', Mastermind: 'leaveMastermind', Bingo: 'leaveBingo', Flood: 'leaveFlood', Chess: 'leaveChess', Dominoes: 'leaveDominoes', Hangman: 'leaveHangman', Trivia: 'leaveTrivia', MathDuel: 'leaveMathDuel', Simon: 'leaveSimon', WordChain: 'leaveWordChain' };
+        const CHALLENGE_GAMES = ['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain', 'UltimateTTT', 'TypingRace', 'Sudoku', 'Blackjack', 'Mines'];
+        const GAME_LEAVE_FN = { TicTacToe: 'leaveGame', RPS: 'leaveRPS', Dots: 'leaveDots', Ludo2: 'leaveLudo', Ludo3: 'leaveLudo', Ludo4: 'leaveLudo', StopTimer: 'leaveStopTimer', Reaction: 'leaveReaction', Matchsticks: 'leaveMatchsticks', HighCard: 'leaveHighCard', GuessNumber: 'leaveGuessNumber', CoinFlip: 'leaveCoinFlip', HigherLower: 'leaveHigherLower', Connect4: 'leaveConnect4', MemoryMatch: 'leaveMemoryMatch', Battleship: 'leaveBattleship', Reversi: 'leaveReversi', Gomoku: 'leaveGomoku', Snakes: 'leaveSnakes', PigDice: 'leavePigDice', Checkers: 'leaveCheckers', Mancala: 'leaveMancala', Mastermind: 'leaveMastermind', Bingo: 'leaveBingo', Flood: 'leaveFlood', Chess: 'leaveChess', Dominoes: 'leaveDominoes', Hangman: 'leaveHangman', Trivia: 'leaveTrivia', MathDuel: 'leaveMathDuel', Simon: 'leaveSimon', WordChain: 'leaveWordChain', UltimateTTT: 'leaveUltimateTTT', TypingRace: 'leaveTypingRace', Sudoku: 'leaveSudoku', Blackjack: 'leaveBlackjack', Mines: 'leaveMines' };
 
         function gameStatsTotals(stats) {
             let w = 0, l = 0, d = 0;
@@ -6124,7 +6382,7 @@ function sendNotification(title, body, icon) {
             if (!sumEl || !detEl) return;
             const totals = gameStatsTotals(stats);
             if (!totals.w && !totals.l && !totals.d) {
-                sumEl.innerText = 'No games yet';
+                sumEl.innerHTML = '<i class="fa-solid fa-gamepad gr-empty-ic"></i>No games yet';
                 detEl.innerText = 'Play a mini-game to start your record';
                 return;
             }
@@ -6326,6 +6584,26 @@ function sendNotification(title, body, icon) {
                 document.getElementById('wordChainOverlay').style.display = 'flex';
                 document.getElementById('wcStatus').innerText = statusText;
                 document.getElementById('wcChain').innerHTML = '';
+            } else if (gameType === 'UltimateTTT') {
+                document.getElementById('ultimateTTTOverlay').style.display = 'flex';
+                document.getElementById('utStatus').innerText = statusText;
+                renderUtBoard();
+            } else if (gameType === 'TypingRace') {
+                document.getElementById('typingRaceOverlay').style.display = 'flex';
+                document.getElementById('trStatus').innerText = statusText;
+                trResetLocal();
+            } else if (gameType === 'Sudoku') {
+                document.getElementById('sudokuOverlay').style.display = 'flex';
+                document.getElementById('suStatus').innerText = statusText;
+                suSel = null;
+                renderSuBoard();
+            } else if (gameType === 'Blackjack') {
+                document.getElementById('blackjackOverlay').style.display = 'flex';
+                document.getElementById('bjStatus').innerText = statusText;
+            } else if (gameType === 'Mines') {
+                document.getElementById('minesOverlay').style.display = 'flex';
+                document.getElementById('mnStatus').innerText = statusText;
+                renderMnBoard();
             }
         }
 
@@ -6391,6 +6669,11 @@ function sendNotification(title, body, icon) {
                 case 'MathDuel': return { seed: Math.floor(Math.random() * 1000000000), round: 1, wins1: 0, wins2: 0, lock1: false, lock2: false, roundWinner: null, winner: null };
                 case 'Simon': return { seed: Math.floor(Math.random() * 1000000000), round: 1, roundStamp: 0, att1: '', att2: '', winner: null };
                 case 'WordChain': return { chain: [], turn: 'P1', lives1: 3, lives2: 3, turnStamp: 0, lastEvent: '', winner: null };
+                case 'UltimateTTT': return { cells: {}, claimed: ['', '', '', '', '', '', '', '', ''], active: -1, turn: 'X', winner: null };
+                case 'TypingRace': return { seed: Math.floor(Math.random() * 1000000000), prog1: 0, prog2: 0, err1: 0, err2: 0, fin1: 0, fin2: 0, done1: false, done2: false, winner: null };
+                case 'Sudoku': return { puz: Math.floor(Math.random() * 16), p1: {}, p2: {}, m1: 0, m2: 0, done1: false, done2: false, fin1: 0, fin2: 0, winner: null };
+                case 'Blackjack': return { seed: Math.floor(Math.random() * 1000000000), winner: null };
+                case 'Mines': return { seed: Math.floor(Math.random() * 1000000000), rev: {}, turn: 'P1', pts1: 0, pts2: 0, winner: null };
                 case 'Ludo2': {
                     const baseTokens = () => [{ id: 0, state: 'base', stepsTaken: -1 }, { id: 1, state: 'base', stepsTaken: -1 }, { id: 2, state: 'base', stepsTaken: -1 }, { id: 3, state: 'base', stepsTaken: -1 }];
                     return { turn: 0, diceRoll: 0, lastRollWasSix: false, winner: null, state: 'playing', targetPlayers: 2, turnStamp: Date.now(), tokens_0: baseTokens(), tokens_2: baseTokens() };
@@ -6634,7 +6917,7 @@ function sendNotification(title, body, icon) {
 
         window.findStrangerGame = function(gameType) {
             if (!requireAuth(() => findStrangerGame(gameType))) return;
-            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain'].includes(gameType)) {
+            if (!['TicTacToe', 'RPS', 'Dots', 'Ludo2', 'Ludo3', 'Ludo4', 'StopTimer', 'Reaction', 'Matchsticks', 'HighCard', 'GuessNumber', 'CoinFlip', 'HigherLower', 'Connect4', 'MemoryMatch', 'Battleship', 'Reversi', 'Gomoku', 'Snakes', 'PigDice', 'Checkers', 'Mancala', 'Mastermind', 'Bingo', 'Flood', 'Chess', 'Dominoes', 'Hangman', 'Trivia', 'MathDuel', 'Simon', 'WordChain', 'UltimateTTT', 'TypingRace', 'Sudoku', 'Blackjack', 'Mines'].includes(gameType)) {
                 showToast(gameType + " initializing...", "success", true);
                 setTimeout(() => showToast(gameType + " coming in future patch!", "error"), 1500);
                 return;
@@ -6761,6 +7044,29 @@ function sendNotification(title, body, icon) {
                 document.getElementById('wordChainOverlay').style.display = 'flex';
                 document.getElementById('wcStatus').innerText = "Searching for opponent...";
                 document.getElementById('wcChain').innerHTML = '';
+            } else if (gameType === 'UltimateTTT') {
+                document.getElementById('ultimateTTTOverlay').style.display = 'flex';
+                document.getElementById('utStatus').innerText = "Searching for opponent...";
+                document.getElementById('utBoard').innerHTML = '';
+            } else if (gameType === 'TypingRace') {
+                document.getElementById('typingRaceOverlay').style.display = 'flex';
+                document.getElementById('trStatus').innerText = "Searching for opponent...";
+                document.getElementById('trSentence').innerHTML = '';
+                document.getElementById('trResult').innerText = '';
+                const trInQ = document.getElementById('trInput'); if (trInQ) { trInQ.value = ''; trInQ.disabled = true; }
+            } else if (gameType === 'Sudoku') {
+                document.getElementById('sudokuOverlay').style.display = 'flex';
+                document.getElementById('suStatus').innerText = "Searching for opponent...";
+                document.getElementById('suBoard').innerHTML = '';
+                document.getElementById('suInfo').innerText = '';
+            } else if (gameType === 'Blackjack') {
+                document.getElementById('blackjackOverlay').style.display = 'flex';
+                document.getElementById('bjStatus').innerText = "Searching for opponent...";
+                document.getElementById('bjNote').innerText = '';
+            } else if (gameType === 'Mines') {
+                document.getElementById('minesOverlay').style.display = 'flex';
+                document.getElementById('mnStatus').innerText = "Searching for opponent...";
+                document.getElementById('mnBoard').innerHTML = '';
             }
 
             if (gameType.startsWith('Ludo')) {
@@ -6900,6 +7206,15 @@ function sendNotification(title, body, icon) {
         let gameChatRef = null;
 
         function startGameSession() {
+            // Stage 13 repair: sync the Stage 11 session globals (see declaration note)
+            currentGameType = activeGameType;
+            currentUser = user;
+            isHost = (mySymbol === 'X');
+            isChallengeRoom = (typeof gameRoom === 'string' && gameRoom.indexOf('challenge_') === 0);
+            playerNames = {
+                X: mySymbol === 'X' ? ((myProfile && myProfile.name) || 'P1') : (window.opponentName || 'P2'),
+                O: mySymbol === 'X' ? (window.opponentName || 'P2') : ((myProfile && myProfile.name) || 'P1')
+            };
             // Re-entry guard: never stack a second set of listeners on a
             // previous session's refs (leaked listeners keep writing into
             // stale overlays and re-render old games).
@@ -7555,6 +7870,122 @@ function sendNotification(title, body, icon) {
                     } else {
                         document.getElementById('flStatus').innerText = data.turn === myGameRole() ? "Your pick — flood your corner" : "Opponent's pick";
                         document.getElementById('rematchFlBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'UltimateTTT') {
+                document.getElementById('utStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') { gameRef.update({ p1Name: myProfile.name || 'P1' }); } else { gameRef.update({ p2Name: myProfile.name || 'P2' }); }
+                if (mySymbol === 'X') { gameRef.update({ cells: {}, claimed: ['', '', '', '', '', '', '', '', ''], active: -1, turn: 'X', winner: null }); }
+                renderUtBoard();
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if (!data) return;
+                    utData = data;
+                    updateUtUI(data);
+                    if (data.winner) {
+                        document.getElementById('utStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'X' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if (mySymbol === 'X') document.getElementById('rematchUtBtn').style.display = 'block'; else document.getElementById('utStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('utStatus').innerText = data.turn === mySymbol ? "Your Turn" : "Opponent's Turn";
+                        document.getElementById('rematchUtBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'TypingRace') {
+                document.getElementById('trStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') { gameRef.update({ p1Name: myProfile.name || 'P1' }); } else { gameRef.update({ p2Name: myProfile.name || 'P2' }); }
+                if (mySymbol === 'X') { gameRef.update({ seed: Math.floor(Math.random() * 1000000000), prog1: 0, prog2: 0, err1: 0, err2: 0, fin1: 0, fin2: 0, done1: false, done2: false, winner: null }); }
+                trResetLocal();
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if (!data || data.seed === undefined) return;
+                    trData = data;
+                    if (trSeed !== data.seed) {
+                        trSeed = data.seed;
+                        trBuildSentence();
+                        const inp = document.getElementById('trInput');
+                        if (inp) { inp.value = ''; inp.disabled = false; inp.focus(); }
+                    }
+                    updateTrUI(data);
+                    trMaybeFinish(data);
+                    if (data.winner) {
+                        document.getElementById('trStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        const inp2 = document.getElementById('trInput'); if (inp2) inp2.disabled = true;
+                        trShowResult(data);
+                        if (mySymbol === 'X') document.getElementById('rematchTrBtn').style.display = 'block'; else document.getElementById('trStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('trStatus').innerText = "Type the sentence — first to finish wins!";
+                        document.getElementById('rematchTrBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Sudoku') {
+                document.getElementById('suStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') { gameRef.update({ p1Name: myProfile.name || 'P1' }); } else { gameRef.update({ p2Name: myProfile.name || 'P2' }); }
+                if (mySymbol === 'X') { gameRef.update({ puz: Math.floor(Math.random() * SUDOKU_PUZZLES.length), p1: {}, p2: {}, m1: 0, m2: 0, done1: false, done2: false, fin1: 0, fin2: 0, winner: null }); }
+                suSel = null;
+                renderSuBoard();
+                if (suTick) clearInterval(suTick);
+                suTick = setInterval(() => { if (suData) suMaybeFinish(suData); }, 1000);
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if (!data || data.puz === undefined) return;
+                    suData = data;
+                    updateSuUI(data);
+                    suMaybeFinish(data);
+                    if (data.winner) {
+                        document.getElementById('suStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if (mySymbol === 'X') document.getElementById('rematchSuBtn').style.display = 'block'; else document.getElementById('suStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        const meDone = myGameRole() === 'P1' ? data.done1 : data.done2;
+                        document.getElementById('suStatus').innerText = meDone ? "You finished — waiting for your opponent..." : "First to complete the grid wins";
+                        document.getElementById('rematchSuBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Blackjack') {
+                document.getElementById('bjStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') { gameRef.update({ p1Name: myProfile.name || 'P1' }); } else { gameRef.update({ p2Name: myProfile.name || 'P2' }); }
+                if (mySymbol === 'X') { gameRef.once('value').then(s0 => { const d0 = s0.val() || {}; if (!d0.shoe) gameRef.update(bjFreshState(d0.seed || Math.floor(Math.random() * 1000000000))); }); }
+                bjPendingRound = -1;
+                bjAdvancing = false;
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if (!data || !data.shoe) return;
+                    bjData = data;
+                    updateBjUI(data);
+                    bjMaybeAdvance(data);
+                    if (data.winner) {
+                        document.getElementById('bjStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins the Match!` : `${data.p2Name || 'P2'} Wins the Match!`;
+                        playWinSound();
+                        if (mySymbol === 'X') document.getElementById('rematchBjBtn').style.display = 'block'; else document.getElementById('bjStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('bjStatus').innerText = data.phase === 'play' ? ((myGameRole() === 'P1' ? data.stood1 : data.stood2) ? "Waiting for your opponent to finish..." : "Your hand — Hit or Stand") : data.phase === 'dealer' ? "Dealer plays..." : data.phase === 'roundEnd' ? "Round over" : "Dealing...";
+                        document.getElementById('rematchBjBtn').style.display = 'none';
+                    }
+                });
+            } else if (activeGameType === 'Mines') {
+                document.getElementById('mnStatus').innerText = "Opponent found! Game starting...";
+                gameRef = db.ref('games/' + gameRoom);
+                if (mySymbol === 'X') { gameRef.update({ p1Name: myProfile.name || 'P1' }); } else { gameRef.update({ p2Name: myProfile.name || 'P2' }); }
+                if (mySymbol === 'X') { gameRef.once('value').then(s0 => { const d0 = s0.val() || {}; const up = { rev: {}, turn: 'P1', pts1: 0, pts2: 0, winner: null }; if (!d0.mines) up.mines = mnMineSet(d0.seed || 0); gameRef.update(up); }); }
+                renderMnBoard();
+                gameRef.on('value', snap => {
+                    const data = snap.val();
+                    if (!data || !data.mines) return;
+                    mnData = data;
+                    updateMnUI(data);
+                    if (data.winner) {
+                        document.getElementById('mnStatus').innerText = data.winner === 'Draw' ? "It's a Draw!" : data.winner === 'P1' ? `${data.p1Name || 'P1'} Wins!` : `${data.p2Name || 'P2'} Wins!`;
+                        playWinSound();
+                        if (mySymbol === 'X') document.getElementById('rematchMnBtn').style.display = 'block'; else document.getElementById('mnStatus').innerText += ' (Waiting for Host to restart)';
+                    } else {
+                        document.getElementById('mnStatus').innerText = data.turn === myGameRole() ? "Your Turn — pick a tile" : "Opponent's Turn";
+                        document.getElementById('rematchMnBtn').style.display = 'none';
                     }
                 });
             } else if (currentGameType === 'Chess') {
@@ -10378,6 +10809,7 @@ function sendNotification(title, body, icon) {
 
 
         window.sendGameChat = function() {
+            if (checkMuted()) return;
             const input = document.getElementById('gameChatInput');
             const text = input.value.trim();
             if(!text || !gameRoom) return;
@@ -10479,6 +10911,7 @@ function sendNotification(title, body, icon) {
             if(drawer) drawer.classList.toggle('open');
         }
         window.sendLudoCustomChat = function() {
+            if (checkMuted()) return;
             let input = document.getElementById('ludo-custom-msg');
             if(input) {
                 let msg = input.value;
@@ -12085,6 +12518,8 @@ window.burnImage = function(element, url, key) {
             if (room) db.ref('typing/'+room).off();
             
             room = k.replace(/[^a-zA-Z0-9_]/g, "");
+            restoreDraftForRoom(); // Stage 13: per-room composer draft
+            resetRoomParticipants(); // Stage 13: @mention candidates start fresh per room
             markRoomRead(room);
             messageLimit = 20;
             switchScreen('chat-screen');
@@ -12683,6 +13118,9 @@ window.burnImage = function(element, url, key) {
 
         window.sendMsg = async function(type, content) {
             if (!requireAuth()) return;
+            if (checkMuted()) return; // Stage 13: admin timeout — blocked before the input is read/cleared, so the text survives
+            dcBuzz();
+            clearDraftForRoom();
             let txt = content;
             const msgInput = document.getElementById('msg-input');
             if(type === 'text') { 
@@ -12898,7 +13336,7 @@ window.burnImage = function(element, url, key) {
             return el.scrollHeight - el.scrollTop - el.clientHeight < (threshold || 120);
         }
 
-        const SPOT_GAME_ICONS = { TicTacToe: 'fa-hashtag', RPS: 'fa-hand-back-fist', Dots: 'fa-braille', Ludo2: 'fa-dice', Ludo3: 'fa-dice-three', Ludo4: 'fa-dice-d20', StopTimer: 'fa-stopwatch', Reaction: 'fa-bolt', Matchsticks: 'fa-fire-flame-simple', HighCard: 'fa-diamond', GuessNumber: 'fa-question', CoinFlip: 'fa-coins', HigherLower: 'fa-arrow-up-9-1', Connect4: 'fa-circle-dot', MemoryMatch: 'fa-clone', Battleship: 'fa-ship', Reversi: 'fa-circle-half-stroke', Gomoku: 'fa-grip', Snakes: 'fa-stairs', PigDice: 'fa-piggy-bank', Checkers: 'fa-chess-board', Mancala: 'fa-gem', Mastermind: 'fa-lock-open', Bingo: 'fa-ticket', Flood: 'fa-palette', Chess: 'fa-chess', Dominoes: 'fa-grip-vertical', Hangman: 'fa-spell-check', Trivia: 'fa-brain', MathDuel: 'fa-plus-minus', Simon: 'fa-bullseye', WordChain: 'fa-link' };
+        const SPOT_GAME_ICONS = { TicTacToe: 'fa-hashtag', RPS: 'fa-hand-back-fist', Dots: 'fa-braille', Ludo2: 'fa-dice', Ludo3: 'fa-dice-three', Ludo4: 'fa-dice-d20', StopTimer: 'fa-stopwatch', Reaction: 'fa-bolt', Matchsticks: 'fa-fire-flame-simple', HighCard: 'fa-diamond', GuessNumber: 'fa-question', CoinFlip: 'fa-coins', HigherLower: 'fa-arrow-up-9-1', Connect4: 'fa-circle-dot', MemoryMatch: 'fa-clone', Battleship: 'fa-ship', Reversi: 'fa-circle-half-stroke', Gomoku: 'fa-grip', Snakes: 'fa-stairs', PigDice: 'fa-piggy-bank', Checkers: 'fa-chess-board', Mancala: 'fa-gem', Mastermind: 'fa-lock-open', Bingo: 'fa-ticket', Flood: 'fa-palette', Chess: 'fa-chess', Dominoes: 'fa-grip-vertical', Hangman: 'fa-spell-check', Trivia: 'fa-brain', MathDuel: 'fa-plus-minus', Simon: 'fa-bullseye', WordChain: 'fa-link', UltimateTTT: 'fa-table-cells-large', TypingRace: 'fa-keyboard', Sudoku: 'fa-table-cells', Blackjack: 'fa-diamond', Mines: 'fa-bomb' };
 
         function updateDashGreeting() {
             const el = document.getElementById('dashGreeting');
@@ -13125,6 +13563,12 @@ window.burnImage = function(element, url, key) {
                     if (cEl) cEl.innerHTML = inviteCardHtml(key, d);
                 }
 
+                // Stage 13: live-update poll bars as votes land
+                if (d.type === 'poll') {
+                    const pEl = document.getElementById(`content-${key}`);
+                    if (pEl) pEl.innerHTML = pollHtml(key, d);
+                }
+
                 // Update Read Receipts
                 const rec = document.getElementById(`receipt-${key}`);
                 if (rec) {
@@ -13165,7 +13609,7 @@ window.burnImage = function(element, url, key) {
                             });
                         }
 
-                        contentEl.innerHTML = safeContent;
+                        contentEl.innerHTML = applyMentions(safeContent); // Stage 13: mentions survive edits too
                     }
                 }
 
@@ -13189,6 +13633,7 @@ window.burnImage = function(element, url, key) {
 
         function createMessageNode(key, d, isHistorical) {
             const isMe = d.uid === user.uid;
+            if (d.name) roomParticipantNames.add(d.name); // Stage 13: @mention candidates
             const div = document.createElement('div');
             div.className = isMe ? 'msg-row me' : 'msg-row other';
             div.id = key;
@@ -13241,6 +13686,9 @@ window.burnImage = function(element, url, key) {
                     const sender = d.uid;
                     content = `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px; border:2px dashed currentColor; border-radius:12px; cursor:pointer;" onclick="openGift('${key}', ${giftVal}, '${sender}')"><i class="fa-solid fa-gift fa-bounce" style="font-size:30px; color:inherit; margin-bottom:10px;"></i><span style="font-weight:700;">Tap to Open Gift Box</span></div>`;
                 }
+            }
+            else if (d.type === 'poll') {
+                content = pollHtml(key, d);
             }
             else {
                 // Escape user text BEFORE linkification so stored HTML/JS can never execute (XSS fix)
@@ -13300,6 +13748,8 @@ window.burnImage = function(element, url, key) {
 
                     content += `<div id="preview-${key}"></div>`;
                 }
+                content = applyMentions(content); // Stage 13: gold @mentions (operates on the escaped string, tags untouched)
+                if (d.warn) content = '<div class="warn-box"><i class="fa-solid fa-triangle-exclamation"></i><span>' + content + '</span></div>';
             }
 
             let safeName = escapeHTML(d.name || "Unknown User");
@@ -13391,6 +13841,10 @@ window.burnImage = function(element, url, key) {
                     </div>
                 </div>`;
 
+            if (!isMe && !d.deleted && d.type !== 'poll' && myProfile.name && typeof d.txt === 'string' && messageMentionsName(d.txt, myProfile.name)) {
+                const bEl = div.querySelector('.bubble');
+                if (bEl) bEl.classList.add('mention-me');
+            }
             return div;
         }
 
@@ -13400,6 +13854,7 @@ window.burnImage = function(element, url, key) {
         window.handleTypingThrottled = function() {
             if(typingInputThrottleTimer) clearTimeout(typingInputThrottleTimer);
             typingInputThrottleTimer = setTimeout(() => {
+                saveDraftForRoom(); // Stage 13: per-room composer draft (localStorage)
                 window.handleTyping();
             }, 300); // Wait 300ms after last keystroke to emit typing indicator to network
         }
@@ -14022,6 +14477,108 @@ window.burnImage = function(element, url, key) {
         <button id="rematchWcBtn" onclick="resetWordChain()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
     </div>
 
+    <div id="ultimateTTTOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveUltimateTTT()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FCA5A5; margin-bottom: 5px;">Ultimate Tic-Tac-Toe</h2>
+        <p id="utStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <div id="utBoard" style="display: grid; grid-template-columns: repeat(3, auto); gap: 8px;"></div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 16px; text-align: center; padding: 0 24px;">Win a mini-board to claim it. The cell you play sends your opponent to that board — if it's finished, they play anywhere. Claim three boards in a row to win.</p>
+        <button id="rematchUtBtn" onclick="resetUltimateTTT()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="typingRaceOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveTypingRace()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #FDBA74; margin-bottom: 5px;">Typing Race</h2>
+        <p id="trStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <div style="width: 330px; max-width: 94vw; display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+            <div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-bottom:4px;"><span id="trName1">P1</span><span id="trPct1">0%</span></div>
+                <div style="height: 10px; border-radius: 6px; background: var(--panel); overflow: hidden;"><div id="trBar1" style="height: 100%; width: 0%; background: #E5484D; border-radius: 6px; transition: width 0.15s linear;"></div></div>
+            </div>
+            <div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-bottom:4px;"><span id="trName2">P2</span><span id="trPct2">0%</span></div>
+                <div style="height: 10px; border-radius: 6px; background: var(--panel); overflow: hidden;"><div id="trBar2" style="height: 100%; width: 0%; background: #FFC926; border-radius: 6px; transition: width 0.15s linear;"></div></div>
+            </div>
+        </div>
+        <div id="trSentence" style="width: 330px; max-width: 94vw; box-sizing: border-box; background: var(--panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 14px 16px; font-size: 16px; line-height: 1.7; letter-spacing: 0.2px; margin-bottom: 12px;"></div>
+        <input type="text" id="trInput" placeholder="Type the sentence here..." autocomplete="off" autocapitalize="off" spellcheck="false" style="width: 330px; max-width: 94vw; box-sizing: border-box; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--field); color: var(--text-primary); outline: none; font-family: inherit; font-size: 15px;" oninput="trOnInput()">
+        <p id="trResult" style="color: var(--text-secondary); font-size: 13px; margin-top: 14px; text-align: center; padding: 0 24px;"></p>
+        <button id="rematchTrBtn" onclick="resetTypingRace()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="sudokuOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveSudoku()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #93C5FD; margin-bottom: 5px;">Sudoku Duel</h2>
+        <p id="suStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="suInfo" style="color: var(--text-secondary); font-size: 13px; margin: 0 0 12px; text-align: center; padding: 0 16px;"></p>
+        <div id="suBoard" style="display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; background: var(--glass-border); border: 2px solid var(--glass-border); border-radius: 8px; overflow: hidden; width: 324px; max-width: 94vw;"></div>
+        <div id="suPad" style="display: flex; gap: 6px; margin-top: 16px; flex-wrap: wrap; justify-content: center; width: 330px; max-width: 94vw;">
+            <button onclick="suPadDigit(1)" class="su-pad-btn">1</button><button onclick="suPadDigit(2)" class="su-pad-btn">2</button><button onclick="suPadDigit(3)" class="su-pad-btn">3</button><button onclick="suPadDigit(4)" class="su-pad-btn">4</button><button onclick="suPadDigit(5)" class="su-pad-btn">5</button><button onclick="suPadDigit(6)" class="su-pad-btn">6</button><button onclick="suPadDigit(7)" class="su-pad-btn">7</button><button onclick="suPadDigit(8)" class="su-pad-btn">8</button><button onclick="suPadDigit(9)" class="su-pad-btn">9</button><button onclick="suPadDigit(0)" class="su-pad-btn"><i class="fa-solid fa-eraser"></i></button>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 14px; text-align: center; padding: 0 24px;">Same puzzle for both of you. Wrong entries turn red and count as mistakes. First to finish wins — if you both finish, fewer mistakes wins.</p>
+        <button id="rematchSuBtn" onclick="resetSudoku()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="blackjackOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveBlackjack()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #6EE7B7; margin-bottom: 5px;">Blackjack Duel</h2>
+        <p id="bjStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="bjScore" style="color: var(--text-primary); font-size: 14px; font-weight: 700; margin: 0 0 16px; text-align: center; padding: 0 16px;"></p>
+        <div style="width: 330px; max-width: 94vw; display: flex; flex-direction: column; gap: 14px;">
+            <div>
+                <div style="font-size: 12px; color: var(--text-secondary); font-weight: 700; margin-bottom: 6px;">DEALER <span id="bjDealerVal" style="color: var(--text-primary);"></span></div>
+                <div id="bjDealerCards" style="display: flex; gap: 6px; flex-wrap: wrap; min-height: 54px;"></div>
+            </div>
+            <div>
+                <div style="font-size: 12px; color: var(--text-secondary); font-weight: 700; margin-bottom: 6px;"><span id="bjMyName">You</span> <span id="bjMyVal" style="color: var(--text-primary);"></span></div>
+                <div id="bjMyCards" style="display: flex; gap: 6px; flex-wrap: wrap; min-height: 54px;"></div>
+            </div>
+            <div>
+                <div style="font-size: 12px; color: var(--text-secondary); font-weight: 700; margin-bottom: 6px;"><span id="bjOppName">Opponent</span> <span id="bjOppVal" style="color: var(--text-primary);"></span></div>
+                <div id="bjOppCards" style="display: flex; gap: 6px; flex-wrap: wrap; min-height: 54px;"></div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 18px;">
+            <button id="bjHitBtn" onclick="bjHit()" style="padding: 13px 30px; border-radius: 30px; border: none; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 15px;">Hit</button>
+            <button id="bjStandBtn" onclick="bjStand()" style="padding: 13px 30px; border-radius: 30px; border: 1px solid var(--glass-border); background: var(--panel); color: var(--text-primary); font-weight: 800; font-size: 15px;">Stand</button>
+        </div>
+        <p id="bjNote" style="color: var(--text-secondary); font-size: 13px; margin-top: 14px; text-align: center; padding: 0 24px;"></p>
+        <button id="rematchBjBtn" onclick="resetBlackjack()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div id="minesOverlay" style="display: none; position: fixed; inset: 0; z-index: 100000; background: var(--bg-dark); flex-direction: column; align-items: center; padding-top: 50px; padding-bottom: 40vh; min-height: 100vh; justify-content: flex-start; overflow-y: auto;">
+        <button onclick="leaveMines()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: var(--text-primary); font-size: 24px;"><i class="fa-solid fa-chevron-left"></i></button>
+        <h2 style="color: #F9A8D4; margin-bottom: 5px;">Mines Duel</h2>
+        <p id="mnStatus" style="color: var(--text-secondary); margin-bottom: 20px; text-align: center; padding: 0 16px;">Waiting for opponent...</p>
+        <p id="mnScore" style="color: var(--text-primary); font-size: 15px; font-weight: 800; margin: 0 0 14px;"></p>
+        <div id="mnBoard" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 318px; max-width: 94vw;"></div>
+        <p style="color: var(--text-secondary); font-size: 12px; margin-top: 16px; text-align: center; padding: 0 24px;">Take turns revealing one tile. A gem scores +1 — a mine costs 2 points. When every gem is found, the higher score wins.</p>
+        <button id="rematchMnBtn" onclick="resetMines()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <div class="bottom-sheet" id="pollSheet" style="z-index: 10000; padding-bottom: 20px;">
+        <div class="sheet-drag-handle" onclick="closePollSheet()"></div>
+        <div class="sheet-title" style="display: flex; align-items: center; justify-content: center; position: relative;">
+            <button onclick="closePollSheet()" style="position: absolute; left: 20px; background: none; border: none; color: var(--text-secondary); font-size: 20px; padding: 10px; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+            <span><i class="fa-solid fa-square-poll-vertical" style="color:#FFC926;"></i> Create Poll</span>
+        </div>
+        <div style="padding: 10px 20px 30px; display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="pollQ" class="auth-input" placeholder="Ask a question..." maxlength="120">
+            <input type="text" id="pollOpt1" class="auth-input" placeholder="Option 1" maxlength="40">
+            <input type="text" id="pollOpt2" class="auth-input" placeholder="Option 2" maxlength="40">
+            <input type="text" id="pollOpt3" class="auth-input" placeholder="Option 3 (optional)" maxlength="40">
+            <input type="text" id="pollOpt4" class="auth-input" placeholder="Option 4 (optional)" maxlength="40">
+            <button class="btn-primary ripple-target" style="margin-top: 6px;" onclick="createPoll()">Post Poll</button>
+        </div>
+    </div>
+
+    <div id="maintenanceOverlay" style="display: none; position: fixed; inset: 0; z-index: 250000; background: var(--bg-dark); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; box-sizing: border-box;">
+        <svg class="v3-hd-logo" viewBox="0 0 48 48" role="img" aria-label="Direct Chat logo" style="width: 64px; height: 64px; margin-bottom: 18px;"><use href="#logoMark"></use></svg>
+        <h2 style="color: var(--text-primary); margin: 0 0 8px;">Under Maintenance</h2>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 14px;">Direct Chat is under maintenance — back soon.</p>
+    </div>
+
+
 
     <!-- GAME CHAT -->
 
@@ -14095,6 +14652,1010 @@ window.burnImage = function(element, url, key) {
             <button onclick="sendGameChat()" style="background: var(--gold-grad); border: none; border-radius: 50%; width: 40px; height: 40px; color: #1A1402;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
+
+<script>
+        // ==================== STAGE 13 — ADMIN POWER PACK + FINALE ====================
+        // Admin powers (mute/warn/Sparks/item grant/details/room moderation/
+        // announcement/maintenance/report actions/stats), polls, @mentions,
+        // pinned chats, composer drafts, haptics, and 5 new games (in the next
+        // script block). Everything here is additive: non-admin behaviour is
+        // unchanged except the admin-triggered announcement banner and the
+        // maintenance screen (both off by default).
+
+        // ---------- tiny haptic ----------
+        function dcBuzz() { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} }
+
+        // ---------- 1. TIMEOUT / MUTE (client side of the gate) ----------
+        function mutedRemainingMs() {
+            if (!user) return 0;
+            if (myProfile && myProfile.isAdmin) return 0; // admins are never muted
+            const until = (myProfile && myProfile.mutedUntil) || 0;
+            return Math.max(0, until - Date.now());
+        }
+        function fmtMuteRemaining(ms) {
+            const sec = Math.ceil(ms / 1000);
+            if (sec < 60) return sec + 's';
+            const min = Math.ceil(sec / 60);
+            if (min < 60) return min + 'm';
+            const h = Math.floor(min / 60), m = min % 60;
+            return m ? (h + 'h ' + m + 'm') : (h + 'h');
+        }
+        window.checkMuted = function() {
+            const rem = mutedRemainingMs();
+            if (rem > 0) { showToast('You are muted — ' + fmtMuteRemaining(rem) + ' remaining', 'error'); return true; }
+            return false;
+        };
+
+        // ---------- 7+8. ANNOUNCEMENT BANNER + MAINTENANCE MODE ----------
+        // These ride their own tiny listeners because the app's existing
+        // globalSettings/features listener (loadDynamicDashboard) only attaches
+        // after login, while the maintenance gate must also cover browse mode.
+        // attachStage13Settings is idempotent; enterBrowseMode re-arms the
+        // features arm because logoutApp() offs every listener on that path.
+        let dcFeaturesCache = {};
+        let dcFeaturesListening = false;
+        let dcAnnounceListening = false;
+        window.applyMaintenanceGate = function() {
+            const ov = document.getElementById('maintenanceOverlay');
+            if (!ov) return;
+            const on = !!(dcFeaturesCache && dcFeaturesCache.maintenance === true);
+            const isAdmin = !!(myProfile && myProfile.isAdmin);
+            ov.style.display = (on && !isAdmin) ? 'flex' : 'none';
+        };
+        window.renderAnnouncementBanner = function(ann) {
+            const bar = document.getElementById('announceBanner');
+            const txt = document.getElementById('announceText');
+            if (!bar || !txt) return;
+            if (!ann || !ann.text) { bar.style.display = 'none'; return; }
+            let dismissed = null;
+            try { dismissed = localStorage.getItem('dc_ann_dismissed'); } catch (e) {}
+            if (dismissed !== null && parseInt(dismissed, 10) === (ann.ts || 0)) { bar.style.display = 'none'; return; }
+            txt.innerText = ann.text; // textContent only — admin text can never inject markup
+            bar.style.display = 'flex';
+        };
+        window.dismissAnnouncement = function() {
+            try {
+                const cur = window._dcAnnouncement;
+                localStorage.setItem('dc_ann_dismissed', String((cur && cur.ts) || 0));
+            } catch (e) {}
+            const bar = document.getElementById('announceBanner');
+            if (bar) bar.style.display = 'none';
+        };
+        window.attachStage13Settings = function(forceFeatures) {
+            if (forceFeatures) dcFeaturesListening = false;
+            if (!dcFeaturesListening) {
+                db.ref('globalSettings/features').on('value', snap => {
+                    dcFeaturesCache = snap.val() || {};
+                    applyMaintenanceGate();
+                });
+                dcFeaturesListening = true; // set only after a successful attach
+            }
+            if (!dcAnnounceListening) {
+                db.ref('globalSettings/announcement').on('value', snap => {
+                    window._dcAnnouncement = snap.val() || null;
+                    renderAnnouncementBanner(window._dcAnnouncement);
+                });
+                dcAnnounceListening = true;
+            }
+        };
+
+        // ---------- interface polish: dashboard skeleton ----------
+        window.hideDashSkeleton = function() {
+            const sk = document.getElementById('skel-dash');
+            if (sk) sk.style.display = 'none';
+        };
+
+        // ---------- 4. DRAFTS (per room, localStorage) ----------
+        function dcLsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+        function dcLsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+        function dcLsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+        window.saveDraftForRoom = function() {
+            if (!room) return;
+            const inp = document.getElementById('msg-input');
+            if (!inp) return;
+            const v = inp.value || '';
+            if (v) dcLsSet('dc_draft_' + room, v); else dcLsDel('dc_draft_' + room);
+        };
+        window.restoreDraftForRoom = function() {
+            if (!room) return;
+            const inp = document.getElementById('msg-input');
+            if (!inp) return;
+            inp.value = dcLsGet('dc_draft_' + room) || '';
+        };
+        window.clearDraftForRoom = function() { if (room) dcLsDel('dc_draft_' + room); };
+
+        // ---------- 3. PIN CHAT (localStorage, DM rows keyed by friend uid) ----------
+        window.getPinnedChats = function() {
+            try { const a = JSON.parse(localStorage.getItem('dc_pinned_chats') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+        };
+        window.togglePinChat = function(uid) {
+            let pins = getPinnedChats();
+            const wasPinned = pins.includes(uid);
+            pins = wasPinned ? pins.filter(p => p !== uid) : pins.concat([uid]);
+            try { localStorage.setItem('dc_pinned_chats', JSON.stringify(pins)); } catch (e) {}
+            showToast(wasPinned ? 'Chat unpinned' : 'Chat pinned to top', 'success');
+            // Re-render the list now: detach the identical query first (the
+            // app's own off() pattern) so listeners never stack.
+            if (user) {
+                try { db.ref('recentChats/' + user.uid).orderByChild('time').off(); } catch (e) {}
+                listenForRecentChats();
+            }
+        };
+
+        // ---------- 2. @MENTIONS ----------
+        // Names are collected from messages rendered in the current room plus
+        // my own name and the DM partner. applyMentions runs on ALREADY-ESCAPED
+        // html and only rewrites text segments outside tags, so it can never
+        // reopen the XSS hole the escaper closed.
+        let roomParticipantNames = new Set();
+        window.resetRoomParticipants = function() { roomParticipantNames = new Set(); };
+        function mentionCandidates() {
+            const set = new Set();
+            roomParticipantNames.forEach(n => { if (n) set.add(n); });
+            if (myProfile && myProfile.name) set.add(myProfile.name);
+            if (typeof currentChatFriend !== 'undefined' && currentChatFriend && currentChatFriend.name) set.add(currentChatFriend.name);
+            return Array.from(set).filter(n => n && n.length >= 2).sort((a, b) => b.length - a.length);
+        }
+        function escapeRegExpStr(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+        window.applyMentions = function(html) {
+            if (!html || typeof html !== 'string') return html;
+            const names = mentionCandidates();
+            if (!names.length) return html;
+            const parts = html.split(/(<[^>]+>)/g);
+            for (let i = 0; i < parts.length; i += 2) {
+                let seg = parts[i];
+                if (!seg || seg.indexOf('@') === -1) continue;
+                for (const name of names) {
+                    const pat = new RegExp('@(' + escapeRegExpStr(escapeHTML(name)) + ')(?![A-Za-z0-9_])', 'gi');
+                    seg = seg.replace(pat, '<span class="mention">@$1</span>');
+                }
+                parts[i] = seg;
+            }
+            return parts.join('');
+        };
+        window.messageMentionsName = function(txt, name) {
+            if (!txt || !name || name.length < 2) return false;
+            const pat = new RegExp('@' + escapeRegExpStr(name) + '(?![A-Za-z0-9_])', 'i');
+            return pat.test(txt);
+        };
+
+        // ---------- 1. POLLS ----------
+        window.openPollSheet = function() {
+            if (!requireAuth()) return;
+            if (burnerMode) { showToast('Polls are not available in Burner Mode', 'error'); return; }
+            const overlay = document.getElementById('sheetOverlay');
+            if (overlay) overlay.classList.add('show');
+            const sheet = document.getElementById('pollSheet');
+            if (sheet) sheet.classList.add('show');
+        };
+        window.closePollSheet = function() {
+            const overlay = document.getElementById('sheetOverlay');
+            if (overlay) overlay.classList.remove('show');
+            const sheet = document.getElementById('pollSheet');
+            if (sheet) sheet.classList.remove('show');
+        };
+        window.createPoll = function() {
+            if (!requireAuth()) return;
+            if (checkMuted()) return;
+            if (burnerMode) { showToast('Polls are not available in Burner Mode', 'error'); return; }
+            if (!room) { showToast('Open a chat first', 'error'); return; }
+            const q = (document.getElementById('pollQ').value || '').trim();
+            const opts = ['pollOpt1', 'pollOpt2', 'pollOpt3', 'pollOpt4']
+                .map(id => (document.getElementById(id).value || '').trim()).filter(Boolean);
+            if (!q) { showToast('Type a question first', 'error'); return; }
+            if (opts.length < 2) { showToast('Add at least 2 options', 'error'); return; }
+
+            const currentRoom = room;
+            const nColor = shopData.nameColors.find(n => n.id === (myProfile.nameColor || 'nc_white'));
+            const resolvedColor = myProfile.customNameColor || (nColor ? nColor.value : '#ffffff');
+            const bStyle = shopData.bubbles.find(b => b.id === myProfile.chatColor) || shopData.bubbles[0] || { color: '#ffcc00', text: '#000' };
+            const msgData = {
+                txt: q,
+                type: 'poll',
+                poll: { q: q, options: opts, votes: {}, ended: false },
+                uid: user.uid,
+                name: myProfile.name || 'User',
+                nameColor: resolvedColor,
+                pic: myProfile.pic || '',
+                avatarRing: myProfile.avatarRing || 'ar_none',
+                badge: myProfile.badge && myProfile.badge !== 'badge_none' ? (shopData.badges.find(b => b.id === myProfile.badge)?.icon || '') : '',
+                time: firebase.database.ServerValue.TIMESTAMP,
+                burner: false,
+                chatColor: bStyle.color,
+                chatTextColor: bStyle.text,
+                chatFont: myProfile.chatFont || 'f_default',
+                read: false,
+                delivered: false
+            };
+            db.ref('rooms/' + currentRoom).push(msgData).then(() => {
+                if (typeof currentChatFriend !== 'undefined' && currentChatFriend) {
+                    const friendUid = currentChatFriend.uid;
+                    const myRecent = { name: currentChatFriend.name, pic: currentChatFriend.pic || '', lastMsg: 'Poll: ' + q, lastSender: user.uid, time: firebase.database.ServerValue.TIMESTAMP };
+                    db.ref(`recentChats/${user.uid}/${friendUid}`).update(myRecent);
+                    const theirRecent = { name: myProfile.name, pic: myProfile.pic || '', lastMsg: 'Poll: ' + q, lastSender: user.uid, time: firebase.database.ServerValue.TIMESTAMP };
+                    db.ref(`recentChats/${friendUid}/${user.uid}`).update(theirRecent);
+                }
+                db.ref(`users/${user.uid}/orbs`).transaction(c => (c || 0) + 1);
+                ['pollQ', 'pollOpt1', 'pollOpt2', 'pollOpt3', 'pollOpt4'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+                closePollSheet();
+                dcBuzz();
+                showToast('Poll posted', 'success');
+            }).catch(e => showToast(e.message, 'error'));
+        };
+        function pollCounts(d) {
+            const poll = d.poll || {};
+            const opts = poll.options || [];
+            const votes = poll.votes || {};
+            const counts = opts.map(() => 0);
+            let myVote = -1;
+            Object.keys(votes).forEach(k => {
+                const idx = parseInt(k, 10);
+                const bucket = votes[k] || {};
+                Object.keys(bucket).forEach(uid => {
+                    if (idx >= 0 && idx < counts.length) counts[idx]++;
+                    if (user && uid === user.uid) myVote = idx;
+                });
+            });
+            const total = counts.reduce((a, b) => a + b, 0);
+            return { counts: counts, total: total, myVote: myVote, opts: opts, ended: !!poll.ended };
+        }
+        window.pollHtml = function(key, d) {
+            const poll = d.poll || {};
+            const info = pollCounts(d);
+            const isAuthor = user && d.uid === user.uid;
+            let h = '<div class="poll-wrap"><div class="poll-q">' + escapeHTML(poll.q || d.txt || '') + '</div>';
+            info.opts.forEach((opt, i) => {
+                const pct = info.total ? Math.round(info.counts[i] * 100 / info.total) : 0;
+                h += '<div class="poll-opt' + (info.myVote === i ? ' mine' : '') + '" onclick="votePoll(\'' + key + '\', ' + i + ')">'
+                    + '<span class="poll-bar" style="width:' + pct + '%"></span>'
+                    + '<span class="poll-opt-txt">' + escapeHTML(opt) + (info.myVote === i ? ' <i class="fa-solid fa-check" style="font-size:10px;"></i>' : '') + '</span>'
+                    + '<span class="poll-pct">' + pct + '% · ' + info.counts[i] + '</span></div>';
+            });
+            h += '<div class="poll-foot"><span>' + info.total + (info.total === 1 ? ' vote' : ' votes') + (info.ended ? ' · Poll ended' : '') + '</span>'
+                + (isAuthor && !info.ended ? '<button class="poll-end-btn" onclick="endPoll(\'' + key + '\')">End poll</button>' : '')
+                + '</div></div>';
+            return h;
+        };
+        window.votePoll = function(key, idx) {
+            if (!requireAuth()) return;
+            if (!room || !user) return;
+            const ref = db.ref('rooms/' + room + '/' + key);
+            ref.once('value').then(snap => {
+                const d = snap.val();
+                if (!d || d.type !== 'poll' || !d.poll || d.poll.ended) return;
+                return ref.child('poll/votes').transaction(cur => {
+                    const votes = cur || {};
+                    const mine = String(idx);
+                    const already = votes[mine] && votes[mine][user.uid];
+                    Object.keys(votes).forEach(k => { if (votes[k]) delete votes[k][user.uid]; });
+                    if (!already) {
+                        if (!votes[mine]) votes[mine] = {};
+                        votes[mine][user.uid] = true;
+                    }
+                    Object.keys(votes).forEach(k => { if (votes[k] && !Object.keys(votes[k]).length) delete votes[k]; });
+                    return votes;
+                });
+            }).catch(e => console.error('votePoll', e));
+        };
+        window.endPoll = function(key) {
+            if (!user || !room) return;
+            const ref = db.ref('rooms/' + room + '/' + key);
+            ref.once('value').then(snap => {
+                const d = snap.val();
+                if (!d || d.uid !== user.uid) return;
+                return ref.child('poll/ended').set(true);
+            }).catch(e => console.error('endPoll', e));
+        };
+
+        // ==================== ADMIN POWER PACK ====================
+        let adminEditCache = { uid: null, data: null, status: null };
+
+        function fmtAdminDate(ts) {
+            if (!ts) return '—';
+            try { return new Date(ts).toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return '—'; }
+        }
+        function fmtAdminAgo(ts) {
+            if (!ts) return 'unknown';
+            const diff = Date.now() - ts;
+            if (diff < 60000) return 'just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            return Math.floor(diff / 86400000) + 'd ago';
+        }
+        window.renderAdminUserDetails = function() {
+            const box = document.getElementById('adminUserDetails');
+            if (!box || !adminEditCache.data) return;
+            const d = adminEditCache.data;
+            const totals = gameStatsTotals(d.gameStats || null);
+            const streak = (d.streak && d.streak.count) || 0;
+            const st = adminEditCache.status;
+            const presence = st ? (st.state === 'online' ? 'Online now' : 'Last online ' + fmtAdminAgo(st.last_changed)) : 'Presence unknown';
+            const muted = d.mutedUntil && d.mutedUntil > Date.now()
+                ? '<span style="color:#ff6b61; font-weight:700;">Muted — ' + fmtMuteRemaining(d.mutedUntil - Date.now()) + ' left</span>'
+                : 'Not muted';
+            box.innerHTML =
+                '<div><i class="fa-solid fa-calendar-day" style="width:16px;"></i> Joined: ' + fmtAdminDate(d.joinDate) + '</div>'
+                + '<div><i class="fa-solid fa-fire" style="width:16px;"></i> Streak: ' + streak + ' day' + (streak === 1 ? '' : 's') + '</div>'
+                + '<div><i class="fa-solid fa-gamepad" style="width:16px;"></i> Game record: ' + totals.w + 'W · ' + totals.l + 'L · ' + totals.d + 'D</div>'
+                + '<div><i class="fa-solid fa-signal" style="width:16px;"></i> ' + presence + '</div>'
+                + '<div><i class="fa-solid fa-volume-xmark" style="width:16px;"></i> ' + muted + '</div>';
+        };
+        function refreshAdminEditAfterChange(uid) {
+            db.ref('users/' + uid).once('value').then(snap => {
+                const data = snap.val() || {};
+                adminEditCache.data = data;
+                adminCurrentEditUserUnlocked = data.unlocked || [];
+                const orbsEl = document.getElementById('adminEditOrbs');
+                if (orbsEl) orbsEl.value = data.orbs || 0;
+                renderAdminUserDetails();
+                if (typeof adminUpdateInventorySelect === 'function') adminUpdateInventorySelect();
+            }).catch(() => {});
+        }
+
+        // 3. Sparks quick actions (transactional; deduct floors at 0)
+        window.adminAdjustOrbs = function(delta) {
+            if (!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            if (!uid) return;
+            if (uid === user.uid && delta < 0) { showToast("You can't deduct from yourself here — use the balance field.", 'error'); return; }
+            db.ref('users/' + uid + '/orbs').transaction(cur => Math.max(0, (cur || 0) + delta)).then(res => {
+                const bal = res && res.snapshot ? res.snapshot.val() : null;
+                const orbsEl = document.getElementById('adminEditOrbs');
+                if (orbsEl && bal !== null && bal !== undefined) orbsEl.value = bal;
+                if (adminEditCache.data) adminEditCache.data.orbs = (bal !== null && bal !== undefined) ? bal : adminEditCache.data.orbs;
+                showToast((delta > 0 ? 'Granted ' : 'Deducted ') + Math.abs(delta) + ' Sparks', 'success');
+            }).catch(e => showToast(e.message, 'error'));
+        };
+
+        // 1. Timeout / Mute (write side)
+        window.adminSetMute = function(minutes) {
+            if (!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            if (!uid) return;
+            if (uid === user.uid) { showToast("You can't mute yourself.", 'error'); return; }
+            const until = minutes > 0 ? Date.now() + minutes * 60000 : 0;
+            db.ref('users/' + uid + '/mutedUntil').set(until).then(() => {
+                if (adminEditCache.data) adminEditCache.data.mutedUntil = until;
+                renderAdminUserDetails();
+                showToast(minutes > 0 ? 'User muted' : 'User unmuted', 'success');
+            }).catch(e => showToast(e.message, 'error'));
+        };
+
+        // 2. Warn — a styled system message in the admin↔user DM room
+        window.adminWarnUser = function() {
+            if (!myProfile.isAdmin) return;
+            const uid = document.getElementById('adminEditUid').value;
+            if (!uid) return;
+            if (uid === user.uid) { showToast("You can't warn yourself.", 'error'); return; }
+            const reason = (document.getElementById('adminWarnReason').value || '').trim();
+            const dmRoom = user.uid < uid ? user.uid + '_' + uid : uid + '_' + user.uid;
+            const targetName = (adminEditCache.data && adminEditCache.data.name) || 'User';
+            const msgData = {
+                txt: 'You received a warning from the admin' + (reason ? ': ' + reason : '. Please follow the community rules.'),
+                type: 'text',
+                warn: true,
+                uid: user.uid,
+                name: myProfile.name || 'Admin',
+                nameColor: '#FF3B30',
+                pic: myProfile.pic || '',
+                avatarRing: myProfile.avatarRing || 'ar_none',
+                badge: '',
+                time: firebase.database.ServerValue.TIMESTAMP,
+                burner: false,
+                chatColor: '#ffcc00',
+                chatTextColor: '#000',
+                chatFont: 'f_default',
+                read: false,
+                delivered: false
+            };
+            db.ref('rooms/' + dmRoom).push(msgData).then(() => {
+                const theirRecent = { name: myProfile.name || 'Admin', pic: myProfile.pic || '', lastMsg: 'You received a warning from the admin', lastSender: user.uid, time: firebase.database.ServerValue.TIMESTAMP };
+                db.ref('recentChats/' + uid + '/' + user.uid).update(theirRecent);
+                const myRecent = { name: targetName, pic: (adminEditCache.data && adminEditCache.data.pic) || '', lastMsg: 'Warning sent', lastSender: user.uid, time: firebase.database.ServerValue.TIMESTAMP };
+                db.ref('recentChats/' + user.uid + '/' + uid).update(myRecent);
+                const rEl = document.getElementById('adminWarnReason');
+                if (rEl) rEl.value = '';
+                showToast('Warning sent to ' + targetName, 'success');
+            }).catch(e => showToast(e.message, 'error'));
+        };
+
+        // 6. Room moderation — Clear Chat deletes message-like children only
+        window.adminClearRoomChat = function(roomId) {
+            if (!myProfile.isAdmin) return;
+            if (!confirm('Clear ALL messages in this room? This cannot be undone.')) return;
+            db.ref('rooms/' + roomId).once('value').then(snap => {
+                const updates = {};
+                let count = 0;
+                snap.forEach(child => {
+                    const v = child.val();
+                    if (v && typeof v === 'object' && v.time !== undefined) { updates[child.key] = null; count++; }
+                });
+                if (!count) { showToast('No messages to clear', 'success'); return; }
+                return db.ref('rooms/' + roomId).update(updates).then(() => showToast('Cleared ' + count + ' messages', 'success'));
+            }).catch(e => showToast(e.message, 'error'));
+        };
+
+        // 7. Announcement (write side)
+        window.adminSetAnnouncement = function() {
+            if (!myProfile.isAdmin) return;
+            const el = document.getElementById('adminAnnounceText');
+            const text = (el && el.value || '').trim();
+            if (!text) { showToast('Type the announcement first', 'error'); return; }
+            db.ref('globalSettings/announcement').set({ text: text, ts: Date.now() })
+                .then(() => showToast('Announcement is live', 'success'))
+                .catch(e => showToast(e.message, 'error'));
+        };
+        window.adminClearAnnouncement = function() {
+            if (!myProfile.isAdmin) return;
+            db.ref('globalSettings/announcement').remove()
+                .then(() => { const el = document.getElementById('adminAnnounceText'); if (el) el.value = ''; showToast('Announcement cleared', 'success'); })
+                .catch(e => showToast(e.message, 'error'));
+        };
+
+        // 9. Reports quick actions
+        window.adminBanFromReport = function(uid) {
+            if (!myProfile.isAdmin) return;
+            adminToggleBan(uid, false);
+            setTimeout(() => { if (typeof loadAdminReports === 'function') loadAdminReports(); }, 700);
+        };
+        window.adminViewRoom = function(roomId) {
+            if (!myProfile.isAdmin) return;
+            window._adminLiveRoom = roomId;
+            stopAdminLiveChat();
+            startAdminLiveChat();
+            showToast('Live viewer: ' + roomId, 'success');
+            const scr = document.getElementById('admin-screen');
+            if (scr) scr.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Boot: attach the settings listeners + skeleton fallback. Runs in
+        // browse mode too (public-readable paths), so the maintenance gate
+        // and the banner work before any login. Guarded: if the Firebase SDK
+        // itself failed to load, db is unavailable and the app is inert
+        // anyway — never add a new console error on top of that.
+        try { attachStage13Settings(false); } catch (e) {}
+        setTimeout(hideDashSkeleton, 2500);
+    </script>
+
+<script>
+        // ==================== STAGE 13 — FIVE NEW GAMES (30 -> 35) ====================
+        // Same integration contract as Batches 1-3: hub card + stranger
+        // allow-list + challenge picker + startGameSession branch + 'P1'/'P2'/
+        // 'Draw' winner semantics + host-authority rematch + leave cleanup.
+        // These games use the first-chain session pattern (activeGameType /
+        // mySymbol / myGameRole), not the Stage 11 free-variable pattern.
+
+        function dcRng(seed) { let a = (seed >>> 0) || 1; return function() { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+        // ---------- ULTIMATE TIC-TAC-TOE ----------
+        let utData = null;
+        const UT_LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        function utLineWinner(cells) { for (let li = 0; li < UT_LINES.length; li++) { const L = UT_LINES[li]; const a = cells[L[0]]; if (a && a === cells[L[1]] && a === cells[L[2]]) return a; } return null; }
+        window.utApplyMove = function(d, b, c, sym) {
+            if (!d || d.winner || d.turn !== sym) return null;
+            const claimed = (d.claimed || []).slice(); while (claimed.length < 9) claimed.push('');
+            if (claimed[b]) return null;
+            if (d.active !== undefined && d.active !== null && d.active >= 0 && d.active !== b) return null;
+            const cells = Object.assign({}, d.cells || {});
+            const key = b + '-' + c;
+            if (cells[key]) return null;
+            cells[key] = sym;
+            const mini = []; for (let i = 0; i < 9; i++) mini.push(cells[b + '-' + i] || '');
+            const mw = utLineWinner(mini);
+            if (mw) claimed[b] = mw; else if (mini.every(v => v)) claimed[b] = 'D';
+            let winner = null;
+            const cw = utLineWinner(claimed.map(v => v === 'D' ? '' : v));
+            if (cw) winner = cw;
+            else if (claimed.every(v => v)) { const cx = claimed.filter(v => v === 'X').length, co = claimed.filter(v => v === 'O').length; winner = cx > co ? 'X' : co > cx ? 'O' : 'Draw'; }
+            let active = c; if (claimed[active]) active = -1;
+            return { cells: cells, claimed: claimed, active: active, turn: sym === 'X' ? 'O' : 'X', winner: winner };
+        };
+        window.utCellClick = function(b, c) {
+            if (!gameRef || !utData || utData.winner) return;
+            if (!utApplyMove(utData, b, c, mySymbol)) return;
+            const role = mySymbol;
+            gameRef.transaction(cur => { if (!cur) return cur; const n = utApplyMove(cur, b, c, role); return n ? Object.assign({}, cur, n) : cur; }).then(() => dcBuzz());
+        };
+        window.renderUtBoard = function() {
+            const el = document.getElementById('utBoard');
+            if (!el || el.children.length) return;
+            for (let b = 0; b < 9; b++) {
+                const mb = document.createElement('div');
+                mb.id = 'ut-b-' + b;
+                mb.style.cssText = 'display:grid; grid-template-columns: repeat(3, 30px); gap: 3px; padding: 5px; border-radius: 10px; background: var(--panel); border: 2px solid transparent; position: relative;';
+                for (let c = 0; c < 9; c++) {
+                    const btn = document.createElement('button');
+                    btn.id = 'ut-c-' + b + '-' + c;
+                    btn.style.cssText = 'width:30px; height:30px; border-radius:7px; border:1px solid var(--glass-border); background: var(--field); color: var(--text-primary); font-size:15px; font-weight:900; cursor:pointer; padding:0; font-family: inherit;';
+                    btn.onclick = (function(bb, cc) { return function() { utCellClick(bb, cc); }; })(b, c);
+                    mb.appendChild(btn);
+                }
+                el.appendChild(mb);
+            }
+        };
+        window.updateUtUI = function(d) {
+            if (!d) return;
+            renderUtBoard();
+            const claimed = d.claimed || [];
+            for (let b = 0; b < 9; b++) {
+                const mb = document.getElementById('ut-b-' + b);
+                if (!mb) continue;
+                const playable = !d.winner && !claimed[b] && (d.active === -1 || d.active === b || d.active === undefined || d.active === null);
+                mb.style.borderColor = (playable && d.turn === mySymbol) ? '#FFC926' : 'transparent';
+                for (let c = 0; c < 9; c++) {
+                    const btn = document.getElementById('ut-c-' + b + '-' + c);
+                    if (!btn) continue;
+                    const v = (d.cells && d.cells[b + '-' + c]) || '';
+                    btn.innerText = claimed[b] ? '' : v;
+                    btn.style.color = v === 'X' ? '#E5484D' : '#FFC926';
+                    btn.disabled = !!d.winner || !!claimed[b] || d.turn !== mySymbol || !playable;
+                }
+                let ov = document.getElementById('ut-ov-' + b);
+                if (claimed[b]) {
+                    if (!ov) { ov = document.createElement('div'); ov.id = 'ut-ov-' + b; ov.style.cssText = 'position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:44px; font-weight:900; pointer-events:none;'; mb.appendChild(ov); }
+                    ov.innerText = claimed[b] === 'D' ? '–' : claimed[b];
+                    ov.style.color = claimed[b] === 'X' ? 'rgba(229,72,77,0.85)' : claimed[b] === 'O' ? 'rgba(255,201,38,0.85)' : 'rgba(155,161,171,0.7)';
+                } else if (ov) { ov.remove(); }
+            }
+        };
+        window.resetUltimateTTT = function() {
+            if (gameRef && mySymbol === 'X') { gameRef.update({ cells: {}, claimed: ['', '', '', '', '', '', '', '', ''], active: -1, turn: 'X', winner: null }); }
+            document.getElementById('rematchUtBtn').style.display = 'none';
+        };
+        window.leaveUltimateTTT = function() {
+            if (typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if (typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('ultimateTTTOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (typeof user !== 'undefined' && user) { db.ref('gameQueue/UltimateTTT/' + user.uid).off(); db.ref('gameQueue/UltimateTTT/' + user.uid).remove(); }
+            utData = null;
+            gameRoom = null;
+        };
+
+        // ---------- TYPING RACE ----------
+        const TR_SENTENCES = [
+            'The quick brown fox jumps over the lazy dog near the river bank',
+            'She sells seashells by the seashore on bright summer mornings',
+            'A journey of a thousand miles begins with a single small step',
+            'The library was quiet except for the soft turning of pages',
+            'He planted tomatoes and peppers in the garden behind his house',
+            'Music filled the room while the rain tapped gently on the window',
+            'The train arrived at the station just as the sun was setting',
+            'They packed sandwiches and lemonade for the picnic by the lake',
+            'Every morning the baker opens his shop before the town wakes up',
+            'The old lighthouse guided the ships safely through the dark night',
+            'Learning a new language takes patience practice and a little courage',
+            'The children built a tall tower out of wooden blocks and laughter',
+            'Winter brought snow that covered the hills in a blanket of white',
+            'She wrote her name in the sand and watched the waves wash it away',
+            'The market was full of fresh bread bright flowers and friendly voices',
+            'He fixed the bicycle with a wrench a spare tube and some patience',
+            'The stars came out one by one as the evening sky turned deep blue',
+            'They told stories around the campfire until the fire burned low',
+            'A good book can carry you to places you have never been before',
+            'The river winds through the valley and under the old stone bridge',
+            'She practiced the piano every day until the melody felt easy',
+            'The workshop smelled of pine wood varnish and fresh coffee',
+            'Birds gathered on the rooftops as the city slowly came to life',
+            'He kept a small notebook where he wrote down ideas and drawings',
+            'The festival lights sparkled above the streets all night long'
+        ];
+        let trData = null, trSeed = null, trLastWrite = 0, trLastProg = -1, trLastErr = -1;
+        function trSentence(seed) { return TR_SENTENCES[Math.abs(seed || 0) % TR_SENTENCES.length]; }
+        function trPrefixLen(typed, sent) { let i = 0; while (i < typed.length && i < sent.length && typed[i] === sent[i]) i++; return i; }
+        function trErrorCount(typed, sent) { let e = 0; for (let i = 0; i < typed.length && i < sent.length; i++) if (typed[i] !== sent[i]) e++; return e; }
+        window.trResetLocal = function() { trSeed = null; trLastProg = -1; trLastErr = -1; const r = document.getElementById('trResult'); if (r) r.innerText = ''; };
+        window.trBuildSentence = function() {
+            const box = document.getElementById('trSentence');
+            if (!box || trSeed === null) return;
+            const sent = trSentence(trSeed);
+            box.innerHTML = '';
+            for (let i = 0; i < sent.length; i++) { const sp = document.createElement('span'); sp.id = 'tr-ch-' + i; sp.innerText = sent[i]; box.appendChild(sp); }
+            trPaintSentence('');
+        };
+        function trPaintSentence(typed) {
+            if (trSeed === null) return;
+            const sent = trSentence(trSeed);
+            const L = trPrefixLen(typed, sent);
+            for (let i = 0; i < sent.length; i++) {
+                const sp = document.getElementById('tr-ch-' + i);
+                if (!sp) continue;
+                if (i < L) { sp.style.color = '#4ade80'; sp.style.background = 'transparent'; }
+                else if (i < typed.length) { sp.style.color = '#ff6b61'; sp.style.background = 'rgba(255,59,48,0.15)'; }
+                else { sp.style.color = 'var(--text-secondary)'; sp.style.background = 'transparent'; }
+                sp.style.textDecoration = (i === typed.length && typed.length < sent.length) ? 'underline' : 'none';
+            }
+        }
+        window.trOnInput = function() {
+            if (!gameRef || !trData || trData.winner || trSeed === null) return;
+            const inp = document.getElementById('trInput');
+            if (!inp) return;
+            const typed = inp.value || '';
+            const sent = trSentence(trSeed);
+            trPaintSentence(typed);
+            const L = trPrefixLen(typed, sent);
+            const errs = trErrorCount(typed, sent);
+            const me = myGameRole() === 'P1' ? '1' : '2';
+            const done = L >= sent.length;
+            const now = Date.now();
+            if (!done && now - trLastWrite < 150) return;
+            if (L === trLastProg && errs === trLastErr && !done) return;
+            trLastWrite = now; trLastProg = L; trLastErr = errs;
+            const up = {}; up['prog' + me] = L; up['err' + me] = errs;
+            if (done) { up['done' + me] = true; up['fin' + me] = Date.now(); }
+            gameRef.update(up);
+        };
+        window.updateTrUI = function(d) {
+            const sent = trSentence(d.seed);
+            const p1 = Math.round((d.prog1 || 0) * 100 / sent.length), p2 = Math.round((d.prog2 || 0) * 100 / sent.length);
+            const b1 = document.getElementById('trBar1'), b2 = document.getElementById('trBar2');
+            if (b1) b1.style.width = p1 + '%';
+            if (b2) b2.style.width = p2 + '%';
+            const pc1 = document.getElementById('trPct1'), pc2 = document.getElementById('trPct2');
+            if (pc1) pc1.innerText = p1 + '%';
+            if (pc2) pc2.innerText = p2 + '%';
+            const n1 = document.getElementById('trName1'), n2 = document.getElementById('trName2');
+            if (n1) n1.innerText = (d.p1Name || 'P1') + (myGameRole() === 'P1' ? ' (You)' : '');
+            if (n2) n2.innerText = (d.p2Name || 'P2') + (myGameRole() === 'P2' ? ' (You)' : '');
+        };
+        window.trMaybeFinish = function(d) {
+            if (!d || d.winner || !gameRef) return;
+            if (!d.done1 && !d.done2) return;
+            let w;
+            if (d.done1 && d.done2) w = d.fin1 === d.fin2 ? 'Draw' : (d.fin1 < d.fin2 ? 'P1' : 'P2');
+            else w = d.done1 ? 'P1' : 'P2';
+            gameRef.child('winner').transaction(cur => cur ? undefined : w);
+        };
+        window.trShowResult = function(d) {
+            const el = document.getElementById('trResult');
+            if (!el) return;
+            const len = trSentence(d.seed).length;
+            const acc = errs => Math.max(0, Math.round(100 * len / Math.max(1, len + (errs || 0))));
+            el.innerText = (d.p1Name || 'P1') + ': ' + acc(d.err1) + '% accuracy · ' + (d.err1 || 0) + ' errors — ' + (d.p2Name || 'P2') + ': ' + acc(d.err2) + '% accuracy · ' + (d.err2 || 0) + ' errors';
+        };
+        window.resetTypingRace = function() {
+            if (gameRef && mySymbol === 'X') { gameRef.update({ seed: Math.floor(Math.random() * 1000000000), prog1: 0, prog2: 0, err1: 0, err2: 0, fin1: 0, fin2: 0, done1: false, done2: false, winner: null }); }
+            document.getElementById('rematchTrBtn').style.display = 'none';
+        };
+        window.leaveTypingRace = function() {
+            if (typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if (typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('typingRaceOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (typeof user !== 'undefined' && user) { db.ref('gameQueue/TypingRace/' + user.uid).off(); db.ref('gameQueue/TypingRace/' + user.uid).remove(); }
+            trData = null; trSeed = null;
+            gameRoom = null;
+        };
+
+        // ---------- SUDOKU DUEL ----------
+        // 16 puzzles generated and uniqueness-verified at build time (each has
+        // exactly one solution; the embedded solution is that solution).
+        const SUDOKU_PUZZLES = [
+            { p: '030080100060100058182956300879520000000390020003008000791830060248701930000000781', s: '537482196964173258182956347879524613615397824423618579791835462248761935356249781' },
+            { p: '040000096001590007200670500500000082020405063638920100010750438007039005006840070', s: '745312896861594327293678541574163982129485763638927154912756438487239615356841279' },
+            { p: '000729608007100020000308700030000409000000060700804532076200943890005076403000815', s: '314729658987156324652348791135672489248593167769814532576281943891435276423967815' },
+            { p: '008210073030007090047506018420000601600081952800620000304002060786000105102708000', s: '568219473231847596947536218425973681673481952819625734394152867786394125152768349' },
+            { p: '030019076005083109916040002354001600000006005000090230580100000270300960043002050', s: '438219576725683149916547382354821697892736415167495238589164723271358964643972851' },
+            { p: '205800063094706820000020740043000506802360970000000000701003000039600002080502000', s: '275849163194736825368125749943271586852364971617958234721493658539687412486512397' },
+            { p: '010004300000000700300960000681090020507002908429876013000415600150729804000030109', s: '718254396962381745345967281681593427537142968429876513893415672156729834274638159' },
+            { p: '082793010971600305300005089000206170100900500065008090007040030030009061010360057', s: '582793614971684325346125789493256178128937546765418293657841932234579861819362457' },
+            { p: '000129000307005000210004080708200050000400078002900601020890040000506003671302095', s: '845129367397685412216734589738261954169453278452978631523897146984516723671342895' },
+            { p: '000007100000060580000809003016738025835190076200000000008200004500086091300940802', s: '683527149921463587754819263416738925835192476279654318198275634542386791367941852' },
+            { p: '600009401001075900807614500009032800700001040124098000040027300310800090270003164', s: '652389471431275986897614523569432817783561249124798635946127358315846792278953164' },
+            { p: '790040000100700408000216730000060080004000300865000012080030000020098076657420093', s: '792843651136759428548216739379162584214985367865374912981637245423598176657421893' },
+            { p: '062045709508300062370006058900080006730260001684001027407600003010530900000000070', s: '162845739548379162379126458921783546735264891684951327457698213216537984893412675' },
+            { p: '500009103600270509710005620000002380820490006001507004180000007200700000000100960', s: '542869173638271549719345628974612385825493716361587294183926457296754831457138962' },
+            { p: '070564020004802035000090600012089400790106052846200097030000000200671080080035076', s: '378564921964812735125397648512789463793146852846253197637428519259671384481935276' },
+            { p: '700001560016045790950760080500000206090006000000020009009687120082954003000013000', s: '723891564816345792954762381548179236291436857367528419439687125182954673675213948' }
+        ];
+        let suData = null, suSel = null, suTick = null;
+        function suGivenAt(d, i) { return SUDOKU_PUZZLES[d.puz].p.charAt(i) !== '0'; }
+        function suSolutionAt(d, i) { return parseInt(SUDOKU_PUZZLES[d.puz].s.charAt(i), 10); }
+        window.renderSuBoard = function() {
+            const el = document.getElementById('suBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 81; i++) {
+                const btn = document.createElement('button');
+                btn.id = 'su-c-' + i;
+                const r = Math.floor(i / 9), c = i % 9;
+                btn.style.cssText = 'aspect-ratio: 1; border: none; border-right: ' + ((c % 3 === 2 && c !== 8) ? '2px solid var(--text-secondary)' : '1px solid transparent') + '; border-bottom: ' + ((r % 3 === 2 && r !== 8) ? '2px solid var(--text-secondary)' : '1px solid transparent') + '; background: var(--panel); color: var(--text-primary); font-size: 15px; font-weight: 600; cursor: pointer; padding: 0; font-family: inherit;';
+                btn.onclick = (function(idx) { return function() { suSelect(idx); }; })(i);
+                el.appendChild(btn);
+            }
+        };
+        window.suSelect = function(i) {
+            if (!suData || suData.winner) return;
+            suSel = suGivenAt(suData, i) ? null : i;
+            updateSuUI(suData);
+        };
+        window.suPadDigit = function(n) {
+            if (!gameRef || !suData || suData.winner || suSel === null) return;
+            const d = suData, me = myGameRole() === 'P1' ? '1' : '2';
+            if (d['done' + me] || suGivenAt(d, suSel)) return;
+            const myEntries = d['p' + me] || {};
+            if (n === 0) {
+                if (myEntries[suSel]) { const up0 = {}; up0['p' + me + '/' + suSel] = null; gameRef.update(up0); }
+                return;
+            }
+            const up = {};
+            up['p' + me + '/' + suSel] = n;
+            if (n !== suSolutionAt(d, suSel) && myEntries[suSel] !== n) up['m' + me] = (d['m' + me] || 0) + 1;
+            gameRef.update(up).then(() => {
+                dcBuzz();
+                gameRef.once('value').then(snap => {
+                    const nd = snap.val(); if (!nd) return;
+                    const entries = nd['p' + me] || {};
+                    let complete = true;
+                    for (let i = 0; i < 81; i++) {
+                        if (SUDOKU_PUZZLES[nd.puz].p.charAt(i) !== '0') continue;
+                        if (entries[i] !== parseInt(SUDOKU_PUZZLES[nd.puz].s.charAt(i), 10)) { complete = false; break; }
+                    }
+                    if (complete) { const u2 = {}; u2['done' + me] = true; u2['fin' + me] = Date.now(); gameRef.update(u2); }
+                });
+            });
+        };
+        window.updateSuUI = function(d) {
+            if (!d || d.puz === undefined) return;
+            renderSuBoard();
+            const me = myGameRole() === 'P1' ? '1' : '2';
+            const op = me === '1' ? '2' : '1';
+            const myE = d['p' + me] || {};
+            let givens = 0;
+            for (let i = 0; i < 81; i++) {
+                const btn = document.getElementById('su-c-' + i);
+                if (!btn) continue;
+                const g = SUDOKU_PUZZLES[d.puz].p.charAt(i);
+                if (g !== '0') {
+                    givens++;
+                    btn.innerText = g;
+                    btn.style.fontWeight = '900';
+                    btn.style.background = 'var(--panel-2)';
+                    btn.style.color = 'var(--text-primary)';
+                } else if (myE[i]) {
+                    btn.innerText = myE[i];
+                    btn.style.fontWeight = '700';
+                    btn.style.background = 'var(--panel)';
+                    btn.style.color = myE[i] === suSolutionAt(d, i) ? '#FFC926' : '#ff6b61';
+                } else {
+                    btn.innerText = '';
+                    btn.style.background = 'var(--panel)';
+                }
+                btn.style.outline = (suSel === i) ? '2px solid #FFC926' : 'none';
+                btn.style.outlineOffset = '-2px';
+            }
+            const info = document.getElementById('suInfo');
+            if (info) {
+                const myFilled = givens + Object.keys(myE).length;
+                const opFilled = givens + Object.keys(d['p' + op] || {}).length;
+                info.innerText = 'You: ' + myFilled + '/81 · ' + (d['m' + me] || 0) + ' mistakes — Opponent: ' + opFilled + '/81 · ' + (d['m' + op] || 0) + ' mistakes';
+            }
+        };
+        window.suMaybeFinish = function(d) {
+            if (!d || d.winner || !gameRef) return;
+            let w = null;
+            if (d.done1 && d.done2) {
+                if ((d.m1 || 0) !== (d.m2 || 0)) w = (d.m1 || 0) < (d.m2 || 0) ? 'P1' : 'P2';
+                else if (d.fin1 !== d.fin2) w = d.fin1 < d.fin2 ? 'P1' : 'P2';
+                else w = 'Draw';
+            } else if (d.done1 && Date.now() - (d.fin1 || 0) > 20000) w = 'P1';
+            else if (d.done2 && Date.now() - (d.fin2 || 0) > 20000) w = 'P2';
+            if (w) gameRef.child('winner').transaction(cur => cur ? undefined : w);
+        };
+        window.resetSudoku = function() {
+            if (gameRef && mySymbol === 'X') {
+                let np = Math.floor(Math.random() * SUDOKU_PUZZLES.length);
+                if (suData && SUDOKU_PUZZLES.length > 1 && np === suData.puz) np = (np + 1) % SUDOKU_PUZZLES.length;
+                gameRef.update({ puz: np, p1: {}, p2: {}, m1: 0, m2: 0, done1: false, done2: false, fin1: 0, fin2: 0, winner: null });
+            }
+            suSel = null;
+            document.getElementById('rematchSuBtn').style.display = 'none';
+        };
+        window.leaveSudoku = function() {
+            if (suTick) { clearInterval(suTick); suTick = null; }
+            if (typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if (typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('sudokuOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (typeof user !== 'undefined' && user) { db.ref('gameQueue/Sudoku/' + user.uid).off(); db.ref('gameQueue/Sudoku/' + user.uid).remove(); }
+            suData = null; suSel = null;
+            gameRoom = null;
+        };
+
+        // ---------- BLACKJACK DUEL ----------
+        let bjData = null, bjPendingRound = -1, bjAdvancing = false;
+        function bjShoe(seed) { const rnd = dcRng(seed); const deck = []; for (let i = 1; i <= 52; i++) deck.push(i); for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const t = deck[i]; deck[i] = deck[j]; deck[j] = t; } return deck; }
+        function bjHandVal(cards) { let base = 0, aces = 0; (cards || []).forEach(c => { const r = ((c - 1) % 13) + 1; if (r === 1) { aces++; base += 1; } else base += Math.min(r, 10); }); let total = base; if (aces && base + 10 <= 21) total = base + 10; return { total: total, bust: base > 21 }; }
+        function bjDealFrom(shoe, ptr) { return { h1: [shoe[ptr], shoe[ptr + 2]], h2: [shoe[ptr + 1], shoe[ptr + 3]], dh: [shoe[ptr + 4], shoe[ptr + 5]], ptr: ptr + 6 }; }
+        window.bjFreshState = function(seed) { const shoe = bjShoe(seed); const deal = bjDealFrom(shoe, 0); return { seed: seed, shoe: shoe, ptr: deal.ptr, round: 1, wins1: 0, wins2: 0, h1: deal.h1, h2: deal.h2, dh: deal.dh, stood1: false, stood2: false, phase: 'play', roundWinner: null, winner: null }; };
+        function bjRoundWinner(h1, h2, dh) {
+            const v1 = bjHandVal(h1), v2 = bjHandVal(h2), vd = bjHandVal(dh);
+            const s1 = v1.bust ? -1 : v1.total, s2 = v2.bust ? -1 : v2.total, sd = vd.bust ? -1 : vd.total;
+            const b1 = s1 > sd, b2 = s2 > sd;
+            if (b1 && b2) return s1 === s2 ? 'Draw' : (s1 > s2 ? 'P1' : 'P2');
+            if (b1) return 'P1';
+            if (b2) return 'P2';
+            return 'Draw';
+        }
+        window.bjMaybeAdvance = function(d) {
+            if (!gameRef || mySymbol !== 'X' || !d || d.winner) return;
+            if (d.phase === 'play') {
+                const done1 = d.stood1 || bjHandVal(d.h1).bust, done2 = d.stood2 || bjHandVal(d.h2).bust;
+                if (done1 && done2 && !bjAdvancing) {
+                    bjAdvancing = true;
+                    const dh = (d.dh || []).slice(); let ptr = d.ptr;
+                    while (bjHandVal(dh).total < 17 && ptr < (d.shoe || []).length) { dh.push(d.shoe[ptr]); ptr++; }
+                    const rw = bjRoundWinner(d.h1, d.h2, dh);
+                    gameRef.update({ dh: dh, ptr: ptr, phase: 'roundEnd', roundWinner: rw, wins1: (d.wins1 || 0) + (rw === 'P1' ? 1 : 0), wins2: (d.wins2 || 0) + (rw === 'P2' ? 1 : 0) }).then(() => { bjAdvancing = false; });
+                }
+            } else if (d.phase === 'roundEnd') {
+                if (bjPendingRound !== d.round) {
+                    bjPendingRound = d.round;
+                    setTimeout(() => {
+                        if (!gameRef || !bjData || bjData.phase !== 'roundEnd' || bjData.winner) return;
+                        if (bjData.wins1 >= 3 || bjData.wins2 >= 3 || bjData.round >= 5) {
+                            gameRef.update({ winner: bjData.wins1 > bjData.wins2 ? 'P1' : bjData.wins2 > bjData.wins1 ? 'P2' : 'Draw', phase: 'over' });
+                        } else {
+                            let shoe = bjData.shoe, ptr = bjData.ptr, seed = bjData.seed;
+                            if (ptr > 40) { seed = Math.floor(Math.random() * 1000000000); shoe = bjShoe(seed); ptr = 0; }
+                            const deal = bjDealFrom(shoe, ptr);
+                            gameRef.update({ seed: seed, shoe: shoe, ptr: deal.ptr, round: bjData.round + 1, h1: deal.h1, h2: deal.h2, dh: deal.dh, stood1: false, stood2: false, phase: 'play', roundWinner: null });
+                        }
+                    }, 2800);
+                }
+            }
+        };
+        window.bjHit = function() {
+            if (!gameRef || !bjData || bjData.winner || bjData.phase !== 'play') return;
+            const me = myGameRole() === 'P1' ? '1' : '2';
+            if (bjData['stood' + me] || bjHandVal(bjData['h' + me]).bust) return;
+            gameRef.child('ptr').transaction(cur => (cur === null || cur === undefined) ? undefined : cur + 1).then(res => {
+                if (!res || !res.committed) return;
+                const idx = res.snapshot.val() - 1;
+                const card = (bjData.shoe || [])[idx];
+                if (card === undefined) return;
+                const nh = (bjData['h' + me] || []).concat([card]);
+                const up = {}; up['h' + me] = nh;
+                const v = bjHandVal(nh);
+                if (v.bust || v.total === 21) up['stood' + me] = true;
+                gameRef.update(up);
+                dcBuzz();
+            });
+        };
+        window.bjStand = function() {
+            if (!gameRef || !bjData || bjData.winner || bjData.phase !== 'play') return;
+            const me = myGameRole() === 'P1' ? '1' : '2';
+            if (bjData['stood' + me]) return;
+            const up = {}; up['stood' + me] = true;
+            gameRef.update(up);
+            dcBuzz();
+        };
+        const BJ_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const BJ_SUITS = ['\u2660', '\u2665', '\u2666', '\u2663'];
+        function bjCardHtml(c, faceDown) {
+            if (faceDown) return '<div style="width:40px; height:54px; border-radius:8px; background: linear-gradient(135deg, #334155, #0f172a); border: 1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:15px;"><i class="fa-solid fa-eye-slash"></i></div>';
+            const r = (c - 1) % 13, suit = BJ_SUITS[Math.floor((c - 1) / 13) % 4];
+            const red = suit === '\u2665' || suit === '\u2666';
+            return '<div style="width:40px; height:54px; border-radius:8px; background:#f8fafc; color:' + (red ? '#dc2626' : '#0f172a') + '; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:14px; line-height:1.15;"><span>' + BJ_RANKS[r] + '</span><span style="font-size:13px;">' + suit + '</span></div>';
+        }
+        function bjCardsHtml(cards, hideSecond) {
+            return (cards || []).map((c, i) => bjCardHtml(c, hideSecond && i > 0)).join('');
+        }
+        window.updateBjUI = function(d) {
+            if (!d || !d.shoe) return;
+            const meRole = myGameRole();
+            const myKey = meRole === 'P1' ? 'h1' : 'h2', opKey = meRole === 'P1' ? 'h2' : 'h1';
+            const myStood = meRole === 'P1' ? d.stood1 : d.stood2;
+            const inPlay = d.phase === 'play';
+            const dEl = document.getElementById('bjDealerCards');
+            if (dEl) dEl.innerHTML = bjCardsHtml(d.dh, inPlay);
+            const dv = document.getElementById('bjDealerVal');
+            if (dv) {
+                if (inPlay) dv.innerText = '· shows ' + bjHandVal([(d.dh || [])[0]]).total;
+                else { const v = bjHandVal(d.dh); dv.innerText = '· ' + v.total + (v.bust ? ' · Bust' : ''); }
+            }
+            const myEl = document.getElementById('bjMyCards');
+            if (myEl) myEl.innerHTML = bjCardsHtml(d[myKey], false);
+            const opEl = document.getElementById('bjOppCards');
+            if (opEl) opEl.innerHTML = bjCardsHtml(d[opKey], false);
+            const mv = document.getElementById('bjMyVal');
+            if (mv) { const v = bjHandVal(d[myKey]); mv.innerText = '· ' + v.total + (v.bust ? ' · Bust' : ''); }
+            const ov2 = document.getElementById('bjOppVal');
+            if (ov2) { const v = bjHandVal(d[opKey]); ov2.innerText = '· ' + v.total + (v.bust ? ' · Bust' : ''); }
+            const mn = document.getElementById('bjMyName'); if (mn) mn.innerText = 'You (' + (meRole === 'P1' ? (d.p1Name || 'P1') : (d.p2Name || 'P2')) + ')';
+            const on = document.getElementById('bjOppName'); if (on) on.innerText = (meRole === 'P1' ? (d.p2Name || 'P2') : (d.p1Name || 'P1'));
+            const sc = document.getElementById('bjScore');
+            if (sc) sc.innerText = 'Round ' + (d.round || 1) + ' of 5 · ' + (d.p1Name || 'P1') + ' ' + (d.wins1 || 0) + ' — ' + (d.wins2 || 0) + ' ' + (d.p2Name || 'P2') + ' · First to 3';
+            const canAct = inPlay && !d.winner && !myStood && !bjHandVal(d[myKey]).bust;
+            ['bjHitBtn', 'bjStandBtn'].forEach(id => { const b = document.getElementById(id); if (b) { b.style.opacity = canAct ? '1' : '0.45'; b.style.pointerEvents = canAct ? 'auto' : 'none'; } });
+            const note = document.getElementById('bjNote');
+            if (note) {
+                if (d.phase === 'roundEnd') {
+                    note.innerText = d.roundWinner === 'Draw' ? 'Round drawn — nobody beat the dealer by more.' : d.roundWinner === meRole ? 'You won this round.' : ((meRole === 'P1' ? (d.p2Name || 'P2') : (d.p1Name || 'P1')) + ' won this round.');
+                } else if (inPlay && bjHandVal(d[myKey]).bust) note.innerText = 'You busted — over 21.';
+                else if (inPlay && myStood) note.innerText = 'You stood on ' + bjHandVal(d[myKey]).total + '.';
+                else note.innerText = '';
+            }
+        };
+        window.resetBlackjack = function() {
+            if (gameRef && mySymbol === 'X') { bjPendingRound = -1; bjAdvancing = false; gameRef.update(bjFreshState(Math.floor(Math.random() * 1000000000))); }
+            document.getElementById('rematchBjBtn').style.display = 'none';
+        };
+        window.leaveBlackjack = function() {
+            if (typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if (typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('blackjackOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (typeof user !== 'undefined' && user) { db.ref('gameQueue/Blackjack/' + user.uid).off(); db.ref('gameQueue/Blackjack/' + user.uid).remove(); }
+            bjData = null;
+            gameRoom = null;
+        };
+
+        // ---------- MINES DUEL ----------
+        // HONESTY NOTE (same class as Battleship): the shared mine layout lives
+        // in the room node so both clients stay in sync; a modified client
+        // could read unrevealed positions. Accepted for a friendly game.
+        let mnData = null;
+        function mnMineSet(seed) { const rnd = dcRng(seed || 1); const idx = []; while (idx.length < 6) { const n = Math.floor(rnd() * 36); if (!idx.includes(n)) idx.push(n); } return idx; }
+        window.mnApplyReveal = function(d, i, role) {
+            if (!d || d.winner || d.turn !== role) return null;
+            const rev = Object.assign({}, d.rev || {});
+            if (rev[i] !== undefined) return null;
+            const isMine = (d.mines || []).includes(i);
+            rev[i] = isMine ? 'm' : 'g';
+            let pts1 = d.pts1 || 0, pts2 = d.pts2 || 0;
+            if (role === 'P1') pts1 = isMine ? Math.max(0, pts1 - 2) : pts1 + 1;
+            else pts2 = isMine ? Math.max(0, pts2 - 2) : pts2 + 1;
+            const gems = Object.keys(rev).filter(k => rev[k] === 'g').length;
+            let winner = null;
+            if (gems >= 30) winner = pts1 > pts2 ? 'P1' : pts2 > pts1 ? 'P2' : 'Draw';
+            return { rev: rev, pts1: pts1, pts2: pts2, turn: role === 'P1' ? 'P2' : 'P1', winner: winner };
+        };
+        window.mnCellClick = function(i) {
+            if (!gameRef || !mnData) return;
+            const role = myGameRole();
+            if (!mnApplyReveal(mnData, i, role)) return;
+            gameRef.transaction(cur => { if (!cur) return cur; const n = mnApplyReveal(cur, i, role); return n ? Object.assign({}, cur, n) : cur; }).then(() => dcBuzz());
+        };
+        window.renderMnBoard = function() {
+            const el = document.getElementById('mnBoard');
+            if (!el || el.children.length) return;
+            for (let i = 0; i < 36; i++) {
+                const btn = document.createElement('button');
+                btn.id = 'mn-c-' + i;
+                btn.style.cssText = 'aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--panel); color: var(--text-primary); font-size: 16px; cursor: pointer; padding: 0; font-family: inherit; display:flex; align-items:center; justify-content:center;';
+                btn.onclick = (function(idx) { return function() { mnCellClick(idx); }; })(i);
+                el.appendChild(btn);
+            }
+        };
+        window.updateMnUI = function(d) {
+            if (!d) return;
+            renderMnBoard();
+            const rev = d.rev || {};
+            for (let i = 0; i < 36; i++) {
+                const btn = document.getElementById('mn-c-' + i);
+                if (!btn) continue;
+                const v = rev[i];
+                if (v === 'g') { btn.innerHTML = '<i class="fa-solid fa-gem" style="color:#FFC926;"></i>'; btn.style.background = 'rgba(255,201,38,0.13)'; btn.disabled = true; }
+                else if (v === 'm') { btn.innerHTML = '<i class="fa-solid fa-bomb" style="color:#ff6b61;"></i>'; btn.style.background = 'rgba(255,59,48,0.13)'; btn.disabled = true; }
+                else { btn.innerHTML = ''; btn.style.background = 'var(--panel)'; btn.disabled = !!d.winner || d.turn !== myGameRole(); }
+            }
+            const sc = document.getElementById('mnScore');
+            if (sc) sc.innerText = (d.p1Name || 'P1') + (myGameRole() === 'P1' ? ' (You)' : '') + '  ' + (d.pts1 || 0) + '  ·  ' + (d.pts2 || 0) + '  ' + (d.p2Name || 'P2') + (myGameRole() === 'P2' ? ' (You)' : '');
+        };
+        window.resetMines = function() {
+            if (gameRef && mySymbol === 'X') { const seed = Math.floor(Math.random() * 1000000000); gameRef.update({ seed: seed, mines: mnMineSet(seed), rev: {}, turn: 'P1', pts1: 0, pts2: 0, winner: null }); }
+            document.getElementById('rematchMnBtn').style.display = 'none';
+        };
+        window.leaveMines = function() {
+            if (typeof gameRef !== 'undefined' && gameRef) { gameRef.off(); gameRef.remove(); }
+            if (typeof gameChatRef !== 'undefined' && gameChatRef) { gameChatRef.off(); }
+            document.getElementById('minesOverlay').style.display = 'none';
+            document.getElementById('gameChatContainer').style.display = 'none';
+            if (typeof user !== 'undefined' && user) { db.ref('gameQueue/Mines/' + user.uid).off(); db.ref('gameQueue/Mines/' + user.uid).remove(); }
+            mnData = null;
+            gameRoom = null;
+        };
+    </script>
 
 </body>
 </html>
