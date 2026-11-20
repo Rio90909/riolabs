@@ -1590,6 +1590,13 @@
         #userProfileSheet .profile-banner-img[src=""] { display: none; }
         #userProfileSheet #upName { font-size: 21px; font-weight: 800; letter-spacing: -0.01em; }
         #userProfileSheet .status-pill { background: var(--panel-2); padding: 6px 12px; font-size: 11.5px; }
+        /* Stage 17 fix: profile sheet — capped height, scrolling body, banner states, back button */
+        #userProfileSheet { max-height: 88vh; }
+        #userProfileSheet .profile-banner-container { flex-shrink: 0; }
+        #userProfileSheet .prof-sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+        #userProfileSheet.s17fix-banner-off .prof-sheet-body { padding-top: 28px; }
+        #userProfileSheet.s17fix-banner-slim .profile-banner-icon { opacity: 1; }
+        .s17fix-profile-back { position: absolute; top: 14px; left: 14px; z-index: 30; width: 38px; height: 38px; border-radius: 50%; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.16); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; padding: 0; }
         .sheet-btn.center { justify-content: center; }
         .sheet-btn.gold-ghost { color: #FFD34D; border-color: rgba(255,201,38,0.4); background: rgba(255,201,38,0.06); }
         .sheet-btn.fire-soft { color: #FF8A3D; border-color: rgba(255,106,0,0.35); background: rgba(255,106,0,0.08); }
@@ -2291,6 +2298,8 @@
         </div>
 
         <div class="sheet-drag-handle" onclick="closeSheet()" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 10;"></div>
+
+        <button class="s17fix-profile-back" onclick="closeSheet()" aria-label="Back"><i class="fa-solid fa-chevron-left"></i></button>
 
         <div class="prof-sheet-body">
             <div id="upAvatarRing" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; z-index: 2;">
@@ -4518,6 +4527,32 @@ function sendNotification(title, body, icon) {
         }
 
         // --- DISCORD-STYLE PROFILE VIEWER WITH BANNERS & TIPS ---
+        // Stage 17 fix: banner states for the profile sheet — a real banner
+        // shows at a reduced height; your own profile without one keeps a
+        // slim "add a banner" strip; someone else's missing banner hides the
+        // container entirely so no empty 120px slab is left behind.
+        function s17ApplyBannerState(hasBanner, isOwn) {
+            const c = document.getElementById('upBannerContainer');
+            const sheet = document.getElementById('userProfileSheet');
+            if (!c) return;
+            c.style.display = '';
+            c.style.height = '';
+            c.style.marginBottom = '';
+            if (sheet) sheet.classList.remove('s17fix-banner-off', 's17fix-banner-slim');
+            if (hasBanner) {
+                c.style.height = '84px';
+                c.style.marginBottom = '-50px';
+                c.style.background = '';
+            } else if (isOwn) {
+                c.style.height = '44px';
+                c.style.marginBottom = '2px';
+                if (sheet) sheet.classList.add('s17fix-banner-slim');
+            } else {
+                c.style.display = 'none';
+                if (sheet) sheet.classList.add('s17fix-banner-off');
+            }
+        }
+
         window.openUserProfile = function(targetUid) {
             viewProfileUid = targetUid;
             const myUid = user ? user.uid : null;
@@ -4550,6 +4585,9 @@ function sendNotification(title, body, icon) {
                         document.getElementById('upBannerContainer').style.pointerEvents = 'none';
                     }
                 }
+
+                // Stage 17 fix: apply the banner state (full / slim / hidden)
+                s17ApplyBannerState(!!uData.banner, targetUid === myUid);
 
                 document.getElementById('upAvatar').src = uData.pic;
                 
