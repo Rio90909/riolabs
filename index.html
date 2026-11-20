@@ -2464,10 +2464,9 @@
                 </div>
             </div>
 
-            <div class="v3-sec" id="spotlightSec">
-                <p class="v3-lbl">Spotlight</p>
-                <div id="spotlightCard"></div>
-            </div>
+            <!-- Stage 17: the Spotlight / Star Pack card was removed from
+                 Home to declutter it. The Star Pack is a Shop item and
+                 stays in the Shop (Stickers category) — nothing deleted. -->
 
             <div class="v3-sec">
                 <p class="v3-lbl">Rooms</p>
@@ -2491,7 +2490,7 @@
             </div>
 
             <div class="v3-sec">
-                <p class="v3-lbl">Quick Play</p>
+                <p class="v3-lbl">Play</p>
                 <div class="v3-row ripple-target" id="cardMiniGames" onclick="openSheet('Mini-Games Hub', 'games')">
                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-gamepad"></i></div>
                     <div class="v3-row-mid">
@@ -2757,15 +2756,20 @@
         </div>
 
         <div id="tab-shop" class="hub-tab">
-             <div class="v3-hd" style="padding-bottom: 10px;">
+             <div class="v3-hd" style="padding-bottom: 8px;">
                  <div class="v3-hd-mid">
                      <div class="v3-hd-title" style="font-size: 22px;">Spark Shop</div>
-                     <div class="v3-hd-sub">Bubbles, themes, banners and more</div>
                  </div>
                  <div class="v3-orb-pill"><span class="orb-dot"></span> <span id="shopOrbCount">0</span></div>
              </div>
 
+             <div class="s17-shop-search">
+                 <i class="fa-solid fa-magnifying-glass"></i>
+                 <input type="text" id="shopSearchInput" placeholder="Search items..." autocomplete="off" oninput="s17ShopSearch()">
+             </div>
+
              <div class="picker-tabs v3-chips" style="max-width: 400px; width: 100%; padding: 0 20px; margin-bottom: 12px; flex-wrap: nowrap; overflow-x: auto; box-sizing: border-box;">
+                 <div id="tabShopFeatured" class="p-tab" onclick="switchShopTab('featured')">Featured</div>
                  <div id="tabShopBubbles" class="p-tab active" onclick="switchShopTab('bubbles')">Bubbles</div>
                  <div id="tabShopThemes" class="p-tab" onclick="switchShopTab('themes')">Themes</div>
                  <div id="tabShopBadges" class="p-tab" onclick="switchShopTab('badges')">Badges</div>
@@ -2775,26 +2779,7 @@
                  <div id="tabShopSounds" class="p-tab" onclick="switchShopTab('sounds')">Sounds</div>
                  <div id="tabShopTitles" class="p-tab" onclick="switchShopTab('titles')">Titles</div>
                  <div id="tabShopStickers" class="p-tab" onclick="switchShopTab('stickers')">Stickers</div>
-             </div>
-
-             <div class="v3-sec" style="margin-bottom: 14px;">
-                 <p class="v3-lbl" style="margin-top: 2px;">Power-Ups</p>
-                 <div class="v3-row ripple-target" onclick="buyMegaphone()">
-                     <div class="v3-row-tile" style="color: #FFD34D;"><i class="fa-solid fa-bullhorn"></i></div>
-                     <div class="v3-row-mid">
-                         <div class="v3-row-name">Megaphone</div>
-                         <div class="v3-row-sub">Broadcast one message to everyone</div>
-                     </div>
-                     <span class="v3-price-pill">1,000</span>
-                 </div>
-                 <div class="v3-row ripple-target" onclick="buyGiftBox()">
-                     <div class="v3-row-tile" style="color: #F9A8D4;"><i class="fa-solid fa-gift"></i></div>
-                     <div class="v3-row-mid">
-                         <div class="v3-row-name">Gift Box</div>
-                         <div class="v3-row-sub">Send Sparks hidden inside a gift</div>
-                     </div>
-                     <span class="v3-price-pill">300</span>
-                 </div>
+                 <div id="tabShopPowerUps" class="p-tab" onclick="switchShopTab('powerups')">Power-Ups</div>
              </div>
 
              <div id="shopGridContent" class="shop-grid" style="padding: 0 20px 250px 20px;"></div>
@@ -3019,15 +3004,11 @@
 
             <div class="island-container">
                 <div class="island" id="islandInputBox">
-                    <button class="icon-btn" id="fToggle" onclick="handleFireClick()" aria-label="Toggle Burner Timer"><i class="fa-solid fa-fire"></i></button>
-                    <button class="icon-btn" onclick="document.getElementById('imageUploadInput').click()" aria-label="Upload Image"><i class="fa-solid fa-image"></i></button>
-                    <button class="icon-btn" onclick="openPollSheet()" aria-label="Create Poll"><i class="fa-solid fa-square-poll-vertical"></i></button>
-                    <button class="icon-btn" onclick="startWatchPrompt()" aria-label="Watch Together"><i class="fa-solid fa-clapperboard"></i></button>
-                    <input type="text" id="msg-input" class="island-input" placeholder="Message..." autocomplete="off" oninput="handleTypingThrottled()">
+                    <button class="icon-btn" id="s17PlusBtn" onclick="s17OpenActions()" aria-label="More actions"><i class="fa-solid fa-plus"></i></button>
                     <button class="icon-btn" onclick="toggleChatPicker('emojiPicker')" aria-label="Open Emoji Picker"><i class="fa-regular fa-face-smile"></i></button>
-                    <button class="icon-btn" id="s16MicBtn" aria-label="Record voice message"><i class="fa-solid fa-microphone"></i></button>
+                    <textarea id="msg-input" class="island-input" rows="1" placeholder="Message..." autocomplete="off" oninput="handleTypingThrottled()"></textarea>
+                    <button class="icon-btn" id="s16MicBtn" aria-label="Record voice message or send"><i class="fa-solid fa-microphone"></i></button>
                 </div>
-                <button class="send-btn" onclick="sendMsg('text')" aria-label="Send Message"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -3552,6 +3533,7 @@ function sendNotification(title, body, icon) {
                 const activeTabEl = document.querySelector('.p-tab.active');
                 if (activeTabEl && activeTabEl.id.startsWith('tabShop')) {
                     const tabMap = {
+                        'tabShopFeatured': 'featured',
                         'tabShopBubbles': 'bubbles',
                         'tabShopThemes': 'themes',
                         'tabShopBadges': 'badges',
@@ -3560,7 +3542,8 @@ function sendNotification(title, body, icon) {
                         'tabShopAvatarRings': 'avatarRings',
                         'tabShopSounds': 'sounds',
                         'tabShopTitles': 'titles',
-                        'tabShopStickers': 'stickers'
+                        'tabShopStickers': 'stickers',
+                        'tabShopPowerUps': 'powerups'
                     };
                     switchShopTab(tabMap[activeTabEl.id]);
                 }
@@ -4736,6 +4719,10 @@ function sendNotification(title, body, icon) {
         // Shop initialization is now handled by tab switching
 
         window.switchShopTab = function(tab) {
+            // Stage 17: Featured and Power-Ups are chips of their own; the
+            // selected chip renders ONLY its own section (see renderShop).
+            window.s17ShopTab = tab;
+            document.getElementById('tabShopFeatured').classList.toggle('active', tab === 'featured');
             document.getElementById('tabShopBubbles').classList.toggle('active', tab === 'bubbles');
             document.getElementById('tabShopThemes').classList.toggle('active', tab === 'themes');
             document.getElementById('tabShopBadges').classList.toggle('active', tab === 'badges');
@@ -4745,6 +4732,7 @@ function sendNotification(title, body, icon) {
             document.getElementById('tabShopSounds').classList.toggle('active', tab === 'sounds');
             document.getElementById('tabShopTitles').classList.toggle('active', tab === 'titles');
             document.getElementById('tabShopStickers').classList.toggle('active', tab === 'stickers');
+            document.getElementById('tabShopPowerUps').classList.toggle('active', tab === 'powerups');
             // Clear first: a category switch must never leave the previous
             // category painted underneath the new grid (ghosting fix).
             const grid = document.getElementById('shopGridContent');
@@ -4870,44 +4858,104 @@ function sendNotification(title, body, icon) {
                 </div>`;
         }
 
+        // Stage 17: the two power-ups that used to block the top of the
+        // shop scroll now live ONLY under the Power-Ups chip. Same names,
+        // same prices, same buy handlers (buyMegaphone / buyGiftBox).
+        const S17_POWERUPS = [
+            { name: 'Megaphone', sub: 'Broadcast one message to everyone', price: '1,000', icon: 'fa-bullhorn', color: '#FFD34D', fn: 'buyMegaphone()' },
+            { name: 'Gift Box', sub: 'Send Sparks hidden inside a gift', price: '300', icon: 'fa-gift', color: '#F9A8D4', fn: 'buyGiftBox()' }
+        ];
+        function s17PowerUpHtml(p) {
+            return `
+                <div class="shop-item s17-power-card ripple-target" onclick="${p.fn}">
+                    <div class="shop-preview shop-preview-tile" style="color: ${p.color};"><i class="fa-solid ${p.icon}"></i></div>
+                    <span class="shop-item-name">${p.name}</span>
+                    <span class="s17-power-sub">${p.sub}</span>
+                    <div class="shop-price-row">
+                        <span class="shop-price"><span class="orb-dot"></span>${p.price}</span>
+                        <button class="btn-primary shop-btn">Buy</button>
+                    </div>
+                </div>`;
+        }
+
         function renderShop(tab) {
             const grid = document.getElementById('shopGridContent');
             if(!grid) return;
 
-            const items = (shopData[tab] || []).filter(i => !i.adminOnly); // Stage 13: adminOnly items (e.g. Founder title) never render in the shop
+            // Stage 17: the search field filters the visible section by
+            // item name (presentation only — data and prices untouched).
+            const searchEl = document.getElementById('shopSearchInput');
+            const query = searchEl ? (searchEl.value || '').trim().toLowerCase() : '';
+            const nameMatch = it => !query || ((it && it.name) || '').toLowerCase().includes(query);
             let html = '';
 
-            // Stage 8: Featured strip — wide cards pinned above every
-            // category (rendered inside the scrollable grid so the shop
-            // tab's fixed layout is untouched).
-            const featuredCards = SHOP_FEATURED
-                .map(f => {
-                    const it = (shopData[f.cat] || []).find(i => i.id === f.id);
-                    return it ? shopCardHtml(f.cat, it, true) : '';
-                })
-                .join('');
-            if (featuredCards) {
-                // Stage 12: Featured is now a horizontal snap-scroll
-                // showcase with larger preview art (.shop-feature-rail).
-                html += `<div class="shop-tier-lbl">Featured</div><div class="shop-rail-wrap"><div class="shop-rail shop-feature-rail">${featuredCards}</div></div>`;
+            // Stage 17: Power-Ups render ONLY under their own chip.
+            if (tab === 'powerups') {
+                const powers = S17_POWERUPS.filter(nameMatch);
+                if (powers.length) {
+                    html += `<div class="shop-tier-lbl">Power-Ups &middot; ${powers.length}</div>`;
+                    powers.forEach(p => { html += s17PowerUpHtml(p); });
+                } else {
+                    html += `<div class="s17-shop-empty">No power-ups match your search.</div>`;
+                }
+                grid.innerHTML = html;
+                return;
             }
 
-            // Stage 12: "New In" rail — every item flagged new:true across
-            // all categories; tapping a card jumps to that item's tab.
-            const newInCards = [];
-            Object.keys(shopData).forEach(cat => {
-                (shopData[cat] || []).forEach(it => {
-                    if (it && it.new && !it.adminOnly) newInCards.push({ cat: cat, it: it });
+            // Stage 17: with a search typed on the Featured chip, show
+            // matching items from every category as one results grid.
+            if (tab === 'featured' && query) {
+                let results = 0;
+                let cards = '';
+                Object.keys(shopData).forEach(cat => {
+                    (shopData[cat] || []).forEach(it => {
+                        if (it && !it.adminOnly && nameMatch(it)) { cards += shopCardHtml(cat, it, false); results++; }
+                    });
                 });
-            });
-            if (newInCards.length) {
-                html += `<div class="shop-tier-lbl">New In &middot; ${newInCards.length}</div><div class="shop-rail-wrap"><div class="shop-rail shop-newin-rail">` +
-                    newInCards.slice(0, 14).map(entry => `
-                    <div class="shop-newin-card ripple-target" onclick="switchShopTab('${entry.cat}')">
-                        ${shopPreviewHtml(entry.cat, entry.it, shopDynColor(entry.cat, entry.it))}
-                        <div class="shop-newin-name">${entry.it.name}</div>
-                        <div class="shop-newin-price">${entry.it.price === 0 ? 'Free' : entry.it.price + ' Sparks'}</div>
-                    </div>`).join('') + `</div></div>`;
+                html += `<div class="shop-tier-lbl">Results &middot; ${results}</div>` + cards;
+                if (!results) html += `<div class="s17-shop-empty">No items match your search.</div>`;
+                grid.innerHTML = html;
+                return;
+            }
+
+            const items = (shopData[tab] || []).filter(i => !i.adminOnly).filter(nameMatch); // Stage 13: adminOnly items (e.g. Founder title) never render in the shop
+
+            // Stage 17: the Featured showcase and the New In rail are now
+            // their OWN view under the Featured chip — they no longer sit
+            // on top of every category. (Stage 8/12 rendering unchanged.)
+            if (tab === 'featured') {
+                const featuredCards = SHOP_FEATURED
+                    .map(f => {
+                        const it = (shopData[f.cat] || []).find(i => i.id === f.id);
+                        return it ? shopCardHtml(f.cat, it, true) : '';
+                    })
+                    .join('');
+                if (featuredCards) {
+                    // Stage 12: Featured is a horizontal snap-scroll
+                    // showcase with larger preview art (.shop-feature-rail).
+                    html += `<div class="shop-tier-lbl">Featured</div><div class="shop-rail-wrap"><div class="shop-rail shop-feature-rail">${featuredCards}</div></div>`;
+                }
+
+                // Stage 12: "New In" rail — every item flagged new:true across
+                // all categories; tapping a card jumps to that item's tab.
+                const newInCards = [];
+                Object.keys(shopData).forEach(cat => {
+                    (shopData[cat] || []).forEach(it => {
+                        if (it && it.new && !it.adminOnly) newInCards.push({ cat: cat, it: it });
+                    });
+                });
+                if (newInCards.length) {
+                    html += `<div class="shop-tier-lbl">New In &middot; ${newInCards.length}</div><div class="shop-rail-wrap"><div class="shop-rail shop-newin-rail">` +
+                        newInCards.slice(0, 14).map(entry => `
+                        <div class="shop-newin-card ripple-target" onclick="switchShopTab('${entry.cat}')">
+                            ${shopPreviewHtml(entry.cat, entry.it, shopDynColor(entry.cat, entry.it))}
+                            <div class="shop-newin-name">${entry.it.name}</div>
+                            <div class="shop-newin-price">${entry.it.price === 0 ? 'Free' : entry.it.price + ' Sparks'}</div>
+                        </div>`).join('') + `</div></div>`;
+                }
+
+                grid.innerHTML = html;
+                return;
             }
 
             // Stage 8: tier groups — Free / Classic (<=600) / Premium (>600).
@@ -4924,12 +4972,19 @@ function sendNotification(title, body, icon) {
                 html += `<div class="shop-tier-lbl">${tier.label} &middot; ${group.length}</div>`;
                 group.forEach(item => { html += shopCardHtml(tab, item, false); });
             });
+            if (query && !items.length) html += `<div class="s17-shop-empty">No items match your search.</div>`;
 
             // Single assignment: building with innerHTML += inside the loop
             // re-parses and re-paints the grid per item, which showed up as
             // doubled/ghosted cards when switching categories.
             grid.innerHTML = html;
         }
+
+        // Stage 17: shop search — re-render the currently selected chip's
+        // section with the typed filter. Called from the search field.
+        window.s17ShopSearch = function() {
+            renderShop(window.s17ShopTab || 'bubbles');
+        };
 
         window.handleShopClick = function(tab, itemId) {
             if (!requireAuth()) return;
@@ -13311,11 +13366,6 @@ window.burnImage = function(element, url, key) {
             // Stage 16: the GIPHY key lives in ONE place — the GIPHY_KEY
             // constant at the top of the Stage 16 block (window.DC16_GIPHY_KEY).
             const GIPHY_KEY = (typeof window !== 'undefined' && window.DC16_GIPHY_KEY) || '';
-            if (!GIPHY_KEY) {
-                const offGrid = document.getElementById('gifGrid');
-                if (offGrid) offGrid.innerHTML = '<div class="s16-gif-off"><i class="fa-solid fa-wand-magic-sparkles"></i><div class="s16-gif-off-t">GIFs are being switched on</div><div class="s16-gif-off-s">This space will light up with GIFs very soon.</div></div>';
-                return;
-            }
             const url = query ? `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(query)}&limit=20` : `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_KEY}&limit=20`;
             try {
                 const res = await fetch(url);
@@ -14919,6 +14969,17 @@ window.burnImage = function(element, url, key) {
         <div id="mnBoard" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; width: 318px; max-width: 94vw;"></div>
         <p style="color: var(--text-secondary); font-size: 12px; margin-top: 16px; text-align: center; padding: 0 24px;">Take turns revealing one tile. A gem scores +1 — a mine costs 2 points. When every gem is found, the higher score wins.</p>
         <button id="rematchMnBtn" onclick="resetMines()" style="display:none; margin-top: 25px; padding: 15px 30px; border-radius: 30px; background: var(--gold-grad); color: #1A1402; font-weight: 900; font-size: 16px; border: none;">Play Again</button>
+    </div>
+
+    <!-- Stage 17: composer actions sheet — every action the old crowded
+         composer row exposed, moved behind the "+" button. Nothing removed. -->
+    <div class="bottom-sheet" id="s17ActionsSheet" style="z-index: 10000; padding-bottom: 24px;">
+        <div class="sheet-drag-handle" onclick="s17CloseActions()"></div>
+        <div class="sheet-title">Add to chat</div>
+        <button class="sheet-btn ripple-target" onclick="s17CloseActions(); document.getElementById('imageUploadInput').click();"><i class="fa-solid fa-image" style="color:#6FD598;"></i> Photo</button>
+        <button class="sheet-btn ripple-target" onclick="s17CloseActions(); openPollSheet();"><i class="fa-solid fa-square-poll-vertical" style="color:#FFC926;"></i> Poll</button>
+        <button class="sheet-btn ripple-target" onclick="s17CloseActions(); startWatchPrompt();"><i class="fa-solid fa-clapperboard" style="color:#8AABFF;"></i> Watch Together</button>
+        <button class="sheet-btn ripple-target" onclick="s17CloseActions(); handleFireClick();"><i class="fa-solid fa-fire" style="color:#FF6A00;"></i> Burner Message</button>
     </div>
 
     <div class="bottom-sheet" id="pollSheet" style="z-index: 10000; padding-bottom: 20px;">
@@ -17693,14 +17754,11 @@ html[data-theme="rose"] .msg-row.me .bubble { color: #FFFFFF !important; }
    ============================================================ */
 
 /* ------------------------------------------------------------
-   OWNER: paste your free GIPHY key here.
-   Get one free at https://developers.giphy.com (create an app,
-   copy its API key between the quotes). While this stays empty,
-   the GIF panel shows a friendly "GIFs are being switched on"
-   note and nothing else changes. This is the ONLY place the
+   Stage 17: the working GIPHY key from the pre-Stage-16 build
+   is restored in the constant below. This is the ONLY place the
    key lives — the chat code reads it from here.
    ------------------------------------------------------------ */
-const GIPHY_KEY = '';
+const GIPHY_KEY = 'jp4KSpOQtYjzdnKKycLCbWQML4ugDuBs';
 window.DC16_GIPHY_KEY = GIPHY_KEY;
 
 /* ---------- best-effort Firebase helpers (Stage 15 pattern) ---------- */
@@ -18840,6 +18898,140 @@ setInterval(() => {
     } catch (e) {}
     try { s16InitWraps(); } catch (e) {}
     try { s16RenderLoungeHome(); } catch (e) {}
+})();
+</script>
+
+<style id="s17-style">
+/* ============================================================
+   STAGE 17 — FEEDBACK FIXES (presentation layer only)
+   Lag law honoured: transform/opacity motion only.
+   ============================================================ */
+
+/* ---- 1 · Composer declutter ---- */
+.chat-footer { padding: 6px 10px 12px; }
+.chat-footer .island-container { gap: 0; padding: 5px; }
+.chat-footer .island { padding: 4px 6px; align-items: flex-end; }
+.chat-footer .icon-btn { width: 36px; height: 36px; font-size: 19px; flex: none; }
+textarea.island-input {
+    font-family: inherit;
+    resize: none;
+    line-height: 1.4;
+    padding: 10px 4px;
+    min-height: 22px;
+    max-height: 94px; /* ~3 lines, then it scrolls internally */
+    overflow-y: auto;
+}
+#s16MicBtn.s17-send { background: var(--gold-grad); color: #1A1402; }
+#s17PlusBtn { color: var(--text-primary); }
+
+/* ---- 3 · Shop cleanup ---- */
+.s17-shop-search {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; max-width: 400px; box-sizing: border-box;
+    margin: 0 20px 12px; padding: 11px 14px;
+    background: var(--field); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; color: var(--text-secondary); font-size: 14px;
+}
+.s17-shop-search input {
+    flex: 1; min-width: 0; background: transparent; border: none; outline: none;
+    color: var(--text-primary); font-size: 14.5px; font-family: inherit;
+}
+.shop-grid { gap: 14px; height: calc(100vh - 296px); }
+.shop-item { padding: 16px; min-height: 172px; gap: 11px; border-radius: 18px; }
+.shop-preview { height: 78px; }
+.shop-tier-lbl, .shop-rail-wrap, .s17-shop-empty { grid-column: 1 / -1; }
+.s17-power-sub { font-size: 12px; color: var(--text-secondary); line-height: 1.35; }
+.s17-power-card .shop-preview { font-size: 30px; }
+.s17-shop-empty { text-align: center; padding: 34px 16px; color: var(--text-secondary); font-size: 13.5px; }
+
+/* ---- 4 · Home order ---- */
+#tab-dashboard.active-tab { gap: 20px; }
+#tab-dashboard .v3-sec { gap: 10px; }
+</style>
+
+<script>
+/* ============================================================
+   STAGE 17 — FEEDBACK FIXES
+   Composer actions sheet + mic/send wiring. Shop, GIF and Home
+   changes live in their own sections (marked "Stage 17").
+   No new Firebase nodes; no logic changes to games, economy,
+   admin, calls or stories.
+   ============================================================ */
+
+/* ---- 1 · Composer actions sheet (bottom-sheet pattern) ---- */
+window.s17OpenActions = function () {
+    const overlay = document.getElementById('sheetOverlay');
+    if (overlay) overlay.classList.add('show');
+    const sheet = document.getElementById('s17ActionsSheet');
+    if (sheet) sheet.classList.add('show');
+};
+window.s17CloseActions = function () {
+    const overlay = document.getElementById('sheetOverlay');
+    if (overlay) overlay.classList.remove('show');
+    const sheet = document.getElementById('s17ActionsSheet');
+    if (sheet) sheet.classList.remove('show');
+};
+
+/* ---- 1 · Composer: auto-growing input + mic/send button ----
+   The single right-hand button is the Stage 16 mic button
+   (#s16MicBtn, same id, same recording behaviour). When the
+   input holds text it becomes Send instead: a capture-phase
+   click on the container sends the message and stops the
+   event before the Stage 16 mic listener can see it. While a
+   recording is active the click falls through untouched, so
+   tap-to-stop-and-send works exactly as in Stage 16. */
+(function s17ComposerInit() {
+    const input = document.getElementById('msg-input');
+    const btn = document.getElementById('s16MicBtn');
+    if (!input || !btn) return;
+    let lastMode = '';
+    function sync() {
+        // Grow the textarea: one full line always visible, up to ~3.
+        try {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 94) + 'px';
+        } catch (e) {}
+        const recording = (typeof s16RecState !== 'undefined' && !!s16RecState);
+        const mode = recording ? 'rec' : ((input.value || '').trim() ? 'send' : 'mic');
+        if (mode === lastMode) return;
+        lastMode = mode;
+        btn.innerHTML = mode === 'send'
+            ? '<i class="fa-solid fa-paper-plane"></i>'
+            : '<i class="fa-solid fa-microphone"></i>';
+        btn.classList.toggle('s17-send', mode === 'send');
+    }
+    window.s17SyncComposer = sync;
+    // Re-sync after layout settles: a sync that runs mid screen-switch
+    // can read a stale scrollHeight and leave the box one line short
+    // until the next tick — the rAF/timeout passes close that gap.
+    input.addEventListener('input', () => { sync(); requestAnimationFrame(sync); setTimeout(sync, 60); });
+    input.addEventListener('focus', () => { sync(); requestAnimationFrame(sync); });
+    window.addEventListener('resize', sync); // keyboard open/close
+    input.addEventListener('keydown', e => {
+        // Textarea Enter: keep the old single-line behaviour — Enter
+        // sends (the legacy keypress listener is suppressed by this
+        // preventDefault, and sendMsg ignores empty text regardless).
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (typeof sendMsg === 'function') sendMsg('text');
+            setTimeout(sync, 0);
+        }
+    });
+    const container = document.querySelector('.island-container');
+    if (container) {
+        container.addEventListener('click', e => {
+            if (!e.target || !e.target.closest || !e.target.closest('#s16MicBtn')) return;
+            if (typeof s16RecState !== 'undefined' && s16RecState) return; // recording: Stage 16 handler owns the tap
+            if ((input.value || '').trim()) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (typeof sendMsg === 'function') sendMsg('text');
+                setTimeout(sync, 0);
+            }
+        }, true);
+    }
+    setInterval(sync, 600); // drafts restore / programmatic clears
+    sync();
 })();
 </script>
 
